@@ -68,7 +68,7 @@
 
 
 
-  <meta name="keywords" content="Hexo, NexT">
+  <meta name="keywords" content="datax,">
 
 
 
@@ -79,13 +79,18 @@
 
 
 
-<meta property="og:type" content="website">
-<meta property="og:title" content="Hexo">
-<meta property="og:url" content="http://yoursite.com/index.html">
+<meta name="description" content="Datax 限速原理使用官方文档并没有写到怎么配置限速，通过观察源码才得知，需要配置core.transport.channel.speed.byte或core.transport.channel.speed.record值。这两个值是指定每个channel的速度。注意job.setting.speed.byte和job.setting.speed.record也是指定速度，但这个是限制所有cha">
+<meta name="keywords" content="datax">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Datax限速bug">
+<meta property="og:url" content="http://yoursite.com/2018/12/16/Datax限速bug/index.html">
 <meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="Datax 限速原理使用官方文档并没有写到怎么配置限速，通过观察源码才得知，需要配置core.transport.channel.speed.byte或core.transport.channel.speed.record值。这两个值是指定每个channel的速度。注意job.setting.speed.byte和job.setting.speed.record也是指定速度，但这个是限制所有cha">
 <meta property="og:locale" content="default">
+<meta property="og:updated_time" content="2018-12-16T06:43:09.957Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Hexo">
+<meta name="twitter:title" content="Datax限速bug">
+<meta name="twitter:description" content="Datax 限速原理使用官方文档并没有写到怎么配置限速，通过观察源码才得知，需要配置core.transport.channel.speed.byte或core.transport.channel.speed.record值。这两个值是指定每个channel的速度。注意job.setting.speed.byte和job.setting.speed.record也是指定速度，但这个是限制所有cha">
 
 
 
@@ -115,13 +120,13 @@
 
 
 
-  <link rel="canonical" href="http://yoursite.com/">
+  <link rel="canonical" href="http://yoursite.com/2018/12/16/Datax限速bug/">
 
 
 
 
 
-  <title>Hexo</title>
+  <title>Datax限速bug | Hexo</title>
   
 
 
@@ -140,8 +145,7 @@
     
   
 
-  <div class="container sidebar-position-left 
-  page-home">
+  <div class="container sidebar-position-left page-post-detail">
     <div class="headband"></div>
 
     <header id="header" class="header" itemscope="" itemtype="http://schema.org/WPHeader">
@@ -214,9 +218,9 @@
         <div class="content-wrap">
           <div id="content" class="content">
             
-  <section id="posts" class="posts-expand">
+
+  <div id="posts" class="posts-expand">
     
-      
 
   
 
@@ -246,9 +250,7 @@
 
         
         
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2018/12/16/Datax限速bug/" itemprop="url">Datax限速bug</a></h1>
+          <h1 class="post-title" itemprop="name headline">Datax限速bug</h1>
         
 
         <div class="post-meta">
@@ -298,9 +300,7 @@
       
 
       
-        
-          
-            <h1 id="Datax-限速原理"><a href="#Datax-限速原理" class="headerlink" title="Datax 限速原理"></a>Datax 限速原理</h1><h2 id="使用"><a href="#使用" class="headerlink" title="使用"></a>使用</h2><p>官方文档并没有写到怎么配置限速，通过观察源码才得知，需要配置core.transport.channel.speed.byte或core.transport.channel.speed.record值。这两个值是指定每个channel的速度。注意job.setting.speed.byte和job.setting.speed.record也是指定速度，但这个是限制所有channel的总速度。</p>
+        <h1 id="Datax-限速原理"><a href="#Datax-限速原理" class="headerlink" title="Datax 限速原理"></a>Datax 限速原理</h1><h2 id="使用"><a href="#使用" class="headerlink" title="使用"></a>使用</h2><p>官方文档并没有写到怎么配置限速，通过观察源码才得知，需要配置core.transport.channel.speed.byte或core.transport.channel.speed.record值。这两个值是指定每个channel的速度。注意job.setting.speed.byte和job.setting.speed.record也是指定速度，但这个是限制所有channel的总速度。</p>
 <p>我们使用限速功能时，可以通过制定job.setting.speed和core.transport.channel.speed的值，这样datax会自动的计算出channel数目。也可以指定core.transport.channel.speed和channel数目。</p>
 <p>配置文件示例如下，指定了channel的数目为5，每个channel的数据读取条数为100：</p>
 <figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">    <span class="attr">"core"</span>: &#123;</span><br><span class="line">         <span class="attr">"transport"</span> : &#123;</span><br><span class="line">              <span class="attr">"channel"</span>: &#123;</span><br><span class="line">                   <span class="attr">"speed"</span>: &#123;</span><br><span class="line">                       <span class="attr">"record"</span>: <span class="number">100</span></span><br><span class="line">                    &#125;</span><br><span class="line">               &#125;</span><br><span class="line">         &#125;</span><br><span class="line">    &#125;,</span><br><span class="line">    <span class="attr">"job"</span>: &#123;</span><br><span class="line">        <span class="attr">"setting"</span>: &#123;</span><br><span class="line">            <span class="attr">"speed"</span>: &#123;</span><br><span class="line">                <span class="attr">"channel"</span>: <span class="number">5</span>,</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;,</span><br><span class="line">        <span class="attr">"content"</span>: [</span><br><span class="line">            &#123;</span><br><span class="line">                <span class="attr">"reader"</span>: &#123;</span><br><span class="line">                    <span class="attr">"name"</span>: <span class="string">"sqlserverreader"</span>,</span><br><span class="line">                    <span class="attr">"parameter"</span>: &#123;</span><br><span class="line"></span><br><span class="line">                        <span class="attr">"username"</span>: <span class="string">"xx"</span>,</span><br><span class="line">                        <span class="attr">"password"</span>: <span class="string">"xx"</span>,</span><br><span class="line">                        <span class="attr">"connection"</span>: [</span><br><span class="line">                            &#123;</span><br><span class="line">                                <span class="attr">"querySql"</span>: [</span><br><span class="line">                                    <span class="string">"SELECT * from mytable LIMIT 100 "</span></span><br><span class="line">                                ],</span><br><span class="line">                                <span class="attr">"jdbcUrl"</span>: [</span><br><span class="line">                                    <span class="string">"jdbc:postgresql://host:port/database"</span></span><br><span class="line">                                ]</span><br><span class="line">                            &#125;</span><br><span class="line">                        ]</span><br><span class="line">                    &#125;</span><br><span class="line">                &#125;,</span><br><span class="line">               <span class="attr">"writer"</span>: &#123;</span><br><span class="line">                    <span class="attr">"name"</span>: <span class="string">"streamwriter"</span>,</span><br><span class="line">                    <span class="attr">"parameter"</span>: &#123;</span><br><span class="line">                        <span class="attr">"print"</span>: <span class="literal">false</span>,</span><br><span class="line">                        <span class="attr">"encoding"</span>: <span class="string">"UTF-8"</span></span><br><span class="line">                    &#125;</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        ]</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
@@ -309,8 +309,6 @@
 <p>可以看到Datax是检查了配置参数，但是这里没有抛出异常，所以需要在DataXException.asDataXException的前面加上throw，将异常抛出来。否则仅仅指定了job.setting.speed，是没有任何限速作用的。</p>
 <h2 id="优化"><a href="#优化" class="headerlink" title="优化"></a>优化</h2><p>Datax的限速原理，是它会每隔一段时间，检查速度。如果速度过快，就会sleep一段时间，来把速度降下来。这种限速其实不太精确，可以自己改写代码，使用guava库的RateLimiter来实现精确的限速。</p>
 
-          
-        
       
     </div>
     
@@ -325,14 +323,20 @@
 
     <footer class="post-footer">
       
+        <div class="post-tags">
+          
+            <a href="/tags/datax/" rel="tag"># datax</a>
+          
+        </div>
+      
+
+      
+      
+      
 
       
 
       
-
-      
-      
-        <div class="post-eof"></div>
       
     </footer>
   </div>
@@ -342,10 +346,11 @@
   </article>
 
 
-    
-  </section>
 
-  
+    <div class="post-spread">
+      
+    </div>
+  </div>
 
 
           </div>
@@ -353,6 +358,10 @@
 
 
           
+
+  
+
+
 
         </div>
         
@@ -373,8 +382,17 @@
       
 
       
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            Table of Contents
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            Overview
+          </li>
+        </ul>
+      
 
-      <section class="site-overview-wrap sidebar-panel sidebar-panel-active">
+      <section class="site-overview-wrap sidebar-panel">
         <div class="site-overview">
           <div class="site-author motion-element" itemprop="author" itemscope="" itemtype="http://schema.org/Person">
             
@@ -425,6 +443,22 @@
         </div>
       </section>
 
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#Datax-限速原理"><span class="nav-number">1.</span> <span class="nav-text">Datax 限速原理</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#使用"><span class="nav-number">1.1.</span> <span class="nav-text">使用</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Bug"><span class="nav-number">1.2.</span> <span class="nav-text">Bug</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#优化"><span class="nav-number">1.3.</span> <span class="nav-text">优化</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
       
 
       
@@ -558,6 +592,10 @@
   
 
   
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
 
   
 
