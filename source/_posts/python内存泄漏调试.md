@@ -24,7 +24,7 @@ def dosomething():
     pass
 
 
-schedule.every(2).minutes.do(dosomething)
+schedule.every(1).minutes.do(dosomething)
 
 
 ```
@@ -63,12 +63,12 @@ ObservationList               349        +4
 IdentityPartitionCluster      349        +4
 ```
 
-注意到第一次会出现大幅的增量，是因为第一运行加载类，函数等对象。 从后面的输出结果，可以看到ObservationList和IdentityPartitionCluster一直在持续增长，但是只能看到数量，并不能看到占用内存大小。
+注意到第一次会出现大幅的增量，是因为第一运行加载类，函数等对象。 从后面的输出结果，可以看到ObservationList和IdentityPartitionCluster一直在持续增长，但是只能看到数量，并不能看到占用内存的数据大小和内容。
 
 
 ## 使用pympler工具 ##
 
-pympler工具可以很容易看到内存的使用情况
+pympler工具可以很容易看到内存的使用情况，用法如下
 
 ```python
 import objgraph
@@ -90,10 +90,10 @@ def dosomething():
     pass
 
 
-schedule.every(2).minutes.do(dosomething)
+schedule.every(1).minutes.do(dosomething)
 ```
 
-观察如下：
+观察输出结果如下：
 
 ```shell
 memory total
@@ -209,8 +209,6 @@ memory difference
                                                 int |          12 |    288     B
 ```
 
-
-
 可以看到unicode类型，一直在持续增长。从当初4M多，一直持续增长到385M。知道了是unicode的问题，接下来要观察下这些unicode被哪些对象引用。
 
 
@@ -227,22 +225,20 @@ from pympler import tracker, muppy, summary
 
 
 tr = tracker.SummaryTracker()
-hp = guppy.hpy()
+hp = guppy.hpy() # 初始化了SessionContext，使用它可以访问heap信息
 
 def dosomething():
     print "heap total"
-    heap = hp.heap()
-    references = heap[0].byvia
+    heap = hp.heap() # 返回heap内存详情
+    references = heap[0].byvia # byvia返回该对象的被哪些引用， heap[0]是内存消耗最大的对象
     print references
     
     # ........ 爬取任务
     pass
 
 
-schedule.every(2).minutes.do(dosomething)
+schedule.every(1).minutes.do(dosomething)
 ```
-
-guppy使用hpy初始化了SessionContext，使用它可以访问heap信息。在调用hp.heap()后返回的heap信息，通过heap[0]能够获取占用内存第一名的信息，即关于unicode信息。byvia返回了引用这个类型的排名。
 
 比如上面的代码，返回哪些object引用了unicode这个类型。
 
@@ -289,7 +285,7 @@ def dosomething():
     pass
 
 
-schedule.every(2).minutes.do(dosomething)
+schedule.every(1).minutes.do(dosomething)
 ```
 
 shpaths返回从最顶端的root到这个object的最短引用路径。rp返回被哪些类型应用信息。
