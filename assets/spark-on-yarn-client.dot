@@ -1,0 +1,32 @@
+digraph spark_on_yarn_client {
+    nodesep=1;
+    ranksep=2;
+    
+    subgraph cluster_yarn_client {
+        bgcolor=lightskyblue1;
+        label = "yarn client";
+        YarnDriverEndpoint;
+        YarnSchedulerEndpoint;
+    };
+
+    subgraph cluster_yarn_applicationmaster {
+        bgcolor=palegreen1;
+        label = "yarn application master";
+        AMEndpoint;
+    };
+
+    subgraph cluster_yarn_container {
+        bgcolor=pink;
+        label = "yarn container";
+        CoarseGrainedExecutorBackend;
+    };
+
+    YarnDriverEndpoint -> YarnSchedulerEndpoint;
+    YarnSchedulerEndpoint -> YarnDriverEndpoint;
+
+    YarnSchedulerEndpoint -> AMEndpoint;
+    AMEndpoint -> YarnSchedulerEndpoint;
+
+    YarnDriverEndpoint -> CoarseGrainedExecutorBackend;
+    CoarseGrainedExecutorBackend -> YarnDriverEndpoint;
+}

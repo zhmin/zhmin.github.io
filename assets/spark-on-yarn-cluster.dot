@@ -1,0 +1,29 @@
+digraph G {
+    rankdir = TB;
+    nodesep=1;
+    ranksep=1;
+
+    subgraph cluster_yarn_applicationmaster {
+        ranksep=0.5;
+        bgcolor=palegreen1;
+        label = "yarn application master";
+        YarnDriverEndpoint;
+        YarnSchedulerEndpoint;
+        AMEndpoint;
+    };
+
+    subgraph cluster_yarn_container {
+        bgcolor=pink;
+        label = "yarn container";
+        CoarseGrainedExecutorBackend;
+    };
+
+    YarnDriverEndpoint -> YarnSchedulerEndpoint;
+    YarnSchedulerEndpoint -> YarnDriverEndpoint;
+
+    YarnSchedulerEndpoint -> AMEndpoint;
+    AMEndpoint -> YarnSchedulerEndpoint;
+
+    YarnDriverEndpoint -> CoarseGrainedExecutorBackend;
+    CoarseGrainedExecutorBackend -> YarnDriverEndpoint;
+}
