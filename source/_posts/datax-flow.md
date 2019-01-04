@@ -33,7 +33,7 @@ public class Engine {
 
 ## JobContainer原理
 
-JobContaier的源码涉及到插件的动态加载，可以参考此篇博客。
+JobContaier的源码涉及到插件的动态加载，可以参考此篇博客 {% post_link  datax-plugin %} 。
 
 首先看看JobContainer的start方法，它将任务的执行分为多个阶段。
 
@@ -167,13 +167,13 @@ private void prepareJobReader() {
 
 ### 切分任务
 
-split方法会根据channel的数目，将整个job任务，划分成多个小的task。具体原理参见这篇博客。
+split方法会根据channel的数目，将整个job任务，划分成多个小的task。具体原理参见这篇博客 {% post_link  datax-job %} 。
 
 
 
 ### 分配和执行任务
 
-schedule方法会将task发送给各个Channel执行。具体原理参见这篇博客。
+schedule方法会将task发送给各个Channel执行。具体原理参见这篇博客 {% post_link  datax-job %} 。
 
 
 

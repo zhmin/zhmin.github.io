@@ -1,10 +1,10 @@
 ---
-title: spark-on-yarn
+title: Spark 运行在Yarn上的原理
 date: 2019-01-02 20:10:01
 tags: spark, yarn
 ---
 
-# Spark 运行在 Yarn 的原理
+# Spark 运行在 Yarn 上的原理
 
 ## Rpc 服务
 

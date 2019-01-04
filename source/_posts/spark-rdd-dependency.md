@@ -1,10 +1,10 @@
 ---
-title: spark-rdd-dependency
+title: Spark RDD之间的依赖
 date: 2019-01-03 21:41:59
 tags: spark, rdd, dependency
 ---
 
-# RDD之间的依赖
+# Spark RDD之间的依赖
 
 当RDD执行transform操作时(比如map，filter，groupby)，就会创造新的RDD。RDD之间的联系类型，就是由Dependency表示。根据rdd分区之间的联系，可以分为两大类，窄依赖NarrowDependency， 宽依赖ShuffleDependency。
 
