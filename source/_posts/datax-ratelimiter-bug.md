@@ -34,7 +34,7 @@ tags: datax
         "content": [
             {
                 "reader": {
-                    "name": "sqlserverreader",
+                    "name": "postgresqlreader",
                     "parameter": {
 
                         "username": "xx",
