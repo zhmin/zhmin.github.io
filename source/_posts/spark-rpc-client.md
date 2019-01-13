@@ -50,5 +50,19 @@ Dispatcher : 分发器，将请求分发给对应的Inbox
 
 Inbox ： 收件箱，每个RpcEndpoint都有独立的收件箱，存储着请求
 
-RpcEndpoint ： Rpc服务端
+RpcEndpoint ： Rpc服务端，它定义了处理请求的逻辑
+
+
+
+## rpc服务端发送响应 ##
+
+<img src="rpc-server-send.svg">
+
+RpcEndpoint ： Rpc服务端，它定义了处理请求的逻辑
+
+Channel : SocketChannel类，负责传输数据
+
+Netty : 通过Netty发送响应
+
+Client ： 请求端
 
