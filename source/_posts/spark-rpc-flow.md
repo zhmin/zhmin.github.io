@@ -1,12 +1,12 @@
 ---
-title: spark-rpc-client
-date: 2019-01-10 23:58:30
-tags:
+title: spark-rpc-flow
+date: 2019-01-13 14:05:40
+tags: spark, rpc
 ---
 
-## Spark Rpc 客户端 ##
+# Spark Rpc 原理介绍 #
 
-
+Spark的Rpc服务，是整个Spark框架的基石。Spark的很多服务都是基于Rpc框架之上的，它承担了各个服务之间的信息交流。下面是Rpc的各个组件运行的流程图 :
 
 ## rpc客户端发送消息
 
@@ -38,7 +38,7 @@ RpcMessage : rpc客户端发送的消息，里面包含了回调函数
 
 
 
-## rpc服务端处理请求 ##
+## rpc服务端处理请求
 
 <img src="rpc-server-receive.svg">
 
@@ -54,7 +54,7 @@ RpcEndpoint ： Rpc服务端，它定义了处理请求的逻辑
 
 
 
-## rpc服务端发送响应 ##
+## rpc服务端发送响应
 
 <img src="rpc-server-send.svg">
 
