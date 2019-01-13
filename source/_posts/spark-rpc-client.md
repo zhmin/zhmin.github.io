@@ -26,7 +26,7 @@ TrasnportClient ： Netty客户端，负责与服务端交互
 
 ## rpc客户端接收消息
 
-<img src="rpc-client-receive.svg" style="float:left;">
+<img src="rpc-client-receive.svg">
 
 TrasnportClient ： Netty客户端，负责与服务端交互
 
