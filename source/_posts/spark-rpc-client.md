@@ -6,21 +6,21 @@ tags: spark, rpc, client
 
 # Spark Rpc 客户端原理 #
 
-Spark Rpc 客户端涉及到多个组件，可以分为发送消息和接收消息两块。
+Spark Rpc 客户端涉及到多个组件，根据发送消息和接收消息的流程，逐一介绍这些组件。
 
-
+ 
 
 ## RpcEndpointRef ##
 
-RpcEndpointRef表示客户端，它提供了两个接口，send方法表示发送请求但不需要返回值。ask方法表示发送请求并且需要获取返回值。
+RpcEndpointRef表示客户端，它提供了两个接口发送请求。send方法表示发送请求但不需要返回值，ask方法表示发送请求并且需要获取返回值。
 
 RpcEndpointRef目前只有一个实现类NettyRpcEndpointRef，基于Netty框架实现的。
 
 NettyRpcEndpointRef有两个比较重要的属性，
 
-* 服务器地址，endpointAddress
-* TransportClient实例，如果为null表示这个RpcEndpointRef是请求远端服务。否则表示服务端与客户端是同一个进程内
-* NettyEnv实例，表示rpc的运行环境
+* endpointAddress， 请求的server地址
+* TransportClient实例
+* NettyRpcEnv实例，表示rpc的运行环境
 
 
 
@@ -43,18 +43,20 @@ class NettyRpcEndpointRef(
 }
 ```
 
+NettyRpcEndpointRef的send和ask方法，都是转交给了NettyRpcEnv发送。
+
 
 
 ## 客户端的NettyRpcEnv  ##
 
-所有的rpc客户端或者服务，都是在NettyRpcEnv环境下才能运行。NettyRpcEnv有比较多的属性，涉及到客户端的属性，主要如下
+所有的rpc客户端和服务，都是在NettyRpcEnv环境下才能运行。NettyRpcEnv有比较多的属性，涉及到客户端的属性，主要如下
 
 * outboxes， 表示Outbox集合。每个Outbox对应着一个server的地址( 主机地址， 端口号)
-* address， 表示server运行绑定的地址。如果该NettyRpcEnv中没有运行server，则为null
+* address， 表示server运行的监听地址。如果该NettyRpcEnv中没有运行的server，则为null
 
+* dispatcher， 将请求消息分发给对应的inbox。只有当客户端和server运行在同一个NettyRpcEnv，才会调用dispatcher直接发送。否则都需要建立socket连接
 
-
-首先看看send方法，
+首先看看NettyRpcEnv的send方法，
 
 ```scala
 class NettyRpcEnv {
@@ -74,7 +76,7 @@ class NettyRpcEnv {
       }
     } else {
       // 如果是远端server，则调用postToOutbox方法发送
-      // 这里序列化了消息
+      // 这里序列化了消息，并生成OneWayOutboxMessage消息
       postToOutbox(message.receiver, OneWayOutboxMessage(message.serialize(this)))
     }
   }
@@ -94,6 +96,7 @@ class NettyRpcEnv {
         if (outbox == null) {
           // 新建Outbox
           val newOutbox = new Outbox(this, receiver.address)
+          // 这里调用了putIfAbsent，防止线程竞争
           val oldOutbox = outboxes.putIfAbsent(receiver.address, newOutbox)
           if (oldOutbox == null) {
             newOutbox
@@ -118,7 +121,7 @@ class NettyRpcEnv {
 }
 ```
 
-继续看ask方法， ask方法因为需要处理server的返回值，所以它定义了处理响应的回调函数。ask返回了Promise实例，在收到响应后，会设置它的值。
+继续看ask方法， ask方法需要返回server的返回值，它使用了异步请求。这里使用了promise，当请求完成时，会将结果保存在promise里。通过访问Future就可以获取结果
 
 ```scala
 def ask[T: ClassTag](message: RequestMessage, timeout: RpcTimeout): Future[T] = {
@@ -154,6 +157,7 @@ def ask[T: ClassTag](message: RequestMessage, timeout: RpcTimeout): Future[T] = 
       // 直接调用dispatcher转发消息
       dispatcher.postLocalMessage(message, p)
     } else {
+      // 生成RpcOutboxMessage消息 
       // 设置RpcOutboxMessage消息的回调函数
       val rpcMessage = RpcOutboxMessage(message.serialize(this),
         onFailure,
@@ -169,8 +173,8 @@ def ask[T: ClassTag](message: RequestMessage, timeout: RpcTimeout): Future[T] = 
     // 设置超时机制，如果超时还没接收响应，则调用onFailure函数
     val timeoutCancelable = timeoutScheduler.schedule(new Runnable {
       override def run(): Unit = {
-        onFailure(new TimeoutException(s"Cannot receive any reply from ${remoteAddr} " +
-          s"in ${timeout.duration}"))
+        onFailure(new TimeoutException(s"Cannot receive any reply from ${remoteAddr} "
+                                       + s"in ${timeout.duration}"))
       }
     }, timeout.duration.toNanos, TimeUnit.NANOSECONDS)
     
@@ -191,13 +195,17 @@ def ask[T: ClassTag](message: RequestMessage, timeout: RpcTimeout): Future[T] = 
 
 ## OutBox ##
 
+Outbox接收两种消息，OneWayOutboxMessage和RpcOutboxMessage。两个都是继承OutboxMessage类。
 
-
-Outbox提供了send方法，给调用方发送消息。从send方法的申明可以看到，它只接受OutboxMessage类型的消息。OutboxMessage表示发送消息，它有两个子类，OneWayOutboxMessage和RpcOutboxMessage。OneWayOutboxMessage表示，请求不需要返回结果。RpcOutboxMessage表示，需要返回结果。
+OneWayOutboxMessage表示，请求不需要返回结果。RpcOutboxMessage表示，需要返回结果。
 
 
 
 ### OneWayOutboxMessage
+
+OneWayOutboxMessage提供了sendWith方法，将消息发送出去。这里只是直接调用TransportClient的send方法发送。
+
+OneWayOutboxMessage定义了请求失败的回调函数onFailure
 
 ```scala
 private[netty] case class OneWayOutboxMessage(content: ByteBuffer) extends OutboxMessage
@@ -217,14 +225,22 @@ private[netty] case class OneWayOutboxMessage(content: ByteBuffer) extends Outbo
 }
 ```
 
-发送OneWayOutboxMessage，就直接调用TransportClient的send方法发送出去。
-
 
 
 ### RpcOutboxMessage
 
+OneWayOutboxMessage提供了sendWith方法，将消息发送出去。这里只是直接调用TransportClient的sendRpc方法发送。
+
+OneWayOutboxMessage定义了三个回调函数
+
+* onTimeout代表着超时，在NettyRpcEnv的ask方法有实现。
+
+* onSuccess代表着请求成功返回时，会被调用。
+
+* onFailure代表着失败，当请求失败时，Outbox会调用这个方法。
+
 ```scala
-private[netty] case class RpcOutboxMessage(
+class RpcOutboxMessage(
     content: ByteBuffer,
     _onFailure: (Throwable) => Unit,
     _onSuccess: (TransportClient, ByteBuffer) => Unit)
@@ -254,28 +270,22 @@ private[netty] case class RpcOutboxMessage(
   }
 ```
 
-发送RpcOutboxMessage，首先保存了TransportClient， 然后将自身作为回调对象，通过TransportClient的sendRpc发送出去。
-
-这里有三个回调函数，onTimeout代表着超时，这里超时功能的实现，是由NettyRpcEnv的timeoutScheduler实现的。
-
-onSuccess代表着成功返回，是在TransportResponseHandler中，会被调用。
-
-onFailure代表着失败，当连接失败时，Outbox会调用这个方法。
 
 
+### 发送消息 ###
 
+一个Outbox对应着一个server地址。Outbox作为一个消息队列，它提供了send方法添加消息，也提供了drainOutbox消费消息。
 
-
-Outbox 代表着发送者，一个Outbox对应着一个服务。请求该服务的消息，都要先发送到，然后由Outbox发送出去。Outbox管理着与服务的通信和发送的消息队列。
-
-
+Outbox有下列主要属性：
 
 * messages， 消息队列
 * client， TransportClient实例
 * connectFuture， 表示新建server连接的异步结果
-* draining
+* draining， 表示是否有线程正在发送消息。Outbox允许同时只有一个线程发送消息，所以在发送消息之前，都会判断draining的值
 
 
+
+首先来看send方法，它的源码比较简单。首先它会将消息添加到队列里，然后调用drainOutbox发送消息
 
 ```scala
 def send(message: OutboxMessage): Unit = {
@@ -300,9 +310,9 @@ def send(message: OutboxMessage): Unit = {
 
 
 
-drainOutbox
+再来看看drainOutbox方法。这里涉及到与server建立连接，还有多线程竞争， 会有点复杂。
 
-首先是否已经建立server的连接，如果没有连接，则请求后台线程创建连接。如果有，则直接发送。注意到，这里发送消息，有线程冲突。因为后台线程创建完连接后，它会主动尝试发送队列里的消息。
+它首先会判断是否建立server的连接，如果没有连接，则请求后台线程创建连接。如果有，则直接发送。注意到，这里发送消息，有线程冲突。因为后台线程创建完连接后，它也会调用drainOutbox发送消息。
 
 ```scala
   private def drainOutbox(): Unit = {
@@ -324,7 +334,7 @@ drainOutbox
         return
       }
       if (draining) {
-        // draining为true，表示已有线程正在发送消息
+        // draining为true，表示有别的线程正在发送消息
         return
       }
       message = messages.poll()
@@ -332,7 +342,7 @@ drainOutbox
       if (message == null) {
         return
       }
-      // 更新draiing为true
+      // 更新draining为true， 表示消费消息的权利
       draining = true
     }
     while (true) {
@@ -353,10 +363,10 @@ drainOutbox
         if (stopped) {
           return
         }
-        // 循环从队列获取消息
+        // 循环从队列获取消息， 直到所有的消息发送完成
         message = messages.poll()
         if (message == null) {
-          // 知道所有的消息发送完成
+          // 释放消费消息的权利
           draining = false
           return
         }
@@ -365,11 +375,13 @@ drainOutbox
   }
 ```
 
+
+
 ### 创建连接
 
 使用后台线程池连接，这个线程池的大小为配置项spark.rpc.connect.threads，默认60。超时时间为60s。
 
-注意后台线程创建完连接后，它会主动处理队列的消息，防止消息堆积。如果它不主动发送消息，则只能等待客户的下一次发送消息，而这个假定是未知的。
+注意后台线程创建完连接后，它会主动处理队列的消息，防止消息堆积。如果它不主动发送消息，则只能等待客户的下一次消息的发送，而这个假定是不确定的。
 
 ```scala
   private def launchConnectTask(): Unit = {
@@ -378,6 +390,7 @@ drainOutbox
 
       override def call(): Unit = {
         try {
+          // 实例化TransportClient
           val _client = nettyEnv.createClient(address)
           outbox.synchronized {
             
@@ -403,4 +416,194 @@ drainOutbox
   }
 ```
 
-### 
+
+
+## TransportClient ##
+
+从RpcOutboxMessage的sendWith源码，可以看到消息是调用TransportClient的sendRpc或send方法发送。
+
+
+
+send方法是发送消息，但不需要server的返回值。这里仅仅是调用了channel的writeAndFlush方法
+
+```scala
+public void send(ByteBuffer message) {
+  channel.writeAndFlush(new OneWayMessage(new NioManagedBuffer(message)));
+}
+```
+
+
+
+sendRpc方法是是需要处理server的返回值的。
+
+```java
+public class TransportClient implements Closeable {
+    
+    private final Channel channel;
+    private final TransportResponseHandler handler;
+    
+    public long sendRpc(ByteBuffer message, RpcResponseCallback callback) {
+      // 为此次请求分配requestId
+      long requestId = Math.abs(UUID.randomUUID().getLeastSignificantBits());
+      // 注意这里将请求信息添加到TransportResponseHandler里，
+      // TransportResponseHandler会在响应完成时，调用此次响应完成的回调函数callback
+      handler.addRpcRequest(requestId, callback);
+
+      channel.writeAndFlush(new RpcRequest(requestId, new NioManagedBuffer(message)))
+          .addListener(future -> {
+            if (future.isSuccess()) {
+                ...
+            } else {
+              // 处理请求失败的情况
+              handler.removeRpcRequest(requestId);
+              channel.close();
+              try {
+                callback.onFailure(new IOException(errorMsg, future.cause()));
+              } catch (Exception e) {
+                logger.error("Uncaught exception in RPC response callback handler!", e);
+              }
+            }
+          });
+
+      return requestId;
+    }
+}
+```
+
+
+
+TransportClient是基于Netty框架的，每个TransportClient有着一个Netty的Channel实例，通过它发送数据。接下来先看看它是如何初始化Netty的。
+
+TransportClientFactory提供了实例化TransportClient的方法
+
+```java
+public class TransportClientFactory implements Closeable {
+    
+     TransportClient createClient(InetSocketAddress address)
+          throws IOException, InterruptedException {
+       
+        // 使用Netty的Bootstrap初始化Client
+        Bootstrap bootstrap = new Bootstrap();
+        bootstrap.group(workerGroup)
+          .channel(socketChannelClass)
+          .option(ChannelOption.TCP_NODELAY, true)
+          .option(ChannelOption.SO_KEEPALIVE, true)
+          .option(ChannelOption.CONNECT_TIMEOUT_MILLIS, conf.connectionTimeoutMs())
+          .option(ChannelOption.ALLOCATOR, pooledAllocator);
+
+        final AtomicReference<TransportClient> clientRef = new AtomicReference<>();
+        final AtomicReference<Channel> channelRef = new AtomicReference<>();
+        
+        // 初始化ChannelHandler
+        bootstrap.handler(new ChannelInitializer<SocketChannel>() {
+          @Override
+          public void initChannel(SocketChannel ch) {
+            // 调用了TransportContext的initializePipeline
+            TransportChannelHandler clientHandler = context.initializePipeline(ch);
+            clientRef.set(clientHandler.getClient());
+            channelRef.set(ch);
+          }
+        });
+
+        // 连接到服务器
+        long preConnect = System.nanoTime();
+        ChannelFuture cf = bootstrap.connect(address);
+
+         // 执行连接后的动作，比如身份权限验证
+        for (TransportClientBootstrap clientBootstrap : clientBootstraps) {
+             clientBootstrap.doBootstrap(client, channel);
+        }
+
+        return client;
+      }
+```
+
+
+
+createClient方法通过Bootstrap，初始化了Netty的客户端。注意到最主要的，调用了TransportContext的initializePipeline来配置Channel Pipeline。
+
+```java
+public class TransportContext {
+    
+  private final RpcHandler rpcHandler;
+    
+  public TransportChannelHandler initializePipeline(SocketChannel channel) {
+    return initializePipeline(channel, rpcHandler);
+  }
+  
+  
+  public TransportChannelHandler initializePipeline(
+      SocketChannel channel,
+      RpcHandler channelRpcHandler) {
+    
+    try {
+      // 创建 channelHandler
+      TransportChannelHandler channelHandler = createChannelHandler(channel, channelRpcHandler);
+      channel.pipeline()
+        .addLast("encoder", ENCODER)
+        .addLast(TransportFrameDecoder.HANDLER_NAME, NettyUtils.createFrameDecoder())
+        .addLast("decoder", DECODER)
+        .addLast("idleStateHandler", new IdleStateHandler(0, 0, conf.connectionTimeoutMs() / 1000))
+        // 添加 TransportChannelHandler
+        .addLast("handler", channelHandler);
+      return channelHandler;
+    } catch (RuntimeException e) {
+      logger.error("Error while initializing Netty pipeline", e);
+      throw e;
+    }
+  }
+}
+```
+
+
+
+注意上面的TransportChannelHandler类，它继承ChannelInboundHandlerAdapter
+
+```java
+public class TransportChannelHandler extends ChannelInboundHandlerAdapter {
+  
+  @Override
+  public void channelRead(ChannelHandlerContext ctx, Object request) throws Exception {
+    if (request instanceof RequestMessage) {
+      requestHandler.handle((RequestMessage) request);
+    } else if (request instanceof ResponseMessage) {
+      responseHandler.handle((ResponseMessage) request);
+    } else {
+      ctx.fireChannelRead(request);
+    }
+  }
+}
+```
+
+TransportChannelHandler在接收响应时，会触发channelRead函数。这里调用TransportResponseHandler的handle函数。
+
+```java
+public class TransportResponseHandler extends MessageHandler<ResponseMessage> {
+  @Override
+  public void handle(ResponseMessage message) throws Exception {
+    if (message instanceof RpcResponse) {
+      RpcResponse resp = (RpcResponse) message;
+      // 根据requestId，取出对应的回调函数
+      RpcResponseCallback listener = outstandingRpcs.get(resp.requestId);
+      
+      ...... 
+          
+      if (listener == null) {
+          ......
+      } else {
+        // 调用onSuccess回调，参数为响应数据
+        outstandingRpcs.remove(resp.requestId);
+        try {
+          listener.onSuccess(resp.body().nioByteBuffer());
+        } finally {
+          resp.body().release();
+        }
+      }
+    }
+  }
+}
+```
+
+
+
+

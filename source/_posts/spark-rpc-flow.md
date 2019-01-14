@@ -66,3 +66,92 @@ Netty : 通过Netty发送响应
 
 Client ： 请求端
 
+
+
+## 测试demo ##
+
+
+
+### rpc服务端 ###
+
+这里定义了HelloEndpoint服务。对于请求SayHi，响应 hello。
+
+```scala
+package org.apache.spark.rpc.HelloEndpoint
+
+import org.apache.spark.SparkConf
+import org.apache.spark.rpc.{RpcCallContext, RpcEndpoint, RpcEnv}
+import org.apache.spark.SecurityManager
+
+
+class HelloEndpoint(override val rpcEnv: RpcEnv) extends RpcEndpoint {
+  override def onStart(): Unit = {
+    println("start hello endpoint")
+  }
+
+  override def receiveAndReply(context: RpcCallContext): PartialFunction[Any, Unit] = {
+    case SayHello(msg) => {
+      println(s"receive $msg")
+      context.reply(s"hello, $msg")
+    }
+  }
+
+  override def onStop(): Unit = {
+    println("stop hello endpoint")
+  }
+}
+
+case class SayHello(msg: String)
+
+object HelloEndpoint {
+  def main(args: Array[String]): Unit = {
+    val conf = new SparkConf()
+    val manager = new SecurityManager(conf)
+    // 创建server模式的RpcEnv
+    val rpcEnv: RpcEnv = RpcEnv.create("hello-server", "localhost", 5432, conf, manager)
+    // 实例化HelloEndpoint
+    val helloEndpoint: RpcEndpoint = new HelloEndpoint(rpcEnv)
+    // 在RpcEnv注册helloEndpoint
+    rpcEnv.setupEndpoint("hello-service", helloEndpoint)
+    // 等待线程rpcEnv运行完
+    rpcEnv.awaitTermination()
+  }
+}
+```
+
+
+
+### rpc客户端 ###
+
+```scala
+package org.apache.spark.rpc.netty.HelloEndpointRed
+
+import org.apache.spark.{SecurityManager, SparkConf}
+import org.apache.spark.rpc.HelloEndpoint.SayHello
+import org.apache.spark.rpc._
+
+import scala.concurrent.duration.Duration
+import scala.concurrent.{Await, Future}
+
+
+object HelloEndpointRef {
+  def main(args: Array[String]): Unit = {
+    val conf = new SparkConf()
+    val manager = new SecurityManager(conf)
+    // 创建client模式的RpcEnv
+    val rpcEnv: RpcEnv = RpcEnv.create("hello-server", "localhost", 5432, conf, manager, true)
+     // 创建EndpointRef
+    val endpointRef: RpcEndpointRef = rpcEnv.setupEndpointRef(RpcAddress("localhost", 5432), "hello-service")
+    val future: Future[String] = endpointRef.ask[String](SayHello("spark-rpc"))
+    val s = Await.result(future, Duration.apply("30s"))
+    print(s)
+  }
+}
+```
+
+
+
+## 源码解析 ##
+
+rpc的客户端的具体原理，可以参见此篇博客 {% post_link  srpc-rpc-client %} 
+
