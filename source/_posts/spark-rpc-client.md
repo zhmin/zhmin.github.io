@@ -1,12 +1,12 @@
 ---
-title: spark-rpc-client
+title: Spark Rpc 客户端原理
 date: 2019-01-13 21:34:54
 tags: spark, rpc, client
 ---
 
 # Spark Rpc 客户端原理 #
 
-Spark Rpc 客户端涉及到多个组件，根据发送消息和接收消息的流程，逐一介绍这些组件。
+Spark Rpc 客户端涉及到多个组件，根据发送消息和接收消息的流程，逐一介绍这些组件。可以参见流程图 {% post_link  spark-rpc-flow %} 
 
  
 
@@ -19,7 +19,6 @@ RpcEndpointRef目前只有一个实现类NettyRpcEndpointRef，基于Netty框架
 NettyRpcEndpointRef有两个比较重要的属性，
 
 * endpointAddress， 请求的server地址
-* TransportClient实例
 * NettyRpcEnv实例，表示rpc的运行环境
 
 
@@ -121,7 +120,9 @@ class NettyRpcEnv {
 }
 ```
 
-继续看ask方法， ask方法需要返回server的返回值，它使用了异步请求。这里使用了promise，当请求完成时，会将结果保存在promise里。通过访问Future就可以获取结果
+
+
+继续看ask方法， ask方法需要返回server的返回值，它使用了异步请求。这里使用了promise，当请求完成时，会将结果保存在promise里。通过访问promise的Future就可以获取结果。
 
 ```scala
 def ask[T: ClassTag](message: RequestMessage, timeout: RpcTimeout): Future[T] = {
@@ -227,17 +228,17 @@ private[netty] case class OneWayOutboxMessage(content: ByteBuffer) extends Outbo
 
 
 
-### RpcOutboxMessage
+### RpcOutboxMessage 
 
 OneWayOutboxMessage提供了sendWith方法，将消息发送出去。这里只是直接调用TransportClient的sendRpc方法发送。
 
 OneWayOutboxMessage定义了三个回调函数
 
 * onTimeout代表着超时，在NettyRpcEnv的ask方法有实现。
-
 * onSuccess代表着请求成功返回时，会被调用。
-
 * onFailure代表着失败，当请求失败时，Outbox会调用这个方法。
+
+
 
 ```scala
 class RpcOutboxMessage(
@@ -279,7 +280,7 @@ class RpcOutboxMessage(
 Outbox有下列主要属性：
 
 * messages， 消息队列
-* client， TransportClient实例
+* client， TransportClient实例，它作为Netty的客户端，异步发送消息
 * connectFuture， 表示新建server连接的异步结果
 * draining， 表示是否有线程正在发送消息。Outbox允许同时只有一个线程发送消息，所以在发送消息之前，都会判断draining的值
 
@@ -349,7 +350,7 @@ def send(message: OutboxMessage): Unit = {
       try {
         val _client = synchronized { client }
         if (_client != null) {
-          // 发送消息
+          // 调用消息的sendWith方法，发送消息
           message.sendWith(_client)
         } else {
           assert(stopped == true)
@@ -421,8 +422,6 @@ def send(message: OutboxMessage): Unit = {
 ## TransportClient ##
 
 从RpcOutboxMessage的sendWith源码，可以看到消息是调用TransportClient的sendRpc或send方法发送。
-
-
 
 send方法是发送消息，但不需要server的返回值。这里仅仅是调用了channel的writeAndFlush方法
 
@@ -530,7 +529,6 @@ public class TransportContext {
   public TransportChannelHandler initializePipeline(SocketChannel channel) {
     return initializePipeline(channel, rpcHandler);
   }
-  
   
   public TransportChannelHandler initializePipeline(
       SocketChannel channel,

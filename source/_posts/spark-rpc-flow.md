@@ -1,5 +1,5 @@
 ---
-title: spark-rpc-flow
+title: Spark Rpc 原理介绍
 date: 2019-01-13 14:05:40
 tags: spark, rpc
 ---
@@ -153,5 +153,5 @@ object HelloEndpointRef {
 
 ## 源码解析 ##
 
-rpc的客户端的具体原理，可以参见此篇博客 {% post_link  srpc-rpc-client %} 
+rpc的客户端的具体原理，可以参见此篇博客 {% post_link  spark-rpc-client Spark Rpc 客户端原理 %} 
 
