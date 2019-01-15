@@ -214,3 +214,68 @@ class AMEndpoint(override val rpcEnv: RpcEnv, driver: RpcEndpointRef, isClusterM
 }
 ```
 
+
+
+## Container 启动  ##
+
+ 当AMEndpoint服务，收到申请Executor的时候，会转发给YarnAllocator。YarnAllocator首先向 Yarn 申请到Container后，会设置Container的启动命令。
+
+设置Container的启动命令是在YarnAllocator的一个线程池里运行的。具体程序在ExecutorRunnable类，这里将程序简化
+
+```scala
+private[yarn] class ExecutorRunnable {
+
+  def run(): Unit = {
+    // 实例化NMClient， 用于和NodeManager沟通，启动container
+    nmClient = NMClient.createNMClient()
+    nmClient.init(conf)
+    nmClient.start()
+    // 配置container信息，并申请提交
+    startContainer()
+  }
+  
+  def startContainer(): java.util.Map[String, ByteBuffer] = {
+    val ctx = Records.newRecord(classOf[ContainerLaunchContext])
+      .asInstanceOf[ContainerLaunchContext]
+    // 配置环境变量
+    val env = prepareEnvironment().asJava
+    ctx.setLocalResources(localResources.asJava)
+    ctx.setEnvironment(env)
+
+   // 配置启动命令
+    val commands = prepareCommand()
+    ctx.setCommands(commands.asJava)
+    // 向NodeManager申请启动container
+    nmClient.startContainer(container.get, ctx)
+  }
+}
+```
+
+上面的prepareCommand生成启动命令，源码简略如下：
+
+```scala
+private def prepareCommand(): List[String] = {
+
+  val commands = prefixEnv ++
+      Seq(Environment.JAVA_HOME.$$() + "/bin/java", "-server") ++
+      // java运行的jvm参数
+      javaOpts ++
+      // java运行的Main函数所在的类
+      Seq("org.apache.spark.executor.CoarseGrainedExecutorBackend",
+        "--driver-url", masterAddress,
+        "--executor-id", executorId,
+        "--hostname", hostname,
+        "--cores", executorCores.toString,
+        "--app-id", appId) ++
+      // 用户指定的jar包
+      userClassPath ++
+      // 指定标准输出和错误输出
+      Seq(
+        s"1>${ApplicationConstants.LOG_DIR_EXPANSION_VAR}/stdout",
+        s"2>${ApplicationConstants.LOG_DIR_EXPANSION_VAR}/stderr")
+
+    commands.map(s => if (s == null) "null" else s).toList
+  }
+```
+
+可以看到container的启动类是org.apache.spark.executor.CoarseGrainedExecutorBackend。
