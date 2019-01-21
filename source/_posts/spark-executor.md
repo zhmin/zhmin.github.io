@@ -1,5 +1,5 @@
 ---
-title: spark-executor
+title: Spark Executor 节点运行原理
 date: 2019-01-19 23:28:48
 tags:
 ---
