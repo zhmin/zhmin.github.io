@@ -14,7 +14,11 @@ tags: spark, rdd, dependency
 
 ### OneToOneDependency
 
-父RDD的分区索引与子RDD的分区索引相同，比如map和filter操作
+父RDD的分区索引与子RDD的分区索引相同，比如map和filter操作, 如下图所示：
+
+![spark-rdd-dependency-one](spark-rdd-dependency-one.svg)
+
+代码原理如下：
 
 ```
 class OneToOneDependency[T](rdd: RDD[T]) extends NarrowDependency[T](rdd) {
@@ -25,7 +29,11 @@ class OneToOneDependency[T](rdd: RDD[T]) extends NarrowDependency[T](rdd) {
 
 ### RangeDependency
 
-父RDD的分区索引与子RDD的分区索引，存在线性关系，比如union操作
+父RDD的分区索引与子RDD的分区索引，存在线性关系，比如union操作。如下图所示：
+
+![spark-rdd-dependency-range](spark-rdd-dependency-range.svg)
+
+代码如下：
 
 ```scala
 // inStart表示父RDD的起始索引，一般是0
@@ -46,9 +54,13 @@ class RangeDependency[T](rdd: RDD[T], inStart: Int, outStart: Int, length: Int)
 
 ### PruneDependency
 
-子RDD的分区数目小于父RDD的分区数目，但子RDD的分区与只对应于父RDD的一个分区。 比如从一个有序的rdd，提取出指定范围内的记录
+子RDD的分区数目小于父RDD的分区数目，但子RDD的分区与只对应于父RDD的一个分区。 比如从一个有序的rdd，提取出指定范围内的记录。如下图所示：
 
-```
+![spark-rdd-dependency-prune](spark-rdd-dependency-prune.svg)
+
+代码如下：
+
+```scala
 // rdd表示父RDD
 // partitionFilterFunc表示需要保留那些分区
 class PruneDependency[T](rdd: RDD[T], partitionFilterFunc: Int => Boolean)
@@ -71,13 +83,17 @@ class PruneDependency[T](rdd: RDD[T], partitionFilterFunc: Int => Boolean)
 
 ## 宽依赖
 
-当子RDD的分区数据来源于父RDD的多个分区时，两者之间的依赖关系就是宽依赖。宽依赖由ShuffleDependency表示，它有以下属性：
+当子RDD的分区数据来源于父RDD的多个分区时，两者之间的依赖关系就是宽依赖。当触发shuffle操作时，两者Rdd的关系就是由宽依赖ShuffleDependency表示，它有以下属性：
 
 - rdd， 指向父RDD
 - partitioner， 子RDD的分区器
 - keyClassName， key值类型
 - valueClassName， value值类型
-- aggregator， 聚合
+- aggregator， 聚合算法
+
+如下图所示：
+
+![spark-rdd-dependency-shuffle](spark-rdd-dependency-shuffle.svg)
 
 
 

@@ -20,6 +20,8 @@ rdd1 经过shuffle 生成 rdd2。rdd1有三个分区，对应着三个ShuffleMap
 
 shuffle reader 需要读取rdd1 shuffle的中间数据，才能生成 rdd2。 以rdd2的partition 0 分区为例，它需要 rdd1 计算出的数据，找到所有reduce0 的数据。这些数据的位置，需要从MapOutputTracker获取。
 
+shuffle reader 需要提供 shuffleId， mapId, reduceId才能确定一个中间数据。shuffleId表示此次shuffle的唯一id。mapId表示map端 rdd的分区索引，表示由哪个父分区产生的数据。reduceId表示reduce端的分区索引，表示属于子分区的那部分数据。
+
 
 
 ## 输出信息 MapStatus
@@ -29,7 +31,7 @@ MapStatus类表示一个ShuffleMapTask执行返回的结果。MapStatus包含了
 它有两个方法
 
 - location ， 返回数据存储所在 BlockManager 的 Id
-- getSizeForBlock， 返回 shufle中间数据中，指定 reduceId 的那部分数据的大小。注意这个值是精度误差的
+- getSizeForBlock， 返回 shufle中间数据中，指定 reduceId 的那部分数据的大小。注意这个值是有精度误差的
 
 以上图的rdd1 的 parition 0 分区为例，它对应着一个ShuffleMapTask。ShuffleMapTask会返回一个MapStatus，该MapStatus会包含了三块数据，分别是reduce0， reduce1， reduce2.
 
