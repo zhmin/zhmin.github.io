@@ -6,11 +6,11 @@ tags: spark, shuffle, writer
 
 ## Spark ShuffleWriter 原理
 
-Spark的shuffle过程比较复杂，涉及到map端和reduce端的共同配合，这篇文章主要介绍map端的操作原理。map端的操作主要由ShuffleWriter实现，它对于不同的情形，会选用不同的算法。
+Spark的shuffle过程比较复杂，涉及到map端和reduce端的共同配合，这篇文章主要介绍map端的运行原理。map端的操作主要由ShuffleWriter实现，它对于不同的情形，会选用不同的算法。
 
 ## shuffle 算法选择
 
-根据不同的情形，提供三个shuffle sort writer选择。
+spark 根据不同的情形，提供三种shuffle writer选择。
 
 - BypassMergeSortShuffleWriter ： 当前shuffle没有聚合， 并且分区数小于spark.shuffle.sort.bypassMergeThreshold（默认200）
 - UnsafeShuffleWriter ： 当前rdd的数据支持序列化（即UnsafeRowSerializer），并且没有聚合， 并且分区数小于  2^24。
@@ -74,17 +74,17 @@ ShuffleManager --> ShuffleReader : getReader
 
 
 
-ShuffleHandle 会保存shuffle writer算法需要的信息。根据ShuffleHandle的类型，来选择ShuffleWriter的类型。
+ShuffleHandle类 会保存shuffle writer算法需要的信息。根据ShuffleHandle的类型，来选择ShuffleWriter的类型。
 
 ShuffleWriter负责在map端生成中间数据，ShuffleReader负责在reduce端读取和整合中间数据。
 
-ShuffleManager 提供了registerShuffle方法，根据shuffle的dependency情况，选择出ShuffleHandler。它对于不同的ShuffleHandler，有着不同的条件
+ShuffleManager 提供了registerShuffle方法，根据shuffle的dependency情况，选择出哪种ShuffleHandler。它对于不同的ShuffleHandler，有着不同的条件
 
 - BypassMergeSortShuffleHandle :  该shuffle不需要聚合，并且reduce端的分区数目小于配置项spark.shuffle.sort.bypassMergeThreshold，默认为200
 - SerializedShuffleHandle  :  该shuffle支持数据不需要聚合，并且必须支持序列化时seek位置，还需要reduce端的分区数目小于16777216（1 << 24 + 1）
 - BaseShuffleHandle  :  其余情况
 
-getWriter方法会根据egisterShuffle方法返回的ShuffleHandler，选择出哪种 shuffle writer，原理比较简单：
+getWriter方法会根据registerShuffle方法返回的ShuffleHandler，选择出哪种 shuffle writer，原理比较简单：
 
 * 如果是BypassMergeSortShuffleHandle， 则选择BypassMergeSortShuffleWriter
 
@@ -94,7 +94,7 @@ getWriter方法会根据egisterShuffle方法返回的ShuffleHandler，选择出�
 
 
 
-ShuffleWriter只有两个方法，write和stop方法。使用者首先调用write方法，添加数据，完成排序最后调用stop方法，返回MapStatus结果。下面依次介绍ShuffleWriter的三个子类。
+ShuffleWriter只有两个方法，write和stop方法。使用者首先调用write方法，添加数据，完成排序，最后调用stop方法，返回MapStatus结果。下面依次介绍ShuffleWriter的三个子类。
 
 
 
@@ -119,6 +119,8 @@ trait ManualCloseOutputStream extends OutputStream {
   }
 }
 ```
+
+这里使用ManualCloseBufferedOutputStream，是因为压缩流和序列化流会经常关闭和新建，所以需要保护底层的FileOutputStream 不受影响。
 
 压缩流和序列化流都是Spark SerializerManager实例化的。
 
@@ -209,13 +211,89 @@ def commitAndGet(): FileSegment = {
 
 
 
-
-
 ## 索引文件
 
-IndexShuffleBlockResolver类负责创建索引文件，它提供了writeIndexFileAndCommit方法创建索引。
+IndexShuffleBlockResolver类负责创建索引文件，存储到ShuffleIndexBlock数据块中。
 
+它提供了writeIndexFileAndCommit方法创建索引。因为创建索引文件，有线程竞争。所以它会先建立临时索引文件，然后再去检查索引文件是否已经存在，并且与临时索引文件是否相同。如果一致，则删除临时索引文件。如果不一致，则会更新索引文件。
 
+索引文件的数据格式很简单，它可以看作是Long的数组，索引是对应的分区在数据文件中的起始地址
+
+```shell
+-----------------------------------------------------------------------------------
+       Long        |        Long        |        Long         |        Long       |
+-----------------------------------------------------------------------------------
+   分区一的偏移量   |    分区二的偏移量    |     分区三的偏移量   |     分区四的偏移量
+------------------------------------------------------------------------------------
+```
+
+writeIndexFileAndCommit方法的代码如下：
+
+```scala
+def writeIndexFileAndCommit(
+    shuffleId: Int,
+    mapId: Int,
+    lengths: Array[Long],      // 每个分区对应的数据长度
+    dataTmp: File): Unit = {
+  // 获取索引文件
+  val indexFile = getIndexFile(shuffleId, mapId)
+  // 新建临时索引文件
+  val indexTmp = Utils.tempFileWith(indexFile)
+  try {
+    val out = new DataOutputStream(new BufferedOutputStream(new FileOutputStream(indexTmp)))
+    Utils.tryWithSafeFinally {
+      // 第一个分区的偏移量肯定是从0开始的
+      var offset = 0L
+      out.writeLong(offset)
+      // 根据对应分区的数据长度，计算出偏移量
+      for (length <- lengths) {
+        offset += length
+        out.writeLong(offset)
+      }
+    } {
+      out.close()
+    }
+    // 获取数据文件
+    val dataFile = getDataFile(shuffleId, mapId)
+    // 使用synchronized，保证下列程序是原子性的
+    synchronized {
+      // 调用checkIndexAndDataFile方法，
+      // 检查索引文件是否与数据文件匹配，还有是否已经存在和临时索引文件相同的索引文件
+      val existingLengths = checkIndexAndDataFile(indexFile, dataFile, lengths.length)
+      if (existingLengths != null) {
+        // 这里表示别的线程已经创建了正确的索引文件
+        // 所以这儿需要删除临时索引文件和对应的临时数据文件
+        System.arraycopy(existingLengths, 0, lengths, 0, lengths.length)
+        if (dataTmp != null && dataTmp.exists()) {
+          dataTmp.delete()
+        }
+        indexTmp.delete()
+      } else {
+        // 这里表示没有创建正确的索引文件，所以需要删除原有索引文件和对应的数据文件
+        if (indexFile.exists()) {
+          indexFile.delete()
+        }
+        
+        if (dataFile.exists()) {
+          dataFile.delete()
+        }
+        // 将临时索引文件重命名，为索引文件
+        if (!indexTmp.renameTo(indexFile)) {
+          throw new IOException("fail to rename file " + indexTmp + " to " + indexFile)
+        }
+        // 将临时数据文件重命名，为数据文件
+        if (dataTmp != null && dataTmp.exists() && !dataTmp.renameTo(dataFile)) {
+          throw new IOException("fail to rename file " + dataTmp + " to " + dataFile)
+        }
+      }
+    }
+  } finally {
+    if (indexTmp.exists() && !indexTmp.delete()) {
+      logError(s"Failed to delete temporary index file at ${indexTmp.getAbsolutePath}")
+    }
+  }
+}
+```
 
 
 
@@ -629,7 +707,7 @@ private long[] mergeSpillsWithTransferTo(SpillInfo[] spills, File outputFile) th
 }
 ```
 
-mergeSpillsWithFileStream的原理和mergeSpillsWithTransferTo差不多，只不过增加了加密和压缩的功能。
+mergeSpillsWithFileStream的原理和mergeSpillsWithTransferTo差不多，只不过封装了文件流，增加了加密和压缩的功能。
 
 综上所述，UnsafeShuffleWriter会利用内存存储和排序，当内存不足时，会溢写到磁盘。而且它只保证分区索引的排序，而并不保证数据的排序。
 
