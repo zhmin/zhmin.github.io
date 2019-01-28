@@ -1,5 +1,5 @@
 ---
-title: spark shuffle 聚合原理
+title: Spark Shuffle 聚合原理
 date: 2019-01-28 22:28:57
 tags: spark, shuffle, aggregator
 ---
