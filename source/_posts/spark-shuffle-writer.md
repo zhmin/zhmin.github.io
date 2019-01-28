@@ -1,5 +1,5 @@
 ---
-title: spark-shuffle-writer
+title: Spark ShuffleWriter 原理
 date: 2019-01-26 22:58:19
 tags: spark, shuffle, writer
 ---
@@ -18,7 +18,7 @@ spark 根据不同的情形，提供三种shuffle writer选择。
 
 
 
-下图是整个shuffle相关的uml图
+下图是相关的uml图
 
 {% plantuml %}
 
@@ -102,7 +102,7 @@ ShuffleWriter只有两个方法，write和stop方法。使用者首先调用writ
 
 在介绍shuffle writer 之前，需要先介绍下DiskBlockObjectWriter原理，因为后面的shuffle writer 都会使用它将数据写入文件。
 
-它提供了文件写入功能，在此之上还加入了统计，压缩和序列化。  它使用了装饰流，涉及到FileOutputStream ， TimeTrackingOutputStream， ManualCloseBufferedOutputStream， 压缩流， 序列化流。
+它提供了文件写入功能，在此之上还加入了统计，压缩和序列化。  它使用了装饰流，依次涉及FileOutputStream ， TimeTrackingOutputStream， ManualCloseBufferedOutputStream， 压缩流， 序列化流。
 
 TimeTrackingOutputStream增加对写花费时间的统计。
 
@@ -120,7 +120,7 @@ trait ManualCloseOutputStream extends OutputStream {
 }
 ```
 
-这里使用ManualCloseBufferedOutputStream，是因为压缩流和序列化流会经常关闭和新建，所以需要保护底层的FileOutputStream 不受影响。
+这里使用ManualCloseBufferedOutputStream，是因为外层的压缩流和序列化流会经常关闭和新建，所以需要保护底层的FileOutputStream 不受影响。
 
 压缩流和序列化流都是Spark SerializerManager实例化的。
 
@@ -213,10 +213,6 @@ def commitAndGet(): FileSegment = {
 
 ## 索引文件
 
-IndexShuffleBlockResolver类负责创建索引文件，存储到ShuffleIndexBlock数据块中。
-
-它提供了writeIndexFileAndCommit方法创建索引。因为创建索引文件，有线程竞争。所以它会先建立临时索引文件，然后再去检查索引文件是否已经存在，并且与临时索引文件是否相同。如果一致，则删除临时索引文件。如果不一致，则会更新索引文件。
-
 索引文件的数据格式很简单，它可以看作是Long的数组，索引是对应的分区在数据文件中的起始地址
 
 ```shell
@@ -227,7 +223,7 @@ IndexShuffleBlockResolver类负责创建索引文件，存储到ShuffleIndexBloc
 ------------------------------------------------------------------------------------
 ```
 
-writeIndexFileAndCommit方法的代码如下：
+IndexShuffleBlockResolver类负责创建索引文件，存储到ShuffleIndexBlock数据块中。它提供了writeIndexFileAndCommit方法创建索引。因为创建索引文件，有线程竞争。所以它会先建立临时索引文件，然后再去检查索引文件是否已经存在，并且与临时索引文件是否相同。如果一致，则删除临时索引文件。如果不一致，则会更新索引文件。writeIndexFileAndCommit方法的代码如下：
 
 ```scala
 def writeIndexFileAndCommit(
@@ -299,9 +295,9 @@ def writeIndexFileAndCommit(
 
 ## BypassMergeSortShuffleHandle 原理
 
-BypassMergeSortShuffleHandle会为 reduce端的每个分区，创建一个DiskBlockObjectWriter。根据Key判断分区索引，然后添加到对应的DiskBlockObjectWriter，写入到文件。 最后按照分区索引顺序，将所有的文件汇合到同一个文件。如下图所示：
+BypassMergeSortShuffleHandle算法适用于没有聚合，数据量不大的场景。它为 reduce端的每个分区，创建一个DiskBlockObjectWriter。根据Key判断分区索引，然后添加到对应的DiskBlockObjectWriter，写入到文件。 最后按照分区索引顺序，将所有的文件汇合到同一个文件。如下图所示：
 
-
+![spark-shuffle-bypass](spark-shuffle-bypass.svg)
 
 接下来看看源码的实现
 
@@ -372,7 +368,7 @@ UnsafeShuffleWriter会首先将数据序列化，保存在MemoryBlock中。然�
 
  如下图所示，表示了map端一个分区的shuffle过程：
 
-
+![spark-shuffle-unsafe](spark-shuffle-unsafe.svg)
 
 首先介绍下数据如何存储到MemoryBlock和ShuffleInMemorySorter里。
 
@@ -713,5 +709,5 @@ mergeSpillsWithFileStream的原理和mergeSpillsWithTransferTo差不多，只不
 
 ## SortShuffleWriter
 
-SortShuffleWriter它支持聚合和排序， 所以它的原理会比较复杂。可以参考这篇博客。
+SortShuffleWriter它支持聚合和排序， 原理会比较复杂。因为篇幅有限，具体原理可以参考这篇博客。
 
