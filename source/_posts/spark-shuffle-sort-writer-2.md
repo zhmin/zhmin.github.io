@@ -142,7 +142,7 @@ override def partitionedDestructiveSortedIterator(keyComparator: Option[Comparat
 
 ## PartitionedAppendOnlyMap 原理
 
-如果shuffle涉及到聚合， 这种情况会使用PartitionedAppendOnlyMap排序。PartitionedAppendOnlyMap提供changeValue方法，添加和合并数据，完成聚合操作。聚合操作的原理可以参见这篇博客。
+如果shuffle涉及到聚合， 这种情况会使用PartitionedAppendOnlyMap排序。PartitionedAppendOnlyMap提供changeValue方法，添加和合并数据，完成聚合操作。聚合操作的原理可以参见这篇博客  {% post_link  spark-shuffle-aggregator Spark 聚合原理 %} 。
 
 PartitionedAppendOnlyMap自己实现了哈希表，采用了二次探测算法避免哈希冲突。
 

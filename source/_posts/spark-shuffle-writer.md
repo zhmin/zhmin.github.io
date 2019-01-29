@@ -709,5 +709,5 @@ mergeSpillsWithFileStream的原理和mergeSpillsWithTransferTo差不多，只不
 
 ## SortShuffleWriter
 
-SortShuffleWriter它支持聚合和排序， 原理会比较复杂。因为篇幅有限，具体原理可以参考这篇博客。
+SortShuffleWriter它支持聚合和排序， 原理会比较复杂。因为篇幅有限，具体原理可以参考这篇博客 {% post_link  spark-shuffle-sort-writer-2 Spark SortShuffleWriter 原理  %} 。
 
