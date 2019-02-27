@@ -2,6 +2,7 @@
 title: Spark SortShuffleWriter 原理
 date: 2019-01-29 22:06:39
 tags: spark, shuffle, SortShuffleWriter 
+categories: spark
 ---
 
 # Spark SortShuffleWriter 原理

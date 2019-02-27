@@ -2,6 +2,7 @@
 title: Datax Channel原理
 date: 2018-12-16 21:49:23
 tags: datax, channel
+categories: datax
 ---
 
 # Channel 原理 #

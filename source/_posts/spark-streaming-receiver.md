@@ -2,6 +2,7 @@
 title: Spark Streaming 数据源读取
 date: 2019-02-13 22:09:47
 tags: spark, streaming, receiver
+categories: spark streaming
 ---
 
 # Spark Streaming 数据源读取

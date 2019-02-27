@@ -2,6 +2,7 @@
 title: Spark MapOutputTracker 原理
 date: 2019-01-18 23:33:55
 tags: spark, MapOutputTracker
+categories: spark
 ---
 
 # Spark MapOutputTracker 原理

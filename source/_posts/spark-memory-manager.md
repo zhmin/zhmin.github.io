@@ -2,6 +2,7 @@
 title: Spark 内存管理
 date: 2019-01-15 22:50:44
 tags: spark, memory
+categories: spark
 ---
 
 # Spark 内存管理

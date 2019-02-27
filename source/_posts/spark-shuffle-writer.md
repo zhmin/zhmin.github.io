@@ -2,6 +2,7 @@
 title: Spark ShuffleWriter 原理
 date: 2019-01-26 22:58:19
 tags: spark, shuffle, writer
+categories: spark
 ---
 
 ## Spark ShuffleWriter 原理

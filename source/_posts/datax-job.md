@@ -2,6 +2,7 @@
 title: Datax 任务分配原理
 date: 2018-12-28 22:14:13
 tags: datax, task
+categories: datax
 ---
 
 # Datax 任务分配原理

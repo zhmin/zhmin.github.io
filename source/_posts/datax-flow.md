@@ -2,6 +2,7 @@
 title: Datax 任务执行流程
 date: 2018-12-27 16:33:43
 tags: datax
+categories: datax
 ---
 
 # Datax 任务执行流程

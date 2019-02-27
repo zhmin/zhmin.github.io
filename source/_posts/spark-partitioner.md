@@ -2,6 +2,7 @@
 title: Spark Partitioner 原理
 date: 2019-01-06 22:11:41
 tags: spark, partitioner
+categories: spark
 ---
 
 # 分区器

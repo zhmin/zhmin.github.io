@@ -2,6 +2,7 @@
 title: Spark Rpc 客户端原理
 date: 2019-01-13 21:34:54
 tags: spark, rpc, client
+categories: spark
 ---
 
 # Spark Rpc 客户端原理 #

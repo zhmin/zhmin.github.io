@@ -2,6 +2,7 @@
 title: Spark Shuffle 聚合原理
 date: 2019-01-28 22:28:57
 tags: spark, shuffle, aggregator
+categories: spark
 ---
 
 # Spark 聚合原理

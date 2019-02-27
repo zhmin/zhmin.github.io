@@ -2,6 +2,7 @@
 title: python内存泄漏调试
 date: 2018-12-22 21:51:30
 tags: python, memory leak
+categories: python
 ---
 # 记录一次内存泄漏的调试经历 #
 

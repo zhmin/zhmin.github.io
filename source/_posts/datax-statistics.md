@@ -2,6 +2,7 @@
 title: Datax数据统计原理
 date: 2018-12-27 16:06:00
 tags: datax, statistics
+categories: datax
 ---
 
 ## Datax 数据统计原理

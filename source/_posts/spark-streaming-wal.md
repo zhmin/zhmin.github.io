@@ -2,6 +2,7 @@
 title: Spark Streaming WAL 原理
 date: 2019-02-17 21:29:24
 tags: spark, streaming, wal
+categories: spark streaming
 ---
 
 # Spark Streaming WAL 原理

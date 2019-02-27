@@ -2,6 +2,7 @@
 title: Datax限速bug
 date: 2018-12-16 14:40:20
 tags: datax
+categories: datax
 ---
 
 # Datax 限速原理 #

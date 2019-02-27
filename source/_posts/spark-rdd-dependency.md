@@ -2,6 +2,7 @@
 title: Spark RDD之间的依赖
 date: 2019-01-03 21:41:59
 tags: spark, rdd, dependency
+categories: spark
 ---
 
 # Spark RDD之间的依赖

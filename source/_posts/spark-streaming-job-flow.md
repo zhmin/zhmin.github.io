@@ -2,6 +2,7 @@
 title: Spark Streaming 运行原理
 date: 2019-02-18 21:25:01
 tags: spark, streaming, job
+categories: spark streaming
 ---
 
 # Spark Streaming 的运行原理

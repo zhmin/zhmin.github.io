@@ -2,6 +2,7 @@
 title: Datax 插件加载原理
 date: 2018-12-27 22:30:47
 tags: data, plugin
+categories: datax
 ---
 
 # Datax 插件加载原理

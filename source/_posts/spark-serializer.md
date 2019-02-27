@@ -2,6 +2,7 @@
 title: Spark序列化与压缩原理
 date: 2019-01-08 23:03:59
 tags: spark, serializer
+categories: spark
 ---
 
 # Spark的序列化与压缩

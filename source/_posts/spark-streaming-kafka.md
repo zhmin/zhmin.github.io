@@ -2,6 +2,7 @@
 title: Spark Streaming Kafka 原理
 date: 2019-02-21 21:25:04
 tags: spark, streaming, kafka
+categories: spark streaming
 ---
 
 # Spark Streaming Kafka 原理

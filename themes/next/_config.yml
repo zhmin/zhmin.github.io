@@ -99,7 +99,7 @@ menu:
   home: / || home
   #about: /about/ || user
   #tags: /tags/ || tags
-  #categories: /categories/ || th
+  categories: /categories/ || th
   archives: /archives/ || archive
   #schedule: /schedule/ || calendar
   # sitemap: /sitemap.xml || sitemap
@@ -809,10 +809,10 @@ vendors:
   needMoreShare2:
 
 mermaid: ## mermaid url https://github.com/knsv/mermaid
-  enable: true  # default true
+  enable: true  ## default true
   version: "7.1.2" # default v7.1.2
   options:  # find more api options from https://github.com/knsv/mermaid/blob/master/src/mermaidAPI.js
-    startOnload: true  // default true
+    startOnload: true
     theme: forest
 
 # Assets
