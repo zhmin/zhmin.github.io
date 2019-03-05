@@ -2,6 +2,7 @@
 title: Kafka NetworkClient 原理
 date: 2019-03-06 00:53:10
 tags: kafka
+categories: kafka
 ---
 
 # Kafka NetworkClient 原理
