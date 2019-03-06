@@ -9,7 +9,7 @@ categories: spark
 
 当RDD触发到shuffle的时候，会将数据重新打乱分配。如下图所示，父RDD经过shuffle将数据重新分配，生成子RDD
 
-
+![spark shuffle](spark-shuffle.svg)
 
 分配的原理，由分区器会决定数据分配到子RDD的哪个分区。分区器由Partitioner接口表示
 
