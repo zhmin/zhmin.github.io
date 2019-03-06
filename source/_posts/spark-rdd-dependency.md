@@ -7,11 +7,11 @@ categories: spark
 
 # Spark RDD之间的依赖
 
-当RDD执行transform操作时(比如map，filter，groupby)，就会创造新的RDD。RDD之间的联系类型，就是由Dependency表示。根据rdd分区之间的联系，可以分为两大类，窄依赖NarrowDependency， 宽依赖ShuffleDependency。
+RDD表示分布式的数据集，它是由多个分区组成。RDD封装了底层原理，使得我们编程更加抽象，更加方便。 当我们执行RDD的常见操作时(比如map，filter，groupby等transform类型的操作)，就会创造新的RDD，这样RDD之间就有着血统关系。这种关系可以分为两大类，窄依赖和宽依赖。
 
 ## 窄依赖
 
-当父RDD的每个分区只对应于子RDD的一个分区，这种情况是窄依赖。这里分为两种情形：
+当父RDD的每个分区只对应于子RDD的一个分区，这种情况是窄依赖。这里分为三种情形：
 
 ### OneToOneDependency
 
@@ -21,7 +21,7 @@ categories: spark
 
 代码原理如下：
 
-```
+```scala
 class OneToOneDependency[T](rdd: RDD[T]) extends NarrowDependency[T](rdd) {
   // 返回父RDD对应的partition
   override def getParents(partitionId: Int): List[Int] = List(partitionId)
@@ -100,15 +100,13 @@ class PruneDependency[T](rdd: RDD[T], partitionFilterFunc: Int => Boolean)
 
 ## RDD的种类
 
-RDD的种类对应着不停的的依赖关系，它们的区别在于怎么计算出分区数据。RDD有两个重要的方法，关于计算分区数据
+RDD的数据计算，涉及到底层分区数据的计算，而分区的计算又涉及到依赖关系。RDD根据分区计算的原理，分为数据源RDD，宽依赖的RDD 和 窄依赖的RDD 三种。
 
-iterator，返回RDD中指定分区的数据，如果没有则调用compute方法
-
-compute， 计算指定分区的数据
+RDD计算分区数据，最重要的的方法就是compute方法。
 
 ### 源数据RDD
 
-spark支持读取不同的数据源，如下：
+spark支持读取不同的数据源，如下例子：
 
 - 支持hdfs文件读取， HadoopRDD
 - 支持jdbc读取数据库，JdbcRDD
@@ -124,6 +122,19 @@ override def compute(split: Partition, context: TaskContext): Iterator[U] =
   f(context, split.index, firstParent[T].iterator(split, context))
 ```
 
+### PartitionPruningRDD
+
+PartitionPruningRDD也只是简单的从对应的父分区读取数据
+
+```scala
+override def compute(split: Partition, context: TaskContext): Iterator[T] = {
+  // split的类型是PartitionPruningRDDPartition， 
+  // 它有parentSplit，表示父RDD的分区
+  firstParent[T].iterator(
+    split.asInstanceOf[PartitionPruningRDDPartition].parentSplit, context)
+}
+```
+
 ### ShuffledRDD
 
 ```scala
@@ -136,17 +147,4 @@ override def compute(split: Partition, context: TaskContext): Iterator[(K, C)] =
 ```
 
 当rdd调用groupby或reduce操作时，会返回ShuffledRDD。ShuffledRDD对应的关系是ShuffleDependency。它计算分区的数据时，是调用了ShuffleReader读取上一步rdd产生的数据。
-
-### PartitionPruningRDD
-
-PartitionPruningRDD只是简单的从对应的父分区读取数据
-
-```
-override def compute(split: Partition, context: TaskContext): Iterator[T] = {
-  // split的类型是PartitionPruningRDDPartition， 
-  // 它有parentSplit，表示父RDD的分区
-  firstParent[T].iterator(
-    split.asInstanceOf[PartitionPruningRDDPartition].parentSplit, context)
-}
-```
 

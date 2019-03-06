@@ -9,26 +9,28 @@ categories: spark
 
 ## Rpc 服务
 
-Spark运行在Yarn上，会涉及到下列Rpc 服务。YarnDriverEndpoint和YarnSchedulerEndpoint运行在同一个进程
+Spark运行在Yarn上，会涉及到下列Rpc 服务。
 
 - YarnDriverEndpoint， 继承DriverEndpoint，主要负责与Executor的通信
 - YarnSchedulerEndpoint， 负责与AMEndpoint沟通
 - AMEndpoint， 运行在ApplicationMaster上，主要负责Yarn的资源请求
 
+YarnDriverEndpoint和YarnSchedulerEndpoint总是运行在同一个进程里。
+
 ### YarnDriverEndpoint
 
-YarnDriverEndpoint继承DriverEndpoint， 只是修改了onDisconnected方法，增加了当Executor断开连接时，会去AMEndpoint获取失败日志这一步。
+YarnDriverEndpoint继承DriverEndpoint， 只是修改了onDisconnected方法，增加了日志收集功能。当Executor断开连接时，会去AMEndpoint获取失败日志。
 
 ### YarnSchedulerEndpoint
 
-YarnSchedulerEndpoint接收下列请求：
+YarnSchedulerEndpoint是DriverEndpoint和AMEndpoint沟通的桥梁，它提供的服务分为两种：
 
 来自AMEndpoint的请求
 
-- RegisterClusterManager，请求包含AMEndpoint客户端。
-- AddWebUIFilter， 通过它可以做一些控制访问spark web ui 的操作
+- RegisterClusterManager，这是AMEndpoint启动时，向YarnSchedulerEndpoint注册自身的请求。
+- AddWebUIFilter， 与Spark UI界面有关，通过它可以做一些控制访问spark web ui 的操作
 
-来自SchedulerBackend的请求， 这些请求都会转发给AMEndpoint
+来自SchedulerBackend的请求， 这些请求最后都会由YarnSchedulerEndpoint转发给AMEndpoint
 
 - RequestExecutors， 请求资源
 - KillExecutors， 杀死Container
@@ -36,7 +38,7 @@ YarnSchedulerEndpoint接收下列请求：
 
 ### AMEndpoint
 
-AMEndpoint的所有请求都是来自YarnSchedulerEndpoint，接收下列请求：
+AMEndpoint的所有请求都是来自YarnSchedulerEndpoint，负责Yarn的资源申请和管理，它接收下列请求：
 
 - RequestExecutors， 请求资源
 - KillExecutors， 杀死Container
@@ -44,13 +46,12 @@ AMEndpoint的所有请求都是来自YarnSchedulerEndpoint，接收下列请求�
 
 ## ApplicationMaster启动
 
-当yarn的客户端申请到第一个container后，会在这个container启动ApplicationMaster的进程。
+这里先简单的介绍下Yarn的资源申请过程，首先程序会向Yarn申请第一个container，这个container启动后，会去运行我们的 ApplicationMaster程序。ApplicationMaster程序才是真正的申请和管理container，它启动后会向Yarn申请资源，这些资源才是真正做计算用的。所以ApplicationMaster的作用会很重要。
+
+这里Spark运行在Yarn上，也必须运行ApplicationMaster程序。下面看看它的原理，
 
 ```scala
-class ApplicationMaster(
-    args: ApplicationMasterArguments,
-    client: YarnRMClient) {
-    
+class ApplicationMaster(args: ApplicationMasterArguments, client: YarnRMClient) {
     final def run(): Int = {
     	// 如果是cluster模式， 则调用runDriver
     	if (isClusterMode) {
@@ -60,11 +61,10 @@ class ApplicationMaster(
 	        runExecutorLauncher(securityMgr)
     	}
     }
-
-					
+}				
 ```
 
-
+ApplicationMaster根据运行模式不同，运行的原理也不一样。
 
 ## Yarn运行模式
 
@@ -187,7 +187,7 @@ def waitForSparkDriver(): RpcEndpointRef = {
 
 ## AMEndpoint 启动
 
-AMEndpoint是只和YarnSchedulerEndpoint通信，它在启动之后会发送RegisterClusterManager消息给YarnSchedulerEndpoint，消息会携带AMEndpoint客户端。这样YarnSchedulerEndpoint就可以通过它与AMEndpoint通信了。
+AMEndpoint只和YarnSchedulerEndpoint通信，它在启动之后会发送RegisterClusterManager消息给YarnSchedulerEndpoint，消息会携带自身。这样YarnSchedulerEndpoint就可以通过与AMEndpoint通信了。
 
 ```scala
 class ApplicationMaster(.... ) {
@@ -219,7 +219,7 @@ class AMEndpoint(override val rpcEnv: RpcEnv, driver: RpcEndpointRef, isClusterM
 
 ## Container 启动  ##
 
- 当AMEndpoint服务，收到申请Executor的时候，会转发给YarnAllocator。YarnAllocator首先向 Yarn 申请到Container后，会设置Container的启动命令。
+ 当AMEndpoint服务，收到申请Executor的时候，会转发给YarnAllocator。YarnAllocator会向 Yarn 申请到Container后，设置Container的启动命令，并且启动它。
 
 设置Container的启动命令是在YarnAllocator的一个线程池里运行的。具体程序在ExecutorRunnable类，这里将程序简化
 
@@ -279,4 +279,4 @@ private def prepareCommand(): List[String] = {
   }
 ```
 
-可以看到container的启动类是org.apache.spark.executor.CoarseGrainedExecutorBackend。
+这里可以看到container的启动，是运行了 java 命令，启动类是org.apache.spark.executor.CoarseGrainedExecutorBackend。

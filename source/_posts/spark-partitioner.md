@@ -7,7 +7,11 @@ categories: spark
 
 # 分区器
 
-当触发到shuffle的时候，会将数据重新打乱分配。分区器会决定数据分配到哪个分区。分区器的接口很简单，
+当RDD触发到shuffle的时候，会将数据重新打乱分配。如下图所示，父RDD经过shuffle将数据重新分配，生成子RDD
+
+
+
+分配的原理，由分区器会决定数据分配到子RDD的哪个分区。分区器由Partitioner接口表示
 
 ```scala
 abstract class Partitioner extends Serializable {
@@ -40,7 +44,7 @@ def nonNegativeMod(x: Int, mod: Int): Int = {
 
 ## RangePartitioner
 
-RangePartitioner的原理会稍微复杂一些，会遍历rdd的所有分区，从每个分区都会采样，然后根据样本，生成新分区的边界值，这样就可以根据key把数据分布到对应的新分区。
+RangePartitioner的原理会稍微复杂一些，会遍历rdd的所有分区数据，从每个分区都会采样，然后根据样本，生成新分区的边界值，这样就可以根据key把数据分布到对应的新分区。
 
 ### 蓄水池采样
 
@@ -65,7 +69,6 @@ def reservoirSampleAndCount[T: ClassTag](
     i += 1
   }
 
-  
   if (i < k) {
     // 如果分区的数据都已经遍历完，则直接返回
     val trimReservoir = new Array[T](i)
