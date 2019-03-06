@@ -14,7 +14,7 @@ Spark的shuffle过程比较复杂，涉及到map端和reduce端的共同配合�
 spark 根据不同的情形，提供三种shuffle writer选择。
 
 - BypassMergeSortShuffleWriter ： 当前shuffle没有聚合， 并且分区数小于spark.shuffle.sort.bypassMergeThreshold（默认200）
-- UnsafeShuffleWriter ： 当前rdd的数据支持序列化（即UnsafeRowSerializer），并且没有聚合， 并且分区数小于  2^24。
+- UnsafeShuffleWriter ： 当条件不满足BypassMergeSortShuffleWriter 时， 并且当前rdd的数据支持序列化（即UnsafeRowSerializer），也不需要聚合， 分区数小于  2^24。
 - SortShuffleWriter ： 其余
 
 
@@ -82,7 +82,7 @@ ShuffleWriter负责在map端生成中间数据，ShuffleReader负责在reduce端
 ShuffleManager 提供了registerShuffle方法，根据shuffle的dependency情况，选择出哪种ShuffleHandler。它对于不同的ShuffleHandler，有着不同的条件
 
 - BypassMergeSortShuffleHandle :  该shuffle不需要聚合，并且reduce端的分区数目小于配置项spark.shuffle.sort.bypassMergeThreshold，默认为200
-- SerializedShuffleHandle  :  该shuffle支持数据不需要聚合，并且必须支持序列化时seek位置，还需要reduce端的分区数目小于16777216（1 << 24 + 1）
+- SerializedShuffleHandle  :  该shuffle不需要聚合，并且必须支持序列化时seek位置，还需要reduce端的分区数目小于16777216（1 << 24 + 1）
 - BaseShuffleHandle  :  其余情况
 
 getWriter方法会根据registerShuffle方法返回的ShuffleHandler，选择出哪种 shuffle writer，原理比较简单：
