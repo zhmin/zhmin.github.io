@@ -156,3 +156,4 @@ object HelloEndpointRef {
 
 rpc的客户端的具体原理，可以参见此篇博客 {% post_link  spark-rpc-client Spark Rpc 客户端原理 %} 
 
+rpc的服务端的具体原理，可以参见此篇博客 {% post_link  spark-rpc-server Spark Rpc 服务端原理 %} 
