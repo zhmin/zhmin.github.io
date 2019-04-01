@@ -1,5 +1,5 @@
 ---
-title: kafka-group-coordinator
+title: Kafka Group Coordinator 原理
 date: 2019-04-01 22:45:12
 tags: kafka, coordinator
 categories: kafka
