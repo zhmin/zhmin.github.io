@@ -1,5 +1,5 @@
 ---
-title: Cloudera 集群添加 Spark Sql 命令行
+title: CDH 集群添加 Spark Sql 命令行
 date: 2019-04-03 21:37:32
 tags: spark, cdh
 categories: spark sql
@@ -7,11 +7,11 @@ categories: spark sql
 
 # Cloudera 集群 添加 Spark Sql 命令行
 
-目前需要从Hive Sql 迁移到 Spark Sql，但是Cloudera版本的集群，不支持Spark Sql命令行。这篇文章详细介绍了Cloudera的Spark命令是如何启动的，然后在此基础上添加Spark Sql。
+目前需要从Hive Sql 迁移到 Spark Sql，但是CDH版本的集群，不支持Spark Sql命令行。这篇文章详细介绍了Cloudera的Spark命令是如何启动的，然后在此基础上添加Spark Sql。
 
 ## Cloudera Spark 启动原理
 
-Cloudera的版本目前是5.12，它的内置Spark版本是1.6。不过我已经添加了Spark2的版本，所以对于spark sql的支持，下面讲解的也只是针对spark2。如果Spark的版本号不同，对应的原理也是一样。
+CDH的版本目前是5.12，它的内置Spark版本是1.6。不过我已经添加了Spark2的版本，所以对于spark sql的支持，下面讲解的也只是针对spark2。如果Spark的版本号不同，对应的原理也是一样。
 
 我们通过以spark2-submit命令为例，查看它的启动过程。
 
