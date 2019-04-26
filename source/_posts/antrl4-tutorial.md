@@ -1,6 +1,6 @@
 ---
 title: antrl4 使用原理
-date: 2019-04-26 21:20:38
+date: 2019-04-26 21:39:45
 tags: antrl4
 categories: antrl4
 ---
@@ -65,7 +65,7 @@ a + b
 
 它会被解析成一棵树
 
-![parsetree](https://github.com/zhmin/blog/blob/antrl4/antrl4/images/calculator-parse-tree.png?raw=true)
+<img src="calculator-parse-tree.png">
 
 上面的三行语句，对应三个stat节点。
 
@@ -152,9 +152,7 @@ public class CalculatorVisitorImp extends CalculatorBaseVisitor<Integer> {
 
 遍历语法树的顺序为
 
-![visittree](https://github.com/zhmin/blog/blob/antrl4/antrl4/images/calculator-visit-tree.png?raw=true)
-
-
+<img src="calculator-visit-tree.png">
 
 ### 测试
 
@@ -219,25 +217,16 @@ ParserRuleContext <|-- RuleContextWithAltNum
 
 上述类的解释如下：
 
-* Tree 接口，是所有节点的接口。它定义了获取父节点，子节点，节点数据的接口。
-
-* SyntaxTree 接口，增加了获取当前节点涉及到的分词范围（antrl4 会先将语句分词，然后才将分词解析成树）
-
-* ParseTree 接口，增加了支持Visitor遍历树的接口
-
-* TerminalNode 接口，表示叶子节点，增加了获取当前节点的分词（叶子节点表示字符常量，或者在antrl4文件中的lexer ）
-
-* TerminalNodeImpl 类，实现了TerminalNode 接口，表示正常的叶子节点
-
-* ErrorNodeImpl 类，继承 TerminalNodeImpl 类，表示错误的叶子节点。
-
-* RuleNode 接口，非叶子节点，表示一个句子的语法，对应 antrl4文件中的 parser rule
-
-* RuleContext 类，实现了RuleNode 接口
-
-* ParserRuleContext 类，在 RuleContext 的基础上，实现了查询子节点的方法，并且支持Listener遍历
-
-* InterpreterRuleContext 和 RuleContextWithAltNum 是用于特殊用途的。
+- Tree 接口，是所有节点的接口。它定义了获取父节点，子节点，节点数据的接口。
+- SyntaxTree 接口，增加了获取当前节点涉及到的分词范围（antrl4 会先将语句分词，然后才将分词解析成树）
+- ParseTree 接口，增加了支持Visitor遍历树的接口
+- TerminalNode 接口，表示叶子节点，增加了获取当前节点的分词（叶子节点表示字符常量，或者在antrl4文件中的lexer ）
+- TerminalNodeImpl 类，实现了TerminalNode 接口，表示正常的叶子节点
+- ErrorNodeImpl 类，继承 TerminalNodeImpl 类，表示错误的叶子节点。
+- RuleNode 接口，非叶子节点，表示一个句子的语法，对应 antrl4文件中的 parser rule
+- RuleContext 类，实现了RuleNode 接口
+- ParserRuleContext 类，在 RuleContext 的基础上，实现了查询子节点的方法，并且支持Listener遍历
+- InterpreterRuleContext 和 RuleContextWithAltNum 是用于特殊用途的。
 
 
 
