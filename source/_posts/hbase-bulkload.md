@@ -1,5 +1,5 @@
 ---
-title: hbase-bulkload
+title: Hbase Bulkload 原理
 date: 2019-06-01 22:09:05
 tags: hbase, bulkload
 categories: hbase
@@ -437,6 +437,6 @@ RecordWriter在写入数据时，如果遇到一条 row key 和 value 都为 nul
 
 ## 其他
 
-至于我研究 Hbase Bulkload 的原因，是在使用过程中发生了错误。虽然经过排查，发现和 Hbase Bulkload 的原理没什么关系，不过在此也顺便提一下，希望能帮到遇到类似情况的人。首先说下我使用的Hadoop 版本是 CDH 5.12.2，出现的错误是报 Out Of Memory 的错误。
+至于我研究 Hbase Bulkload 的原因，是在使用过程中发生了 Out Of Memory 的错误。虽然经过排查，发现和 Hbase Bulkload 的原理没什么关系，不过在此也顺便提一下，希望能帮到遇到类似情况的人。首先说下我使用的Hadoop 版本是 CDH 5.12.2。
 
-经过排查，发现是因为 Hbase Bulkload 底层用的MapReduce 模式为本地模式，而不是集群 Yarn 的方式。我们知道 MapReduce 选择哪一种方式，可以通过 mapreduce.framework.name 配置项指定。虽然在 CDH 的 Yarn 配置页面里，设置了为 yarn，但是 Hbase Bulkload 仍然使用本地模式。后来发现 Yarn 组件下有个 Gateway 的角色实例，这是个特殊的角色，它负责 Yarn 客户端的配置部署。而恰好这台主机没有安装，所以在使用 Hbase Bulkload 时，没有读取到 Yarn 的配置。解决方法是在 CDH 界面添加  Gateway 实例就好了。
+经过排查，发现是因为 Hbase Bulkload 底层用的 MapReduce 模式为本地模式，而不是集群 Yarn 的方式。我们知道 MapReduce 程序选择哪一种方式，可以通过 mapreduce.framework.name 配置项指定。虽然在 CDH 的 Yarn 配置页面里，设置了该配置为 yarn，但是 Hbase Bulkload 仍然使用本地模式。后来发现 Yarn 组件下有个 Gateway 的角色实例，这是个特殊的角色，它负责 Yarn 客户端的配置部署。而恰好这台主机没有安装，所以在使用 Hbase Bulkload 时，没有读取到 Yarn 的配置。解决方法是在 CDH 界面添加  Gateway 实例就好了。
