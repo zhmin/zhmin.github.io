@@ -109,6 +109,8 @@ export HADOOP_HOME=$CDH_LIB_DIR/hadoop
 exec $LIB_DIR/spark2/bin/spark-sql "$@"  
 ```
 
+并且给与这个文件可执行权限 `chmod a+x /opt/cloudera/parcels/SPARK2/bin/spark2-sql`
+
 然后创建 /opt/cloudera/parcels/SPARK2-2.2.0.cloudera3-1.cdh5.13.3.p0.556753/lib/spark2/bin/spark-sql 文件，内容如下
 
 ```shell
@@ -138,6 +140,8 @@ fi
 export _SPARK_CMD_USAGE="Usage: ./bin/spark-sql [options] [cli option]"
 exec "${SPARK_HOME}"/bin/spark-submit --class org.apache.spark.sql.hive.thriftserver.SparkSQLCLIDriver "$@"
 ```
+
+同样给与这个文件可执行权限 `chmod a+x /opt/cloudera/parcels/SPARK2-2.2.0.cloudera3-1.cdh5.13.3.p0.556753/lib/spark2/bin/spark-sql `
 
 
 

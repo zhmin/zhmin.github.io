@@ -1,13 +1,13 @@
 ---
-title: antrl4 使用原理
+title: antlr4 使用原理
 date: 2019-04-26 21:39:45
 tags: antrl4
 categories: antrl4
 ---
 
-# antrl4 使用原理
+# antlr4 使用原理
 
-Antlr4 是一款开源的框架，用来分析语法。使用者可以自己创建语法规则文件，然后使用 antrl4 生成类文件。这些类实现了将语句按照关键字分词，然后将分词构造成一棵树。使用者在这些类之上封装代码，就可以实现自己的功能。比如下面，我们使用 antrl4 实现一个计算器：
+Antlr4 是一款开源的框架，用来分析语法。使用者可以自己创建语法规则文件，然后使用 antlr4 生成类文件。这些类实现了将语句按照关键字分词，然后将分词构造成一棵树。使用者在这些类之上封装代码，就可以实现自己的功能。比如下面，我们使用 antlr4 实现一个计算器：
 
 ## 四则运算语法
 
@@ -81,7 +81,7 @@ a + b， 匹配了 print 这个类型规则 expr NEWLINE。
 
 ### 实现遍历代码
 
-我们用 antrl4 的命令行，可以生成关于解析语句的类。其中 CalculatorBaseVisitor 类比较重要，我们可以继承它，实现语法树的遍历，来完成计算器的功能
+我们用 antlr4 的命令行，可以生成关于解析语句的类。其中 CalculatorBaseVisitor 类比较重要，我们可以继承它，实现语法树的遍历，来完成计算器的功能
 
 ```java
 public class CalculatorVisitorImp extends CalculatorBaseVisitor<Integer> {
@@ -178,9 +178,9 @@ public class Main {
 
 
 
-## antrl4 基础类
+## antlr4 基础类
 
-上面介绍了 antrl4 的 基本用法，实现了一个四则运算的功能。但是其中的原理，还没有详细讲解。我们知道 antlr4 会将语句解析成一棵树，但这棵树的数据结构是什么样的，还不清楚。我们首先介绍下树的节点。
+上面介绍了 antlr4 的 基本用法，实现了一个四则运算的功能。但是其中的原理，还没有详细讲解。我们知道 antlr4 会将语句解析成一棵树，但这棵树的数据结构是什么样的，还不清楚。我们首先介绍下树的节点。
 
 树的节点可以主要分为叶子节点和非叶子节点两类。 但是涉及到节点的类比较多，如下图所示
 
@@ -365,7 +365,7 @@ public abstract class AbstractParseTreeVisitor<T> implements ParseTreeVisitor<T>
 
 ## 生成的节点类
 
- 回忆一下上面的计算器语法，里面定义了三条语法规则，prog，stat，expr。antrl4 会为每条规则，生成一个 ParserRuleContext  的子类。如果这个语法规则添加了标签，那么为每个标签也生成一个 ParserRuleContext 的子类。这些类之间的关系，如下图所示：
+ 回忆一下上面的计算器语法，里面定义了三条语法规则，prog，stat，expr。antlr4 会为每条规则，生成一个 ParserRuleContext  的子类。如果这个语法规则添加了标签，那么为每个标签也生成一个 ParserRuleContext 的子类。这些类之间的关系，如下图所示：
 
 {% plantuml %}
 @startuml
