@@ -1,11 +1,9 @@
 ---
-title: Spark Sql  LogicalPlan 原理
+title: Spark Sql  LogicalPlan 介绍
 date: 2019-06-18 21:58:42
 tags: spark sql, logical plan
 categories: spark sql
 ---
-
-# Spark Sql  LogicalPlan 介绍
 
 
 
