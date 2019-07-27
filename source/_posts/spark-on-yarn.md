@@ -5,254 +5,92 @@ tags: spark, yarn
 categories: spark
 ---
 
-# Spark 运行在 Yarn 上的原理
+## 前言
 
-## Rpc 服务
+为了更好的管理集群资源，一般都会有资源管理调度器，所有的服务都需要服从调度器的安排才能运行。Hadoop 集群内置了 Yarn 资源管理器，而 Spark 处理的数据一般存储在 Hadoop 里，所以 Spark 也支持运行在 Yarn 上面。本篇会介绍 Spark 是如何运行在 Yarn 上的。
 
-Spark运行在Yarn上，会涉及到下列Rpc 服务。
 
-- YarnDriverEndpoint， 继承DriverEndpoint，主要负责与Executor的通信
-- YarnSchedulerEndpoint， 负责与AMEndpoint沟通
-- AMEndpoint， 运行在ApplicationMaster上，主要负责Yarn的资源请求
 
-YarnDriverEndpoint和YarnSchedulerEndpoint总是运行在同一个进程里。
+## Yarn 运行程序
 
-### YarnDriverEndpoint
+Yarn 作为一个框架，包含了多个组件。如果想在 Yarn 上运行程序，需要先了解它的运行流程。
 
-YarnDriverEndpoint继承DriverEndpoint， 只是修改了onDisconnected方法，增加了日志收集功能。当Executor断开连接时，会去AMEndpoint获取失败日志。
+<img src="yarn-application-flow.svg">
 
-### YarnSchedulerEndpoint
 
-YarnSchedulerEndpoint是DriverEndpoint和AMEndpoint沟通的桥梁，它提供的服务分为两种：
 
-来自AMEndpoint的请求
+## Spark Rpc 服务
 
-- RegisterClusterManager，这是AMEndpoint启动时，向YarnSchedulerEndpoint注册自身的请求。
-- AddWebUIFilter， 与Spark UI界面有关，通过它可以做一些控制访问spark web ui 的操作
+Spark运行在Yarn上，会涉及到下列Rpc 服务
 
-来自SchedulerBackend的请求， 这些请求最后都会由YarnSchedulerEndpoint转发给AMEndpoint
+<img src="spark-on-yarn-rpc.svg">
 
-- RequestExecutors， 请求资源
-- KillExecutors， 杀死Container
-- GetExecutorLossReason， 获取Executor运行的错误信息 
+- YarnDriverEndpoint， 代表着 driver 端，它继承 DriverEndpoint， 负责分配任务和日志收集。
+- CoarseGrainedExecutorBackend， 表示 Executor 进程，负责执行由 Driver 端分配的任务。
+- YarnSchedulerEndpoint， DriverEndpoint 和 AMEndpoint沟通的桥梁
+- AMEndpoint， 运行在 ApplicationMaster 进程上，主要负责 Yarn 的资源请求
 
-### AMEndpoint
+注意到 YarnDriverEndpoint 和 YarnSchedulerEndpoint 总是运行在同一个进程里，这里简称为 driver 端。根据进程所在的位置，分为两种运行模式：
 
-AMEndpoint的所有请求都是来自YarnSchedulerEndpoint，负责Yarn的资源申请和管理，它接收下列请求：
+- client 模式，此进程运行在 Client。
+- cluster 模式，此进程运行在 ApplicationMaster 。
 
-- RequestExecutors， 请求资源
-- KillExecutors， 杀死Container
-- GetExecutorLossReason， 获取Executor运行的错误信息 
 
-## ApplicationMaster启动
 
-这里先简单的介绍下Yarn的资源申请过程，首先程序会向Yarn申请第一个container，这个container启动后，会去运行我们的 ApplicationMaster程序。ApplicationMaster程序才是真正的申请和管理container，它启动后会向Yarn申请资源，这些资源才是真正做计算用的。所以ApplicationMaster的作用会很重要。
+## ApplicationMaster 运行原理
 
-这里Spark运行在Yarn上，也必须运行ApplicationMaster程序。下面看看它的原理，
 
-```scala
-class ApplicationMaster(args: ApplicationMasterArguments, client: YarnRMClient) {
-    final def run(): Int = {
-    	// 如果是cluster模式， 则调用runDriver
-    	if (isClusterMode) {
-        	runDriver(securityMgr)
-      	} else {
-      	// 否则调用runExecutorLauncher
-	        runExecutorLauncher(securityMgr)
-    	}
-    }
-}				
-```
 
-ApplicationMaster根据运行模式不同，运行的原理也不一样。
+### AMEndpoint 启动
 
-## Yarn运行模式
+因为 ApplicationMaster 进程运行的所在 Container 是随机分配的，所以 driver 端并不知道 AMEndpoint 的地址。AMEndpoint 在启动之后，会主动发送自己的地址给 YarnSchedulerEndpoint，两者之间就可以通过顺利通信了。
 
-### cluster模式
 
-cluster模式下，ApplicationMaster会首先启动一个线程，执行用户的程序，里面就包含了sparkContext的初始化。sparkContext在初始化的时候，会运行DriverEndpoint服务。
-
-然后会运行AMEndpoint服务，对外提供资源请求的Rpc接口。主线程会一直等待用户程序执行完，才退出。
-
-这里可以看到，DriverEndpoint和AmEndpoint运行在同一个进程里面。
-
-![cluster mode](cluster-mode.jpg)
-
-```scala
-def runDriver(securityMgr: SecurityManager): Unit = {
-    // 启动用户线程，运行main方法。这里面会完成 sparkContext 的初始化
-	userClassThread = startUserApplication()
-	val totalWaitTime = sparkConf.get(AM_MAX_WAIT_TIME)
-	// 等待 sparkContext 初始化完成
-	val sc = ThreadUtils.awaitResult(sparkContextPromise.future,
-    	Duration(totalWaitTime, TimeUnit.MILLISECONDS))
-    if (sc != null) {
-        // 调用rpcEnv创建和运行AMEndpoint
-    	rpcEnv = sc.env.rpcEnv
-		val driverRef = runAMEndpoint(
-         	sc.getConf.get("spark.driver.host"),
-      		sc.getConf.get("spark.driver.port"),
-      		isClusterMode = true)
-         // 向 Yarn 注册ApplicationMaster
-		registerAM(sc.getConf, rpcEnv, driverRef, sc.ui.map(_.webUrl), securityMgr)
-	} else {
-        if (!finished) {
-      		throw new IllegalStateException("SparkContext is null but app is still running!")
-    	}
-	}
-	// 等待用户线程执行完
-	userClassThread.join()	
-}
-
-def startUserApplication(): Thread = {
-	// 加载Main函数
-	val mainMethod = userClassLoader.loadClass(args.userClass)
-		.getMethod("main", classOf[Array[String]])
-	val userThread = new Thread {
-		override def run() {
-			try {
-				// 执行Main函数
-				mainMethod.invoke(null, userArgs.toArray)
-				// 成功执行Main函数后，调用finish做清洗操作
-				finish(FinalApplicationStatus.SUCCEEDED, ApplicationMaster.EXIT_SUCCESS)
-			}
-			.......
-		}
-	}
-	userThread.setContextClassLoader(userClassLoader)
-	userThread.setName("Driver")
-	// 启动线程
-	userThread.start()
-	userThread
-}
-```
 
 ### client模式
 
-client模式下，用户的程序是运行在spark-submit提交的那台主机上，所以SparkContext和DriverEndpoint都是运行在这台主机上。而ApplicationMaster运行在yarn上的container里。ApplicationMaster这里仅仅是运行AMEndpoint的Rpc服务。
-
-所以在client模式下，DriverEndpoint和AmEndpoint 是不在同一个进程里面的。
-
-![client mode](client-mode.jpg)
-
-```scala
-def runExecutorLauncher(securityMgr: SecurityManager): Unit = {
-  val port = sparkConf.get(AM_PORT)
-  // 实例化 rpcEnv
-  rpcEnv = RpcEnv.create("sparkYarnAM", Utils.localHostName, port, sparkConf, securityMgr,
-    clientMode = true)
-  // 等待DriverEndpoint服务启动，
-  val driverRef = waitForSparkDriver()
-  registerAM(sparkConf, rpcEnv, driverRef, sparkConf.getOption("spark.driver.appUIAddress"),
-    securityMgr)
-
-  // reporterThread会与yarn的ResourceManager保持心跳，知道程序运行结束
-  reporterThread.join()
-}
-
-def waitForSparkDriver(): RpcEndpointRef = {
-    var driverUp = false
-    // 解析driverEndpoint的服务地址
-    val hostport = args.userArgs(0)
-    val (driverHost, driverPort) = Utils.parseHostPort(hostport)
-    // 计算超时时间
-    val totalWaitTimeMs = sparkConf.get(AM_MAX_WAIT_TIME)
-    val deadline = System.currentTimeMillis + totalWaitTimeMs
-    
-    // 不停的尝试socket连接，查看是否服务已经启动
-    while (!driverUp && !finished && System.currentTimeMillis < deadline) {
-    	try {
-            // 这里新建socket，会自动连接，如果没有出错，则说明正常连接
-            val socket = new Socket(driverHost, driverPort)
-            socket.close()
-            driverUp = true
-        } catch {
-            // 等待100ms
-            case e: Exception =>
-            	Thread.sleep(100L)
-        }
-    }
-    
-    if (!driverUp) {
-    	throw new SparkException("Failed to connect to driver!")
-    }
-    sparkConf.set("spark.driver.host", driverHost)
-    sparkConf.set("spark.driver.port", driverPort.toString)
-    // 运行AMEndpoint服务
-    runAMEndpoint(driverHost, driverPort.toString, isClusterMode = false)
-}
-```
+client模式下，ApplicationMaster 进程仅仅运行 AMEndpoint 的服务。因为 driver 端服务在 Client 进程上，所以 AMEndpoint 必须远程请求。在启动 ApplicationMaster 进程时候，Spark 已经将 driver 端的地址，通过 Main 函数的参数传递过来了。AMEndpoint 会不停的重试连接driver 端，才会进行下一步操作。
 
 
 
-## AMEndpoint 启动
+### cluster模式
 
-AMEndpoint只和YarnSchedulerEndpoint通信，它在启动之后会发送RegisterClusterManager消息给YarnSchedulerEndpoint，消息会携带自身。这样YarnSchedulerEndpoint就可以通过与AMEndpoint通信了。
-
-```scala
-class ApplicationMaster(.... ) {
-  private def runAMEndpoint(
-      host: String,
-      port: String,
-      isClusterMode: Boolean): RpcEndpointRef = {
-    // 注意这里实例化的是YarnSchedulerEndpoint
-    // AMEndpoint的driverEndpoint是指YarnSchedulerEndpoint， 而不是DriverEndpoint
-    val driverEndpoint = rpcEnv.setupEndpointRef(
-      RpcAddress(host, port.toInt),
-      YarnSchedulerBackend.ENDPOINT_NAME)
-    amEndpoint =
-      rpcEnv.setupEndpoint("YarnAM", new AMEndpoint(rpcEnv, driverEndpoint, isClusterMode))
-    driverEndpoint
-  }
-}
-
-class AMEndpoint(override val rpcEnv: RpcEnv, driver: RpcEndpointRef, isClusterMode: Boolean)
-  	extends RpcEndpoint with Logging {
-  	override def onStart(): Unit = {
-    	// 向YarnSchedulerEndpoint发送 注册信息
-    	driver.send(RegisterClusterManager(self))
-  	}
-}
-```
+cluster模式下，ApplicationMaster 进程运行多个服务，dirver 服务和 AMEndpoint 服务。ApplicationMaster 进程会先启动 driver 服务完成 SparkContext 的初始化后，才会启动 AMEndpoint 服务。
 
 
 
 ## Container 启动  ##
 
- 当AMEndpoint服务，收到申请Executor的时候，会转发给YarnAllocator。YarnAllocator会向 Yarn 申请到Container后，设置Container的启动命令，并且启动它。
+### 请求资源大小
 
-设置Container的启动命令是在YarnAllocator的一个线程池里运行的。具体程序在ExecutorRunnable类，这里将程序简化
+ AMEndpoint 启动后，当接收到了 driver 端的请求，就会向 ResourceManager 申请资源。每个 Container 申请的资源分为 cpu 和内存大小：
+
+ cpu 的数量由配置项 spark.executor.cores 指定。
+
+内存大小 = 初始内存 + 额外内存。初始内存由配置项spark.executor.memory指定。 额外内存由 spark.yarn.executor.memoryOverhead 配置项指定，如果没有指定，那么就取值为初始内存大小的 10%，但是大小必须大于 384MB。
 
 ```scala
-private[yarn] class ExecutorRunnable {
+// 初始内存，由配置项spark.executor.memory指定，默认为1GB
+protected val executorMemory = sparkConf.get(EXECUTOR_MEMORY).toInt
 
-  def run(): Unit = {
-    // 实例化NMClient， 用于和NodeManager沟通，启动container
-    nmClient = NMClient.createNMClient()
-    nmClient.init(conf)
-    nmClient.start()
-    // 配置container信息，并申请提交
-    startContainer()
-  }
-  
-  def startContainer(): java.util.Map[String, ByteBuffer] = {
-    val ctx = Records.newRecord(classOf[ContainerLaunchContext])
-      .asInstanceOf[ContainerLaunchContext]
-    // 配置环境变量
-    val env = prepareEnvironment().asJava
-    ctx.setLocalResources(localResources.asJava)
-    ctx.setEnvironment(env)
+// 计算额外内存大小
+// EXECUTOR_MEMORY_OVERHEAD 表示配置项 spark.yarn.executor.memoryOverhead
+// MEMORY_OVERHEAD_FACTOR 等于 0.1
+// MEMORY_OVERHEAD_MIN 等于 384
+protected val memoryOverhead: Int = sparkConf.get(EXECUTOR_MEMORY_OVERHEAD).getOrElse(
+  math.max((MEMORY_OVERHEAD_FACTOR * executorMemory).toInt, MEMORY_OVERHEAD_MIN)).toInt
 
-   // 配置启动命令
-    val commands = prepareCommand()
-    ctx.setCommands(commands.asJava)
-    // 向NodeManager申请启动container
-    nmClient.startContainer(container.get, ctx)
-  }
-}
+// 内存大小等于初始内存加上额外内存
+private[yarn] val resource = Resource.newInstance(executorMemory + memoryOverhead, executorCores)
 ```
 
-上面的prepareCommand生成启动命令，源码简略如下：
+这里需要注意下，Yarn 的资源分配有最小单位。假设 spark 申请的 container 资源为 初始内存 1GB + 额外内存 384MB，并且 Yarn 的最小单位为1GB，那么Yarn 会分配两个单位的资源，也就是2GB 的内存。所以我们在优化资源分配时，必须考虑到额外内存，避免内存的浪费（虽然多余的内存都会被用于本地内存，但是也许我们不会用到这么多本地内存）。关于为什么会需要额外内存，这和 jvm 内存模型有关，下面会详细介绍。
+
+
+
+### 启动命令
+
+负责生成命令的源码简略如下：
 
 ```scala
 private def prepareCommand(): List[String] = {
@@ -279,4 +117,9 @@ private def prepareCommand(): List[String] = {
   }
 ```
 
-这里可以看到container的启动，是运行了 java 命令，启动类是org.apache.spark.executor.CoarseGrainedExecutorBackend。
+这里可以看到container的启动，是运行了 java 命令，启动类是org.apache.spark.executor.CoarseGrainedExecutorBackend，启动参数包含了 driver 端的地址，execuor id 等等，还指定了 jvm 运行参数。
+
+我们知道 jvm 运行时，将该进程的内存分为 jvm 管理的内存和不受管理的本地内存。而 jvm 管理的内存分为堆，栈等多块，其中很大部分是由堆占用，jvm 支持堆内存的大小限制。而本地内存不受 jvm 控制，它属于操作系统管理，操作系统一般不对进程使用的内存做限制，除非超过了物理机的容量。但是它受到 Yarn 的控制，如果进程用的内存超标，就会被 Yarn 杀死。
+
+spark 申请的初始内存只被用在堆上，所以还需要额外内存来用于其他地方，比如 jvm 管理的栈，和本地内存。spark 会用到本地内存来存储数据，或接收远端传来的 shuffle 数据。所以当 shuffle 数据较大时，可能造成本地内存过大，造成被 Yarn 杀死。这时你可以看到一条日志，意思是让你提高额外内存的大小，其实也就是提高本地内存的原理。
+
