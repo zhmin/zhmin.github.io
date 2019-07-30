@@ -120,5 +120,127 @@ StreamResponse 消息的 frame size 是不包括 body 数据的，所以它在�
 
 
 
+## Buffer 之间的转换
+
+消息一般都被序列化成二进制数据，然后发送出去。因为数据可能是Netty 的内置 ByteBuf 实例，也可能是 java 内置的 ByteBuffer，还有可能是存储在文件中。Spark 为了统一多种实例之间的转换，抽象了 ManagedBuffer 接口。
+
+```java
+public abstract class ManagedBuffer {
+  // 返回数据的长度
+  public abstract long size();
+  
+  // 将数据以ByteBuffer的格式返回
+  public abstract ByteBuffer nioByteBuffer() throws IOException;
+  
+  // 以流的形式返回数据
+  public abstract InputStream createInputStream() throws IOException;
+  
+  // 增加引用，只有NettyManagedBuffer子类才支持
+  public abstract ManagedBuffer retain();
+  
+  // 减少引用，只有NettyManagedBuffer子类才支持
+  public abstract ManagedBuffer release();
+
+  // 当使用netty将数据发送出去时，会调用此方法完成数据格式转换。
+  // 返回结果可能是 ByteBuf（netty实现的），或者 FileRegion（用于实现文件到socket的zero-copy）
+  public abstract Object convertToNetty() throws IOException;
+}   
+```
+
+ 
+
+ManagedBuffer 的子类负责接收每个种类的数据：
+
+- NettyManagedBuffer 负责接收 Netty 的 ByteBuf
+- NioManagedBuffer 负责接收 Java 的 ByteBuffer
+- FileSegmentManagedBuffer 负责接收文件数据
+
+### 文件数据
+
+FileSegmentManagedBuffer 接收文件，它在传输大型 shuffle 文件数据时特别有用，它利用了 Netty 的零拷贝，避免了数据多次拷贝。
+
+它通过下面三个属性描述了数据的存储位置
+
+```java
+public final class FileSegmentManagedBuffer extends ManagedBuffer {
+  private final File file;  // 文件路径
+  private final long offset;  // 数据起始位置
+  private final long length;  // 数据的长度
+}
+```
+
+
+
+继续看看它是如何转换成 ByteBuffer 实例的。如果数据小于指定的值（由 spark.storage.memoryMapThreshold 配置指定，默认为2MB），那么直接在堆中分配 ByteBuffer 实例，将数据存储其中。否则，采用内存映射的方式。
+
+```java
+public ByteBuffer nioByteBuffer() throws IOException {
+    FileChannel channel = null;
+    channel = new RandomAccessFile(file, "r").getChannel();
+    if (length < conf.memoryMapBytes()) {
+        ByteBuffer buf = ByteBuffer.allocate((int) length);
+        channel.position(offset);
+        while (buf.remaining() != 0) {
+            channel.read(buf)
+        }
+        buf.flip();
+        return buf;
+    } else {
+        // 内存映射
+        return channel.map(FileChannel.MapMode.READ_ONLY, offset, length);
+    }
+}
+```
+
+再继续看看它是如何转为 Netty 支持的数据。它返回FileRegion实例，利用了 Netty 的零拷贝技术。
+
+```java
+public Object convertToNetty() throws IOException {
+    if (conf.lazyFileDescriptor()) {
+        // 等待要发送出去的时候，才去打开文件
+        return new DefaultFileRegion(file, offset, length);
+    } else {
+        // 现在就打开文件
+        FileChannel fileChannel = new FileInputStream(file).getChannel();
+        return new DefaultFileRegion(fileChannel, offset, length);
+    }
+}
+```
+
+
+
+### Netty 内置数据
+
+NettyManagedBuffer 接收 Netty 内置 ByteBuf
+
+```java
+import io.netty.buffer.ByteBuf;
+
+public class NettyManagedBuffer extends ManagedBuffer {
+  private final ByteBuf buf;
+
+  public ByteBuffer nioByteBuffer() throws IOException {
+    return buf.nioBuffer();
+  }
+}
+```
+
+
+
+### Java 内置数据
+
+NioManagedBuffer 接收 Java 内置的 ByteBuffer。
+
+```java
+public class NioManagedBuffer extends ManagedBuffer {
+  private final ByteBuffer buf;
+  
+  public Object convertToNetty() throws IOException {
+    // 调用 Netty 的内置方法
+    return Unpooled.wrappedBuffer(buf);
+  }    
+}
+```
+
 
 
