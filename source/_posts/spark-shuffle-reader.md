@@ -326,3 +326,4 @@ public class OneForOneStreamManager extends StreamManager {
 如果有聚合操作，则调用 Aggregator 方法完成聚合操作。
 
 如果有排序要求，则调用 ExternalSorter 完成排序操作。
+
