@@ -88,7 +88,9 @@ public class ExecutorShuffleInfo implements Encodable {
 
 上面只是定义了两级目录，如果想要了解它的含义，就必须了解 shuffle 数据存储位置的规则。
 
-Executor 在 存储 shuffle 数据时，是将它存放在分散的目录，分散的目录是根据文件名的哈希值来确定的。我们知道 shuffle 的数据文件名是有着固定的格式的，`shuffle_{shuffleId}_{mapId}_{reduceId}.data`，因为目前 shuffle 实现的时候，为了减少文件数过多造成的性能差，会将多份数据合并成一个大文件，对应的最终文件名 `shuffle_{shuffleId}_{mapId}_0.data`,并且为了快速查找 reduceId 对应的数据位置，还生成了一份索引文件 `shuffle_{shuffleId}_{mapId}_0.index`。
+Executor 在 存储 shuffle 数据时，是将它存放在分散的目录，分散的目录是根据文件名的哈希值来确定的。分散的目的是防止单个目录下文件数目过大，造成寻找文件的延迟增大。
+
+我们知道 shuffle 的数据文件名是有着固定的格式的，`shuffle_{shuffleId}_{mapId}_{reduceId}.data`，因为目前 shuffle 实现的时候，为了减少文件数过多造成的性能差，会将多份数据合并成一个大文件，对应的最终文件名 `shuffle_{shuffleId}_{mapId}_0.data`,并且为了快速查找 reduceId 对应的数据位置，还生成了一份索引文件 `shuffle_{shuffleId}_{mapId}_0.index`。
 
 YarnShuffleService 服务会将这些位置信息存储到内存中，如果指定了持久化，会保存到 leveldb 中。
 
