@@ -11,7 +11,9 @@ RDD表示分布式的数据集，它是由多个分区组成。RDD封装了底�
 
 ## 窄依赖
 
-当父RDD的每个分区只对应于子RDD的一个分区，这种情况是窄依赖。这里分为三种情形：
+当父RDD的每个分区只对应于子RDD的一个分区，这种情况是窄依赖。
+
+这里分为三种情形：
 
 ### OneToOneDependency
 
@@ -84,7 +86,7 @@ class PruneDependency[T](rdd: RDD[T], partitionFilterFunc: Int => Boolean)
 
 ## 宽依赖
 
-当子RDD的分区数据来源于父RDD的多个分区时，两者之间的依赖关系就是宽依赖。当触发shuffle操作时，两者Rdd的关系就是由宽依赖ShuffleDependency表示，它有以下属性：
+当父RDD的分区对应于子RDD的多个分区时，两者之间的依赖关系就是宽依赖。当触发shuffle操作时，两者Rdd的关系就是由宽依赖ShuffleDependency表示，它有以下属性：
 
 - rdd， 指向父RDD
 - partitioner， 子RDD的分区器
