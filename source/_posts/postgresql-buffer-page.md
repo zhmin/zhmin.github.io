@@ -7,7 +7,7 @@ categories: postgresql
 
 ## 前言
 
-buffer page 存储着真正的数据，它同磁盘的block是相同格式的。
+postgresql 保存数据的基本单位是 page，一个 page 里包含多条数据。postgresql 同磁盘的读写单位也是 page，一个 page 对应于磁盘的一个 block。block 的格式和 page 是相同的，本篇文章详细得介绍了 page 的数据存储格式和相关的增删改查操作。
 
 
 
