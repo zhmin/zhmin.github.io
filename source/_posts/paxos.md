@@ -118,15 +118,13 @@ learner 在 t4 时刻就感知到议案 N+1 已经被多数 acceptor 接受了�
 
 上面 basic paxos 算法是用来确认一个值的，但是仅仅是确认一个值，对于我们来说，使用场景太少。如果能确认多个值，那么就更好。既然运行一次 basic paxos 算法能确认一个值，那么为每个值都单独运行一次，就可以确认多个值了。我们称运行一次 basic paxos 算法，称作为一个实例。这个思想在 Paxos Made Simple 论文的最后一部分有提到过，它被用来实现一个状态机。
 
-运行一个 basic paxos 实例，proposer 至少需要和 acceptor 通信两次，如果能在大部分时间里，选定一个 proposer（被称为 leader），只有它才能提出方案，这样就能将两次通信转化为一次。算法流程如下：
+运行一个 basic paxos 实例，proposer 至少需要和 acceptor 通信两次（prepare 请求和 accept 请求），如果能在大部分时间里，选定一个 proposer（被称为 leader），只有它才能提出方案，这样就能将两次通信转化为一次（accept 请求）。算法流程如下：
 
 1. 当一个 proposer 被选定为 leader 后，它会首先向多数的 acceptor 发起 prepare（N）请求。
 2. acceptor 在接收到这个请求后，如果之前没有接受过其余的 prepare 请求，或者接受过的prepare（M）请求并且 M < N，那么就保证以后不会接受编号小于 N 的 accept 请求。否则忽略请求或者返回错误。
 3. proposer 在收到多数 acceptor 的保证后，就认为自己成为 leader。对于接下来的值，直接发送 accept（N，Vi）请求给多数 acceptor。在收到多数 acceptor 的成功响应后，这个值就被确定下来了。
 
-注意到 leader 的存在仅仅是性能的优化，multi-paxos 算法是可以允许有多个 leader 同时存在的，而不会导致。假如有多个 leader 存在，后者发起 prepare 的编号肯定比前者大，那么就会导致前者的 accept 请求会失败，最后后者回城为真正的 leader。
-
-
+注意到 leader 的存在仅仅是性能的优化，multi-paxos 算法是可以允许有多个 leader 同时存在的，而不会导致系统混乱。假如有多个 leader 存在，后者发起 prepare 的编号肯定比前者大，那么就会导致前者的 accept 请求会失败，最后后者会成为真正的 leader。
 
 
 
