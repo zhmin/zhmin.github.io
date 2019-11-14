@@ -31,7 +31,7 @@ proposer 在提出议案 N 之前，N 是该议案的编号，需要向至少多
 
 acceptor 收到 Prepare（N）请求后，
 
-1. 如果之前已经接受了其他议案，那么就会返回成功响应该议案。
+1. 如果之前已经接受了其他议案，那么返回接受过的议案。
 2. 如果之前收到过Prepare（M）请求，并且 M > N，那么可以忽略此次请求，也可以返回一个错误。
 3. 如果之前收到过Prepare（M）请求，并且 M < N，那么 acceptor 会保证以后不会响应议案编号小于 N 的任何请求，并且返回成功响应。
 
@@ -46,10 +46,8 @@ if has_accepted:
 elif prepare_req.num < highest_prepare_proposal_num::
     reply("error")
 else:
+    highest_prepare_proposal_num = prepare_req.num
     reply("ok")
-else:
-  highest_prepare_proposal_num = prepare_req.num
-  reply({ "num": highest_accepted_proposal.num, "value":  highest_accepted_proposal.value})
 ```
 
 
@@ -58,7 +56,7 @@ else:
 
 proposer 在收到多数 acceptor 的成功响应后，如果这些acceptor中有返回议案，那么就从中选出那个编号最大的议案的值，作为接下来要提交的。如果没有返回议案，那么将本身的议案作为提交议案。
 
-在确定好提交议案后，proposer 会向至少多数的 acceptor 发起 ACCEPT 请求，提交议案。注意下这里的多数acceptor可以不和prepare 阶段的相同。
+在确定好提交议案后，proposer 会向至少多数的 acceptor 发起 ACCEPT 请求，提交议案。注意下这里的多数 acceptor 可以不和 prepare 阶段的多数 acceptor 相同。
 
 acceptor 当收到 ACCEPT 请求后，会检查议案编号。因为acceptor 在 prepare 阶段，已经承诺过不会议案编号小于 N 的请求，如果 ACCEPT 请求的议案编号小于 N，那么就会拒绝接受此议案。否则，就会接受该议案。
 
@@ -70,14 +68,14 @@ value = max_num_proposal(prepare_responses).value
 if value is None:
     value = my_proposal.value
 for acceptor in acceptors:
-  send_accept_req(my_proposal.num, value)
+    send_accept_req(my_proposal.num, value)
 
 # Acceptor
-if accept_req.num >= highest_prepare_proposal_num:
+if accept_req.num < highest_prepare_proposal_num:
+    reply("error")
+else:
   highest_accepted_proposal = {"num": accept_req.num, "value": accept_req.value}
   reply("ok")
-else:
-  reply("error")
 ```
 
 
