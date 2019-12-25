@@ -250,7 +250,7 @@ test=# select (my_tuple_func(orders)).* from orders where id = 1;
 
 ## 返回多行数据
 
-下面展示一个函数，用于生成指定数量的行数据。每行数据包括两列，（message text ,num int）。
+下面展示一个函数，用于生成指定数量的 [斐波那契数列](https://zh.wikipedia.org/zh-hk/斐波那契数列)。每行数据包括两列（num int, value int）。
 
 c 语言文件
 
@@ -260,18 +260,33 @@ c 语言文件
 
 PG_MODULE_MAGIC;
 
-PG_FUNCTION_INFO_V1(my_records_func);    
+// 计算斐波那契数列，需要记录前两个结果的值
+typedef struct OlderValues {
+    uint64 value1;
+    uint64 value2;
+} OlderValues;
+
+PG_FUNCTION_INFO_V1(my_records_func);
 Datum my_records_func(PG_FUNCTION_ARGS)
 {
     FuncCallContext     *funcctx;
-    
+
     // 判断是否第一次执行
     if (SRF_IS_FIRSTCALL())
     {
-        // 进行此次函数滴哦啊用初始化
+        // 进行此次函数第一次初始化
         funcctx = SRF_FIRSTCALL_INIT();
+        // 切换内存分配器
+        MemoryContext oldcontext = MemoryContextSwitchTo(funcctx->multi_call_memory_ctx);
         // 提取参数，保存到FuncCallContext的max_calls属性里
         funcctx->max_calls = PG_GETARG_UINT32(0);
+        // 分配自定义上下文变量
+        OlderValues * mydata = palloc(sizeof(OlderValues));
+        mydata->value1 = 0;
+        mydata->value2 = 1;
+        funcctx->user_fctx = mydata;
+        //切回内存分配器
+        MemoryContextSwitchTo(oldcontext);
     }
 
     // 获取最新的FuncCallContext
@@ -284,25 +299,39 @@ Datum my_records_func(PG_FUNCTION_ARGS)
         TupleDesc            tupdesc;
         if (get_call_result_type(fcinfo, NULL, &tupdesc) != TYPEFUNC_COMPOSITE)
             elog(ERROR, "return type must be a row type");
-        
-        // 构建返回值，使用调用次数作为第二列的值
+
+        // 构建返回值，使用调用次数作为第一列的值
         Datum values[2];
-        values[0] = PointerGetDatum(cstring_to_text("hello"));
-        values[1] = UInt64GetDatum(call_cntr);
+        values[0] = UInt64GetDatum(call_cntr);
+        // 计算此次斐波那契的值
+        uint64 value;
+        if (call_cntr == 0) {
+            value = 0;
+        }
+        if (call_cntr == 1) {
+            value = 1;
+        }
+        if (call_cntr > 1) {
+            // 取出上下文的变量，也就是前两个斐波那契的值
+            OlderValues *mydata = (OlderValues *) funcctx->user_fctx;
+            value = mydata->value1 + mydata->value2;
+            mydata->value1 = mydata->value2;
+            mydata->value2 = value;
+        }
+        values[1] = UInt64GetDatum(value);
+
         // nulls 数组表示值是否为空
-        bool		nulls[2];
+        bool            nulls[2];
         memset(nulls, 0, sizeof(nulls));
         // 构建返回数据，由HeapTuple表示
-        HeapTuple tuple = heap_form_tuple(tupdesc, values, nulls);        
+        HeapTuple tuple = heap_form_tuple(tupdesc, values, nulls);
         Datum result = HeapTupleGetDatum(tuple);
         // 返回数据
         SRF_RETURN_NEXT(funcctx, result);
     }
-    else    
-    {
-        // 数据已经全部返回
-        SRF_RETURN_DONE(funcctx);
-    }
+
+    // 数据已经全部返回
+    SRF_RETURN_DONE(funcctx);
 }
 ```
 
@@ -311,8 +340,8 @@ Datum my_records_func(PG_FUNCTION_ARGS)
 创建函数
 
 ```sql
-CREATE FUNCTION my_tuple_func(tuple record) 
-     RETURNS TABLE (message text ,num int)
+CREATE FUNCTION my_records_func(number_limit int) 
+     RETURNS TABLE (num int ,value int)
 AS '/var/lib/pgsql/my_records_func.so', 'my_records_func'
 LANGUAGE C STRICT;
 ```
@@ -322,15 +351,14 @@ LANGUAGE C STRICT;
 执行语句
 
 ```shell
-test=# 
-test=# select  * from my_records_func(5);
- message | num 
----------+-----
- hello   |   0
- hello   |   1
- hello   |   2
- hello   |   3
- hello   |   4
+test=# select * from my_records_func(5);
+ num | value 
+-------+-----
+     0 |   0
+     1 |   1
+     2 |   1
+     3 |   2
+     4 |   3
 (5 rows)
 ```
 
@@ -344,14 +372,11 @@ test=# select  * from my_records_func(5);
 typedef struct FuncCallContext
 {
 	uint64		call_cntr;      // 已经返回结果的次数
+    void	   *user_fctx;      // 用于保存自定义上下文
 	MemoryContext multi_call_memory_ctx;   // 用于分配内存
     // .......
 } FuncCallContext;
 ```
-
-
-
-`ReturnSetInfo`作为返回结果的描述信息，主要到它的`isDone`成员。如果为`ExprMultipleResult`，表示返回了正常的函数据。如果为`ExprEndResult`，表示数据返回完毕。
 
 
 
