@@ -15,11 +15,11 @@ postgresql 的 checkpoint 是数据库中非常重要的部分，它涉及到数
 
 ## Checkpoint 简介
 
-postgresql 为了缓解磁盘的读写，采用了缓存来提升速度。这样每次的数据读写都会优先在缓存中处理，如果数据不存在缓存中，那么会从磁盘加载数据，然后在缓存中修改。虽然这样很大的提升了效率，但是缓存不具有磁盘的持久性，在机器断电时就会丢失。
+postgresql 会将数据持久化到磁盘里，不过因为磁盘的读写性能比较差，所以又添加了一层缓存。这样每次的数据读写都会优先在缓存中处理，如果数据不存在缓存中，才会从磁盘查找。虽然这样很大的提升了性能，但是缓存不具有磁盘的持久性，在机器断电时就会丢失。
 
-postgresql 为了解决这个问题，又引入了 wal 日志机制，当每次数据修改时，还会记录一条日志存储在 wal 文件里，日志包含了此次修改的数据。这样即使数据库意外退出，也能利用wal来恢复数据。不过 wal 日志随着时间的积累会变得非常大，同样导致恢复的时间很长。
+postgresql 为了解决这个问题，结合了磁盘顺序写的特点，引入了 wal 日志机制。当每次数据修改时，还会记录一条日志存储在 wal 文件里，日志包含了此次修改的数据。wal 数据采用添加写的方式，能够充分利用顺序写高效的特点。这样即使数据库意外退出，也能利用 wal 来恢复数据。
 
-postgresql 针对于wal 问题，提供了checkpoint 机制，定期将缓存刷新到磁盘，这样前面的 wal 日志就不再有用，可以直接删除或回收。数据的恢复也只需要从刷新点开始重放 wal 日志。
+当数据库重启时，只需要重放之前所有的wal 日志。不过 wal 日志随着时间的积累会变得非常大，会导致恢复的时间很长。针对这个问题，postgresql 提供了checkpoint 机制，会定期将缓存刷新到磁盘。数据的恢复也只需要从刷新点开始重放 wal 日志，并且之前的 wal 日志就不再有用，可以被回收。
 
 
 
@@ -29,15 +29,15 @@ checkpoint 的触发条件分为下面多种。
 
 时间触发：后台 checkpoint 进程会定时检查时间，如果距离上次 checkpoint 执行开始时的间隔超过了指定值，就会触发 checkpoint。这个指定值是配置文件的`checkpoint_timeout` 值，范围在 30s ~ 1 day，默认值为300s。
 
-wal日志：当最新的 wal 日志，和上次 checkpoint 的刷新点的距离大于指定值，就会触发 checkpoint。触发值的大小在介绍`checkpoint_complete_target`会提到。
+wal日志：当最新的 wal 日志，和上次 checkpoint 的刷新点的距离大于指定值，就会触发 checkpoint。触发值的大小在下面介绍`checkpoint_complete_target`会提到。
 
 手动触发：当用户执行`checkpoint`命令也会触发，这个命令必须由超级用户才能执行。
 
 数据库关闭：当数据库正常关闭时，会触发一次 checkpoint 。
 
-基础备份：当用户执行`pg_start_backup`命令时，会触发 checkpoint。
+基础备份：当进行数据基础备份时，会执行`pg_start_backup`命令，触发 checkpoint。
 
-数据库崩溃修复：数据库异常退出后，在重新启动时，会进行崩溃修复，修复完成后会触发 checkpoint。
+数据库崩溃修复：数据库异常退出后，比如数据库进程被`kill -9`，来不及清理操作 。在重新启动时，会进行崩溃修复，修复完成后会触发 checkpoint。
 
 
 
@@ -78,7 +78,7 @@ checkpoint 结束时的日志，记录此次的刷新缓存的数目，使用时
 
 ## Checkpoint_complete_target 配置项
 
-这里需要详细的介绍`checkpoint_complete_target`配置项，它在 checkpoint 优化时比较重要，同时也比较复杂。我们知道 checkpoint 执行时会占用系统资源，尤其是磁盘 IO，所以为了减少系统的波动，会进行 IO 限速。如果开启了`checkpoint_complete_target`配置，那么此次 checkpoint 不需要立即完成，它会将完成时间控制在`checkpoint_timeout_ms * checkpoint_complete_target`。这样磁盘 IO 就可以平缓的运行，将其控制在一定的影响范围之内。
+这里需要详细的介绍`checkpoint_complete_target`配置项，它在 checkpoint 优化时比较重要，同时也比较复杂。我们知道 checkpoint 执行时会占用系统资源，尤其是磁盘 IO，所以为了减少对系统的影响，会进行 IO 限速。如果开启了`checkpoint_complete_target`配置，那么此次 checkpoint 不需要立即完成，它会将完成时间控制在`checkpoint_timeout_ms * checkpoint_complete_target`。这样磁盘 IO 就可以平缓的运行，将其控制在一定的影响范围之内。
 
 如果  checkpoint 不能立即完成，那么旧有的 wal 日志也就不能立即删除。因为`max_wal_size`规定了 wal 日志的最大值，那么我们需要将由于 wal 过大而引起 checkpoint 的触发值调低，因为在执行 checkpoint 的时候吗，同时会有新的 wal 日志产生。那么显而易见，到达 wal 日志大小的顶峰是checkpoint 即将完成的时刻，因为这时包含了此次触发的wal 日志，加上新增的 wal 日志。假设触发值为`trigger_wal_size`，那么`checkpoint_timeout`时间内，wal 日志新增的大小最多为`trigger_wal_size`。我们假设 wal 日志的增长速度是相同的，那么此时增长的 wal 日志大小为`trigger_wal_size * checkpoint_completion_target`。为了保证顶峰时刻，wal 日志大小等于`max_wal_size`，可以计算出触发值
 
@@ -93,27 +93,24 @@ trigger_wal_size = max_wal_size / (1 + checkpoint_completion_target)
 
 ## Checkpoint 进程
 
+postgresql 会创建出一个后台进程，负责处理 checkpoint 。
 
+checkpoint 进程会定期检查是否满足时间触发条件，还会检查是否有来自其它进程发送的请求。比如数据库崩溃修复是由 recovery 进程负责，在恢复成功后，会发送checkpoint请求在共享内存里。checkpoint 进程定期检查到有请求就会处理。
 
-### 定时检查
-
-checkpoint 后台进程会周期性的检查 checkpoint 触发条件。如果有其他进程发送的 checkpoint 请求，或者此时离上次 checkpoint 的间隔时间超过了指定值，就会执行 checkpoint 操作。
+```mermaid
+graph LR
+	other_process[其它进程]
+	share[共享内存]
+	checkpoint_process[checkpoint进程]
+	other_process --> share
+	share --> checkpoint_process
+```
 
 
 
 ### checkpoint 请求
 
-```c
-typedef struct
-{
-    int			ckpt_flags;		/* 标记位，当其他进程请求checkpoint，会设置对应的标记位 */
-    ...
-} CheckpointerShmemStruct;
-```
-
-其他进程通过修改共享内存的`ckpt_flags`字段，它记录了触发原因和一些标记位。checkpoint 进程会定期检查该字段，如果发现了字段被更改，就会执行 checkpoint。
-
-`ckpt_flags`字段的标记位如下：
+checkpoint 请求只是由一个 int 类型变量表示，名称为`ckpt_flags`。它是作为标记位，其中的位对应了不同的触发原因
 
 ```c
 #define CHECKPOINT_IS_SHUTDOWN	0x0001	/* 因为数据库关闭而触发checkpoint */
@@ -126,28 +123,8 @@ typedef struct
 #define CHECKPOINT_FLUSH_ALL	0x0010	/* 刷新所有的缓存 */
 
 #define CHECKPOINT_WAIT			0x0020	/* 进程会等待checkpoint完成 */
-#define CHECKPOINT_REQUESTED	0x0040	/* Checkpoint request has been made */
+#define CHECKPOINT_REQUESTED	0x0040	/* 表示之前就请求过了 */
 ```
-
-
-
-### sync 请求
-
-当buffer刷新到文件系统的缓存后，会发起sync请求，checkpoint 进程会使用数组保存这些请求。
-
-```c
-typedef struct
-{
-    ......
-    int			num_requests;	/* sync请求数目 */
-	int			max_requests;	/* 预分配的数组大小 */
-	CheckpointerRequest requests[FLEXIBLE_ARRAY_MEMBER];  /* 数组 */
-} CheckpointerShmemStruct;
-```
-
-
-
-## 处理过程
 
 
 
@@ -158,6 +135,8 @@ typedef struct
 
 
 ### 刷新脏页
+
+在获取锁之后，checkpoint 进程会将缓存的数据刷新到磁盘。
 
 1.会去遍历所有的数据缓存页，如果该页包含`dirty`和`pernament`标记位，就会添加一个`checkpoint_need`标记位，然后将其保存到一个链表。
 
@@ -189,7 +168,9 @@ wal_progress = (latest_wal_pointer - checkpoint_start_wal_pointer) / (trigger_wa
 
 ### 磁盘刷新
 
-注意到上一部只是将 postgresql 的缓存刷新到了文件系统的 cache，还没有将文件系统的 cache 同步到磁盘。当刷新一个buffer时，postgresql 就会发送sync请求。checkpoint 执行中会处理这些 sync 请求，会将这些文件系统 cache 刷新到磁盘。
+注意到上一部只是将 postgresql 的缓存刷新到了文件系统，还不能保证数据持久化到磁盘，因为文件文件系统本身也会有缓存的存在。
+
+当刷新一个buffer时，postgresql 就会发送sync请求。checkpoint 执行中会处理这些 sync 请求，会将这些文件系统 cache 刷新到磁盘。
 
 
 
@@ -240,3 +221,24 @@ ControlFile->minRecoveryPointTLI = 0; // 表示数据库启动需要恢复到最
 
 如果开启了 wal archive，那么这里还会检查 archive 超时。本来 wal 日志达到了一定大小，默认为16MB，才会触发归档。但是如果数据的修改比较慢，这样wal 日志大小达到16MB的时间就会比较长。而 wal 归档一般用于增量备份或者从库运行，如果长时间没得到更新，就会使备份的时间间隔大。为了解决这个问题，postgresql 提供了`archive_timeout`设置，保证触发归档的超时时间。
 
+
+
+## 检查点
+
+每次 checkpoint 开始时，都会记录当前最新的 wal 日志位置，称作为检查点（redo）。当数据库恢复时，会从检查点开始回放 wal 日志。
+
+
+
+上图左边的蓝色方块，代表着 checkpoint 开始的 wal 数据。因为 checkpoint 并不会影响用户请求，所以之后的红色方块代表着之后的请求。
+
+postgresql 在修改缓存时，会记录对应的 wal 日志，所以 checkpoint 完成后，这些蓝色的 wal 日志对应的修改，就能确保已经持久化到磁盘了。
+
+checkpoint 完成后，会将检查点的位置记录下来，保存到 checkpoint wal 日志中。为了方便数据库恢复时，快速找到 checkpoint 的数据，会将它的位置存储到 pg_control 文件。
+
+
+
+这里额外提一下，会涉及到数据恢复时的概念。假如下面这种情况，当一个 buffer 对应的数据，在checkpoint开始后，刷新到磁盘之前时，用户执行了一条 insert 请求，修改了这个 buffer 的数据。
+
+假设该数据库发生崩溃，在恢复时，从检查点开始。它会首先从磁盘读取数据 data b，然后遇到 insert 语句对应的 wal 日志，它需要知道该 wal 日志对应的修改，已经成功持久化了，不然就会发生恢复错误。
+
+这里需要介绍下 buffer 的头部，它有个特殊的属性`pd_lsn`，表示最后一次修改对应的 wal 日志位置。它在执行恢复时，会首先检查`pd_lsn`和该 wal 日志的位置，如果发现了`pd_lsn`大，那么就会忽略掉此 wal 日志。

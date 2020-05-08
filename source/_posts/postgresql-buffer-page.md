@@ -35,14 +35,13 @@ page 头部由结构体`PageHeaderData`来表示，
 ```c
 typedef struct PageHeaderData
 {
-	PageXLogRecPtr pd_lsn;		/* LSN: next byte after last byte of xlog
-								 * record for last change to this page */
+	PageXLogRecPtr pd_lsn;	// 该数据页最后一次被修改对应的wal日志的位置
 	uint16		pd_checksum;	// 校检值
-	uint16		pd_flags;		// 标记位
-	LocationIndex pd_lower;		// 空闲空间的起始偏移量
-	LocationIndex pd_upper;		// 空闲空间的结束偏移量
+	uint16		pd_flags;	// 标记位
+	LocationIndex pd_lower;	// 空闲空间的起始偏移量
+	LocationIndex pd_upper;	// 空闲空间的结束偏移量
 	LocationIndex pd_special;	// 特殊空间的结束偏移量
-	uint16		pd_pagesize_version;  // page 格式版本号
+	uint16		pd_pagesize_version;	// page 格式版本号
 	TransactionId pd_prune_xid; /* oldest prunable XID, or zero if none */
 	ItemIdData	pd_linp[FLEXIBLE_ARRAY_MEMBER]; // 数据指针数组
 } PageHeaderData;
