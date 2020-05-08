@@ -3,6 +3,7 @@ title: Postgresql Checkpoint 原理
 date: 2019-11-24 20:03:41
 tags: postgresql, checkpoint
 categories: postgresql
+
 ---
 
 
@@ -227,6 +228,8 @@ ControlFile->minRecoveryPointTLI = 0; // 表示数据库启动需要恢复到最
 
 每次 checkpoint 开始时，都会记录当前最新的 wal 日志位置，称作为检查点（redo）。当数据库恢复时，会从检查点开始回放 wal 日志。
 
+<img src="pg-checkpoint-redo.svg">
+
 
 
 上图左边的蓝色方块，代表着 checkpoint 开始的 wal 数据。因为 checkpoint 并不会影响用户请求，所以之后的红色方块代表着之后的请求。
@@ -239,6 +242,10 @@ checkpoint 完成后，会将检查点的位置记录下来，保存到 checkpoi
 
 这里额外提一下，会涉及到数据恢复时的概念。假如下面这种情况，当一个 buffer 对应的数据，在checkpoint开始后，刷新到磁盘之前时，用户执行了一条 insert 请求，修改了这个 buffer 的数据。
 
+<img src="pg-checkpoint-recovery.svg">
+
+
+
 假设该数据库发生崩溃，在恢复时，从检查点开始。它会首先从磁盘读取数据 data b，然后遇到 insert 语句对应的 wal 日志，它需要知道该 wal 日志对应的修改，已经成功持久化了，不然就会发生恢复错误。
 
-这里需要介绍下 buffer 的头部，它有个特殊的属性`pd_lsn`，表示最后一次修改对应的 wal 日志位置。它在执行恢复时，会首先检查`pd_lsn`和该 wal 日志的位置，如果发现了`pd_lsn`大，那么就会忽略掉此 wal 日志。
+这里需要介绍下 buffer 的头部，它有个特殊的属性`pd_lsn`，表示最后一次修改对应的 wal 日志位置。它在执行恢复时，会首先检查`pd_lsn`和该 wal 日志的位置，如果发现了`pd_lsn`大，那么就会忽略掉此 wal 日志。这样就不会发生恢复错误了。
