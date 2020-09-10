@@ -3,7 +3,6 @@ title: Postgresql Checkpoint 原理
 date: 2019-11-24 20:03:41
 tags: postgresql, checkpoint
 categories: postgresql
-
 ---
 
 
