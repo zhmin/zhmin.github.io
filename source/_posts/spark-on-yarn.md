@@ -63,9 +63,9 @@ cluster模式下，ApplicationMaster 进程运行多个服务，dirver 服务和
 
 ### 请求资源大小
 
- AMEndpoint 启动后，当接收到了 driver 端的请求，就会向 ResourceManager 申请资源。每个 Container 申请的资源分为 cpu 和内存大小：
+AMEndpoint 启动后，当接收到了 driver 端的请求，就会向 ResourceManager 申请资源。每个 Container 申请的资源分为 cpu 和内存大小两个方面：
 
- cpu 的数量由配置项 spark.executor.cores 指定。
+CPU 的数量由配置项 spark.executor.cores 指定。
 
 内存大小 = 初始内存 + 额外内存。初始内存由配置项spark.executor.memory指定。 额外内存由 spark.yarn.executor.memoryOverhead 配置项指定，如果没有指定，那么就取值为初始内存大小的 10%，但是大小必须大于 384MB。
 
@@ -117,7 +117,7 @@ private def prepareCommand(): List[String] = {
   }
 ```
 
-这里可以看到container的启动，是运行了 java 命令，启动类是org.apache.spark.executor.CoarseGrainedExecutorBackend，启动参数包含了 driver 端的地址，execuor id 等等，还指定了 jvm 运行参数。jvm 运行参数包括使用 server 模式的 gc 回收器，并且指定了堆的最大值。
+这里可以看到container的启动，是运行了 java 命令，启动类是org.apache.spark.executor.CoarseGrainedExecutorBackend，启动参数包含了 driver 端的地址，execuor id 等等，还指定了 jvm 运行参数。jvm 运行参数包括使用 server 模式的 gc 回收器，并且指定了堆的最大值为申请的初始内存。比如以上面的申请为例，它的堆最大值为1GB。
 
 我们知道 jvm 运行时，将该进程的内存分为 jvm 管理的内存和不受管理的本地内存。而 jvm 管理的内存分为堆，栈等多块，其中很大部分是由堆占用，jvm 支持堆内存的大小限制。而本地内存不受 jvm 控制，它属于操作系统管理，操作系统一般不对进程使用的内存做限制，除非超过了物理机的容量。但是它受到 Yarn 的控制，如果进程用的内存超标，就会被 Yarn 杀死。
 

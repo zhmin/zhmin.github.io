@@ -52,8 +52,7 @@ NettyRpcEndpointRef的send和ask方法，都是转交给了NettyRpcEnv发送。
 所有的rpc客户端和服务，都是在NettyRpcEnv环境下才能运行。NettyRpcEnv有比较多的属性，涉及到客户端的属性，主要如下
 
 * outboxes， 表示Outbox集合。每个Outbox对应着一个server的地址( 主机地址， 端口号)
-* address， 表示server运行的监听地址。如果该NettyRpcEnv中没有运行的server，则为null
-
+* address， 表示server运行的监听地址。如果该NettyRpcEnv中没有运行的server，则为 null
 * dispatcher， 将请求消息分发给对应的inbox。只有当客户端和server运行在同一个NettyRpcEnv，才会调用dispatcher直接发送。否则都需要建立socket连接
 
 首先看看NettyRpcEnv的send方法，
