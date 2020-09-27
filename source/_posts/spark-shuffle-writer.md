@@ -13,7 +13,7 @@ Spark的 shuffle 过程比较复杂，涉及到map端和reduce端的共同配合
 
 它的原理很简单，下面的图展示了 map 端的一个分区，执行的流程
 
-![spark-shuffle-bypass](C:/Users/zhmin/Desktop/zhmin.github.io/source/_posts/spark-shuffle-bypass.svg)
+![spark-shuffle-bypass](spark-shuffle-bypass.svg)
 
 它根据记录的 key ，计算出对应的 reduce 分区，存储到对应的文件中。最后会将这些文件合并成一个文件。（不太明白为什么最后需要合并这些文件，这样会造成磁盘IO，是为了减少文件数目吗）
 
@@ -127,7 +127,7 @@ def commitAndGet(): FileSegment = {
 3. 合并这些文件为一个整文件
 4. 生成索引文件
 
-它在实例化`DiskBlockObjectWriter`的时候，指定了写的缓存区大小，这样可以提高磁盘吞吐量。可以通过`spark.shuffle.file.buffer`配置项指定，默认为 32MB。还有在合并文件中，使用了`transferTo`技术，避免了内核空间和用户空间的多次拷贝，可以通过`spark.file.transferTo`配置项指定，默认是开启的。
+它在实例化`DiskBlockObjectWriter`的时候，指定了写的缓存区大小，这样可以提高磁盘吞吐量。可以通过`spark.shuffle.file.buffer`配置项指定，默认为 32KB。还有在合并文件中，使用了`transferTo`技术，避免了内核空间和用户空间的多次拷贝，可以通过`spark.file.transferTo`配置项指定，默认是开启的。
 
 
 
