@@ -1,15 +1,15 @@
 ---
-title: KafkaProducer 原理
+title: Kafka Producer 原理
 date: 2019-03-11 21:44:15
 tags: kafka, producer
 categories: kafka
 ---
 
-# Kafka Producer 原理
+## 前言
 
 Kafka为使用者提供了客户端，负责向Kafka中写入消息，由KafkaProducer实现。KafkaProducer为了提高系统的吞吐量，它会先将消息缓存起来，然后以批次为单位的发送。具体原理如下：
 
-![kafka-producer](kafka-producer.svg)
+![kafka-producer](kafka-produce-flow.svg)
 
 `KafkaProducer`计算出消息发往哪个分区，然后放入`RecordAccumulator`缓存队列里。
 
@@ -73,68 +73,19 @@ public Future<RecordMetadata> send(ProducerRecord<K, V> record, Callback callbac
 
 那么如何判断哪些节点可以发送消息呢，首先这个节点的连接必须已经创建就绪了。然后依次遍历每个分区对应的`ProducerBatch`队列的头部元素。只要该`ProducerBatch`满足下面一种，就会认为需要发送。
 
+- 该分区对应的队列长度大于1，那么需要发送。
 - 消息发送失败后，kafka 会自动重试，不过需要等待一段时间。该`ProducerBatch`重试过了这段时间，那么就需要发送。这段等待时间由`retry.backoff.ms`配置项指定，默认为100ms。
 - 该`ProducerBatch`在队列的时间超过了阈值，就需要发送。阈值由`linger.ms`指定，不过默认为0，表示没有延迟。
 - 该batch已经填充了足够多的数据，那么需要发送。阈值由`batch.size`配置项指定。
-- 当内存池的空闲空间不足时，那么需要发送。因为消息占用内存，所以需要快速发送。当消息发送完成时，就会释放空间
+- 当内存池的空闲空间不足时，那么需要发送。因为消息占用内存，所以需要快速发送。当消息发送完成时，就会释放空间。
+
+在获取到哪些 broker 需要发送后，它还会尽量将同个 broker 其他分区的消息 batch，合并到同一个请求中。合并的原则是一个请求中，同个分区只能包含一个消息 batch。
 
 
 
-## 消息发送者 Sender
+## 发送线程 Sender
 
-
-
-Sender实现了Runnable接口，它运行在一个单独的线程里。它会循环的从RecordAccumulator获取消息，并且通过NetworkClient发送消息。
-
-```java
-public class Sender implements Runnable {
-    private final KafkaClient client;
-    private final RecordAccumulator accumulator;
-    private final Metadata metadata;
-    
-    public void run() {
-        while (running) {
-            run(time.milliseconds());
-        }
-        ......
-    }
-    
-    void run(long now) {
-        if (transactionManager != null) {
-            ...... // 这里暂时不讨论事务
-        }
-        // 调用sendProducerData发送消息
-        long pollTimeout = sendProducerData(now);
-        // 调用client的poll方法发送消息和处理响应
-        client.poll(pollTimeout, now);
-    }
-    private long sendProducerData(long now) {
-        // 获取元数据
-        Cluster cluster = metadata.fetch();
-        // 从accumulator获取，需要发送消息给哪些节点
-        RecordAccumulator.ReadyCheckResult result = this.accumulator.ready(cluster, now);
-        // 如果存在leader未知的情况，请求更新元数据
-        if (!result.unknownLeaderTopics.isEmpty()) { 
-            for (String topic : result.unknownLeaderTopics)
-                this.metadata.add(topic);
-            this.metadata.requestUpdate();
-        }
-        // 从accumulator获取消息
-        Map<Integer, List<ProducerBatch>> batches = this.accumulator.drain(cluster, result.readyNodes, this.maxRequestSize, now);
-        // 当请求数目过多，或者网络原因，导致有些batch很久都未能发送出去
-        // 这里会认为batch失败，不再重新发送
-        List<ProducerBatch> expiredBatches = this.accumulator.expiredBatches(this.requestTimeout, now);
-        for (ProducerBatch expiredBatch : expiredBatches) {
-            // 调用failBatch处理过期的batch
-            failBatch(expiredBatch, -1, NO_TIMESTAMP, expiredBatch.timeoutException(), false);
-        }
-        // 调用sendProduceRequests发送请求
-        sendProduceRequests(batches, now);
-    }               
-}
-```
-
-sendProduceRequests方法会为每个节点，构造请求，并且调用NetworkClient发送出去。
+`Sender`实现了`Runnable`接口，它运行在一个单独的线程里。它会一直从`RecordAccumulator`获取消息，并且通过`NetworkClient`发送消息。`Sender`首先在选择完消息 batch 后，会将这些 batch 按照  broker 进行合并成一个请求。
 
 ```java
 private void sendProduceRequest(long now, int destination, short acks, int timeout, List<ProducerBatch> batches) {
@@ -169,8 +120,6 @@ private void sendProduceRequest(long now, int destination, short acks, int timeo
 }
 ```
 
-
-
 注意到上面的回调函数，它会处理响应。它会解析请求，然后执行每个batch的回调函数。而每个batch会为每个它的每条消息，生成响应，并且执行每条消息的回调。
 
 ```java
@@ -195,45 +144,36 @@ private void completeBatch(ProducerBatch batch, ProduceResponse.PartitionRespons
 
 
 
+## 错误处理
 
+### 消息重试
 
-## 请求响应
-
-当Kafka发送一个batch后，会得到响应。这个batch响应又包含了里面每个消息的响应。
-
-batch的响应由ProduceRequestResult类表示
+当出现一些错误时，比如网络断开，leader重新选举等可重试解决的错误时，kafka 会进行自动重试。下面代码展示了可以重试的场景
 
 ```java
-public final class ProduceRequestResult {
-
-    private final TopicPartition topicPartition;
-
-    private volatile Long baseOffset = null;
-    private volatile long logAppendTime = RecordBatch.NO_TIMESTAMP;
-    private volatile RuntimeException error;
+private boolean canRetry(ProducerBatch batch, ProduceResponse.PartitionResponse response, long now) {
+    return !batch.hasReachedDeliveryTimeout(accumulator.getDeliveryTimeoutMs(), now) &&   // 该消息batch没有超时
+        batch.attempts() < this.retries &&  // 重试次数没有超过指定值
+        !batch.isDone() && // 该batch还没有执行回调函数
+        ((response.error.exception() instanceof RetriableException) ||  // 遇到的错误是可以重试的
+         (transactionManager != null && transactionManager.canRetry(response, batch)));  // 事务认为该响应可以被重试
 }
 ```
-
-单个消息的响应由FutureRecordMetadata类表示， 它在ProduceRequestResult之上生成
-
-```java
-public final class FutureRecordMetadata implements Future<RecordMetadata> {
-    private final ProduceRequestResult result;   // batch响应
-    private final long relativeOffset;           // 此条消息在batch中的位置
-    private final long createTimestamp;          // 创建时间
-    private final Long checksum;                 // 校检值
-    private final int serializedKeySize;         // key序列化之后的数据长度
-    private final int serializedValueSize;       // value序列化之后的数据长度
-}
-```
-
-
 
 
 
 ### 消息超时
 
-```
-delivery.timeout.ms，从开始创建到还没有收到响应，会被认为发送失败。默认为2分钟。一般情况下，我们可以不用在意这个配置项。
-```
+当消息从创建的那刻起，可能经过了重试，仍然还没有得到服务端的响应，如果时间差超过了阈值，那么 kafka producer 就直接认为该消息超时了，会执行它的失败回调函数。阈值由`delivery.timeout.ms`指定，默认为2分钟。
 
+
+
+## Acks 选项
+
+这里再额外提下 acks 选项，它有三个值：
+
+1. 值为 0，表示只要请求发送出去了，就认为该消息成功了
+2. 值为 1，表示请求如果被 leader 处理了，就认为该消息成功了
+3. 值为 2，表示氢气不仅被 leader 处理，还要被 follower 同步完成，才认为该消息成功了
+
+这里需要考虑一下异步的场景，如果 acks 为 0，且发送为异步的情况。那么当数据仅仅完成写入到了 socket buffer 后，就会认为成功了，此时就会执行回调函数。
