@@ -11,482 +11,78 @@ Kafka为使用者提供了客户端，负责向Kafka中写入消息，由KafkaPr
 
 ![kafka-producer](kafka-producer.svg)
 
-KafkaProducer将消息发送给RecordAccumulator缓存。
+`KafkaProducer`计算出消息发往哪个分区，然后放入`RecordAccumulator`缓存队列里。
 
-RecordAccumulator会将消息，以ProducerBatch的格式存储起来。它为每一个分区都生成了一个ProducerBatch的队列。
+`RecordAccumulator`会尽量将同个分区的多个消息压缩成一个 batch，以`ProducerBatch`的格式存储起来。
 
-Sender会从RecordAccumulator拉取消息批次ProducerBatch，然后生成请求，通过NetworkClient发送出去。
+`Sender`会从`RecordAccumulator`拉取消息 batch，因为有些分区是存储在同一个 broker，所以它会将发往相同 broker 的消息 batch，合并成一个`ClientRequest`。如图中所示，tp 0 和 tp1 是是存储到同一个分区的，所以这两个分区的消息 batch 会合并成一个请求。
+
+`NetworkClient`将生成的网络请求，通过 select 方式发送给服务端。
 
 
 
 ## 消息生成者 KafkaProducer
 
-KafkaProducer负责将消息序列化，并且确定消息发往哪个节点。它还支持钩子函数，由ProducerInterceptors表示。目前支持发送前的onSend函数，和发送错误后的onSendError函数。
-
-KafkaProducer发送消息有两种方式，一种是不指定callback，一种是指定callback。
+`KafkaProducer`提供了下面两种发送接口，
 
 ```java
-public class KafkaProducer<K, V> implements Producer<K, V> {
-    // 序列化器
-    private final ExtendedSerializer<K> keySerializer;
-    private final ExtendedSerializer<V> valueSerializer;
-    // 钩子函数集合
-    private final ProducerInterceptors<K, V> interceptors;
-    // 消息缓冲区
-    private final RecordAccumulator accumulator;
-    // 默认的分区器
-    private final Partitioner partitioner;
-    
-    
-    public Future<RecordMetadata> send(ProducerRecord<K, V> record) {
-        return send(record, null);
-    }
-    public Future<RecordMetadata> send(ProducerRecord<K, V> record, Callback callback) {
-        // 调用onSend钩子函数
-        ProducerRecord<K, V> interceptedRecord = this.interceptors.onSend(record);
-        return doSend(interceptedRecord, callback);
-    }
-    
-    private Future<RecordMetadata> doSend(ProducerRecord<K, V> record, Callback callback) {
-        TopicPartition tp = null;
-        try {
-            // 获取该topic partition的元数据
-            ClusterAndWaitTime clusterAndWaitTime = waitOnMetadata(record.topic(), record.partition(), maxBlockTimeMs);
-            Cluster cluster = clusterAndWaitTime.cluster;
-            // 序列化key值
-            byte[] serializedKey;
-            try {
-                serializedKey = keySerializer.serialize(record.topic(), record.headers(), record.key());
-            } catch (ClassCastException cce) {
-                throw new SerializationException(...);
-            }
-            // 序列化value值
-            byte[] serializedValue;
-            try {
-                serializedValue = valueSerializer.serialize(record.topic(), record.headers(), record.value());
-            } catch (ClassCastException cce) {
-                throw new SerializationException(...);
-            }
-            // 调用partition函数，确认发往哪个节点
-            int partition = partition(record, serializedKey, serializedValue, cluster);
-            // 发往消息缓冲区
-            RecordAccumulator.RecordAppendResult result = accumulator.append(tp, timestamp, serializedKey, serializedValue, headers, interceptCallback, remainingWaitMs);            
-            // 如果此时有batch完成，则调用sender的wakeup方法，通知sender，防止它阻塞
-            if (result.batchIsFull || result.newBatchCreated) {
-                this.sender.wakeup();
-            }
-            return result.future;
-        } catch (Exception e) {
-            // 调用onSendError钩子函数
-            this.interceptors.onSendError(record, tp, e);
-            throw e;
-        }
-    }
-}
+public Future<RecordMetadata> send(ProducerRecord<K, V> record);
+
+public Future<RecordMetadata> send(ProducerRecord<K, V> record, Callback callback);
 ```
 
+这两个接口返回的都是`Future`类型，说明发送是异步的。如果我们需要等待消息请求被服务端处理完成的结果，需要调用`Future.get`方法获取。不过这种方法会造成一段时间的阻塞。如果我们不在乎发送的结果，那么可以直接忽略掉，不过这点不建议在生产环境使用。
 
+如果我们既不想阻塞，影响了消息的发送速度，同样也想处理发送结果，那么建议使用第二个接口，传递回调函数。这里需要提醒下，回调函数是由另外一个线程（Sender 线程）执行的。
 
-上面有个比较重要的partition方法，确定消息发往哪个分区。这个算法由分区器Partitioner表示。kafka有个默认的分区器，同时它也支持自定义。
+`KafkaProducer` 在发送消息之前，会先去获取集群的信息，弄清楚要发送的 topic 有哪些分区，这些分区在集群中是如何分布的。在获取完分区信息之后，会将消息序列化，并且通过分区器来确认发往哪个分区。
 
-```java
-public class DefaultPartitioner implements Partitioner {
-    
-    // key为topic名称，value为计数器，初始值为随机分配的。每次添加消息，都会自增
-    private final ConcurrentMap<String, AtomicInteger> topicCounterMap = new ConcurrentHashMap<>();
-    
-    public int partition(String topic, Object key, byte[] keyBytes, Object value, byte[] valueBytes, Cluster cluster) {
-        // 获取这个topic的分区数目
-        List<PartitionInfo> partitions = cluster.partitionsForTopic(topic);
-        int numPartitions = partitions.size();
-        if (keyBytes == null) {
-            // 如果消息的key值为空，则更新计数器的值
-            int nextValue = nextValue(topic);
-            // 获取有效的分区（有效是指该分区的leader副本正常运行）
-            List<PartitionInfo> availablePartitions = cluster.availablePartitionsForTopic(topic);
-            if (availablePartitions.size() > 0) {
-                // 取余数
-                int part = Utils.toPositive(nextValue) % availablePartitions.size();
-                return availablePartitions.get(part).partition();
-            } else {
-                // 简单取余
-                return Utils.toPositive(nextValue) % numPartitions;
-            }
-        } else {
-            // 使用murmur2哈希算法，生成key的哈希值，然后取余 
-            return Utils.toPositive(Utils.murmur2(keyBytes)) % numPartitions;
-        }
-    }
-}
-```
+分区器支持自定义，只需要实现`Partitioner`接口。不过 kafka 也也提供了三种分区器
+
+| 分区器                   | 注释                                                         |
+| ------------------------ | ------------------------------------------------------------ |
+| DefaultPartitioner       | 对于非空值进行hash分区，对于空值采用UniformStickyPartitioner分区 |
+| RoundRobinPartitioner    | 轮询                                                         |
+| UniformStickyPartitioner | 随机选取一个分区，当此分区生成了一个 batch 后，才会随机选取别的分区 |
+
+这三个分区器适用于不同的场景，
+
+1. `DefaultPartitioner`适合于需要将相同key的数据，都保存到同一个分区，但是我们无法控制key的分区是否均匀。
+2. `RoundRobinPartitioner`则没有这个需求，它使得数据在分区的分布是非常平均的，而且计算分区的效率也非常高。
+3. `UniformStickyPartitioner`更适合低延迟的场景，因为`RecordAccumulator`会将消息压缩成一个 batch，它会等待一段时间使得该batch 包含足够多的消息，如果消息满了之后，则会立即发送
 
 
 
 ## 消息缓冲区 RecordAccumulator
 
-RecordAccumulator作为消息缓冲区，它为每个topic partition，生成了一个ProducerBatch的队列。ProducerBatch表示消息批次，每个ProducerBatch也都有大小限制，当它的缓存空间存储满了之后，就会新建一个ProducerBatch。
-
-### ProducerBatch 原理
-
-ProducerBatch包含了多条消息，最终可以转换为MemoryRecords的格式，发送给服务端。
-
-ProducerBatch提供了两个重要的方法：
-
-- tryAppend方法，支持添加消息
-- records方法，返回MemoryRecords
-
-ProducerBatch使用MemoryRecordsBuilder类，负责构建MemoryRecords。MemoryRecords是Kafka中保存消息，常见的一种格式。这里需要说明下，Kafka发送消息，是以batch为单位的，每个batch包含了多条消息。MemoryRecords定义了batch的数据格式。
-
-当Kafka发送一个batch后，会得到响应。这个batch响应又包含了里面每个消息的响应。
-
-batch的响应由ProduceRequestResult类表示
-
-```java
-public final class ProduceRequestResult {
-
-    private final TopicPartition topicPartition;
-
-    private volatile Long baseOffset = null;
-    private volatile long logAppendTime = RecordBatch.NO_TIMESTAMP;
-    private volatile RuntimeException error;
-}
-```
-
-单个消息的响应由FutureRecordMetadata类表示， 它在ProduceRequestResult之上生成
-
-```java
-public final class FutureRecordMetadata implements Future<RecordMetadata> {
-    private final ProduceRequestResult result;   // batch响应
-    private final long relativeOffset;           // 此条消息在batch中的位置
-    private final long createTimestamp;          // 创建时间
-    private final Long checksum;                 // 校检值
-    private final int serializedKeySize;         // key序列化之后的数据长度
-    private final int serializedValueSize;       // value序列化之后的数据长度
-}
-```
-
-ProducerBatch在添加消息的时候，就实例化消息的响应。
-
-```java
-public final class ProducerBatch {
-    
-    // 保存了回调函数，当ProducerBatch发送完成后，会调用里面每条消息的回调函数
-    private final List<Thunk> thunks = new ArrayList<>();
-    // MemoryRecords构造器
-    private final MemoryRecordsBuilder recordsBuilder;
-    // 包含消息的数目
-    int recordCount;
-    // 表示batch响应的future
-    final ProduceRequestResult produceFuture;
 
 
-    public FutureRecordMetadata tryAppend(long timestamp, byte[] key, byte[] value, Header[] headers, Callback callback, long now) {
-        // 检查是否有足够的缓存，存储此条消息。
-        // 如果没有，则返回null
-        if (!recordsBuilder.hasRoomFor(timestamp, key, value, headers)) {
-            return null;
-        } else {
-            // 将消息添加到MemoryRecords构造器里
-            Long checksum = this.recordsBuilder.append(timestamp, key, value, headers);
-            // 生成此条消息响应数据的future
-            // 注意到使用了this.recordCount属性，来表示此条消息在batch中的位置
-            FutureRecordMetadata future = new FutureRecordMetadata(this.produceFuture, this.recordCount, timestamp, checksum, key == null ? -1 : key.length, value == null ? -1 : value.length);
-            // 将回调函数和future添加到thunks队列
-            thunks.add(new Thunk(callback, future));
-            // 更新消息数目
-            this.recordCount++;
-            return future;
-        }
-    }
-    
-    public MemoryRecords records() {
-        // tryAppend方法会将消息添加到recordsBuilder，这里调用build方法即可生成MemoryRecords
-        return recordsBuilder.build();
-    }
-}
-```
+### 添加消息
 
-在上面添加消息的时候，ProducerBatch将回调函数和响应结果都保存在了thunks列表里。Sender线程在接收完响应后，会调用ProducerBatch的done方法，负责执行回调函数。
-
-```java
-public final class ProducerBatch {
-    
-    public boolean done(long baseOffset, long logAppendTime, RuntimeException exception) {
-        // 更新状态
-        final FinalState finalState;
-        if (exception == null) {
-            finalState = FinalState.SUCCEEDED;
-        } else {
-            finalState = FinalState.FAILED;
-        }
-        // 执行回调函数
-        completeFutureAndFireCallbacks(baseOffset, logAppendTime, exception);
-        return true;
-    }  
-    
-    
-    // baseOffset为该batch 在 Kafka topic partition 中的位置
-    private void completeFutureAndFireCallbacks(long baseOffset, long logAppendTime, RuntimeException exception) {
-        // 通过set方法设置batch的响应数据
-        produceFuture.set(baseOffset, logAppendTime, exception);
-
-        // 执行每个消息的回调函数
-        for (Thunk thunk : thunks) {
-            try {
-                if (exception == null) {
-                    // 获取消息的响应数据，并执行回调函数
-                    RecordMetadata metadata = thunk.future.value();
-                    if (thunk.callback != null)
-                        // 注意这里第二个参数表示异常。如果为null，则表示请求成功
-                        thunk.callback.onCompletion(metadata, null);
-                } else {
-                    // 注意到这儿，如果此次请求异常，只有设置消息的回调函数，才能知道
-                    // 第二次参数表示异常实例
-                    if (thunk.callback != null)
-                        thunk.callback.onCompletion(null, exception);
-                }
-            } catch (Exception e) {
-                log.error("Error executing user-provided callback on message for topic-partition '{}'", topicPartition, e);
-            }
-        }
-        // 表示future已完成
-        produceFuture.done();
-    }
-}
-```
+`RecordAccumulator`作为消息缓冲区，它为每个topic partition，生成了一个`ProducerBatch`的队列。`ProducerBatch`表示消息 batch，它有字节大小的限制。当它所包含的消息总长度，超过了阈值，就会新建一个`ProducerBatch`。这个阈值由`batch.size`配置项指定，默认为16 KB。当提高这个值时，单次请求可以包含更多的消息，不过也会造成 batch 填满的时间变长，消息发送的延迟增加。
 
 
 
-### RecordAccumulator 添加消息
+### 提取消息
 
-RecordAccumulator的append方法，负责添加消息。append方法主要是负责管理ProducerBatch队列，当ProducerBatch数据已满，就会新建ProducerBatch。真正的添加消息是在tryAppend方法里。
+`Sender`会从`RecordAccumulator`中提取消息 batch，过程如下
 
-```java
-public final class RecordAccumulator {
-    
-    // 消息集合，Key为分区，Value为该分区对应的batch队列
-    private final ConcurrentMap<TopicPartition, Deque<ProducerBatch>> batches;
-    // ProducerBatch可以保存数据的最小长度
-    private final int batchSize;
-    // 缓存池
-    private final BufferPool free;
-    
-    public RecordAppendResult append(TopicPartition tp,
-                                     long timestamp,
-                                     byte[] key,
-                                     byte[] value,
-                                     Header[] headers,
-                                     Callback callback,
-                                     long maxTimeToBlock) throws InterruptedException {
-        
-        ByteBuffer buffer = null;
-        if (headers == null) headers = Record.EMPTY_HEADERS;
-        try {
-            // 获取该分区的batch队列，如果没有就创建
-            Deque<ProducerBatch> dq = getOrCreateDeque(tp);
-            // 这里使用了锁，保证线程竞争
-            synchronized (dq) {
-                if (closed)
-                    throw new KafkaException("Producer closed while send in progress");
-                // 调用tryAppend方法添加，如果返回null，则表示当前ProducerBatch空间已满
-                RecordAppendResult appendResult = tryAppend(timestamp, key, value, headers, callback, dq);
-                // 表示添加成功
-                if (appendResult != null)
-                    return appendResult;
-            }
-            byte maxUsableMagic = apiVersions.maxUsableProduceMagic();
-            // 确定batch的大小，比较当前消息的长度和指定最小的长度
-            int size = Math.max(this.batchSize, AbstractRecords.estimateSizeInBytesUpperBound(maxUsableMagic, compression, key, value, headers));
-            // 从缓冲池中申请内存
-            buffer = free.allocate(size, maxTimeToBlock);
-            synchronized (dq) {
-                if (closed)
-                    throw new KafkaException("Producer closed while send in progress");
-                // 因为在申请内存的时候，Sender线程有可能刚好提取了消息，所以这里再次尝试调用tryAppend
-                // 或者别的线程已经在这个时候，创建完了新的ProducerBatch
-                RecordAppendResult appendResult = tryAppend(timestamp, key, value, headers, callback, dq);
-                if (appendResult != null) {
-                    return appendResult;
-                }
-                // 生成MemoryRecords构造器，它使用的缓存就是刚刚申请
-                MemoryRecordsBuilder recordsBuilder = recordsBuilder(buffer, maxUsableMagic);
-                // 新建ProducerBatch
-                ProducerBatch batch = new ProducerBatch(tp, recordsBuilder, time.milliseconds());
-                // 调用新建的ProducerBatch的tryAppend方法添加数据
-                FutureRecordMetadata future = Utils.notNull(batch.tryAppend(timestamp, key, value, headers, callback, time.milliseconds()));
-                // 将新建的ProducerBatch，添加到队列里
-                dq.addLast(batch);
+1. 查找哪些可以发送消息的 broker
+1. 查找这些 broker 包含了哪些分区
+1. 从队列中提取这些分区对应的消息 batch
 
-                // 因为这个buffer已经被新的ProducerBatch所使用，
-                // 所以这里将其设置null，防止被释放
-                buffer = null;
+那么如何判断哪些节点可以发送消息呢，首先这个节点的连接必须已经创建就绪了。然后依次遍历每个分区对应的`ProducerBatch`队列的头部元素。只要该`ProducerBatch`满足下面一种，就会认为需要发送。
 
-                return new RecordAppendResult(future, dq.size() > 1 || batch.isFull(), true);
-            }
-        } finally {
-            // 如果申请的buffer没有用到，这里需要将其释放掉
-            if (buffer != null)
-                free.deallocate(buffer);
-        }
-    }
-    
-    // 负责将消息添加到，batch队列中的最后一个
-    private RecordAppendResult tryAppend(long timestamp, byte[] key, byte[] value, Header[] headers, Callback callback, Deque<ProducerBatch> deque) {
-        // 取出最后的ProducerBatch
-        ProducerBatch last = deque.peekLast();
-        if (last != null) {
-            // 调用batch的tryAppend添加
-            FutureRecordMetadata future = last.tryAppend(timestamp, key, value, headers, callback, time.milliseconds());
-            // 如果返回null，表示当前batch的空间已满
-            if (future == null)
-                // 关闭当前batch的添加
-                last.closeForRecordAppends();
-            else
-                // 返回RecordAppendResult
-                return new RecordAppendResult(future, deque.size() > 1 || last.isFull(), false);
-        }
-        return null;
-    }
-}
-```
-
-
-
-### RecordAccumulator 消费消息
-
-Sender作为消息的消费者，它涉及到RecordAccumulator的两个方法：
-
-1. RecordAccumulator的ready方法负责，来查看哪些节点的请求需要发送。
-
-1. RecordAccumulator的drain方法负责，从队列中提取消息。目前这里先不考虑事务，代码简化如下
-
-首先看ready方法，它会根据好几个方面，来判断是否应该发送请求。只要满足下面一种，就会认为需要发送
-
-- 内存紧张时，因为RecordAccumulator会一直保存消息，占用内存，一直到消息发送完成才会释放
-- 消息堆积一直没有发送，堆积时间超过了指定值
-- 消息重试的时间间隔，已经过去
-- 该batch存储消息的空间已满，需要立即发送
-
-```java
-public final class RecordAccumulator {
-    
-    // 消息集合，Key为分区，Value为该分区对应的batch队列
-    private final ConcurrentMap<TopicPartition, Deque<ProducerBatch>> batches;    
-    
-    public ReadyCheckResult ready(Cluster cluster, long nowMs) {
-        Set<Node> readyNodes = new HashSet<>();
-        long nextReadyCheckDelayMs = Long.MAX_VALUE;
-        Set<String> unknownLeaderTopics = new HashSet<>();
-
-        // 查看缓冲池是否资源紧张
-        boolean exhausted = this.free.queued() > 0;
-        // 遍历batch
-        for (Map.Entry<TopicPartition, Deque<ProducerBatch>> entry : this.batches.entrySet()) {
-            // 获取topic partition 和 消息队列
-            TopicPartition part = entry.getKey();
-            Deque<ProducerBatch> deque = entry.getValue();
-            
-            // 查看topic partition的 leader副本所在的节点，因为只有leader副本才能处理写请求
-            Node leader = cluster.leaderFor(part);
-            synchronized (deque) {
-                if (leader == null && !deque.isEmpty()) {
-                    unknownLeaderTopics.add(part.topic());
-                } else if (!readyNodes.contains(leader) && !muted.contains(part)) {
-                    ProducerBatch batch = deque.peekFirst();
-                    if (batch != null) { 
-                        long waitedTimeMs = batch.waitedTimeMs(nowMs);
-                        // 检查是否在重试时间内
-                        boolean backingOff = batch.attempts() > 0 && waitedTimeMs < retryBackoffMs;
-                        // 计算batch停留的最大时间， 
-                        // 当batch的空间一直没有写满，它允许停留的最大时间不能超过 lingerMs
-                        // 当batch在重试期间内，重试间隔必须大于 retryBackoffMs
-                        long timeToWaitMs = backingOff ? retryBackoffMs : lingerMs;
-                        // 该topic partition是有有已经完成的batch，
-                        // 如果batch的数目大于1，说明第一个batch肯定已经完成了，才会新建第二个batch
-                        // 如果只有一个batch，那么查看这个batch是否已经完成
-                        boolean full = deque.size() > 1 || batch.isFull();
-                        // batch停留的时间超过最大时间
-                        boolean expired = waitedTimeMs >= timeToWaitMs;
-                        // 满足上述条件的一种，则表示允许发送
-                        boolean sendable = full || expired || exhausted || closed || flushInProgress();
-                        if (sendable && !backingOff) {
-                            // 添加到readyNodes列表
-                            readyNodes.add(leader);
-                        } else {
-                            long timeLeftMs = Math.max(timeToWaitMs - waitedTimeMs, 0);
-                            nextReadyCheckDelayMs = Math.min(timeLeftMs, nextReadyCheckDelayMs);
-                        }
-                    }
-                }
-            }
-        }
-        return new ReadyCheckResult(readyNodes, nextReadyCheckDelayMs, unknownLeaderTopics);
-    }
-}
-```
-
-
-
-接下来看drain方法，如何提取消息的。它会找到节点的所有topic partition，然后从对应的ProducerBatch队列中提取。
-
-```java
-// nodes参数，表示限制请求是这些节点
-public Map<Integer, List<ProducerBatch>> drain(Cluster cluster, Set<Node> nodes, int maxSize, long now) {
-    Map<Integer, List<ProducerBatch>> batches = new HashMap<>();
-    for (Node node : nodes) {
-        int size = 0;
-        // 获取该节点有哪些分区
-        List<PartitionInfo> parts = cluster.partitionsForNode(node.id());
-        List<ProducerBatch> ready = new ArrayList<>();
-        // drainIndex是RecordAccumulator类的一个属性，
-        // 通过它可以按照顺序遍历，而不必每次都是从第一个位置开始
-        int start = drainIndex = drainIndex % parts.size();
-        do {
-            PartitionInfo part = parts.get(drainIndex);
-            TopicPartition tp = new TopicPartition(part.topic(), part.partition());
-            // 当启动消息发送的幂等性，需要要求batch发送完成后，才能继续发送新的batch
-            if (!isMuted(tp, now)) {
-                // 获取topic partition的消息队列
-                Deque<ProducerBatch> deque = getDeque(tp);
-                if (deque != null) {
-                    synchronized (deque) {
-                        ProducerBatch first = deque.peekFirst();
-                        if (first != null) {
-                            // 检查是否，消息发送失败正在重试，因为重试有时间间隔要求的
-                            boolean backoff = first.attempts() > 0 && first.waitedTimeMs(now) < retryBackoffMs;
-                            if (!backoff) {
-                                // 检查batch是否超过了指定的最大值
-                                if (size + first.estimatedSizeInBytes() > maxSize && !ready.isEmpty()) {
-                                    break;
-                                } else {
-                                    // 取出batch，添加到ready列表里
-                                    ProducerIdAndEpoch producerIdAndEpoch = null;
-                                    boolean isTransactional = false;
-                                    ProducerBatch batch = deque.pollFirst();
-                                    batch.close();
-                                    size += batch.records().sizeInBytes();
-                                    ready.add(batch);
-                                    // 设置batch的drain的时间点
-                                    batch.drained(now);
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-            // 更新drainIndex，指向下一个
-            this.drainIndex = (this.drainIndex + 1) % parts.size();
-        } while (start != drainIndex);
-        // 将这个节点的请求，添加到batches集合
-        batches.put(node.id(), ready);
-    }
-    return batches;
-}
-```
+- 消息发送失败后，kafka 会自动重试，不过需要等待一段时间。该`ProducerBatch`重试过了这段时间，那么就需要发送。这段等待时间由`retry.backoff.ms`配置项指定，默认为100ms。
+- 该`ProducerBatch`在队列的时间超过了阈值，就需要发送。阈值由`linger.ms`指定，不过默认为0，表示没有延迟。
+- 该batch已经填充了足够多的数据，那么需要发送。阈值由`batch.size`配置项指定。
+- 当内存池的空闲空间不足时，那么需要发送。因为消息占用内存，所以需要快速发送。当消息发送完成时，就会释放空间
 
 
 
 ## 消息发送者 Sender
+
+
 
 Sender实现了Runnable接口，它运行在一个单独的线程里。它会循环的从RecordAccumulator获取消息，并且通过NetworkClient发送消息。
 
@@ -596,3 +192,48 @@ private void completeBatch(ProducerBatch batch, ProduceResponse.PartitionRespons
         this.accumulator.deallocate(batch);
 }
 ```
+
+
+
+
+
+## 请求响应
+
+当Kafka发送一个batch后，会得到响应。这个batch响应又包含了里面每个消息的响应。
+
+batch的响应由ProduceRequestResult类表示
+
+```java
+public final class ProduceRequestResult {
+
+    private final TopicPartition topicPartition;
+
+    private volatile Long baseOffset = null;
+    private volatile long logAppendTime = RecordBatch.NO_TIMESTAMP;
+    private volatile RuntimeException error;
+}
+```
+
+单个消息的响应由FutureRecordMetadata类表示， 它在ProduceRequestResult之上生成
+
+```java
+public final class FutureRecordMetadata implements Future<RecordMetadata> {
+    private final ProduceRequestResult result;   // batch响应
+    private final long relativeOffset;           // 此条消息在batch中的位置
+    private final long createTimestamp;          // 创建时间
+    private final Long checksum;                 // 校检值
+    private final int serializedKeySize;         // key序列化之后的数据长度
+    private final int serializedValueSize;       // value序列化之后的数据长度
+}
+```
+
+
+
+
+
+### 消息超时
+
+```
+delivery.timeout.ms，从开始创建到还没有收到响应，会被认为发送失败。默认为2分钟。一般情况下，我们可以不用在意这个配置项。
+```
+
