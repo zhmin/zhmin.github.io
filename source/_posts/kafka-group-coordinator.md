@@ -1,105 +1,30 @@
 ---
-title: Kafka Group Coordinator 原理
+title: Kafka Rebalance 服务端原理
 date: 2019-04-01 22:45:12
 tags: kafka, coordinator
 categories: kafka
 
 ---
 
-# Kafka Group Coordinator 原理
+## 前言
 
-从这篇博客，我们知道客户端与服务端的交互，分为三种请求。
-
-1. 第一种，寻找GroupCoordinator地址请求。consumer客户端首先需要知道GroupCoordinator的地址。
-2. 第二种，加入组请求。consumer客户端向GroupCoordinator发起加入指定组。
-3. 第三种，获取分配结果请求。consumer客户端向GroupCoordinator，申请获取分配结果
-4. 第四种，心跳请求。consumer客户端获取到分配结果后，需要和GroupCoordinator保持线条。
-
-下面依次介绍GroupCoordinator是如何处理这几种请求的
+上篇文章讲述了 Rebalance 在客户端的实现，这篇文章就来讲讲它在服务端是如何实现的。服务端由`GroupCoordinator`负责处理请求
 
 
 
-## 处理寻找GroupCoordinator地址请求
+## 元数据
 
-在介绍这之前，需要先了解下Kafka是如何存储consumer group的消费位置。Kafka内部保存了一个名称为_consumer_offsets 的 topic，这个 topic 是按照 consumer group 来分区的。一个 consumer group 订阅的所有 topic 的消费位置，只存在 一个分区里。而这个分区的 leader 副本所在的主机，就是负责该consumer group的GroupCoordinator的地址。
+我们先来看看服务端维护了哪些数据。GroupCoordinator 为每个 consumer group 保存元数据，包含了组里每个的成员和分配结果，还有 leader 的信息。
 
-当GroupCoordinator收到此请求后，会主动创建_consumer_offsets 的 topic，分区数目由 offsets.topic.num.partitions 配置项指定。
+GroupMetadata描述了一个consumer group的信息，它主要包含以下字段：
 
-```scala
-class KafkaApis(...) {
+| 字段名       | 字段类型            | 字段含义            |
+| ------------ | ------------------- | ------------------- |
+| generationId | 整数                | 版本号              |
+| members      | MemberMetadata 列表 | 组成员的元数据列表  |
+| leaderId     | 整数                | leader角色的成员 id |
 
-  def handleFindCoordinatorRequest(request: RequestChannel.Request) {
-      val findCoordinatorRequest = request.body[FindCoordinatorRequest]
-      
-      .... // 认证和校检
-      
-      val (partition, topicMetadata) = findCoordinatorRequest.coordinatorType match {
-        case FindCoordinatorRequest.CoordinatorType.GROUP =>
-          // 计算该consumer group被分配到哪个partition
-          val partition = groupCoordinator.partitionFor(findCoordinatorRequest.coordinatorKey)
-          // 创建内部topic(即保存消费位置的topic)，并且返回该topic的元数据
-          val metadata = getOrCreateInternalTopic(GROUP_METADATA_TOPIC_NAME, request.context.listenerName)
-          (partition, metadata)
-        case FindCoordinatorRequest.CoordinatorType.TRANSACTION =>
-          ... // 处理事务
-        case _ =>
-          throw new InvalidRequestException("Unknown coordinator type in FindCoordinator request")
-      }
-
-      // createResponse函数负责生成响应
-      def createResponse(requestThrottleMs: Int): AbstractResponse = {
-        val responseBody = if (topicMetadata.error != Errors.NONE) {
-          new FindCoordinatorResponse(requestThrottleMs, Errors.COORDINATOR_NOT_AVAILABLE, Node.noNode)
-        } else {
-          // 遍历该topic的partition，找到那个partition的leader副本 
-          val coordinatorEndpoint = topicMetadata.partitionMetadata.asScala
-            .find(_.partition == partition)
-            .map(_.leader)
-            .flatMap(p => Option(p))
-          // 返回结果
-          coordinatorEndpoint match {
-            case Some(endpoint) if !endpoint.isEmpty =>
-              new FindCoordinatorResponse(requestThrottleMs, Errors.NONE, endpoint)
-            case _ =>
-              new FindCoordinatorResponse(requestThrottleMs, Errors.COORDINATOR_NOT_AVAILABLE, Node.noNode)
-          }
-        }
-        responseBody
-      }
-      
-      // 发送响应
-      sendResponseMaybeThrottle(request, createResponse)
-    }
-  }
-    
-}
-```
-
-
-
-Kafka是计算consumer group名称的哈希值，来确定它被分配到哪个partition。算法如下：
-
-```java
-class GroupMetadataManager(...) {
-  // 获取该topic的分区数
-  private val groupMetadataTopicPartitionCount = getGroupMetadataTopicPartitionCount
-  // 调用zkClient获取分区数
-  private def getGroupMetadataTopicPartitionCount: Int = {
-    zkClient.getTopicPartitionCount(Topic.GROUP_METADATA_TOPIC_NAME).getOrElse(config.offsetsTopicNumPartitions)
-  }
-  // 计算该groupId的哈希值，取余
-  def partitionFor(groupId: String): Int = Utils.abs(groupId.hashCode) % groupMetadataTopicPartitionCount
-}
-
-```
-
-
-
-## GroupCoordinator 相关元数据
-
-在介绍GroupCoordinator的原理之前，首先看看它维护了哪些数据。GroupCoordinator为每个consumer group保存元数据，由GroupMetadata类表示。GroupMetadata类保存了组里每个成员的元数据，由MemberMetadata类表示。
-
-MemberMetadata描述一个consumer的信息，它主要包含以下字段：
+MemberMetadata描述一个成员的信息，它主要包含以下字段：
 
 | 字段名             | 字段类型 | 字段含义                     |
 | ------------------ | -------- | ---------------------------- |
@@ -112,174 +37,110 @@ MemberMetadata描述一个consumer的信息，它主要包含以下字段：
 
 
 
-GroupMetadata描述了一个consumer group的信息，它主要包含以下字段：
+## 状态机
 
-| 字段名       | 字段类型            | 字段含义            |
-| ------------ | ------------------- | ------------------- |
-| generationId | 整数                | 版本号              |
-| members      | MemberMetadata 列表 | 组成员的元数据列表  |
-| leaderId     | 整数                | leader角色的成员 id |
+GroupMetadata 本身也是一个状态机，如下图所示：
+
+<img src="kafka-group-coordinator-state.svg">GroupMetadata 开始时的状态为 Empty，此时还没有一个成员。
+
+当有新的 consumer 申请加入到该组中，GroupMetadata 会将其信息保存起来，并且状态变为`PrepareRebalance`。
+
+kafka 会将第一个 consumer 任命为 leader，并且会等待一段时间，期待有新的 consumer 加入进来。当超过此段时间后，状态会变为`CompletingRebalance`。
+
+当处于`CompletingRebalance`状态时候，此时恰好又有新的 consumer 加入进来，那么会重新进入到`PrepareRebalance`中。
+
+kafka 服务端会将组成员的信息发送给 leader，然后leader进行分区分配，将结果发送给服务端。服务端在接受到了分配结果，状态变为`Stable`。
+
+当组内没有活动consumer时，可以被删除掉，此时状态就会变为`Dead`。
 
 
 
-GroupMetadata本身也是一个状态机，如下图所示：
+## 处理寻找 GroupCoordinator 地址请求
 
-<img src="kafka-group-coordinator-state.svg">
+每个topic 的`GroupCoordinator` 对应的节点是不相同的，这和`_consumer_offsets ` topic 有关系。这个 topic 是存储consumer group的消费位置，它的分区时按照 consumer group 名称来分的。一个 consumer group 订阅的所有 topic 的消费位置，只存在 一个分区里。而这个分区的 leader 副本所在的主机，就是负责该consumer group的 GroupCoordinator 的地址。
 
 
 
 ## 处理加入请求
 
-处理加入请求的过程比较复杂。我们下面沿着简单的流程依次介绍。按照GroupMetadata的状态，Empty --> PrepareRebalance --> CompletingRebalance --> Stable的方向。
+
 
 ### 处理请求
 
-对于加入请求的处理，最终是由 GroupCoordinator 的 handleJoinGroup 方法负责。它会首先检测请求参数和 group 状态，然后调用doJoinGroup方法处理请求。
+对于加入请求的处理，最终是由 GroupCoordinator 的 handleJoinGroup 方法负责。它会首先检测请求参数和 group 状态，然后调用doJoinGroup方法处理请求。下面的代码经过简化处理：
 
 ```scala
-class GroupCoordinator(） {
-    
-  def handleJoinGroup(groupId: String,
-                      memberId: String,
-                      clientId: String,
-                      clientHost: String,
-                      rebalanceTimeoutMs: Int,
-                      sessionTimeoutMs: Int,
-                      protocolType: String,
-                      protocols: List[(String, Array[Byte])],
-                      responseCallback: JoinCallback): Unit = {
-    // 检查group的状态
-    validateGroupStatus(groupId, ApiKeys.JOIN_GROUP).foreach { error =>
-      responseCallback(joinError(memberId, error))
-      return
-    }
-    // consumer的sessionTimeoutMs时间设置，必须在group组的设定范围内
-    if (sessionTimeoutMs < groupConfig.groupMinSessionTimeoutMs ||
-      sessionTimeoutMs > groupConfig.groupMaxSessionTimeoutMs) {
-      responseCallback(joinError(memberId, Errors.INVALID_SESSION_TIMEOUT))
+group.currentState match {
+    case Dead =>
+    responseCallback(joinError(memberId, Errors.UNKNOWN_MEMBER_ID))
+
+    case PreparingRebalance =>
+    // 如果是新成员加入，则调用addMemberAndRebalance方法处理
+    if (memberId == JoinGroupRequest.UNKNOWN_MEMBER_ID) {
+        addMemberAndRebalance(rebalanceTimeoutMs, sessionTimeoutMs, clientId, clientHost, protocolType,
+                              protocols, group, responseCallback)
     } else {
-      // 查看该group是否以前存在
-      groupManager.getGroup(groupId) match {
-        case None =>
-          // 如果是新的group，那么所有请求中的memberId必须为UNKNOWN_MEMBER_ID
-          if (memberId != JoinGroupRequest.UNKNOWN_MEMBER_ID) {
-            responseCallback(joinError(memberId, Errors.UNKNOWN_MEMBER_ID))
-          } else {
-            // 添加group，并且新建group的元数据
-            val group = groupManager.addGroup(new GroupMetadata(groupId, initialState = Empty))
-            // 调用doJoinGroup函数，处理请求
-            doJoinGroup(group, memberId, clientId, clientHost, rebalanceTimeoutMs, sessionTimeoutMs, protocolType, protocols, responseCallback)
-          }
-        case Some(group) =>
-          // 如果该group之前存在，那么直接调用doJoinGroup函数
-          doJoinGroup(group, memberId, clientId, clientHost, rebalanceTimeoutMs, sessionTimeoutMs, protocolType, protocols, responseCallback)
-      }
+        // 如果是旧有成员加入，则调用updateMemberAndRebalance方法处理
+        val member = group.get(memberId)
+        updateMemberAndRebalance(group, member, protocols, responseCallback)
     }
-  }  
-}
-```
 
-
-
-doJoinGroup方法会依据GroupMetadata的状态，做不同的处理。
-
-```scala
-private def doJoinGroup(group: GroupMetadata,
-                        memberId: String,
-                        clientId: String,
-                        clientHost: String,
-                        rebalanceTimeoutMs: Int,
-                        sessionTimeoutMs: Int,
-                        protocolType: String,   // 这里协议类型是 consumer
-                        protocols: List[(String, Array[Byte])],  // 支持的分配算法列表
-                        responseCallback: JoinCallback) {
-  group.inLock {
-    if (!group.is(Empty) && (!group.protocolType.contains(protocolType) || !group.supportsProtocols(protocols.map(_._1).toSet))) {
-      // 检查是否支持协议类型和分配算法
-      responseCallback(joinError(memberId, Errors.INCONSISTENT_GROUP_PROTOCOL))
-    } else if (group.is(Empty) && (protocols.isEmpty || protocolType.isEmpty)) {
-      // 检查group是否新建并且还未指定协议或分配算法
-      responseCallback(joinError(memberId, Errors.INCONSISTENT_GROUP_PROTOCOL))
-    } else if (memberId != JoinGroupRequest.UNKNOWN_MEMBER_ID && !group.has(memberId)) {
-      // 检查该成员是否在group里
-      responseCallback(joinError(memberId, Errors.UNKNOWN_MEMBER_ID))
+    case CompletingRebalance =>
+    // 如果是新成员加入，则调用addMemberAndRebalance方法处理
+    if (memberId == JoinGroupRequest.UNKNOWN_MEMBER_ID) {
+        addMemberAndRebalance(rebalanceTimeoutMs, sessionTimeoutMs, clientId, clientHost, protocolType,
+                              protocols, group, responseCallback)
     } else {
-      group.currentState match {
-        case Dead =>
-          // if the group is marked as dead, it means some other thread has just removed the group
-          // from the coordinator metadata; this is likely that the group has migrated to some other
-          // coordinator OR the group is in a transient unstable phase. Let the member retry
-          // joining without the specified member id,
-          responseCallback(joinError(memberId, Errors.UNKNOWN_MEMBER_ID))
-          
-        case PreparingRebalance =>
-          // 如果是新成员加入，则调用addMemberAndRebalance方法处理
-          if (memberId == JoinGroupRequest.UNKNOWN_MEMBER_ID) {
-            addMemberAndRebalance(rebalanceTimeoutMs, sessionTimeoutMs, clientId, clientHost, protocolType,
-              protocols, group, responseCallback)
-          } else {
-            // 如果是旧有成员加入，则调用updateMemberAndRebalance方法处理
-            val member = group.get(memberId)
-            updateMemberAndRebalance(group, member, protocols, responseCallback)
-          }
-
-        case CompletingRebalance =>
-          // 如果是新成员加入，则调用addMemberAndRebalance方法处理
-          if (memberId == JoinGroupRequest.UNKNOWN_MEMBER_ID) {
-            addMemberAndRebalance(rebalanceTimeoutMs, sessionTimeoutMs, clientId, clientHost, protocolType,
-              protocols, group, responseCallback)
-          } else {
-            val member = group.get(memberId)
-            if (member.matches(protocols)) {
-              // 成员之前已经发送了 JoinGroup请求，但是因为超时等原因，没有收到响应。
-              // 这里直接返回响应
-              responseCallback(JoinGroupResult(
+        val member = group.get(memberId)
+        if (member.matches(protocols)) {
+            // 成员之前已经发送了 JoinGroup请求，但是因为超时等原因，没有收到响应。
+            // 这里直接返回响应
+            responseCallback(JoinGroupResult(
                 members = if (group.isLeader(memberId)) {
-                  group.currentMemberMetadata
+                    group.currentMemberMetadata
                 } else {
-                  Map.empty
+                    Map.empty
                 },
                 memberId = memberId,
                 generationId = group.generationId,
                 subProtocol = group.protocolOrNull,
                 leaderId = group.leaderOrNull,
                 error = Errors.NONE))
-            } else {
-              // 成员的请求与上次请求不一致，说明是新的请求，需要重新平衡
-              updateMemberAndRebalance(group, member, protocols, responseCallback)
-            }
-          }
+        } else {
+            // 成员的请求与上次请求不一致，说明是新的请求，需要重新平衡
+            updateMemberAndRebalance(group, member, protocols, responseCallback)
+        }
+    }
 
-        case Empty | Stable =>
-          if (memberId == JoinGroupRequest.UNKNOWN_MEMBER_ID) {
-            // 如果是新加入的成员
-            addMemberAndRebalance(rebalanceTimeoutMs, sessionTimeoutMs, clientId, clientHost, protocolType,
-              protocols, group, responseCallback)
-          } else {
-            val member = group.get(memberId)
-            if (group.isLeader(memberId) || !member.matches(protocols)) {
-              // 如果是leader角色重新加入，那么需要重新平衡
-              // 如果该consumer的分配算法改变了，那么也需要重新平衡
-              updateMemberAndRebalance(group, member, protocols, responseCallback)
-            } else {
-              // 如果是旧有成员，并且是follower角色，而且与上次请求一样，
-              // 那么则直接返回与上次相同的响应
-              responseCallback(JoinGroupResult(
+    case Empty | Stable =>
+    if (memberId == JoinGroupRequest.UNKNOWN_MEMBER_ID) {
+        // 如果是新加入的成员
+        addMemberAndRebalance(rebalanceTimeoutMs, sessionTimeoutMs, clientId, clientHost, protocolType,
+                              protocols, group, responseCallback)
+    } else {
+        val member = group.get(memberId)
+        if (group.isLeader(memberId) || !member.matches(protocols)) {
+            // 如果是leader角色重新加入，那么需要重新平衡
+            // 如果该consumer的分配算法改变了，那么也需要重新平衡
+            updateMemberAndRebalance(group, member, protocols, responseCallback)
+        } else {
+            // 如果是旧有成员，并且是follower角色，而且与上次请求一样，
+            // 那么则直接返回与上次相同的响应
+            responseCallback(JoinGroupResult(
                 members = Map.empty,
                 memberId = memberId,
                 generationId = group.generationId,
                 subProtocol = group.protocolOrNull,
                 leaderId = group.leaderOrNull,
                 error = Errors.NONE))
-            }
-          }
-      }
-
-      if (group.is(PreparingRebalance))
-        // 尝试提前完成，加入请求
-        joinPurgatory.checkAndComplete(GroupKey(group.groupId))
+        }
     }
-  }
+}
+
+if (group.is(PreparingRebalance))
+// 尝试提前完成，加入请求
+joinPurgatory.checkAndComplete(GroupKey(group.groupId))
+}
 }
 ```
 
@@ -696,4 +557,14 @@ def onExpireHeartbeat(group: GroupMetadata, member: MemberMetadata, heartbeatDea
 }
 
 ```
+
+
+
+## Rebalance 通知
+
+当离开消费组时，Coordiantor 会进入Rebalance 状态。消费者通过心跳返回的响应，可以获取这一点。这时消费者就会重新发起一次 rebalance 流程。
+
+
+
+
 

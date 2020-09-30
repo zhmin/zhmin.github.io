@@ -160,7 +160,7 @@ private boolean canRetry(ProducerBatch batch, ProduceResponse.PartitionResponse 
 }
 ```
 
-
+最多重试次数由`retries`配置项指定，默认为 2147483647。
 
 ### 消息超时
 
