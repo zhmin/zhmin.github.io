@@ -153,7 +153,9 @@ consumer 会启动一个心跳线程，定时的向Coordinator发送心跳请求
 
 ### 心跳时间
 
-心跳的间隔时间由`heartbeat.interval.ms`配置项指定，默认为3秒。当长时间的没有收到心跳响应，consumer 就会认为超时了，它会认为 Coordinator 已经挂掉了，会将连接断开。这个超时由`session.timeout.ms`配置项指定，默认为10秒。
+心跳的间隔时间由`heartbeat.interval.ms`配置项指定，默认为3秒。也就是 consumer 会每隔 3秒，就会发送一次心跳。
+
+当长时间的没有收到心跳响应，consumer 就会认为超时了，它会认为 Coordinator 已经挂掉了，会将连接断开。这个超时由`session.timeout.ms`配置项指定，默认为10秒。
 
 这里额外提下 poll 超时的问题，kafka 规定两次 poll 的间隔时间必须要小于一定时间，不然会自动的离开 group。这个阈值由`max.poll.interval.ms`配置项指定，默认为5分钟。后面会讲到如何处理这个问题。
 
@@ -205,13 +207,37 @@ kafka 在获取到分区结果后，会调用`onPartitionsAssigned`方法，参�
 
 
 
-
-
 ## 数据版本
 
 我们观察到所有的请求都会携带`generation_id`参数，这是用来表示逻辑时间的。客户端可能因为没来及和服务端沟通，它的信息会落后。当服务端更新消费组的元数据后，`generation_id`就会加一。这样客户端和服务端请求时，服务端就能及时的提醒客户端的数据已经过时了，需要重新获取。
 
 
 
+## 线程关系
+
+KafkaConsumer 有两个最重要的成员，
+
+```java
+public class KafkaConsumer<K, V> implements Consumer<K, V> {
+    
+    // 负责rebalance的逻辑处理，还有提交offset
+    private final ConsumerCoordinator coordinator;
+    
+    // 负责拉取消息
+    private final Fetcher<K, V> fetcher;
+
+}
+```
+
+我们在使用 KafkaConsumer 时，会循坏的调用 poll 方法。这个方法的原理，其实调用了 coordinator.poll 处理 rebalance 流程，保证了 该 consumer 成功的加入到组。然后调用了 fetcher 来拉去消息，最后处理完消息后，通过 coordinator 来提交 offset。
 
 
+
+Kafka Consumer 一共有两个线程，
+
+1. 主线程，负责创建了KafkaConsumer，处理请求，并且处理消息。也就是我们自己编写的程序。
+2. 心跳线程，负责定期向服务端发送心跳
+
+主线程在调用 `KafkaConsumer.poll`方法时 ，会检查是否与服务端 GroupCoordinator 的连接是否是好的，是否需要 rebalance 操作。它会保证 consumer 能够成功加入到组里。
+
+心跳线程一个功能是通知服务端，自己还活着。另一方面是即使的获取服务端的状态，如果服务端处于 rebalance 状态，心跳线程会设置比较位。这样主线程在下次调用 poll 方法时，就会负责执行 rebalance 操作。

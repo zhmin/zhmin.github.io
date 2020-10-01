@@ -754,3 +754,9 @@ public final class ConsumerCoordinator extends AbstractCoordinator {
 
 
 这里额外说下使用自动提交的注意点。KafkaConsumer拉取消息时，会先自动向服务端提交offset请求。之后才真正的从Fetcher里拉取数据，而Fetcher在返回数据时，会更新分区的offset。所以如果开启了自动提交，在每次拉取消息后，一定要保证已经处理完这些消息，才去拉取新的消息。
+
+
+
+## 执行任务时间过长
+
+我们调用 poll 方法获取到消息之后，会立即处理请求。有时候消息的处理会比较久，导致两次 poll 之间的时间间隔太长，就会引起 rebalance 操作。为了避免这种情况，可以设置`max.poll.records`配置项，设置单次 poll 获取的消息。
