@@ -63,7 +63,7 @@ cluster模式下，ApplicationMaster 进程运行多个服务，dirver 服务和
 
 ### 请求资源大小
 
-AMEndpoint 启动后，当接收到了 driver 端的请求，就会向 ResourceManager 申请资源。每个 Container 申请的资源分为 cpu 和内存大小两个方面：
+AMEndpoint 启动后，当接收到了 driver 端的请求，就会向 ResourceManager 申请资源。每个 Executor 申请的资源分为 cpu 和内存大小两个方面：
 
 CPU 的数量由配置项 spark.executor.cores 指定。
 
@@ -123,3 +123,8 @@ private def prepareCommand(): List[String] = {
 
 spark 申请的初始内存只被用在堆上，所以还需要额外内存来用于其他地方，比如 jvm 管理的栈，和本地内存。spark 会用到本地内存来存储数据，或接收远端传来的 shuffle 数据。所以当 shuffle 数据较大时，可能造成本地内存过大，造成被 Yarn 杀死。这时你可以看到一条日志，意思是让你提高额外内存的大小，其实也就是提高本地内存的原理。
 
+
+
+### executor 数量
+
+spark 有个配置项`spark.executor.instances`可以设置 executor 的数量。ApplicationMaster 在申请 exector 资源时，会尽量让 executor 分配的 container 分布到对应的数据节点，这样允许它直接读取本地磁盘，避免了网络的开销。
