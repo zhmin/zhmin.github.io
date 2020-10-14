@@ -67,7 +67,7 @@ AMEndpoint 启动后，当接收到了 driver 端的请求，就会向 ResourceM
 
 CPU 的数量由配置项 spark.executor.cores 指定。
 
-内存大小 = 初始内存 + 额外内存。初始内存由配置项spark.executor.memory指定。 额外内存由 spark.yarn.executor.memoryOverhead 配置项指定，如果没有指定，那么就取值为初始内存大小的 10%，但是大小必须大于 384MB。
+内存大小 = 堆内存 + 额外内存。堆内存由配置项spark.executor.memory指定。 额外内存由 spark.yarn.executor.memoryOverhead 配置项指定，如果没有指定，那么就取值为初始内存大小的 10%，但是大小必须大于 384MB。
 
 ```scala
 // 初始内存，由配置项spark.executor.memory指定，默认为1GB
