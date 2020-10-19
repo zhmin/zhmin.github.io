@@ -9,6 +9,52 @@ categories: spark streaming
 
 Kafka作为一个消息队列，具有很高的吞吐量，和Spark Streaming结合起来，可以实现高速实时的流处理。Spark Streaming在以前的版本支持两种方式读取Kafka，一种是通过 receiver 读取的方式，另一种是直接读取的方式。基于 receiver 方式的读取因为不太稳定，已经被最新版遗弃了，所以下面只讲直接读取的方式。
 
+
+
+## 工作流程
+
+<img src="spark-streaming-kafka-direct.svg">
+
+
+
+consumer 消费的 offset，这里会直接存储到 kafka里（__consumer_offset topic）。
+
+1. driver 首先会从 kafka 获取消费组的 offset，然后生成 KafkaRDD，KafkaRDD里的每个分区对应了 kafka 中一个 topic partition 的一小段数据。
+2. executor 会根据这个信息，从 kafka 中读取对应的数据，注意到这里consumer使用的是 assign 分配模式，它不会去管理 offset。executor 读取到数据后，会进行相应的处理。
+3. driver 收到所有 executor 的处理成功消息后，会向 kafka 提交 offset。
+
+下面可以看看它的示例代码
+
+```java
+// kafka 配置项，这里只列出一些重要项
+Map<String, Object> kafkaParams = new HashMap<>();
+kafkaParams.put("bootstrap.servers", "localhost:9092,anotherhost:9092");
+kafkaParams.put("group.id", "my_consumer_group");
+kafkaParams.put("enable.auto.commit", false);
+
+Collection<String> topics = Arrays.asList("topicA", "topicB");
+
+// 创建 kafka stream
+JavaInputDStream<ConsumerRecord<String, String>> stream =
+  KafkaUtils.createDirectStream(
+    streamingContext,
+    LocationStrategies.PreferConsistent(),
+    ConsumerStrategies.<String, String>Subscribe(topics, kafkaParams)
+  );
+
+// 调用 foreachRDD 来处理
+stream.foreachRDD(rdd -> {
+  OffsetRange[] offsetRanges = ((HasOffsetRanges) rdd.rdd()).offsetRanges();  // 在 driver执行
+  rdd.mapPartitions( p -> {
+      // .... 处理 
+  })
+  // 等待executor执行完任务，driver 端负责提交offset
+  ((CanCommitOffsets) stream.inputDStream()).commitAsync(offsetRanges);
+});
+```
+
+
+
 ## Kafka数据流生成RDD
 
 Kafka数据输入流由DirectKafkaInputDStream类表示，它会定期生成RDD。DirectKafkaInputDStream每次生成RDD的数据，都是读取kafka对应的topic所有分区，自从上次提交的offset一直到最新的offset到的数据。
