@@ -1,0 +1,930 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+  xmlns:xhtml="http://www.w3.org/1999/xhtml">
+  
+  <url>
+    <loc>https://zhmin.github.io/posts/apache-orc-structure/</loc>
+    <lastmod>2021-09-12T11:48:25+08:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://zhmin.github.io/categories/</loc>
+    <lastmod>2021-09-13T12:53:25+08:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://zhmin.github.io/tags/orc/</loc>
+    <lastmod>2021-09-12T11:48:25+08:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://zhmin.github.io/categories/orc/</loc>
+    <lastmod>2021-09-12T11:48:25+08:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://zhmin.github.io/posts/</loc>
+    <lastmod>2021-09-13T12:53:25+08:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://zhmin.github.io/tags/</loc>
+    <lastmod>2021-09-13T12:53:25+08:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://zhmin.github.io/</loc>
+    <lastmod>2021-09-13T12:53:25+08:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://zhmin.github.io/posts/apache-orc-compress/</loc>
+    <lastmod>2021-09-12T11:48:25+08:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://zhmin.github.io/tags/hash/</loc>
+    <lastmod>2021-09-12T11:48:25+08:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://zhmin.github.io/tags/postgresql/</loc>
+    <lastmod>2021-09-12T11:48:25+08:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://zhmin.github.io/categories/postgresql/</loc>
+    <lastmod>2021-09-12T11:48:25+08:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://zhmin.github.io/posts/postgresql-dynamic-hash/</loc>
+    <lastmod>2021-09-12T11:48:25+08:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://zhmin.github.io/tags/buffer/</loc>
+    <lastmod>2021-09-12T11:48:25+08:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://zhmin.github.io/posts/postgresql-buffer-concurrent/</loc>
+    <lastmod>2021-09-12T11:48:25+08:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://zhmin.github.io/posts/postgresql-storage-architecture/</loc>
+    <lastmod>2021-09-12T11:48:25+08:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://zhmin.github.io/tags/storage/</loc>
+    <lastmod>2021-09-12T11:48:25+08:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://zhmin.github.io/posts/postgresql-toast/</loc>
+    <lastmod>2021-09-12T11:48:25+08:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://zhmin.github.io/posts/postgresql-varlena/</loc>
+    <lastmod>2021-09-12T11:48:25+08:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://zhmin.github.io/posts/blink-tree/</loc>
+    <lastmod>2021-09-12T11:48:25+08:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://zhmin.github.io/tags/b-tree/</loc>
+    <lastmod>2021-09-12T11:48:25+08:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://zhmin.github.io/tags/brin/</loc>
+    <lastmod>2021-09-12T11:48:25+08:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://zhmin.github.io/posts/postgresql-block-range-index/</loc>
+    <lastmod>2021-09-12T11:48:25+08:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://zhmin.github.io/posts/postgresql-physical-replication/</loc>
+    <lastmod>2021-09-12T11:48:25+08:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://zhmin.github.io/tags/replication/</loc>
+    <lastmod>2021-09-12T11:48:25+08:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://zhmin.github.io/posts/shiro-spring-boot/</loc>
+    <lastmod>2021-09-13T12:49:16+08:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://zhmin.github.io/tags/shiro/</loc>
+    <lastmod>2021-09-13T12:53:25+08:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://zhmin.github.io/categories/shiro/</loc>
+    <lastmod>2021-09-13T12:53:25+08:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://zhmin.github.io/posts/shiro-filter/</loc>
+    <lastmod>2021-09-13T12:53:25+08:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://zhmin.github.io/tags/filter/</loc>
+    <lastmod>2021-09-13T12:53:25+08:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://zhmin.github.io/posts/shiro-session/</loc>
+    <lastmod>2021-09-12T11:48:25+08:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://zhmin.github.io/tags/session/</loc>
+    <lastmod>2021-09-12T11:48:25+08:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://zhmin.github.io/posts/shiro-realm/</loc>
+    <lastmod>2021-09-12T11:48:25+08:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://zhmin.github.io/tags/realm/</loc>
+    <lastmod>2021-09-12T11:48:25+08:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://zhmin.github.io/posts/shiro-security-manager/</loc>
+    <lastmod>2021-09-12T11:48:25+08:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://zhmin.github.io/tags/securitymanager/</loc>
+    <lastmod>2021-09-12T11:48:25+08:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://zhmin.github.io/posts/shiro-subject/</loc>
+    <lastmod>2021-09-12T11:48:25+08:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://zhmin.github.io/posts/shiro-architecture/</loc>
+    <lastmod>2021-09-12T11:48:25+08:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://zhmin.github.io/tags/spring/</loc>
+    <lastmod>2021-09-12T11:48:25+08:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://zhmin.github.io/categories/spring/</loc>
+    <lastmod>2021-09-12T11:48:25+08:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://zhmin.github.io/posts/spring-data-query-annotation/</loc>
+    <lastmod>2021-09-12T11:48:25+08:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://zhmin.github.io/tags/openwrt/</loc>
+    <lastmod>2021-09-12T11:48:25+08:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://zhmin.github.io/categories/openwrt/</loc>
+    <lastmod>2021-09-12T11:48:25+08:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://zhmin.github.io/posts/openwrt-v2ray/</loc>
+    <lastmod>2021-09-12T11:48:25+08:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://zhmin.github.io/posts/postgresql-slru/</loc>
+    <lastmod>2021-09-12T11:48:25+08:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://zhmin.github.io/tags/slru/</loc>
+    <lastmod>2021-09-12T11:48:25+08:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://zhmin.github.io/tags/function/</loc>
+    <lastmod>2021-09-12T11:48:25+08:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://zhmin.github.io/posts/postgresql-c-function/</loc>
+    <lastmod>2021-09-12T11:48:25+08:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://zhmin.github.io/tags/bg-writer/</loc>
+    <lastmod>2021-09-12T11:48:25+08:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://zhmin.github.io/posts/postgresql-bg-writer/</loc>
+    <lastmod>2021-09-12T11:48:25+08:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://zhmin.github.io/tags/checkpoint/</loc>
+    <lastmod>2021-09-12T11:48:25+08:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://zhmin.github.io/posts/postgresql-checkpoint/</loc>
+    <lastmod>2021-09-12T11:48:25+08:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://zhmin.github.io/posts/postgresql-wal-format/</loc>
+    <lastmod>2021-09-12T11:48:25+08:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://zhmin.github.io/posts/postgresql-buffer-replace/</loc>
+    <lastmod>2021-09-12T11:48:25+08:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://zhmin.github.io/posts/postgresql-buffer-pool/</loc>
+    <lastmod>2021-09-12T11:48:25+08:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://zhmin.github.io/tags/lwlock/</loc>
+    <lastmod>2021-09-12T11:48:25+08:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://zhmin.github.io/posts/postgresql-lwlock/</loc>
+    <lastmod>2021-09-12T11:48:25+08:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://zhmin.github.io/tags/page/</loc>
+    <lastmod>2021-09-12T11:48:25+08:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://zhmin.github.io/posts/postgresql-buffer-page/</loc>
+    <lastmod>2021-09-12T11:48:25+08:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://zhmin.github.io/tags/fsm/</loc>
+    <lastmod>2021-09-12T11:48:25+08:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://zhmin.github.io/posts/postgresql-fsm-file/</loc>
+    <lastmod>2021-09-12T11:48:25+08:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://zhmin.github.io/posts/postgresql-storage-interface/</loc>
+    <lastmod>2021-09-12T11:48:25+08:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://zhmin.github.io/tags/zab/</loc>
+    <lastmod>2021-09-12T11:48:25+08:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://zhmin.github.io/tags/zookeeper/</loc>
+    <lastmod>2021-09-12T11:48:25+08:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://zhmin.github.io/categories/zookeeper/</loc>
+    <lastmod>2021-09-12T11:48:25+08:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://zhmin.github.io/posts/zookeeper-zab/</loc>
+    <lastmod>2021-09-12T11:48:25+08:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://zhmin.github.io/tags/paxos/</loc>
+    <lastmod>2021-09-12T11:48:25+08:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://zhmin.github.io/posts/paxos/</loc>
+    <lastmod>2021-09-12T11:48:25+08:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://zhmin.github.io/tags/curator/</loc>
+    <lastmod>2021-09-12T11:48:25+08:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://zhmin.github.io/posts/zookeeper-curator/</loc>
+    <lastmod>2021-09-12T11:48:25+08:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://zhmin.github.io/tags/client/</loc>
+    <lastmod>2021-09-12T11:48:25+08:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://zhmin.github.io/posts/zookeeper-client/</loc>
+    <lastmod>2021-09-12T11:48:25+08:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://zhmin.github.io/posts/leveldb-thought/</loc>
+    <lastmod>2021-09-12T11:48:25+08:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://zhmin.github.io/tags/leveldb/</loc>
+    <lastmod>2021-09-12T11:48:25+08:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://zhmin.github.io/categories/leveldb/</loc>
+    <lastmod>2021-09-12T11:48:25+08:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://zhmin.github.io/tags/external-shuffle-service/</loc>
+    <lastmod>2021-09-12T11:48:25+08:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://zhmin.github.io/tags/spark/</loc>
+    <lastmod>2021-09-12T11:48:25+08:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://zhmin.github.io/categories/spark/</loc>
+    <lastmod>2021-09-12T11:48:25+08:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://zhmin.github.io/posts/spark-external-shuffle-service/</loc>
+    <lastmod>2021-09-12T11:48:25+08:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://zhmin.github.io/tags/reader/</loc>
+    <lastmod>2021-09-12T11:48:25+08:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://zhmin.github.io/tags/shuffle/</loc>
+    <lastmod>2021-09-12T11:48:25+08:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://zhmin.github.io/posts/spark-shuffle-reader/</loc>
+    <lastmod>2021-09-12T11:48:25+08:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://zhmin.github.io/tags/netty/</loc>
+    <lastmod>2021-09-12T11:48:25+08:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://zhmin.github.io/tags/protocol/</loc>
+    <lastmod>2021-09-12T11:48:25+08:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://zhmin.github.io/posts/spark-rpc-protocol/</loc>
+    <lastmod>2021-09-12T11:48:25+08:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://zhmin.github.io/tags/kafka/</loc>
+    <lastmod>2021-09-12T11:48:25+08:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://zhmin.github.io/categories/kafka/</loc>
+    <lastmod>2021-09-12T11:48:25+08:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://zhmin.github.io/posts/kafka-client-buffer-manage/</loc>
+    <lastmod>2021-09-12T11:48:25+08:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://zhmin.github.io/tags/benchmark/</loc>
+    <lastmod>2021-09-12T11:48:25+08:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://zhmin.github.io/tags/ycsb/</loc>
+    <lastmod>2021-09-12T11:48:25+08:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://zhmin.github.io/categories/%E5%9F%BA%E5%87%86%E6%B5%8B%E8%AF%95/</loc>
+    <lastmod>2021-09-12T11:48:25+08:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://zhmin.github.io/posts/ycsb/</loc>
+    <lastmod>2021-09-12T11:48:25+08:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://zhmin.github.io/tags/expression/</loc>
+    <lastmod>2021-09-12T11:48:25+08:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://zhmin.github.io/tags/spark-sql/</loc>
+    <lastmod>2021-09-12T11:48:25+08:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://zhmin.github.io/categories/spark-sql/</loc>
+    <lastmod>2021-09-12T11:48:25+08:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://zhmin.github.io/posts/spark-sql-expression/</loc>
+    <lastmod>2021-09-12T11:48:25+08:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://zhmin.github.io/tags/logical-plan/</loc>
+    <lastmod>2021-09-12T11:48:25+08:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://zhmin.github.io/posts/spark-sql-logicalplan/</loc>
+    <lastmod>2021-09-12T11:48:25+08:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://zhmin.github.io/posts/spark-sql-treenode/</loc>
+    <lastmod>2021-09-12T11:48:25+08:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://zhmin.github.io/tags/bulkload/</loc>
+    <lastmod>2021-09-12T11:48:25+08:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://zhmin.github.io/tags/hbase/</loc>
+    <lastmod>2021-09-12T11:48:25+08:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://zhmin.github.io/categories/hbase/</loc>
+    <lastmod>2021-09-12T11:48:25+08:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://zhmin.github.io/posts/hbase-bulkload/</loc>
+    <lastmod>2021-09-12T11:48:25+08:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://zhmin.github.io/posts/kafka-transaction/</loc>
+    <lastmod>2021-09-12T11:48:25+08:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://zhmin.github.io/tags/transaction/</loc>
+    <lastmod>2021-09-12T11:48:25+08:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://zhmin.github.io/posts/antlr4-tutorial/</loc>
+    <lastmod>2021-09-12T11:48:25+08:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://zhmin.github.io/tags/antrl4/</loc>
+    <lastmod>2021-09-12T11:48:25+08:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://zhmin.github.io/categories/antrl4/</loc>
+    <lastmod>2021-09-12T11:48:25+08:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://zhmin.github.io/posts/kafka-schema-registry/</loc>
+    <lastmod>2021-09-12T11:48:25+08:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://zhmin.github.io/tags/registry/</loc>
+    <lastmod>2021-09-12T11:48:25+08:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://zhmin.github.io/tags/schema/</loc>
+    <lastmod>2021-09-12T11:48:25+08:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://zhmin.github.io/tags/consumer/</loc>
+    <lastmod>2021-09-12T11:48:25+08:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://zhmin.github.io/posts/kafka-consumer-transaction/</loc>
+    <lastmod>2021-09-12T11:48:25+08:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://zhmin.github.io/tags/idempotence/</loc>
+    <lastmod>2021-09-12T11:48:25+08:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://zhmin.github.io/posts/kafka-producer-idempotence/</loc>
+    <lastmod>2021-09-12T11:48:25+08:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://zhmin.github.io/tags/producer/</loc>
+    <lastmod>2021-09-12T11:48:25+08:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://zhmin.github.io/posts/kafka-consumer-offset/</loc>
+    <lastmod>2021-09-12T11:48:25+08:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://zhmin.github.io/tags/offset/</loc>
+    <lastmod>2021-09-12T11:48:25+08:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://zhmin.github.io/tags/cdh/</loc>
+    <lastmod>2021-09-12T11:48:25+08:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://zhmin.github.io/posts/spark-sql-cdh/</loc>
+    <lastmod>2021-09-12T11:48:25+08:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://zhmin.github.io/tags/coordinator/</loc>
+    <lastmod>2021-09-12T11:48:25+08:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://zhmin.github.io/posts/kafka-group-coordinator/</loc>
+    <lastmod>2021-09-12T11:48:25+08:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://zhmin.github.io/tags/delay/</loc>
+    <lastmod>2021-09-12T11:48:25+08:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://zhmin.github.io/posts/kafka-timer/</loc>
+    <lastmod>2021-09-12T11:48:25+08:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://zhmin.github.io/tags/timer/</loc>
+    <lastmod>2021-09-12T11:48:25+08:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://zhmin.github.io/posts/kafka-consumer-coordinator/</loc>
+    <lastmod>2021-09-12T11:48:25+08:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://zhmin.github.io/posts/kafka-consumer-network-client/</loc>
+    <lastmod>2021-09-12T11:48:25+08:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://zhmin.github.io/tags/network/</loc>
+    <lastmod>2021-09-12T11:48:25+08:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://zhmin.github.io/posts/kafka-producer/</loc>
+    <lastmod>2021-09-12T11:48:25+08:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://zhmin.github.io/posts/kafka-metadata/</loc>
+    <lastmod>2021-09-12T11:48:25+08:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://zhmin.github.io/tags/metadata/</loc>
+    <lastmod>2021-09-12T11:48:25+08:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://zhmin.github.io/posts/kafka-networkclient/</loc>
+    <lastmod>2021-09-12T11:48:25+08:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://zhmin.github.io/posts/kafka-protocol/</loc>
+    <lastmod>2021-09-12T11:48:25+08:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://zhmin.github.io/tags/spark-rpc-%E6%9C%8D%E5%8A%A1%E7%AB%AF%E5%8E%9F%E7%90%86/</loc>
+    <lastmod>2021-09-12T11:48:25+08:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://zhmin.github.io/posts/spark-rpc-server/</loc>
+    <lastmod>2021-09-12T11:48:25+08:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://zhmin.github.io/categories/spark-streaming/</loc>
+    <lastmod>2021-09-12T11:48:25+08:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://zhmin.github.io/posts/spark-streaming-kafka/</loc>
+    <lastmod>2021-09-12T11:48:25+08:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://zhmin.github.io/tags/streaming/</loc>
+    <lastmod>2021-09-12T11:48:25+08:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://zhmin.github.io/tags/job/</loc>
+    <lastmod>2021-09-12T11:48:25+08:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://zhmin.github.io/posts/spark-streaming-job-flow/</loc>
+    <lastmod>2021-09-12T11:48:25+08:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://zhmin.github.io/posts/spark-streaming-wal/</loc>
+    <lastmod>2021-09-12T11:48:25+08:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://zhmin.github.io/tags/wal/</loc>
+    <lastmod>2021-09-12T11:48:25+08:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://zhmin.github.io/tags/receiver/</loc>
+    <lastmod>2021-09-12T11:48:25+08:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://zhmin.github.io/posts/spark-streaming-receiver/</loc>
+    <lastmod>2021-09-12T11:48:25+08:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://zhmin.github.io/tags/sortshufflewriter/</loc>
+    <lastmod>2021-09-12T11:48:25+08:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://zhmin.github.io/posts/spark-shuffle-sort-writer-2/</loc>
+    <lastmod>2021-09-12T11:48:25+08:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://zhmin.github.io/tags/aggregator/</loc>
+    <lastmod>2021-09-12T11:48:25+08:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://zhmin.github.io/posts/spark-shuffle-aggregator/</loc>
+    <lastmod>2021-09-12T11:48:25+08:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://zhmin.github.io/tags/shuffle-writer/</loc>
+    <lastmod>2021-09-12T11:48:25+08:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://zhmin.github.io/posts/spark-unsafe-shuffle-writer/</loc>
+    <lastmod>2021-09-12T11:48:25+08:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://zhmin.github.io/posts/spark-shuffle-writer/</loc>
+    <lastmod>2021-09-12T11:48:25+08:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://zhmin.github.io/tags/writer/</loc>
+    <lastmod>2021-09-12T11:48:25+08:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://zhmin.github.io/posts/spark-executor/</loc>
+    <lastmod>2021-09-12T11:48:25+08:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://zhmin.github.io/tags/mapoutputtracker/</loc>
+    <lastmod>2021-09-12T11:48:25+08:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://zhmin.github.io/posts/spark-map-output-tracker/</loc>
+    <lastmod>2021-09-12T11:48:25+08:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://zhmin.github.io/tags/memory/</loc>
+    <lastmod>2021-09-12T11:48:25+08:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://zhmin.github.io/posts/spark-memory-manager/</loc>
+    <lastmod>2021-09-12T11:48:25+08:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://zhmin.github.io/tags/rpc/</loc>
+    <lastmod>2021-09-12T11:48:25+08:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://zhmin.github.io/posts/spark-rpc-client/</loc>
+    <lastmod>2021-09-12T11:48:25+08:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://zhmin.github.io/posts/spark-rpc-flow/</loc>
+    <lastmod>2021-09-12T11:48:25+08:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://zhmin.github.io/tags/serializer/</loc>
+    <lastmod>2021-09-12T11:48:25+08:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://zhmin.github.io/posts/spark-serializer/</loc>
+    <lastmod>2021-09-12T11:48:25+08:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://zhmin.github.io/tags/partitioner/</loc>
+    <lastmod>2021-09-12T11:48:25+08:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://zhmin.github.io/posts/spark-partitioner/</loc>
+    <lastmod>2021-09-12T11:48:25+08:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://zhmin.github.io/tags/dependency/</loc>
+    <lastmod>2021-09-12T11:48:25+08:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://zhmin.github.io/tags/rdd/</loc>
+    <lastmod>2021-09-12T11:48:25+08:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://zhmin.github.io/posts/spark-rdd-dependency/</loc>
+    <lastmod>2021-09-12T11:48:25+08:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://zhmin.github.io/posts/spark-on-yarn/</loc>
+    <lastmod>2021-09-12T11:48:25+08:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://zhmin.github.io/tags/yarn/</loc>
+    <lastmod>2021-09-12T11:48:25+08:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://zhmin.github.io/tags/datax/</loc>
+    <lastmod>2021-09-12T11:48:25+08:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://zhmin.github.io/categories/datax/</loc>
+    <lastmod>2021-09-12T11:48:25+08:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://zhmin.github.io/posts/datax-job/</loc>
+    <lastmod>2021-09-12T11:48:25+08:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://zhmin.github.io/tags/task/</loc>
+    <lastmod>2021-09-12T11:48:25+08:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://zhmin.github.io/tags/data/</loc>
+    <lastmod>2021-09-12T11:48:25+08:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://zhmin.github.io/posts/datax-plugin/</loc>
+    <lastmod>2021-09-12T11:48:25+08:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://zhmin.github.io/tags/plugin/</loc>
+    <lastmod>2021-09-12T11:48:25+08:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://zhmin.github.io/posts/datax-flow/</loc>
+    <lastmod>2021-09-12T11:48:25+08:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://zhmin.github.io/posts/datax-statistics/</loc>
+    <lastmod>2021-09-12T11:48:25+08:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://zhmin.github.io/tags/statistics/</loc>
+    <lastmod>2021-09-12T11:48:25+08:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://zhmin.github.io/tags/memory-leak/</loc>
+    <lastmod>2021-09-12T11:48:25+08:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://zhmin.github.io/tags/python/</loc>
+    <lastmod>2021-09-12T11:48:25+08:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://zhmin.github.io/categories/python/</loc>
+    <lastmod>2021-09-12T11:48:25+08:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://zhmin.github.io/posts/python-meomory-leak/</loc>
+    <lastmod>2021-09-12T11:48:25+08:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://zhmin.github.io/tags/channel/</loc>
+    <lastmod>2021-09-12T11:48:25+08:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://zhmin.github.io/posts/datax-channel/</loc>
+    <lastmod>2021-09-12T11:48:25+08:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://zhmin.github.io/posts/datax-ratelimiter-bug/</loc>
+    <lastmod>2021-09-12T11:48:25+08:00</lastmod>
+  </url>
+  
+</urlset>

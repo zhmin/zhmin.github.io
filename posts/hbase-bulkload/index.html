@@ -1,0 +1,1152 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+    <head prefix="og: http://ogp.me/ns# article: http://ogp.me/ns/article#">
+    <meta charset="UTF-8" />
+
+    <meta name="generator" content="Hugo 0.79.0" /><meta name="theme-color" content="#fff" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    
+    <meta name="format-detection" content="telephone=no, date=no, address=no, email=no" />
+    
+    <meta http-equiv="Cache-Control" content="no-transform" />
+    
+    <meta http-equiv="Cache-Control" content="no-siteapp" />
+
+    <title>Hbase Bulkload 原理 | 学习笔记</title>
+
+    <link rel="stylesheet" href="/css/meme.min.81031e6b78ad2f1f534002ebb3b658886fea2f25d8a44d296d1466a2fe52f1c1.css"/>
+
+    
+    
+        <script src="/js/meme.min.120d98bb614adc6beb13bf79f943d2cceffd323f4de1544029228c3dca2e9bda.js"></script>
+
+    
+
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=EB&#43;Garamond:ital,wght@0,400;0,500;0,700;1,400;1,700&amp;family=Noto&#43;Serif&#43;SC:wght@400;500;700&amp;family=Source&#43;Code&#43;Pro:ital,wght@0,400;0,700;1,400;1,700&amp;display=swap" media="print" onload="this.media='all'" />
+        <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=EB&#43;Garamond:ital,wght@0,400;0,500;0,700;1,400;1,700&amp;family=Noto&#43;Serif&#43;SC:wght@400;500;700&amp;family=Source&#43;Code&#43;Pro:ital,wght@0,400;0,700;1,400;1,700&amp;display=swap" /></noscript>
+
+    <meta name="author" content="zhmin" /><meta name="description" content="Hbase Bulkload 原理 当需要大批量的向Hbase导入数据时，我们可以使用Hbase Bulkload的方式，这种方式是先生成Hbase的底层存储文件 HFile，然后直接将这些 HFile 移动到Hbase的存储目录下。它相比调用……" />
+
+    <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon" />
+    <link rel="mask-icon" href="/icons/safari-pinned-tab.svg" color="#2a6df4" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/icons/apple-touch-icon.png" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-title" content="学习笔记" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="application-name" content="学习笔记" />
+    <meta name="msapplication-starturl" content="../../" />
+    <meta name="msapplication-TileColor" content="#fff" />
+    <meta name="msapplication-TileImage" content="../../icons/mstile-150x150.png" />
+    <link rel="manifest" href="/manifest.json" />
+
+    
+    
+
+    
+    <link rel="canonical" href="https://zhmin.github.io/posts/hbase-bulkload/" />
+    
+
+<script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "BlogPosting",
+        "datePublished": "2019-06-01T22:09:05+00:00",
+        "dateModified": "2021-09-12T11:48:25+08:00",
+        "url": "https://zhmin.github.io/posts/hbase-bulkload/",
+        "headline": "Hbase Bulkload 原理",
+        "description": "Hbase Bulkload 原理 当需要大批量的向Hbase导入数据时，我们可以使用Hbase Bulkload的方式，这种方式是先生成Hbase的底层存储文件 HFile，然后直接将这些 HFile 移动到Hbase的存储目录下。它相比调用……",
+        "inLanguage" : "zh-CN",
+        "articleSection": "posts",
+        "wordCount":  5794 ,
+        "image": "https://zhmin.github.io/icons/apple-touch-icon.png",
+        "author": {
+            "@type": "Person",
+            "description": "无问西东",
+            "image": "https://zhmin.github.io/icons/apple-touch-icon.png",
+            "url": "https://zhmin.github.io/",
+            "name": "zhmin"
+        },
+        "publisher": {
+            "@type": "Organization",
+            "name": "学习笔记",
+            "logo": {
+                "@type": "ImageObject",
+                "url": "https://zhmin.github.io/icons/apple-touch-icon.png"
+            },
+            "url": "https://zhmin.github.io/"
+        },
+        "mainEntityOfPage": {
+            "@type": "WebSite",
+            "@id": "https://zhmin.github.io/"
+        }
+    }
+</script>
+
+    
+    
+
+
+
+<meta property="og:title" content="Hbase Bulkload 原理" />
+<meta property="og:description" content="Hbase Bulkload 原理 当需要大批量的向Hbase导入数据时，我们可以使用Hbase Bulkload的方式，这种方式是先生成Hbase的底层存储文件 HFile，然后直接将这些 HFile 移动到Hbase的存储目录下。它相比调用……" />
+<meta property="og:url" content="https://zhmin.github.io/posts/hbase-bulkload/" />
+<meta property="og:site_name" content="学习笔记" />
+<meta property="og:locale" content="zh" /><meta property="og:image" content="https://zhmin.github.io/icons/apple-touch-icon.png" />
+    <meta property="og:type" content="article" />
+    <meta property="article:published_time" content="2019-06-01T22:09:05&#43;00:00" />
+    <meta property="article:modified_time" content="2021-09-12T11:48:25&#43;08:00" />
+    
+    <meta property="article:section" content="posts" />
+
+
+
+    
+    
+
+    
+</head>
+
+    <body>
+        <div class="container">
+            
+    <header class="header">
+        
+            <div class="header-wrapper">
+                <div class="header-inner single">
+                    
+    <div class="site-brand">
+        
+            <a href="/" class="brand">学习笔记</a>
+        
+    </div>
+
+                    <nav class="nav">
+    <ul class="menu" id="menu">
+        
+            
+        
+        
+        
+        
+            
+                <li class="menu-item"><a href="/posts/"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon archive"><path d="M32 448c0 17.7 14.3 32 32 32h384c17.7 0 32-14.3 32-32V160H32v288zm160-212c0-6.6 5.4-12 12-12h104c6.6 0 12 5.4 12 12v8c0 6.6-5.4 12-12 12H204c-6.6 0-12-5.4-12-12v-8zM480 32H32C14.3 32 0 46.3 0 64v48c0 8.8 7.2 16 16 16h480c8.8 0 16-7.2 16-16V64c0-17.7-14.3-32-32-32z"/></svg><span class="menu-item-name">文章</span></a>
+                </li>
+            
+        
+            
+                <li class="menu-item"><a href="/categories/"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon th"><path d="M149.333 56v80c0 13.255-10.745 24-24 24H24c-13.255 0-24-10.745-24-24V56c0-13.255 10.745-24 24-24h101.333c13.255 0 24 10.745 24 24zm181.334 240v-80c0-13.255-10.745-24-24-24H205.333c-13.255 0-24 10.745-24 24v80c0 13.255 10.745 24 24 24h101.333c13.256 0 24.001-10.745 24.001-24zm32-240v80c0 13.255 10.745 24 24 24H488c13.255 0 24-10.745 24-24V56c0-13.255-10.745-24-24-24H386.667c-13.255 0-24 10.745-24 24zm-32 80V56c0-13.255-10.745-24-24-24H205.333c-13.255 0-24 10.745-24 24v80c0 13.255 10.745 24 24 24h101.333c13.256 0 24.001-10.745 24.001-24zm-205.334 56H24c-13.255 0-24 10.745-24 24v80c0 13.255 10.745 24 24 24h101.333c13.255 0 24-10.745 24-24v-80c0-13.255-10.745-24-24-24zM0 376v80c0 13.255 10.745 24 24 24h101.333c13.255 0 24-10.745 24-24v-80c0-13.255-10.745-24-24-24H24c-13.255 0-24 10.745-24 24zm386.667-56H488c13.255 0 24-10.745 24-24v-80c0-13.255-10.745-24-24-24H386.667c-13.255 0-24 10.745-24 24v80c0 13.255 10.745 24 24 24zm0 160H488c13.255 0 24-10.745 24-24v-80c0-13.255-10.745-24-24-24H386.667c-13.255 0-24 10.745-24 24v80c0 13.255 10.745 24 24 24zM181.333 376v80c0 13.255 10.745 24 24 24h101.333c13.255 0 24-10.745 24-24v-80c0-13.255-10.745-24-24-24H205.333c-13.255 0-24 10.745-24 24z"/></svg><span class="menu-item-name">分类</span></a>
+                </li>
+            
+        
+            
+                <li class="menu-item"><a href="/tags/"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512" class="icon tags"><path d="M497.941 225.941L286.059 14.059A48 48 0 0 0 252.118 0H48C21.49 0 0 21.49 0 48v204.118a48 48 0 0 0 14.059 33.941l211.882 211.882c18.744 18.745 49.136 18.746 67.882 0l204.118-204.118c18.745-18.745 18.745-49.137 0-67.882zM112 160c-26.51 0-48-21.49-48-48s21.49-48 48-48 48 21.49 48 48-21.49 48-48 48zm513.941 133.823L421.823 497.941c-18.745 18.745-49.137 18.745-67.882 0l-.36-.36L527.64 323.522c16.999-16.999 26.36-39.6 26.36-63.64s-9.362-46.641-26.36-63.64L331.397 0h48.721a48 48 0 0 1 33.941 14.059l211.882 211.882c18.745 18.745 18.745 49.137 0 67.882z"/></svg><span class="menu-item-name">标签</span></a>
+                </li>
+            
+        
+            
+                <li class="menu-item"><a href="/about/"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512" class="icon user-circle"><path d="M248 8C111 8 0 119 0 256s111 248 248 248 248-111 248-248S385 8 248 8zm0 96c48.6 0 88 39.4 88 88s-39.4 88-88 88-88-39.4-88-88 39.4-88 88-88zm0 344c-58.7 0-111.3-26.6-146.5-68.2 18.8-35.4 55.6-59.8 98.5-59.8 2.4 0 4.8.4 7.1 1.1 13 4.2 26.6 6.9 40.9 6.9 14.3 0 28-2.7 40.9-6.9 2.3-.7 4.7-1.1 7.1-1.1 42.9 0 79.7 24.4 98.5 59.8C359.3 421.4 306.7 448 248 448z"/></svg><span class="menu-item-name">关于</span></a>
+                </li>
+            
+        
+            
+                
+                    
+                    
+                        <li class="menu-item">
+                            <a id="theme-switcher" href="#"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon theme-icon-light"><path d="M193.2 104.5l48.8-97.5a18 18 0 0128 0l48.8 97.5 103.4 -34.5a18 18 0 0119.8 19.8l-34.5 103.4l97.5 48.8a18 18 0 010 28l-97.5 48.8 34.5 103.4a18 18 0 01-19.8 19.8l-103.4-34.5-48.8 97.5a18 18 0 01-28 0l-48.8-97.5l-103.4 34.5a18 18 0 01-19.8-19.8l34.5-103.4-97.5-48.8a18 18 0 010-28l97.5-48.8-34.5-103.4a18 18 0 0119.8-19.8zM256 128a128 128 0 10.01 0M256 160a96 96 0 10.01 0"/></svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon theme-icon-dark"><path d="M27 412a256 256 0 10154-407a11.5 11.5 0 00-5 20a201.5 201.5 0 01-134 374a11.5 11.5 0 00-15 13"/></svg></a>
+                        </li>
+                    
+                
+            
+        
+            
+                
+            
+        
+    </ul>
+</nav>
+
+                    
+                </div>
+            </div>
+            
+    <input type="checkbox" id="nav-toggle" aria-hidden="true" />
+    <label for="nav-toggle" class="nav-toggle"></label>
+    <label for="nav-toggle" class="nav-curtain"></label>
+
+
+        
+    </header>
+
+
+
+
+            
+            
+    <main class="main single" id="main">
+    <div class="main-inner">
+
+        
+
+        <article class="content post h-entry" data-align="justify" data-type="posts" data-toc-num="true">
+
+            <h1 class="post-title p-name">Hbase Bulkload 原理</h1>
+
+            
+
+            
+                
+            
+
+            
+                
+
+<div class="post-meta">
+    
+        
+        <time datetime="2019-06-01T22:09:05&#43;00:00" class="post-meta-item published dt-published"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512" class="icon post-meta-icon"><path d="M148 288h-40c-6.6 0-12-5.4-12-12v-40c0-6.6 5.4-12 12-12h40c6.6 0 12 5.4 12 12v40c0 6.6-5.4 12-12 12zm108-12v-40c0-6.6-5.4-12-12-12h-40c-6.6 0-12 5.4-12 12v40c0 6.6 5.4 12 12 12h40c6.6 0 12-5.4 12-12zm96 0v-40c0-6.6-5.4-12-12-12h-40c-6.6 0-12 5.4-12 12v40c0 6.6 5.4 12 12 12h40c6.6 0 12-5.4 12-12zm-96 96v-40c0-6.6-5.4-12-12-12h-40c-6.6 0-12 5.4-12 12v40c0 6.6 5.4 12 12 12h40c6.6 0 12-5.4 12-12zm-96 0v-40c0-6.6-5.4-12-12-12h-40c-6.6 0-12 5.4-12 12v40c0 6.6 5.4 12 12 12h40c6.6 0 12-5.4 12-12zm192 0v-40c0-6.6-5.4-12-12-12h-40c-6.6 0-12 5.4-12 12v40c0 6.6 5.4 12 12 12h40c6.6 0 12-5.4 12-12zm96-260v352c0 26.5-21.5 48-48 48H48c-26.5 0-48-21.5-48-48V112c0-26.5 21.5-48 48-48h48V12c0-6.6 5.4-12 12-12h40c6.6 0 12 5.4 12 12v52h128V12c0-6.6 5.4-12 12-12h40c6.6 0 12 5.4 12 12v52h48c26.5 0 48 21.5 48 48zm-48 346V160H48v298c0 3.3 2.7 6 6 6h340c3.3 0 6-2.7 6-6z"/></svg>&nbsp;2019.6.1</time>
+    
+    
+    
+    
+        
+        
+        
+            
+                <span class="post-meta-item category"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon post-meta-icon"><path d="M464 128H272l-54.63-54.63c-6-6-14.14-9.37-22.63-9.37H48C21.49 64 0 85.49 0 112v288c0 26.51 21.49 48 48 48h416c26.51 0 48-21.49 48-48V176c0-26.51-21.49-48-48-48zm0 272H48V112h140.12l54.63 54.63c6 6 14.14 9.37 22.63 9.37H464v224z"/></svg>&nbsp;<a href="/categories/hbase/" class="category-link p-category">hbase</a></span>
+            
+        
+    
+    
+        
+        <span class="post-meta-item wordcount"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon post-meta-icon"><path d="M497.9 142.1l-46.1 46.1c-4.7 4.7-12.3 4.7-17 0l-111-111c-4.7-4.7-4.7-12.3 0-17l46.1-46.1c18.7-18.7 49.1-18.7 67.9 0l60.1 60.1c18.8 18.7 18.8 49.1 0 67.9zM284.2 99.8L21.6 362.4.4 483.9c-2.9 16.4 11.4 30.6 27.8 27.8l121.5-21.3 262.6-262.6c4.7-4.7 4.7-12.3 0-17l-111-111c-4.8-4.7-12.4-4.7-17.1 0zM124.1 339.9c-5.5-5.5-5.5-14.3 0-19.8l154-154c5.5-5.5 14.3-5.5 19.8 0s5.5 14.3 0 19.8l-154 154c-5.5 5.5-14.3 5.5-19.8 0zM88 424h48v36.3l-64.5 11.3-31.1-31.1L51.7 376H88v48z"/></svg>&nbsp;5794</span>
+    
+    
+        
+        <span class="post-meta-item reading-time"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon post-meta-icon"><path d="M256 8C119 8 8 119 8 256s111 248 248 248 248-111 248-248S393 8 256 8zm0 448c-110.5 0-200-89.5-200-200S145.5 56 256 56s200 89.5 200 200-89.5 200-200 200zm61.8-104.4l-84.9-61.7c-3.1-2.3-4.9-5.9-4.9-9.7V116c0-6.6 5.4-12 12-12h32c6.6 0 12 5.4 12 12v141.7l66.8 48.6c5.4 3.9 6.5 11.4 2.6 16.8L334.6 349c-3.9 5.3-11.4 6.5-16.8 2.6z"/></svg>&nbsp;12&nbsp;分钟</span>
+    
+    
+    
+</div>
+
+            
+
+            <div class="post-body e-content">
+                <h1 id="hbase-bulkload-原理"><a href="#hbase-bulkload-原理" class="anchor-link"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon anchor-icon"><path d="M326.612 185.391c59.747 59.809 58.927 155.698.36 214.59-.11.12-.24.25-.36.37l-67.2 67.2c-59.27 59.27-155.699 59.262-214.96 0-59.27-59.26-59.27-155.7 0-214.96l37.106-37.106c9.84-9.84 26.786-3.3 27.294 10.606.648 17.722 3.826 35.527 9.69 52.721 1.986 5.822.567 12.262-3.783 16.612l-13.087 13.087c-28.026 28.026-28.905 73.66-1.155 101.96 28.024 28.579 74.086 28.749 102.325.51l67.2-67.19c28.191-28.191 28.073-73.757 0-101.83-3.701-3.694-7.429-6.564-10.341-8.569a16.037 16.037 0 0 1-6.947-12.606c-.396-10.567 3.348-21.456 11.698-29.806l21.054-21.055c5.521-5.521 14.182-6.199 20.584-1.731a152.482 152.482 0 0 1 20.522 17.197zM467.547 44.449c-59.261-59.262-155.69-59.27-214.96 0l-67.2 67.2c-.12.12-.25.25-.36.37-58.566 58.892-59.387 154.781.36 214.59a152.454 152.454 0 0 0 20.521 17.196c6.402 4.468 15.064 3.789 20.584-1.731l21.054-21.055c8.35-8.35 12.094-19.239 11.698-29.806a16.037 16.037 0 0 0-6.947-12.606c-2.912-2.005-6.64-4.875-10.341-8.569-28.073-28.073-28.191-73.639 0-101.83l67.2-67.19c28.239-28.239 74.3-28.069 102.325.51 27.75 28.3 26.872 73.934-1.155 101.96l-13.087 13.087c-4.35 4.35-5.769 10.79-3.783 16.612 5.864 17.194 9.042 34.999 9.69 52.721.509 13.906 17.454 20.446 27.294 10.606l37.106-37.106c59.271-59.259 59.271-155.699.001-214.959z"/></svg></a>Hbase Bulkload 原理</h1>
+<p>当需要大批量的向Hbase导入数据时，我们可以使用Hbase Bulkload的方式，这种方式是先生成Hbase的底层存储文件 HFile，然后直接将这些 HFile 移动到Hbase的存储目录下。它相比调用Hbase 的 put 接口添加数据，处理效率更快并且对Hbase 运行影响更小。</p>
+<p>下面假设我们有一个 CSV 文件，是存储用户购买记录的。它一共有三列， order_id，consumer，product。我们需要将这个文件导入到Hbase里，其中 order_id 作为Hbase 的 row key。</p>
+<div class="highlight"><div class="chroma">
+<div class="table-container"><table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-shell" data-lang="shell">bin/hbase org.apache.hadoop.hbase.mapreduce.ImportTsv -Dimporttsv.separator<span class="o">=</span><span class="s1">$&#39;\x01&#39;</span>
+-Dimporttsv.columns<span class="o">=</span>HBASE_ROW_KEY,cf:consumer,cf:product
+ -Dimporttsv.bulk.output<span class="o">=</span>&lt;hdfs://storefileoutput&gt; &lt;hbase_table&gt; &lt;hdfs://datainput&gt;
+ 
+bin/hbase org.apache.hadoop.hbase.mapreduce.LoadIncrementalHFiles &lt;hdfs://storefileoutput&gt; &lt;hbase_table&gt;
+</code></pre></td></tr></table></div>
+</div>
+</div><p>可以看到批量导入只需要上述两部， 生成 HFile 文件 和 加载 HFile 文件。下面我们来深入了解其原理</p>
+<h2 id="底层实现原理"><a href="#底层实现原理" class="anchor-link"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon anchor-icon"><path d="M326.612 185.391c59.747 59.809 58.927 155.698.36 214.59-.11.12-.24.25-.36.37l-67.2 67.2c-59.27 59.27-155.699 59.262-214.96 0-59.27-59.26-59.27-155.7 0-214.96l37.106-37.106c9.84-9.84 26.786-3.3 27.294 10.606.648 17.722 3.826 35.527 9.69 52.721 1.986 5.822.567 12.262-3.783 16.612l-13.087 13.087c-28.026 28.026-28.905 73.66-1.155 101.96 28.024 28.579 74.086 28.749 102.325.51l67.2-67.19c28.191-28.191 28.073-73.757 0-101.83-3.701-3.694-7.429-6.564-10.341-8.569a16.037 16.037 0 0 1-6.947-12.606c-.396-10.567 3.348-21.456 11.698-29.806l21.054-21.055c5.521-5.521 14.182-6.199 20.584-1.731a152.482 152.482 0 0 1 20.522 17.197zM467.547 44.449c-59.261-59.262-155.69-59.27-214.96 0l-67.2 67.2c-.12.12-.25.25-.36.37-58.566 58.892-59.387 154.781.36 214.59a152.454 152.454 0 0 0 20.521 17.196c6.402 4.468 15.064 3.789 20.584-1.731l21.054-21.055c8.35-8.35 12.094-19.239 11.698-29.806a16.037 16.037 0 0 0-6.947-12.606c-2.912-2.005-6.64-4.875-10.341-8.569-28.073-28.073-28.191-73.639 0-101.83l67.2-67.19c28.239-28.239 74.3-28.069 102.325.51 27.75 28.3 26.872 73.934-1.155 101.96l-13.087 13.087c-4.35 4.35-5.769 10.79-3.783 16.612 5.864 17.194 9.042 34.999 9.69 52.721.509 13.906 17.454 20.446 27.294 10.606l37.106-37.106c59.271-59.259 59.271-155.699.001-214.959z"/></svg></a>底层实现原理</h2>
+<p>生成 HFile 是调用了 MapReduce 来实现的。它有两种实现方式，虽然最后生成的 HFile 是一样的，但中间过程却是不一样。现在我们先回顾下 MapReduce 的编程模型，主要分为下列组件：</p>
+<ul>
+<li>InputFormat：负责读取数据源，并且将数据源切割成多个分片，分片的数目等于Map的数目</li>
+<li>Mapper：负责接收分片，生成中间结果&lt;K, V&gt;，K 为数据的 key 值类型，V为数据的 value 值类型</li>
+<li>Reducer：Mapper的数据会按照 key 值分组，Reducer接收的数据格式&lt;K, List<V>&gt;</li>
+<li>OutputFormat：负责将Reducer生成的数据持久化，比如存储到 hdfs。</li>
+</ul>
+<h3 id="mapreduce-实现-一"><a href="#mapreduce-实现-一" class="anchor-link"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon anchor-icon"><path d="M326.612 185.391c59.747 59.809 58.927 155.698.36 214.59-.11.12-.24.25-.36.37l-67.2 67.2c-59.27 59.27-155.699 59.262-214.96 0-59.27-59.26-59.27-155.7 0-214.96l37.106-37.106c9.84-9.84 26.786-3.3 27.294 10.606.648 17.722 3.826 35.527 9.69 52.721 1.986 5.822.567 12.262-3.783 16.612l-13.087 13.087c-28.026 28.026-28.905 73.66-1.155 101.96 28.024 28.579 74.086 28.749 102.325.51l67.2-67.19c28.191-28.191 28.073-73.757 0-101.83-3.701-3.694-7.429-6.564-10.341-8.569a16.037 16.037 0 0 1-6.947-12.606c-.396-10.567 3.348-21.456 11.698-29.806l21.054-21.055c5.521-5.521 14.182-6.199 20.584-1.731a152.482 152.482 0 0 1 20.522 17.197zM467.547 44.449c-59.261-59.262-155.69-59.27-214.96 0l-67.2 67.2c-.12.12-.25.25-.36.37-58.566 58.892-59.387 154.781.36 214.59a152.454 152.454 0 0 0 20.521 17.196c6.402 4.468 15.064 3.789 20.584-1.731l21.054-21.055c8.35-8.35 12.094-19.239 11.698-29.806a16.037 16.037 0 0 0-6.947-12.606c-2.912-2.005-6.64-4.875-10.341-8.569-28.073-28.073-28.191-73.639 0-101.83l67.2-67.19c28.239-28.239 74.3-28.069 102.325.51 27.75 28.3 26.872 73.934-1.155 101.96l-13.087 13.087c-4.35 4.35-5.769 10.79-3.783 16.612 5.864 17.194 9.042 34.999 9.69 52.721.509 13.906 17.454 20.446 27.294 10.606l37.106-37.106c59.271-59.259 59.271-155.699.001-214.959z"/></svg></a>MapReduce 实现 一</h3>
+<p>MapReducer 程序中各个组件的实现类，如下所示：</p>
+<ul>
+<li>InputFormat 类：TextInputFormat，数据输出格式 LongWritable，Text（数据所在行号，行数据）</li>
+<li>Mapper 类：TsvImporterTextMapper，数据输出格式 ImmutableBytesWritable, Text（row key，行数据）</li>
+<li>Reduce 类：TextSortReducer，数据输出格式 ImmutableBytesWritable, KeyValue （row key，单列数据）</li>
+<li>OutputFormat 类：HFileOutputFormat2，负责将结果持久化 HFile</li>
+</ul>
+<p>执行过程如下：</p>
+<ol>
+<li>TextInputFormat 会读取数据源文件，按照文件在 hdfs 的 Block 切割，每个Block对应着一个切片</li>
+<li>Mapper 会解析每行数据，然后从中解析出 row key，生成（row key， 行数据）</li>
+<li>Reducer 会解析行数据，为每列生成 KeyValue。这里简单说下 KeyValue，它是 Hbase 存储每列数据的格式， 详细原理后面会介绍到。如果一个 row key 对应的列过多，它会将列分批处理。处理完一批数据之后，会写入（null，null）这一条特殊的数据，表示 HFileOutputFormat2 在持久化的过程中，需要新创建一个 HFile。</li>
+</ol>
+<p>这里简单的说下 TextSortReducer，它的原理与下面的实现方式二，使用到的 PutSortReducer 相同，只不过从 Map 端接收到的数据为原始的行数据。如果 row key 对应的数据过多时，它也会使用 TreeSet 来去重，TreeSet 保存的数据最大字节数，不能超过1GB。如果超过了，那么就会分批输。</p>
+<h3 id="mapreduce-实现-二"><a href="#mapreduce-实现-二" class="anchor-link"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon anchor-icon"><path d="M326.612 185.391c59.747 59.809 58.927 155.698.36 214.59-.11.12-.24.25-.36.37l-67.2 67.2c-59.27 59.27-155.699 59.262-214.96 0-59.27-59.26-59.27-155.7 0-214.96l37.106-37.106c9.84-9.84 26.786-3.3 27.294 10.606.648 17.722 3.826 35.527 9.69 52.721 1.986 5.822.567 12.262-3.783 16.612l-13.087 13.087c-28.026 28.026-28.905 73.66-1.155 101.96 28.024 28.579 74.086 28.749 102.325.51l67.2-67.19c28.191-28.191 28.073-73.757 0-101.83-3.701-3.694-7.429-6.564-10.341-8.569a16.037 16.037 0 0 1-6.947-12.606c-.396-10.567 3.348-21.456 11.698-29.806l21.054-21.055c5.521-5.521 14.182-6.199 20.584-1.731a152.482 152.482 0 0 1 20.522 17.197zM467.547 44.449c-59.261-59.262-155.69-59.27-214.96 0l-67.2 67.2c-.12.12-.25.25-.36.37-58.566 58.892-59.387 154.781.36 214.59a152.454 152.454 0 0 0 20.521 17.196c6.402 4.468 15.064 3.789 20.584-1.731l21.054-21.055c8.35-8.35 12.094-19.239 11.698-29.806a16.037 16.037 0 0 0-6.947-12.606c-2.912-2.005-6.64-4.875-10.341-8.569-28.073-28.073-28.191-73.639 0-101.83l67.2-67.19c28.239-28.239 74.3-28.069 102.325.51 27.75 28.3 26.872 73.934-1.155 101.96l-13.087 13.087c-4.35 4.35-5.769 10.79-3.783 16.612 5.864 17.194 9.042 34.999 9.69 52.721.509 13.906 17.454 20.446 27.294 10.606l37.106-37.106c59.271-59.259 59.271-155.699.001-214.959z"/></svg></a>MapReduce 实现 二</h3>
+<p>MapReducer 程序中各个组件的实现类，如下所示：</p>
+<ul>
+<li>InputFormat 类：TextInputFormat，数据输出格式 LongWritable，Text（数据所在行号，数据）</li>
+<li>Mapper 类：TsvImporterMapper，数据输出格式 ImmutableBytesWritable，Put （row key，Put）</li>
+<li>Combiner 类：PutCombiner</li>
+<li>Reducer 类：PutSortReducer，数据输出格式 ImmutableBytesWritable, KeyValue（row key，单列数据）</li>
+<li>OutputFormat 类：HFileOutputFormat2，负责将结果持久化 HFile</li>
+</ul>
+<p>这里使用了 Combiner，它的作用是在 Map 端进行一次初始的 reduce 操作，起到聚合的作用，这样就减少了 Reduce 端与 Map 端的数据传输，提高了运行效率。</p>
+<p>执行过程如下：</p>
+<ol>
+<li>TextInputFormat 会读取数据源文件，原理同实现 一</li>
+<li>Mapper 会解析每行数据，然后从中解析出 row key，并且生成 Put 实例。生成（row key， Put）</li>
+<li>Combiner 会按照 row key 将多个 Put 进行合并，它也是分批合并的。</li>
+<li>Reducer 会遍历 Put 实例，为每列生成 KeyValue 并且去重。</li>
+</ol>
+<p>这里讲下PutSortReducer的具体实现，下面的代码经过简化，去掉了KeyValue中关于Tag的处理：</p>
+<div class="highlight"><div class="chroma">
+<div class="table-container"><table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span><span class="lnt">35
+</span><span class="lnt">36
+</span><span class="lnt">37
+</span><span class="lnt">38
+</span><span class="lnt">39
+</span><span class="lnt">40
+</span><span class="lnt">41
+</span><span class="lnt">42
+</span><span class="lnt">43
+</span><span class="lnt">44
+</span><span class="lnt">45
+</span><span class="lnt">46
+</span><span class="lnt">47
+</span><span class="lnt">48
+</span><span class="lnt">49
+</span><span class="lnt">50
+</span><span class="lnt">51
+</span><span class="lnt">52
+</span><span class="lnt">53
+</span><span class="lnt">54
+</span><span class="lnt">55
+</span><span class="lnt">56
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">PutSortReducer</span> <span class="kd">extends</span>
+    <span class="n">Reducer</span><span class="o">&lt;</span><span class="n">ImmutableBytesWritable</span><span class="o">,</span> <span class="n">Put</span><span class="o">,</span> <span class="n">ImmutableBytesWritable</span><span class="o">,</span> <span class="n">KeyValue</span><span class="o">&gt;</span> <span class="o">{</span>
+  <span class="c1">// the cell creator
+</span><span class="c1"></span>  <span class="kd">private</span> <span class="n">CellCreator</span> <span class="n">kvCreator</span><span class="o">;</span>
+  
+  <span class="nd">@Override</span>
+  <span class="kd">protected</span> <span class="kt">void</span> <span class="nf">reduce</span><span class="o">(</span>
+      <span class="n">ImmutableBytesWritable</span> <span class="n">row</span><span class="o">,</span>
+      <span class="n">java</span><span class="o">.</span><span class="na">lang</span><span class="o">.</span><span class="na">Iterable</span><span class="o">&lt;</span><span class="n">Put</span><span class="o">&gt;</span> <span class="n">puts</span><span class="o">,</span>
+      <span class="n">Reducer</span><span class="o">&lt;</span><span class="n">ImmutableBytesWritable</span><span class="o">,</span> <span class="n">Put</span><span class="o">,</span>
+              <span class="n">ImmutableBytesWritable</span><span class="o">,</span> <span class="n">KeyValue</span><span class="o">&gt;.</span><span class="na">Context</span> <span class="n">context</span><span class="o">)</span>
+      <span class="kd">throws</span> <span class="n">java</span><span class="o">.</span><span class="na">io</span><span class="o">.</span><span class="na">IOException</span><span class="o">,</span> <span class="n">InterruptedException</span>
+  <span class="o">{</span>
+    <span class="c1">// 这里指定了一个阈值，默认为10GB过大。如果puts中不重复的数据过大，就会按照这个阈值分批处理
+</span><span class="c1"></span>    <span class="kt">long</span> <span class="n">threshold</span> <span class="o">=</span> <span class="n">context</span><span class="o">.</span><span class="na">getConfiguration</span><span class="o">().</span><span class="na">getLong</span><span class="o">(</span>
+        <span class="s">&#34;putsortreducer.row.threshold&#34;</span><span class="o">,</span> <span class="n">1L</span> <span class="o">*</span> <span class="o">(</span><span class="n">1</span><span class="o">&lt;&lt;</span><span class="n">30</span><span class="o">));</span>
+    <span class="n">Iterator</span><span class="o">&lt;</span><span class="n">Put</span><span class="o">&gt;</span> <span class="n">iter</span> <span class="o">=</span> <span class="n">puts</span><span class="o">.</span><span class="na">iterator</span><span class="o">();</span>
+    <span class="c1">// 开始遍历 puts列表
+</span><span class="c1"></span>    <span class="k">while</span> <span class="o">(</span><span class="n">iter</span><span class="o">.</span><span class="na">hasNext</span><span class="o">())</span> <span class="o">{</span>
+      <span class="c1">// 这个TreeSet就是用来去重的，比如向同个qualifier添加值
+</span><span class="c1"></span>      <span class="n">TreeSet</span><span class="o">&lt;</span><span class="n">KeyValue</span><span class="o">&gt;</span> <span class="n">map</span> <span class="o">=</span> <span class="k">new</span> <span class="n">TreeSet</span><span class="o">&lt;&gt;(</span><span class="n">CellComparator</span><span class="o">.</span><span class="na">getInstance</span><span class="o">());</span>
+      <span class="c1">// 记录map里保存的数据长度
+</span><span class="c1"></span>      <span class="kt">long</span> <span class="n">curSize</span> <span class="o">=</span> <span class="n">0</span><span class="o">;</span>
+      <span class="c1">// 遍历 puts列表，直到不重复的数据不超过阈值
+</span><span class="c1"></span>      <span class="k">while</span> <span class="o">(</span><span class="n">iter</span><span class="o">.</span><span class="na">hasNext</span><span class="o">()</span> <span class="o">&amp;&amp;</span> <span class="n">curSize</span> <span class="o">&lt;</span> <span class="n">threshold</span><span class="o">)</span> <span class="o">{</span>
+        <span class="c1">// 从列表中获取值
+</span><span class="c1"></span>        <span class="n">Put</span> <span class="n">p</span> <span class="o">=</span> <span class="n">iter</span><span class="o">.</span><span class="na">next</span><span class="o">();</span>
+        <span class="c1">// 遍历这个Put的所有列值，一个Put包含了多列，这些列由Cell表示
+</span><span class="c1"></span>        <span class="k">for</span> <span class="o">(</span><span class="n">List</span><span class="o">&lt;</span><span class="n">Cell</span><span class="o">&gt;</span> <span class="n">cells</span><span class="o">:</span> <span class="n">p</span><span class="o">.</span><span class="na">getFamilyCellMap</span><span class="o">().</span><span class="na">values</span><span class="o">())</span> <span class="o">{</span>
+          <span class="k">for</span> <span class="o">(</span><span class="n">Cell</span> <span class="n">cell</span><span class="o">:</span> <span class="n">cells</span><span class="o">)</span> <span class="o">{</span>
+            <span class="n">KeyValue</span> <span class="n">kv</span> <span class="o">=</span> <span class="kc">null</span><span class="o">;</span>
+            <span class="n">kv</span> <span class="o">=</span> <span class="n">KeyValueUtil</span><span class="o">.</span><span class="na">ensureKeyValue</span><span class="o">(</span><span class="n">cell</span><span class="o">);</span>
+            <span class="o">}</span>
+            <span class="k">if</span> <span class="o">(</span><span class="n">map</span><span class="o">.</span><span class="na">add</span><span class="o">(</span><span class="n">kv</span><span class="o">))</span> <span class="o">{</span>
+              <span class="c1">// 如果这列值没有重复，那么添加到TreeSet中，并且更新curSize的值
+</span><span class="c1"></span>              <span class="n">curSize</span> <span class="o">+=</span> <span class="n">kv</span><span class="o">.</span><span class="na">heapSize</span><span class="o">();</span>
+            <span class="o">}</span>
+          <span class="o">}</span>
+        <span class="o">}</span>
+      <span class="o">}</span>
+      <span class="c1">// 将map里的数据，调用context.write方法输出
+</span><span class="c1"></span>      <span class="kt">int</span> <span class="n">index</span> <span class="o">=</span> <span class="n">0</span><span class="o">;</span>
+      <span class="k">for</span> <span class="o">(</span><span class="n">KeyValue</span> <span class="n">kv</span> <span class="o">:</span> <span class="n">map</span><span class="o">)</span> <span class="o">{</span>
+        <span class="n">context</span><span class="o">.</span><span class="na">write</span><span class="o">(</span><span class="n">row</span><span class="o">,</span> <span class="n">kv</span><span class="o">);</span>
+        <span class="k">if</span> <span class="o">(++</span><span class="n">index</span> <span class="o">%</span> <span class="n">100</span> <span class="o">==</span> <span class="n">0</span><span class="o">)</span>
+          <span class="n">context</span><span class="o">.</span><span class="na">setStatus</span><span class="o">(</span><span class="s">&#34;Wrote &#34;</span> <span class="o">+</span> <span class="n">index</span><span class="o">);</span>
+      <span class="o">}</span>
+
+      <span class="c1">// 如果还有，那么说明此行数据过大，那么就会输出一条特殊的记录(null, null)
+</span><span class="c1"></span>      <span class="k">if</span> <span class="o">(</span><span class="n">iter</span><span class="o">.</span><span class="na">hasNext</span><span class="o">())</span> <span class="o">{</span>
+        <span class="c1">// force flush because we cannot guarantee intra-row sorted order
+</span><span class="c1"></span>        <span class="n">context</span><span class="o">.</span><span class="na">write</span><span class="o">(</span><span class="kc">null</span><span class="o">,</span> <span class="kc">null</span><span class="o">);</span>
+      <span class="o">}</span>
+    <span class="o">}</span>
+  <span class="o">}</span>
+<span class="o">}</span>  
+</code></pre></td></tr></table></div>
+</div>
+</div><p>从上面的代码可以看到，PutSortReducer会使用到TreeSet去重，TreeSet会保存数据，默认不超过 1GB。如果当Reducer的内存设置过小时，并且数据过大时，是有可能会造成内存溢出。如果遇到这种情况，可以通过减少阈值或者增大Reducer的内存。</p>
+<h3 id="两种实现方式比较"><a href="#两种实现方式比较" class="anchor-link"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon anchor-icon"><path d="M326.612 185.391c59.747 59.809 58.927 155.698.36 214.59-.11.12-.24.25-.36.37l-67.2 67.2c-59.27 59.27-155.699 59.262-214.96 0-59.27-59.26-59.27-155.7 0-214.96l37.106-37.106c9.84-9.84 26.786-3.3 27.294 10.606.648 17.722 3.826 35.527 9.69 52.721 1.986 5.822.567 12.262-3.783 16.612l-13.087 13.087c-28.026 28.026-28.905 73.66-1.155 101.96 28.024 28.579 74.086 28.749 102.325.51l67.2-67.19c28.191-28.191 28.073-73.757 0-101.83-3.701-3.694-7.429-6.564-10.341-8.569a16.037 16.037 0 0 1-6.947-12.606c-.396-10.567 3.348-21.456 11.698-29.806l21.054-21.055c5.521-5.521 14.182-6.199 20.584-1.731a152.482 152.482 0 0 1 20.522 17.197zM467.547 44.449c-59.261-59.262-155.69-59.27-214.96 0l-67.2 67.2c-.12.12-.25.25-.36.37-58.566 58.892-59.387 154.781.36 214.59a152.454 152.454 0 0 0 20.521 17.196c6.402 4.468 15.064 3.789 20.584-1.731l21.054-21.055c8.35-8.35 12.094-19.239 11.698-29.806a16.037 16.037 0 0 0-6.947-12.606c-2.912-2.005-6.64-4.875-10.341-8.569-28.073-28.073-28.191-73.639 0-101.83l67.2-67.19c28.239-28.239 74.3-28.069 102.325.51 27.75 28.3 26.872 73.934-1.155 101.96l-13.087 13.087c-4.35 4.35-5.769 10.79-3.783 16.612 5.864 17.194 9.042 34.999 9.69 52.721.509 13.906 17.454 20.446 27.294 10.606l37.106-37.106c59.271-59.259 59.271-155.699.001-214.959z"/></svg></a>两种实现方式比较</h3>
+<p>第一种方式实现简单，它从Map 端传递到 Reduce 端的中间结果的数据格式很紧凑，如果是数据源重复的数据不多，建议使用这种。</p>
+<p>第二种方式实现相对复杂，它从Map 端传递到 Reduce 端的中间结果的数据格式，使用 Put 来表示，它的数据存储比原始的数据要大。但是它使用了 Combiner 来初步聚合，减小了 Map 端传递到 Reduce 端的数据大小。如果是数据源重复比较多，建议采用第二种方式。</p>
+<p>Hbase 默认采用第二种方式，如果用户想使用第一种方式，需要在运行命令时，指定 importtsv.mapper.class 的值为 org.apache.hadoop.hbase.mapreduce.TsvImporterTextMapper。</p>
+<h2 id="数据源解析"><a href="#数据源解析" class="anchor-link"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon anchor-icon"><path d="M326.612 185.391c59.747 59.809 58.927 155.698.36 214.59-.11.12-.24.25-.36.37l-67.2 67.2c-59.27 59.27-155.699 59.262-214.96 0-59.27-59.26-59.27-155.7 0-214.96l37.106-37.106c9.84-9.84 26.786-3.3 27.294 10.606.648 17.722 3.826 35.527 9.69 52.721 1.986 5.822.567 12.262-3.783 16.612l-13.087 13.087c-28.026 28.026-28.905 73.66-1.155 101.96 28.024 28.579 74.086 28.749 102.325.51l67.2-67.19c28.191-28.191 28.073-73.757 0-101.83-3.701-3.694-7.429-6.564-10.341-8.569a16.037 16.037 0 0 1-6.947-12.606c-.396-10.567 3.348-21.456 11.698-29.806l21.054-21.055c5.521-5.521 14.182-6.199 20.584-1.731a152.482 152.482 0 0 1 20.522 17.197zM467.547 44.449c-59.261-59.262-155.69-59.27-214.96 0l-67.2 67.2c-.12.12-.25.25-.36.37-58.566 58.892-59.387 154.781.36 214.59a152.454 152.454 0 0 0 20.521 17.196c6.402 4.468 15.064 3.789 20.584-1.731l21.054-21.055c8.35-8.35 12.094-19.239 11.698-29.806a16.037 16.037 0 0 0-6.947-12.606c-2.912-2.005-6.64-4.875-10.341-8.569-28.073-28.073-28.191-73.639 0-101.83l67.2-67.19c28.239-28.239 74.3-28.069 102.325.51 27.75 28.3 26.872 73.934-1.155 101.96l-13.087 13.087c-4.35 4.35-5.769 10.79-3.783 16.612 5.864 17.194 9.042 34.999 9.69 52.721.509 13.906 17.454 20.446 27.294 10.606l37.106-37.106c59.271-59.259 59.271-155.699.001-214.959z"/></svg></a>数据源解析</h2>
+<p>Mapper 接收到数据后，需要解析每行数据，从中读取各列的值。它会按照分割符来切割数据，然后根据指定的列格式，生成每列的数据。客户在使用命令时，通过 importtsv.separator 参数指定分隔符，通过 importtsv.columns 参数指定列格式。在客户端指定的列名中， 有些会有着特殊含义，比如 HBASE_ROW_KEY 代表着该列是作为 row key，HBASE_TS_KEY 代表着该列作为数据的 timestamp，HBASE_ATTRIBUTES_KEY 代表着该列是属性列等。</p>
+<p>TsvParser 类负责解析数据，它定义在 ImportTsv 类里。这里需要注意下，它不支持负责的 CSV 格式，只是简单的根据分隔符作为列的划分，根据换行符作为每条数据的划分。</p>
+<p>它的原理比较简单，这里不再详细介绍。</p>
+<h2 id="reducer的数目选择"><a href="#reducer的数目选择" class="anchor-link"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon anchor-icon"><path d="M326.612 185.391c59.747 59.809 58.927 155.698.36 214.59-.11.12-.24.25-.36.37l-67.2 67.2c-59.27 59.27-155.699 59.262-214.96 0-59.27-59.26-59.27-155.7 0-214.96l37.106-37.106c9.84-9.84 26.786-3.3 27.294 10.606.648 17.722 3.826 35.527 9.69 52.721 1.986 5.822.567 12.262-3.783 16.612l-13.087 13.087c-28.026 28.026-28.905 73.66-1.155 101.96 28.024 28.579 74.086 28.749 102.325.51l67.2-67.19c28.191-28.191 28.073-73.757 0-101.83-3.701-3.694-7.429-6.564-10.341-8.569a16.037 16.037 0 0 1-6.947-12.606c-.396-10.567 3.348-21.456 11.698-29.806l21.054-21.055c5.521-5.521 14.182-6.199 20.584-1.731a152.482 152.482 0 0 1 20.522 17.197zM467.547 44.449c-59.261-59.262-155.69-59.27-214.96 0l-67.2 67.2c-.12.12-.25.25-.36.37-58.566 58.892-59.387 154.781.36 214.59a152.454 152.454 0 0 0 20.521 17.196c6.402 4.468 15.064 3.789 20.584-1.731l21.054-21.055c8.35-8.35 12.094-19.239 11.698-29.806a16.037 16.037 0 0 0-6.947-12.606c-2.912-2.005-6.64-4.875-10.341-8.569-28.073-28.073-28.191-73.639 0-101.83l67.2-67.19c28.239-28.239 74.3-28.069 102.325.51 27.75 28.3 26.872 73.934-1.155 101.96l-13.087 13.087c-4.35 4.35-5.769 10.79-3.783 16.612 5.864 17.194 9.042 34.999 9.69 52.721.509 13.906 17.454 20.446 27.294 10.606l37.106-37.106c59.271-59.259 59.271-155.699.001-214.959z"/></svg></a>Reducer的数目选择</h2>
+<p>我们知道MapReduce程序的一般瓶颈在于 reduce 阶段，如果我们能够适当增加 reduce 的数目，一般能够提高运行效率（如果数据倾斜不严重）。我们还知道 Hbase 支持超大数据量的表，它会将表的数据自动切割，分布在不同的服务上。这些数据切片在 Hbase 里，称为Region， 每个Region只负责一段 row key 范围的数据。</p>
+<p>Hbase 在批量导入的时候，会去获取表的 Region 分布情况，然后将 Reducer 的数目 设置为 Region 数目。如果在导入数据之前还没有创建表，Hbase会自动创建，但是创建的表的region数只有一个。所以在生成HFile之前，我们可以自行创建表，并指定 Reigion 的分布情况，那么就能提高 Reducer 的数目。</p>
+<p>Reducer 的数目决定，是在 HFileOutputFormat2 的 configureIncrementalLoad 方法里。它会读取表的 region 分布情况，然后调用 setNumReduceTasks 方法设置 reduce 数目。下面的代码经过简化：</p>
+<div class="highlight"><div class="chroma">
+<div class="table-container"><table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">HFileOutputFormat2</span>
+    <span class="kd">extends</span> <span class="n">FileOutputFormat</span><span class="o">&lt;</span><span class="n">ImmutableBytesWritable</span><span class="o">,</span> <span class="n">Cell</span><span class="o">&gt;</span> <span class="o">{</span>
+    
+    <span class="kd">public</span> <span class="kd">static</span> <span class="kt">void</span> <span class="nf">configureIncrementalLoad</span><span class="o">(</span><span class="n">Job</span> <span class="n">job</span><span class="o">,</span> <span class="n">TableDescriptor</span> <span class="n">tableDescriptor</span><span class="o">,</span>
+      <span class="n">RegionLocator</span> <span class="n">regionLocator</span><span class="o">)</span> <span class="kd">throws</span> <span class="n">IOException</span> <span class="o">{</span>
+    	<span class="n">ArrayList</span><span class="o">&lt;</span><span class="n">TableInfo</span><span class="o">&gt;</span> <span class="n">singleTableInfo</span> <span class="o">=</span> <span class="k">new</span> <span class="n">ArrayList</span><span class="o">&lt;&gt;();</span>
+    	<span class="n">singleTableInfo</span><span class="o">.</span><span class="na">add</span><span class="o">(</span><span class="k">new</span> <span class="n">TableInfo</span><span class="o">(</span><span class="n">tableDescriptor</span><span class="o">,</span> <span class="n">regionLocator</span><span class="o">));</span>
+    	<span class="n">configureIncrementalLoad</span><span class="o">(</span><span class="n">job</span><span class="o">,</span> <span class="n">singleTableInfo</span><span class="o">,</span> <span class="n">HFileOutputFormat2</span><span class="o">.</span><span class="na">class</span><span class="o">);</span>
+  	<span class="o">}</span>    
+  	<span class="kd">static</span> <span class="kt">void</span> <span class="nf">configureIncrementalLoad</span><span class="o">(</span><span class="n">Job</span> <span class="n">job</span><span class="o">,</span> <span class="n">List</span><span class="o">&lt;</span><span class="n">TableInfo</span><span class="o">&gt;</span> <span class="n">multiTableInfo</span><span class="o">,</span>
+      	<span class="n">Class</span><span class="o">&lt;?</span> <span class="kd">extends</span> <span class="n">OutputFormat</span><span class="o">&lt;?,</span> <span class="o">?&gt;&gt;</span> <span class="n">cls</span><span class="o">)</span> <span class="kd">throws</span> <span class="n">IOException</span> <span class="o">{</span>
+        <span class="c1">// 这里虽然支持多表，但是批量导入时只会使用单表
+</span><span class="c1"></span>        <span class="n">List</span><span class="o">&lt;</span><span class="n">RegionLocator</span><span class="o">&gt;</span> <span class="n">regionLocators</span> <span class="o">=</span> <span class="k">new</span> <span class="n">ArrayList</span><span class="o">&lt;&gt;(</span> <span class="n">multiTableInfo</span><span class="o">.</span><span class="na">size</span><span class="o">());</span>     
+      	<span class="k">for</span><span class="o">(</span> <span class="n">TableInfo</span> <span class="n">tableInfo</span> <span class="o">:</span> <span class="n">multiTableInfo</span> <span class="o">)</span>
+      	<span class="o">{</span>
+            <span class="c1">// 获取region分布情况
+</span><span class="c1"></span>      		<span class="n">regionLocators</span><span class="o">.</span><span class="na">add</span><span class="o">(</span><span class="n">tableInfo</span><span class="o">.</span><span class="na">getRegionLocator</span><span class="o">());</span>
+     		<span class="o">......</span>
+      	<span class="o">}</span>
+        <span class="c1">// 获取region的row key起始大小
+</span><span class="c1"></span>      	<span class="n">List</span><span class="o">&lt;</span><span class="n">ImmutableBytesWritable</span><span class="o">&gt;</span> <span class="n">startKeys</span> <span class="o">=</span> <span class="n">getRegionStartKeys</span><span class="o">(</span><span class="n">regionLocators</span><span class="o">,</span> <span class="n">writeMultipleTables</span><span class="o">);</span>
+        <span class="c1">// 设置reduce的数目
+</span><span class="c1"></span>      	<span class="n">job</span><span class="o">.</span><span class="na">setNumReduceTasks</span><span class="o">(</span><span class="n">startKeys</span><span class="o">.</span><span class="na">size</span><span class="o">());</span>
+    <span class="o">}</span>  
+<span class="o">}</span>
+</code></pre></td></tr></table></div>
+</div>
+</div><h2 id="hbase-数据存储格式"><a href="#hbase-数据存储格式" class="anchor-link"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon anchor-icon"><path d="M326.612 185.391c59.747 59.809 58.927 155.698.36 214.59-.11.12-.24.25-.36.37l-67.2 67.2c-59.27 59.27-155.699 59.262-214.96 0-59.27-59.26-59.27-155.7 0-214.96l37.106-37.106c9.84-9.84 26.786-3.3 27.294 10.606.648 17.722 3.826 35.527 9.69 52.721 1.986 5.822.567 12.262-3.783 16.612l-13.087 13.087c-28.026 28.026-28.905 73.66-1.155 101.96 28.024 28.579 74.086 28.749 102.325.51l67.2-67.19c28.191-28.191 28.073-73.757 0-101.83-3.701-3.694-7.429-6.564-10.341-8.569a16.037 16.037 0 0 1-6.947-12.606c-.396-10.567 3.348-21.456 11.698-29.806l21.054-21.055c5.521-5.521 14.182-6.199 20.584-1.731a152.482 152.482 0 0 1 20.522 17.197zM467.547 44.449c-59.261-59.262-155.69-59.27-214.96 0l-67.2 67.2c-.12.12-.25.25-.36.37-58.566 58.892-59.387 154.781.36 214.59a152.454 152.454 0 0 0 20.521 17.196c6.402 4.468 15.064 3.789 20.584-1.731l21.054-21.055c8.35-8.35 12.094-19.239 11.698-29.806a16.037 16.037 0 0 0-6.947-12.606c-2.912-2.005-6.64-4.875-10.341-8.569-28.073-28.073-28.191-73.639 0-101.83l67.2-67.19c28.239-28.239 74.3-28.069 102.325.51 27.75 28.3 26.872 73.934-1.155 101.96l-13.087 13.087c-4.35 4.35-5.769 10.79-3.783 16.612 5.864 17.194 9.042 34.999 9.69 52.721.509 13.906 17.454 20.446 27.294 10.606l37.106-37.106c59.271-59.259 59.271-155.699.001-214.959z"/></svg></a>Hbase 数据存储格式</h2>
+<p>Hbase的每列数据都是单独存储的，都是以 KeyValue 的形式。KeyValue 的数据格式如下图所示：</p>
+<div class="highlight"><div class="chroma">
+<div class="table-container"><table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-shell" data-lang="shell">-----------------------------------------------
+ keylength <span class="p">|</span> valuelength <span class="p">|</span> key <span class="p">|</span> value <span class="p">|</span> Tags
+-----------------------------------------------
+</code></pre></td></tr></table></div>
+</div>
+</div><p>其中 key 的格式如下：</p>
+<div class="highlight"><div class="chroma">
+<div class="table-container"><table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-shell" data-lang="shell">----------------------------------------------------------------------------------------------
+ rowlength <span class="p">|</span> row <span class="p">|</span> columnfamilylength <span class="p">|</span> columnfamily <span class="p">|</span> columnqualifier <span class="p">|</span> timestamp <span class="p">|</span> keytype 
+----------------------------------------------------------------------------------------------
+</code></pre></td></tr></table></div>
+</div>
+</div><p>Tags的格式如下：</p>
+<div class="highlight"><div class="chroma">
+<div class="table-container"><table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-shell" data-lang="shell">-------------------------
+ tagslength <span class="p">|</span> tagsbytes 
+-------------------------
+</code></pre></td></tr></table></div>
+</div>
+</div><p>tagsbytes 可以包含多个 tag，每个 tag 的格式如下：</p>
+<div class="highlight"><div class="chroma">
+<div class="table-container"><table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-shell" data-lang="shell">----------------------------------
+ taglength <span class="p">|</span> tagtype <span class="p">|</span> tagbytes
+----------------------------------
+</code></pre></td></tr></table></div>
+</div>
+</div><p>Reducer 会使用 CellCreator 类，负责生成 KeyValue。CellCreator 的原理很简单，这里不再详细介绍。</p>
+<h2 id="生成-hfile"><a href="#生成-hfile" class="anchor-link"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon anchor-icon"><path d="M326.612 185.391c59.747 59.809 58.927 155.698.36 214.59-.11.12-.24.25-.36.37l-67.2 67.2c-59.27 59.27-155.699 59.262-214.96 0-59.27-59.26-59.27-155.7 0-214.96l37.106-37.106c9.84-9.84 26.786-3.3 27.294 10.606.648 17.722 3.826 35.527 9.69 52.721 1.986 5.822.567 12.262-3.783 16.612l-13.087 13.087c-28.026 28.026-28.905 73.66-1.155 101.96 28.024 28.579 74.086 28.749 102.325.51l67.2-67.19c28.191-28.191 28.073-73.757 0-101.83-3.701-3.694-7.429-6.564-10.341-8.569a16.037 16.037 0 0 1-6.947-12.606c-.396-10.567 3.348-21.456 11.698-29.806l21.054-21.055c5.521-5.521 14.182-6.199 20.584-1.731a152.482 152.482 0 0 1 20.522 17.197zM467.547 44.449c-59.261-59.262-155.69-59.27-214.96 0l-67.2 67.2c-.12.12-.25.25-.36.37-58.566 58.892-59.387 154.781.36 214.59a152.454 152.454 0 0 0 20.521 17.196c6.402 4.468 15.064 3.789 20.584-1.731l21.054-21.055c8.35-8.35 12.094-19.239 11.698-29.806a16.037 16.037 0 0 0-6.947-12.606c-2.912-2.005-6.64-4.875-10.341-8.569-28.073-28.073-28.191-73.639 0-101.83l67.2-67.19c28.239-28.239 74.3-28.069 102.325.51 27.75 28.3 26.872 73.934-1.155 101.96l-13.087 13.087c-4.35 4.35-5.769 10.79-3.783 16.612 5.864 17.194 9.042 34.999 9.69 52.721.509 13.906 17.454 20.446 27.294 10.606l37.106-37.106c59.271-59.259 59.271-155.699.001-214.959z"/></svg></a>生成 HFile</h2>
+<p>HFileOutputFormat2 负责将Reduce的结果，持久化成 HFile 文件。持久化目录的格式如下：</p>
+<div class="highlight"><div class="chroma">
+<div class="table-container"><table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-shell" data-lang="shell">.
+<span class="p">|</span>---- column_family_1
+<span class="p">|</span>    <span class="p">|</span>---- uuid_1
+<span class="p">|</span>    <span class="sb">`</span>---- uuid_2
+<span class="p">|</span>---- column_family_2
+<span class="p">|</span>    <span class="p">|</span>---- uuid3
+<span class="p">|</span>    <span class="sb">`</span>---- uuid4
+</code></pre></td></tr></table></div>
+</div>
+</div><p>每个 column family 对应一个目录，这个目录会有多个 HFile 文件。</p>
+<p>HFileOutputFormat2 会创建 RecordWriter 实例，所有数据的写入都是通过 RecordWriter。</p>
+<div class="highlight"><div class="chroma">
+<div class="table-container"><table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">HFileOutputFormat2</span>
+    <span class="kd">extends</span> <span class="n">FileOutputFormat</span><span class="o">&lt;</span><span class="n">ImmutableBytesWritable</span><span class="o">,</span> <span class="n">Cell</span><span class="o">&gt;</span> <span class="o">{</span>
+    
+  <span class="nd">@Override</span>
+  <span class="kd">public</span> <span class="n">RecordWriter</span><span class="o">&lt;</span><span class="n">ImmutableBytesWritable</span><span class="o">,</span> <span class="n">Cell</span><span class="o">&gt;</span> <span class="nf">getRecordWriter</span><span class="o">(</span>
+      <span class="kd">final</span> <span class="n">TaskAttemptContext</span> <span class="n">context</span><span class="o">)</span> <span class="kd">throws</span> <span class="n">IOException</span><span class="o">,</span> <span class="n">InterruptedException</span> <span class="o">{</span>
+    <span class="c1">// 调用createRecordWriter方法创建
+</span><span class="c1"></span>    <span class="k">return</span> <span class="n">createRecordWriter</span><span class="o">(</span><span class="n">context</span><span class="o">,</span> <span class="k">this</span><span class="o">.</span><span class="na">getOutputCommitter</span><span class="o">(</span><span class="n">context</span><span class="o">));</span>
+  <span class="o">}</span>
+    
+  <span class="kd">static</span> <span class="o">&lt;</span><span class="n">V</span> <span class="kd">extends</span> <span class="n">Cell</span><span class="o">&gt;</span> <span class="n">RecordWriter</span><span class="o">&lt;</span><span class="n">ImmutableBytesWritable</span><span class="o">,</span> <span class="n">V</span><span class="o">&gt;</span>
+      <span class="nf">createRecordWriter</span><span class="o">(</span><span class="kd">final</span> <span class="n">TaskAttemptContext</span> <span class="n">context</span><span class="o">,</span> <span class="kd">final</span> <span class="n">OutputCommitter</span> <span class="n">committer</span><span class="o">)</span>
+          <span class="kd">throws</span> <span class="n">IOException</span> <span class="o">{</span>
+      <span class="c1">// 实例化一个匿名类
+</span><span class="c1"></span>      <span class="k">return</span> <span class="k">new</span> <span class="n">RecordWriter</span><span class="o">&lt;</span><span class="n">ImmutableBytesWritable</span><span class="o">,</span> <span class="n">V</span><span class="o">&gt;()</span> <span class="o">{</span>
+          <span class="o">......</span>
+      <span class="o">}</span>
+  <span class="o">}</span>
+<span class="o">}</span>
+</code></pre></td></tr></table></div>
+</div>
+</div><p>可以看到 createRecordWriter 方法，返回了一个匿名类。继续看看这个匿名类的定义：</p>
+<div class="highlight"><div class="chroma">
+<div class="table-container"><table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-java" data-lang="java"><span class="c1">// 封装了StoreFileWriter，记录了写入的数据长度
+</span><span class="c1"></span><span class="kd">static</span> <span class="kd">class</span> <span class="nc">WriterLength</span> <span class="o">{</span>
+    <span class="kt">long</span> <span class="n">written</span> <span class="o">=</span> <span class="n">0</span><span class="o">;</span>
+    <span class="n">StoreFileWriter</span> <span class="n">writer</span> <span class="o">=</span> <span class="kc">null</span><span class="o">;</span>
+<span class="o">}</span>
+
+<span class="kd">class</span> <span class="nc">RecordWriter</span><span class="o">&lt;</span><span class="n">ImmutableBytesWritable</span><span class="o">,</span> <span class="n">V</span><span class="o">&gt;()</span> <span class="o">{</span>
+    <span class="c1">// key值为表名和column family组成的字节，value为对应的writer
+</span><span class="c1"></span>    <span class="kd">private</span> <span class="kd">final</span> <span class="n">Map</span><span class="o">&lt;</span><span class="kt">byte</span><span class="o">[],</span> <span class="n">WriterLength</span><span class="o">&gt;</span> <span class="n">writers</span> <span class="o">=</span> <span class="k">new</span> <span class="n">TreeMap</span><span class="o">&lt;&gt;(</span><span class="n">Bytes</span><span class="o">.</span><span class="na">BYTES_COMPARATOR</span><span class="o">);</span>
+    <span class="c1">// 是否需要创建新的HFile
+</span><span class="c1"></span>    <span class="kd">private</span> <span class="kt">boolean</span> <span class="n">rollRequested</span> <span class="o">=</span> <span class="kc">false</span><span class="o">;</span>
+<span class="o">}</span>
+</code></pre></td></tr></table></div>
+</div>
+</div><p>从上面 WriterLength 类的定义，我们可以知道 RecordWriter的底层原理是调用了StoreFileWriter的接口。对于StoreFile，我们回忆下Hbase的写操作，它接收客户端的写请求，首先写入到内存中MemoryStore，然后刷新到磁盘生成StoreFile。如果该表有两个column family，就会有两个MemoryStore和两个StoreFile，对应于不同的column family。所以 RecordWriter 类有个哈希表，记录着每个 column family 的 StoreFileWriter。（这里说的 StoreFile 也就是 HFile）</p>
+<p>因为 HFile 支持不同的压缩算法，不同的块大小，RecordWriter 会根据配置，获取HFile的格式，然后创建对应的 StoreFileWriter。下面创建 StoreFileWriter 时只指定了文件目录，StoreFileWriter会在这个目录下，使用 uuid 生成一个唯一的文件名。</p>
+<div class="highlight"><div class="chroma">
+<div class="table-container"><table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span><span class="lnt">35
+</span><span class="lnt">36
+</span><span class="lnt">37
+</span><span class="lnt">38
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-java" data-lang="java"><span class="kd">class</span> <span class="nc">RecordWriter</span><span class="o">&lt;</span><span class="n">ImmutableBytesWritable</span><span class="o">,</span> <span class="n">V</span><span class="o">&gt;()</span> <span class="o">{</span>
+    <span class="c1">// favoredNodes 表示创建HFile文件，希望尽可能在这些服务器节点上
+</span><span class="c1"></span>    <span class="kd">private</span> <span class="n">WriterLength</span> <span class="nf">getNewWriter</span><span class="o">(</span><span class="kt">byte</span><span class="o">[]</span> <span class="n">tableName</span><span class="o">,</span> <span class="kt">byte</span><span class="o">[]</span> <span class="n">family</span><span class="o">,</span> <span class="n">Configuration</span> <span class="n">conf</span><span class="o">,</span> <span class="n">InetSocketAddress</span><span class="o">[]</span> <span class="n">favoredNodes</span><span class="o">)</span> <span class="kd">throws</span> <span class="n">IOException</span> <span class="o">{</span>
+        <span class="c1">// 根据表名和column family生成唯一字节
+</span><span class="c1"></span>        <span class="kt">byte</span><span class="o">[]</span> <span class="n">tableAndFamily</span> <span class="o">=</span> <span class="n">getTableNameSuffixedWithFamily</span><span class="o">(</span><span class="n">tableName</span><span class="o">,</span> <span class="n">family</span><span class="o">);</span>
+        <span class="n">Path</span> <span class="n">familydir</span> <span class="o">=</span> <span class="k">new</span> <span class="n">Path</span><span class="o">(</span><span class="n">outputDir</span><span class="o">,</span> <span class="n">Bytes</span><span class="o">.</span><span class="na">toString</span><span class="o">(</span><span class="n">family</span><span class="o">));</span>
+        <span class="n">WriterLength</span> <span class="n">wl</span> <span class="o">=</span> <span class="k">new</span> <span class="n">WriterLength</span><span class="o">();</span>
+        <span class="c1">// 获取HFile的压缩算法
+</span><span class="c1"></span>        <span class="n">Algorithm</span> <span class="n">compression</span> <span class="o">=</span> <span class="n">compressionMap</span><span class="o">.</span><span class="na">get</span><span class="o">(</span><span class="n">tableAndFamily</span><span class="o">);</span>
+        <span class="c1">// 获取bloom过滤器信息
+</span><span class="c1"></span>        <span class="n">BloomType</span> <span class="n">bloomType</span> <span class="o">=</span> <span class="n">bloomTypeMap</span><span class="o">.</span><span class="na">get</span><span class="o">(</span><span class="n">tableAndFamily</span><span class="o">);</span>
+        <span class="c1">// 获取HFile其他的配置
+</span><span class="c1"></span>        <span class="o">.....</span>
+        <span class="c1">// 生成HFile的配置信息
+</span><span class="c1"></span>        <span class="n">HFileContextBuilder</span> <span class="n">contextBuilder</span> <span class="o">=</span> <span class="k">new</span> <span class="n">HFileContextBuilder</span><span class="o">()</span>
+                                    <span class="o">.</span><span class="na">withCompression</span><span class="o">(</span><span class="n">compression</span><span class="o">)</span>
+                                    <span class="o">.</span><span class="na">withChecksumType</span><span class="o">(</span><span class="n">HStore</span><span class="o">.</span><span class="na">getChecksumType</span><span class="o">(</span><span class="n">conf</span><span class="o">))</span>
+                                    <span class="o">.</span><span class="na">withBytesPerCheckSum</span><span class="o">(</span><span class="n">HStore</span><span class="o">.</span><span class="na">getBytesPerChecksum</span><span class="o">(</span><span class="n">conf</span><span class="o">))</span>
+                                    <span class="o">.</span><span class="na">withBlockSize</span><span class="o">(</span><span class="n">blockSize</span><span class="o">);</span>
+        <span class="n">HFileContext</span> <span class="n">hFileContext</span> <span class="o">=</span> <span class="n">contextBuilder</span><span class="o">.</span><span class="na">build</span><span class="o">();</span>
+        <span class="c1">// 实例化 StoreFileWriter
+</span><span class="c1"></span>        <span class="n">f</span> <span class="o">(</span><span class="kc">null</span> <span class="o">==</span> <span class="n">favoredNodes</span><span class="o">)</span> <span class="o">{</span>
+          <span class="n">wl</span><span class="o">.</span><span class="na">writer</span> <span class="o">=</span>
+              <span class="k">new</span> <span class="n">StoreFileWriter</span><span class="o">.</span><span class="na">Builder</span><span class="o">(</span><span class="n">conf</span><span class="o">,</span> <span class="k">new</span> <span class="n">CacheConfig</span><span class="o">(</span><span class="n">tempConf</span><span class="o">),</span> <span class="n">fs</span><span class="o">)</span>
+                  <span class="o">.</span><span class="na">withOutputDir</span><span class="o">(</span><span class="n">familydir</span><span class="o">).</span><span class="na">withBloomType</span><span class="o">(</span><span class="n">bloomType</span><span class="o">)</span>
+              <span class="o">.</span><span class="na">withComparator</span><span class="o">(</span><span class="n">CellComparator</span><span class="o">.</span><span class="na">getInstance</span><span class="o">()).</span><span class="na">withFileContext</span><span class="o">(</span><span class="n">hFileContext</span><span class="o">).</span><span class="na">build</span><span class="o">();</span>
+        <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
+          <span class="n">wl</span><span class="o">.</span><span class="na">writer</span> <span class="o">=</span>
+              <span class="k">new</span> <span class="n">StoreFileWriter</span><span class="o">.</span><span class="na">Builder</span><span class="o">(</span><span class="n">conf</span><span class="o">,</span> <span class="k">new</span> <span class="n">CacheConfig</span><span class="o">(</span><span class="n">tempConf</span><span class="o">),</span> <span class="k">new</span> <span class="n">HFileSystem</span><span class="o">(</span><span class="n">fs</span><span class="o">))</span>
+                  <span class="o">.</span><span class="na">withOutputDir</span><span class="o">(</span><span class="n">familydir</span><span class="o">).</span><span class="na">withBloomType</span><span class="o">(</span><span class="n">bloomType</span><span class="o">)</span>
+                  <span class="o">.</span><span class="na">withComparator</span><span class="o">(</span><span class="n">CellComparator</span><span class="o">.</span><span class="na">getInstance</span><span class="o">()).</span><span class="na">withFileContext</span><span class="o">(</span><span class="n">hFileContext</span><span class="o">)</span>
+                  <span class="o">.</span><span class="na">withFavoredNodes</span><span class="o">(</span><span class="n">favoredNodes</span><span class="o">).</span><span class="na">build</span><span class="o">();</span>
+        <span class="o">}</span>
+        <span class="c1">// 添加到 writers集合中
+</span><span class="c1"></span>        <span class="k">this</span><span class="o">.</span><span class="na">writers</span><span class="o">.</span><span class="na">put</span><span class="o">(</span><span class="n">tableAndFamily</span><span class="o">,</span> <span class="n">wl</span><span class="o">);</span>
+        <span class="k">return</span> <span class="n">wl</span><span class="o">;</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+</code></pre></td></tr></table></div>
+</div>
+</div><p>继续看看 RecordWriter 的写操作：</p>
+<div class="highlight"><div class="chroma">
+<div class="table-container"><table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span><span class="lnt">35
+</span><span class="lnt">36
+</span><span class="lnt">37
+</span><span class="lnt">38
+</span><span class="lnt">39
+</span><span class="lnt">40
+</span><span class="lnt">41
+</span><span class="lnt">42
+</span><span class="lnt">43
+</span><span class="lnt">44
+</span><span class="lnt">45
+</span><span class="lnt">46
+</span><span class="lnt">47
+</span><span class="lnt">48
+</span><span class="lnt">49
+</span><span class="lnt">50
+</span><span class="lnt">51
+</span><span class="lnt">52
+</span><span class="lnt">53
+</span><span class="lnt">54
+</span><span class="lnt">55
+</span><span class="lnt">56
+</span><span class="lnt">57
+</span><span class="lnt">58
+</span><span class="lnt">59
+</span><span class="lnt">60
+</span><span class="lnt">61
+</span><span class="lnt">62
+</span><span class="lnt">63
+</span><span class="lnt">64
+</span><span class="lnt">65
+</span><span class="lnt">66
+</span><span class="lnt">67
+</span><span class="lnt">68
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-java" data-lang="java"><span class="kd">class</span> <span class="nc">RecordWriter</span><span class="o">&lt;</span><span class="n">ImmutableBytesWritable</span><span class="o">,</span> <span class="n">V</span><span class="o">&gt;()</span> <span class="o">{</span>
+    <span class="nd">@Override</span>
+    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">write</span><span class="o">(</span><span class="n">ImmutableBytesWritable</span> <span class="n">row</span><span class="o">,</span> <span class="n">V</span> <span class="n">cell</span><span class="o">)</span>
+        <span class="n">Cell</span> <span class="n">kv</span> <span class="o">=</span> <span class="n">cell</span><span class="o">;</span>
+         <span class="c1">// 收到空数据，表示需要立即刷新到磁盘，并且创建新的HFile
+</span><span class="c1"></span>    	<span class="k">if</span> <span class="o">(</span><span class="n">row</span> <span class="o">==</span> <span class="kc">null</span> <span class="o">&amp;&amp;</span> <span class="n">kv</span> <span class="o">==</span> <span class="kc">null</span><span class="o">)</span> <span class="o">{</span>
+            <span class="c1">// 刷新到磁盘
+</span><span class="c1"></span>            <span class="n">rollWriters</span><span class="o">(</span><span class="kc">null</span><span class="o">);</span>
+            <span class="k">return</span><span class="o">;</span>
+        <span class="o">}</span>
+        <span class="c1">// 根据table和column family生成唯一值
+</span><span class="c1"></span>    	<span class="kt">byte</span><span class="o">[]</span> <span class="n">tableAndFamily</span> <span class="o">=</span> <span class="n">getTableNameSuffixedWithFamily</span><span class="o">(</span><span class="n">tableNameBytes</span><span class="o">,</span> <span class="n">family</span><span class="o">);</span>
+        <span class="c1">// 获取对应的writer
+</span><span class="c1"></span>    	<span class="n">WriterLength</span> <span class="n">wl</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="na">writers</span><span class="o">.</span><span class="na">get</span><span class="o">(</span><span class="n">tableAndFamily</span><span class="o">);</span>
+    	<span class="k">if</span> <span class="o">(</span><span class="n">wl</span> <span class="o">==</span> <span class="kc">null</span><span class="o">)</span> <span class="o">{</span>
+            <span class="c1">// 如果为空，那么先创建对应的文件目录
+</span><span class="c1"></span>            <span class="n">Path</span> <span class="n">writerPath</span> <span class="o">=</span> <span class="kc">null</span><span class="o">;</span>
+            <span class="n">writerPath</span> <span class="o">=</span> <span class="k">new</span> <span class="n">Path</span><span class="o">(</span><span class="n">outputDir</span><span class="o">,</span> <span class="n">Bytes</span><span class="o">.</span><span class="na">toString</span><span class="o">(</span><span class="n">family</span><span class="o">));</span>
+            <span class="n">fs</span><span class="o">.</span><span class="na">mkdirs</span><span class="o">(</span><span class="n">writerPath</span><span class="o">);</span>
+        <span class="o">}</span>
+        <span class="c1">// 检测当前HFile的大小是否超过了最大值，默认为10GB
+</span><span class="c1"></span>    	<span class="k">if</span> <span class="o">(</span><span class="n">wl</span> <span class="o">!=</span> <span class="kc">null</span> <span class="o">&amp;&amp;</span> <span class="n">wl</span><span class="o">.</span><span class="na">written</span> <span class="o">+</span> <span class="n">length</span> <span class="o">&gt;=</span> <span class="n">maxsize</span><span class="o">)</span> <span class="o">{</span>
+            <span class="k">this</span><span class="o">.</span><span class="na">rollRequested</span> <span class="o">=</span> <span class="kc">true</span><span class="o">;</span>
+        <span class="o">}</span>
+        <span class="c1">// 如果当前HFile过大，那么需要将它刷新到磁盘
+</span><span class="c1"></span>    	<span class="k">if</span> <span class="o">(</span><span class="n">rollRequested</span> <span class="o">&amp;&amp;</span> <span class="n">Bytes</span><span class="o">.</span><span class="na">compareTo</span><span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="na">previousRow</span><span class="o">,</span> <span class="n">rowKey</span><span class="o">)</span> <span class="o">!=</span> <span class="n">0</span><span class="o">)</span> <span class="o">{</span>
+            <span class="n">rollWriters</span><span class="o">(</span><span class="n">wl</span><span class="o">);</span>
+        <span class="o">}</span>
+        <span class="c1">// 创建writer
+</span><span class="c1"></span>    	<span class="k">if</span> <span class="o">(</span><span class="n">wl</span> <span class="o">==</span> <span class="kc">null</span> <span class="o">||</span> <span class="n">wl</span><span class="o">.</span><span class="na">writer</span> <span class="o">==</span> <span class="kc">null</span><span class="o">)</span> <span class="o">{</span>
+            <span class="k">if</span> <span class="o">(</span><span class="n">conf</span><span class="o">.</span><span class="na">getBoolean</span><span class="o">(</span><span class="n">LOCALITY_SENSITIVE_CONF_KEY</span><span class="o">,</span> <span class="n">DEFAULT_LOCALITY_SENSITIVE</span><span class="o">))</span> <span class="o">{</span>
+                <span class="c1">// 如果开启了位置感知，那么就会去获取row所在的region的地址
+</span><span class="c1"></span>                <span class="n">HRegionLocation</span> <span class="n">loc</span> <span class="o">=</span> <span class="kc">null</span><span class="o">;</span>
+                <span class="n">loc</span> <span class="o">=</span> <span class="n">locator</span><span class="o">.</span><span class="na">getRegionLocation</span><span class="o">(</span><span class="n">rowKey</span><span class="o">);</span>
+                <span class="n">InetSocketAddress</span> <span class="n">initialIsa</span> <span class="o">=</span> <span class="k">new</span> <span class="n">InetSocketAddress</span><span class="o">(</span><span class="n">loc</span><span class="o">.</span><span class="na">getHostname</span><span class="o">(),</span> <span class="n">loc</span><span class="o">.</span><span class="na">getPort</span><span class="o">());</span>
+                <span class="c1">// 创建writer，指定了偏向节点
+</span><span class="c1"></span>                <span class="n">wl</span> <span class="o">=</span> <span class="n">getNewWriter</span><span class="o">(</span><span class="n">tableNameBytes</span><span class="o">,</span> <span class="n">family</span><span class="o">,</span> <span class="n">conf</span><span class="o">,</span> <span class="k">new</span> <span class="n">InetSocketAddress</span><span class="o">[]</span> <span class="o">{</span> <span class="n">initialIsa</span><span class="o">})</span>
+            <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
+                <span class="c1">// 创建writer
+</span><span class="c1"></span>                <span class="n">wl</span> <span class="o">=</span> <span class="n">getNewWriter</span><span class="o">(</span><span class="n">tableNameBytes</span><span class="o">,</span> <span class="n">family</span><span class="o">,</span> <span class="n">conf</span><span class="o">,</span> <span class="kc">null</span><span class="o">);</span>
+            <span class="o">}</span>
+        <span class="o">}</span>
+    	<span class="n">wl</span><span class="o">.</span><span class="na">writer</span><span class="o">.</span><span class="na">append</span><span class="o">(</span><span class="n">kv</span><span class="o">);</span>
+    	<span class="n">wl</span><span class="o">.</span><span class="na">written</span> <span class="o">+=</span> <span class="n">length</span><span class="o">;</span>
+    	<span class="k">this</span><span class="o">.</span><span class="na">previousRow</span> <span class="o">=</span> <span class="n">rowKey</span><span class="o">;</span>
+	<span class="o">}</span>
+
+	<span class="kd">private</span> <span class="kt">void</span> <span class="nf">rollWriters</span><span class="o">(</span><span class="n">WriterLength</span> <span class="n">writerLength</span><span class="o">)</span> <span class="kd">throws</span> <span class="n">IOException</span> <span class="o">{</span>
+        <span class="k">if</span> <span class="o">(</span><span class="n">writerLength</span> <span class="o">!=</span> <span class="kc">null</span><span class="o">)</span> <span class="o">{</span>
+            <span class="c1">// 关闭当前writer
+</span><span class="c1"></span>            <span class="n">closeWriter</span><span class="o">(</span><span class="n">writerLength</span><span class="o">);</span>
+        <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
+            <span class="c1">// 关闭所有family对应的writer
+</span><span class="c1"></span>            <span class="k">for</span> <span class="o">(</span><span class="n">WriterLength</span> <span class="n">wl</span> <span class="o">:</span> <span class="k">this</span><span class="o">.</span><span class="na">writers</span><span class="o">.</span><span class="na">values</span><span class="o">())</span> <span class="o">{</span>
+                <span class="n">closeWriter</span><span class="o">(</span><span class="n">wl</span><span class="o">);</span>
+            <span class="o">}</span>
+        <span class="o">}</span>
+        <span class="k">this</span><span class="o">.</span><span class="na">rollRequested</span> <span class="o">=</span> <span class="kc">false</span><span class="o">;</span>
+    <span class="o">}</span>
+
+	<span class="kd">private</span> <span class="kt">void</span> <span class="nf">closeWriter</span><span class="o">(</span><span class="n">WriterLength</span> <span class="n">wl</span><span class="o">)</span> <span class="kd">throws</span> <span class="n">IOException</span> <span class="o">{</span>
+        <span class="k">if</span> <span class="o">(</span><span class="n">wl</span><span class="o">.</span><span class="na">writer</span> <span class="o">!=</span> <span class="kc">null</span><span class="o">)</span> <span class="o">{</span>
+            <span class="n">close</span><span class="o">(</span><span class="n">wl</span><span class="o">.</span><span class="na">writer</span><span class="o">);</span>
+        <span class="o">}</span>
+        <span class="n">wl</span><span class="o">.</span><span class="na">writer</span> <span class="o">=</span> <span class="kc">null</span><span class="o">;</span>
+        <span class="n">wl</span><span class="o">.</span><span class="na">written</span> <span class="o">=</span> <span class="n">0</span><span class="o">;</span>
+    <span class="o">}</span>
+<span class="o">}</span>   	
+</code></pre></td></tr></table></div>
+</div>
+</div><p>RecordWriter在写入数据时，如果遇到一条 row key 和 value 都为 null 的数据时，这条数据有着特殊的含义，表示writer应该立即 flush。在每次创建RecordWriter时，它会根据此时row key 的值，找到所属 Region 的服务器地址，然后尽量在这台服务器上，创建新的HFile文件。</p>
+<h2 id="加载-hfile"><a href="#加载-hfile" class="anchor-link"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon anchor-icon"><path d="M326.612 185.391c59.747 59.809 58.927 155.698.36 214.59-.11.12-.24.25-.36.37l-67.2 67.2c-59.27 59.27-155.699 59.262-214.96 0-59.27-59.26-59.27-155.7 0-214.96l37.106-37.106c9.84-9.84 26.786-3.3 27.294 10.606.648 17.722 3.826 35.527 9.69 52.721 1.986 5.822.567 12.262-3.783 16.612l-13.087 13.087c-28.026 28.026-28.905 73.66-1.155 101.96 28.024 28.579 74.086 28.749 102.325.51l67.2-67.19c28.191-28.191 28.073-73.757 0-101.83-3.701-3.694-7.429-6.564-10.341-8.569a16.037 16.037 0 0 1-6.947-12.606c-.396-10.567 3.348-21.456 11.698-29.806l21.054-21.055c5.521-5.521 14.182-6.199 20.584-1.731a152.482 152.482 0 0 1 20.522 17.197zM467.547 44.449c-59.261-59.262-155.69-59.27-214.96 0l-67.2 67.2c-.12.12-.25.25-.36.37-58.566 58.892-59.387 154.781.36 214.59a152.454 152.454 0 0 0 20.521 17.196c6.402 4.468 15.064 3.789 20.584-1.731l21.054-21.055c8.35-8.35 12.094-19.239 11.698-29.806a16.037 16.037 0 0 0-6.947-12.606c-2.912-2.005-6.64-4.875-10.341-8.569-28.073-28.073-28.191-73.639 0-101.83l67.2-67.19c28.239-28.239 74.3-28.069 102.325.51 27.75 28.3 26.872 73.934-1.155 101.96l-13.087 13.087c-4.35 4.35-5.769 10.79-3.783 16.612 5.864 17.194 9.042 34.999 9.69 52.721.509 13.906 17.454 20.446 27.294 10.606l37.106-37.106c59.271-59.259 59.271-155.699.001-214.959z"/></svg></a>加载 HFile</h2>
+<p>上面生成完 HFile 之后，我们还需要调用第二条命令完成加载 HFile 过程。这个过程分为两步，切割数据量大的 HFile 文件和发送加载请求让服务器完成。</p>
+<h3 id="切割-hfile"><a href="#切割-hfile" class="anchor-link"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon anchor-icon"><path d="M326.612 185.391c59.747 59.809 58.927 155.698.36 214.59-.11.12-.24.25-.36.37l-67.2 67.2c-59.27 59.27-155.699 59.262-214.96 0-59.27-59.26-59.27-155.7 0-214.96l37.106-37.106c9.84-9.84 26.786-3.3 27.294 10.606.648 17.722 3.826 35.527 9.69 52.721 1.986 5.822.567 12.262-3.783 16.612l-13.087 13.087c-28.026 28.026-28.905 73.66-1.155 101.96 28.024 28.579 74.086 28.749 102.325.51l67.2-67.19c28.191-28.191 28.073-73.757 0-101.83-3.701-3.694-7.429-6.564-10.341-8.569a16.037 16.037 0 0 1-6.947-12.606c-.396-10.567 3.348-21.456 11.698-29.806l21.054-21.055c5.521-5.521 14.182-6.199 20.584-1.731a152.482 152.482 0 0 1 20.522 17.197zM467.547 44.449c-59.261-59.262-155.69-59.27-214.96 0l-67.2 67.2c-.12.12-.25.25-.36.37-58.566 58.892-59.387 154.781.36 214.59a152.454 152.454 0 0 0 20.521 17.196c6.402 4.468 15.064 3.789 20.584-1.731l21.054-21.055c8.35-8.35 12.094-19.239 11.698-29.806a16.037 16.037 0 0 0-6.947-12.606c-2.912-2.005-6.64-4.875-10.341-8.569-28.073-28.073-28.191-73.639 0-101.83l67.2-67.19c28.239-28.239 74.3-28.069 102.325.51 27.75 28.3 26.872 73.934-1.155 101.96l-13.087 13.087c-4.35 4.35-5.769 10.79-3.783 16.612 5.864 17.194 9.042 34.999 9.69 52.721.509 13.906 17.454 20.446 27.294 10.606l37.106-37.106c59.271-59.259 59.271-155.699.001-214.959z"/></svg></a>切割 HFile</h3>
+<p>首先它会遍历目录下的每个 HFile ，</p>
+<ol>
+<li>首先检查 HFile 里面数据的 family 在 Hbase 表里是否存在。</li>
+<li>获取HFile 数据的起始 row key，找到 Hbase 里对应的 Region，然后比较两者之间的 row key 范围</li>
+<li>如果 HFile 的 row key 范围比 Region 大，也就是 HFile 的结束 row key 比这个 Region 的 结束 row Key 大，那么需要将这个 HFile 切割成两份，切割值为 Region 的结束 row key。</li>
+<li>继续从上一部切割生成的两份HFile中，选择第二份 HFile（它的row key 大于 Regioin 的结束 row key），将它继续按照第二步切割，直到所有HFile的 row key范围都能在一个Region里。</li>
+</ol>
+<p>在割切HFile的过程中，还会检查 column family 对应的 HFile数目。 如果一个 column family 对应的 HFile 数目过多，默认数目为32，程序就会报错。但是这个值通过指定 hbase.mapreduce.bulkload.max.hfiles.perRegion.perFamily，来设置更大的值。</p>
+<h3 id="发送加载请求"><a href="#发送加载请求" class="anchor-link"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon anchor-icon"><path d="M326.612 185.391c59.747 59.809 58.927 155.698.36 214.59-.11.12-.24.25-.36.37l-67.2 67.2c-59.27 59.27-155.699 59.262-214.96 0-59.27-59.26-59.27-155.7 0-214.96l37.106-37.106c9.84-9.84 26.786-3.3 27.294 10.606.648 17.722 3.826 35.527 9.69 52.721 1.986 5.822.567 12.262-3.783 16.612l-13.087 13.087c-28.026 28.026-28.905 73.66-1.155 101.96 28.024 28.579 74.086 28.749 102.325.51l67.2-67.19c28.191-28.191 28.073-73.757 0-101.83-3.701-3.694-7.429-6.564-10.341-8.569a16.037 16.037 0 0 1-6.947-12.606c-.396-10.567 3.348-21.456 11.698-29.806l21.054-21.055c5.521-5.521 14.182-6.199 20.584-1.731a152.482 152.482 0 0 1 20.522 17.197zM467.547 44.449c-59.261-59.262-155.69-59.27-214.96 0l-67.2 67.2c-.12.12-.25.25-.36.37-58.566 58.892-59.387 154.781.36 214.59a152.454 152.454 0 0 0 20.521 17.196c6.402 4.468 15.064 3.789 20.584-1.731l21.054-21.055c8.35-8.35 12.094-19.239 11.698-29.806a16.037 16.037 0 0 0-6.947-12.606c-2.912-2.005-6.64-4.875-10.341-8.569-28.073-28.073-28.191-73.639 0-101.83l67.2-67.19c28.239-28.239 74.3-28.069 102.325.51 27.75 28.3 26.872 73.934-1.155 101.96l-13.087 13.087c-4.35 4.35-5.769 10.79-3.783 16.612 5.864 17.194 9.042 34.999 9.69 52.721.509 13.906 17.454 20.446 27.294 10.606l37.106-37.106c59.271-59.259 59.271-155.699.001-214.959z"/></svg></a>发送加载请求</h3>
+<p>当完成了HFile的切割后，最后的导入动作是发送 BulkLoadHFileRequest 请求给 Hbase 服务端。Hbase 服务端会处理该请求，完成HFile加载。</p>
+<h2 id="其他"><a href="#其他" class="anchor-link"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon anchor-icon"><path d="M326.612 185.391c59.747 59.809 58.927 155.698.36 214.59-.11.12-.24.25-.36.37l-67.2 67.2c-59.27 59.27-155.699 59.262-214.96 0-59.27-59.26-59.27-155.7 0-214.96l37.106-37.106c9.84-9.84 26.786-3.3 27.294 10.606.648 17.722 3.826 35.527 9.69 52.721 1.986 5.822.567 12.262-3.783 16.612l-13.087 13.087c-28.026 28.026-28.905 73.66-1.155 101.96 28.024 28.579 74.086 28.749 102.325.51l67.2-67.19c28.191-28.191 28.073-73.757 0-101.83-3.701-3.694-7.429-6.564-10.341-8.569a16.037 16.037 0 0 1-6.947-12.606c-.396-10.567 3.348-21.456 11.698-29.806l21.054-21.055c5.521-5.521 14.182-6.199 20.584-1.731a152.482 152.482 0 0 1 20.522 17.197zM467.547 44.449c-59.261-59.262-155.69-59.27-214.96 0l-67.2 67.2c-.12.12-.25.25-.36.37-58.566 58.892-59.387 154.781.36 214.59a152.454 152.454 0 0 0 20.521 17.196c6.402 4.468 15.064 3.789 20.584-1.731l21.054-21.055c8.35-8.35 12.094-19.239 11.698-29.806a16.037 16.037 0 0 0-6.947-12.606c-2.912-2.005-6.64-4.875-10.341-8.569-28.073-28.073-28.191-73.639 0-101.83l67.2-67.19c28.239-28.239 74.3-28.069 102.325.51 27.75 28.3 26.872 73.934-1.155 101.96l-13.087 13.087c-4.35 4.35-5.769 10.79-3.783 16.612 5.864 17.194 9.042 34.999 9.69 52.721.509 13.906 17.454 20.446 27.294 10.606l37.106-37.106c59.271-59.259 59.271-155.699.001-214.959z"/></svg></a>其他</h2>
+<p>至于我研究 Hbase Bulkload 的原因，是在使用过程中发生了 Out Of Memory 的错误。虽然经过排查，发现和 Hbase Bulkload 的原理没什么关系，不过在此也顺便提一下，希望能帮到遇到类似情况的人。首先说下我使用的Hadoop 版本是 CDH 5.12.2。</p>
+<p>经过排查，发现是因为 Hbase Bulkload 底层用的 MapReduce 模式为本地模式，而不是集群 Yarn 的方式。我们知道 MapReduce 程序选择哪一种方式，可以通过 mapreduce.framework.name 配置项指定。虽然在 CDH 的 Yarn 配置页面里，设置了该配置为 yarn，但是 Hbase Bulkload 仍然使用本地模式。后来发现 Yarn 组件下有个 Gateway 的角色实例，这是个特殊的角色，它负责 Yarn 客户端的配置部署。而恰好这台主机没有安装，所以在使用 Hbase Bulkload 时，没有读取到 Yarn 的配置。解决方法是在 CDH 界面添加  Gateway 实例就好了。</p>
+
+            </div>
+
+            
+    
+    
+        <ul class="post-copyright">
+            <li class="copyright-item author"><span class="copyright-item-text">作者</span>：<a href="https://zhmin.github.io/" class="p-author h-card" target="_blank" rel="noopener">zhmin</a></li>
+            
+                
+                
+                
+                
+                <li class="copyright-item link"><span class="copyright-item-text">链接</span>：<a href="/posts/hbase-bulkload/" target="_blank" rel="noopener">https://zhmin.github.io/posts/hbase-bulkload/</a></li>
+            
+            
+        </ul>
+    
+
+
+
+        </article>
+
+        
+
+        
+    <div class="updated-badge-container">
+        <span title="Updated @ 2021-09-12 11:48:25 CST" style="cursor:help">
+
+<svg xmlns="http://www.w3.org/2000/svg" width="130" height="20" class="updated-badge"><linearGradient id="b" x2="0" y2="100%"><stop offset="0" stop-color="#bbb" stop-opacity=".1"/><stop offset="1" stop-opacity=".1"/></linearGradient><clipPath id="a"><rect width="130" height="20" rx="3" fill="#fff"/></clipPath><g clip-path="url(#a)"><path class="updated-badge-left" d="M0 0h55v20H0z"/><path class="updated-badge-right" d="M55 0h75v20H55z"/><path fill="url(#b)" d="M0 0h130v20H0z"/></g><g fill="#fff" text-anchor="middle" font-size="110"><text x="285" y="150" fill="#010101" fill-opacity=".3" textLength="450" transform="scale(.1)">updated</text><text x="285" y="140" textLength="450" transform="scale(.1)">updated</text><text x="915" y="150" fill="#010101" fill-opacity=".3" textLength="650" transform="scale(.1)">2021-09-12</text><text x="915" y="140" textLength="650" transform="scale(.1)">2021-09-12</text></g></svg>
+        </span></div>
+
+
+
+        
+
+
+        
+
+
+        
+    
+    
+
+
+
+        
+    
+        <div class="post-tags">
+            
+                
+                
+                
+                
+                    
+                    <a href="/tags/hbase/" rel="tag" class="post-tags-link"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon tag-icon"><path d="M0 252.118V48C0 21.49 21.49 0 48 0h204.118a48 48 0 0 1 33.941 14.059l211.882 211.882c18.745 18.745 18.745 49.137 0 67.882L293.823 497.941c-18.745 18.745-49.137 18.745-67.882 0L14.059 286.059A48 48 0 0 1 0 252.118zM112 64c-26.51 0-48 21.49-48 48s21.49 48 48 48 48-21.49 48-48-21.49-48-48-48z"/></svg>hbase</a>
+                
+            
+                
+                
+                
+                
+                    
+                    <a href="/tags/bulkload/" rel="tag" class="post-tags-link"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon tag-icon"><path d="M0 252.118V48C0 21.49 21.49 0 48 0h204.118a48 48 0 0 1 33.941 14.059l211.882 211.882c18.745 18.745 18.745 49.137 0 67.882L293.823 497.941c-18.745 18.745-49.137 18.745-67.882 0L14.059 286.059A48 48 0 0 1 0 252.118zM112 64c-26.51 0-48 21.49-48 48s21.49 48 48 48 48-21.49 48-48-21.49-48-48-48z"/></svg>bulkload</a>
+                
+            
+        </div>
+    
+
+
+
+        
+
+
+        
+
+
+        
+    
+        
+        
+    
+    
+    
+    
+        <ul class="post-nav">
+            
+                <li class="post-nav-prev">
+                    <a href="/posts/spark-sql-treenode/" rel="prev">&lt; Spark Sql 基础类 TreeNode</a>
+                </li>
+            
+            
+                <li class="post-nav-next">
+                    <a href="/posts/kafka-transaction/" rel="next">Kafka 事务实现原理 &gt;</a>
+                </li>
+            
+        </ul>
+    
+
+
+
+        
+    
+
+        
+
+        
+
+        
+            <div id="vcomments"></div>
+        
+
+        
+
+        
+    
+
+
+
+    </div>
+</main>
+
+
+            
+    <div id="back-to-top" class="back-to-top">
+        <a href="#"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512" class="icon arrow-up"><path d="M34.9 289.5l-22.2-22.2c-9.4-9.4-9.4-24.6 0-33.9L207 39c9.4-9.4 24.6-9.4 33.9 0l194.3 194.3c9.4 9.4 9.4 24.6 0 33.9L413 289.4c-9.5 9.5-25 9.3-34.3-.4L264 168.6V456c0 13.3-10.7 24-24 24h-32c-13.3 0-24-10.7-24-24V168.6L69.2 289.1c-9.3 9.8-24.8 10-34.3.4z"/></svg></a>
+    </div>
+
+
+            
+    <footer id="footer" class="footer">
+        <div class="footer-inner">
+            <div class="site-info">©&nbsp;2019–2021&nbsp;<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon footer-icon"><path d="M462.3 62.6C407.5 15.9 326 24.3 275.7 76.2L256 96.5l-19.7-20.3C186.1 24.3 104.5 15.9 49.7 62.6c-62.8 53.6-66.1 149.8-9.9 207.9l193.5 199.8c12.5 12.9 32.8 12.9 45.3 0l193.5-199.8c56.3-58.1 53-154.3-9.8-207.9z"/></svg>&nbsp;zhmin</div><div class="site-copyright"></div>
+
+            
+    
+        <ul class="socials"><li class="socials-item">
+                    <a href="/rss.xml" target="_blank" rel="external noopener" title="RSS"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" class="icon social-icon"><path d="M19.199 24C19.199 13.467 10.533 4.8 0 4.8V0c13.165 0 24 10.835 24 24h-4.801zM3.291 17.415c1.814 0 3.293 1.479 3.293 3.295 0 1.813-1.485 3.29-3.301 3.29C1.47 24 0 22.526 0 20.71s1.475-3.294 3.291-3.295zM15.909 24h-4.665c0-6.169-5.075-11.245-11.244-11.245V8.09c8.727 0 15.909 7.184 15.909 15.91z"/></svg></a>
+                </li><li class="socials-item">
+                    <a href="mailto:reuixiy@gmail.com" target="_blank" rel="external noopener" title="Email"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon social-icon"><path d="M464 64H48C21.49 64 0 85.49 0 112v288c0 26.51 21.49 48 48 48h416c26.51 0 48-21.49 48-48V112c0-26.51-21.49-48-48-48zm0 48v40.805c-22.422 18.259-58.168 46.651-134.587 106.49-16.841 13.247-50.201 45.072-73.413 44.701-23.208.375-56.579-31.459-73.413-44.701C106.18 199.465 70.425 171.067 48 152.805V112h416zM48 400V214.398c22.914 18.251 55.409 43.862 104.938 82.646 21.857 17.205 60.134 55.186 103.062 54.955 42.717.231 80.509-37.199 103.053-54.947 49.528-38.783 82.032-64.401 104.947-82.653V400H48z"/></svg></a>
+                </li><li class="socials-item">
+                    <a href="https://github.com/reuixiy" target="_blank" rel="external noopener" title="GitHub"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" class="icon social-icon"><path d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"/></svg></a>
+                </li><li class="socials-item">
+                    <a href="https://twitter.com/reuixiy" target="_blank" rel="external noopener" title="Twitter"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon social-icon"><path d="M459.37 151.716c.325 4.548.325 9.097.325 13.645 0 138.72-105.583 298.558-298.558 298.558-59.452 0-114.68-17.219-161.137-47.106 8.447.974 16.568 1.299 25.34 1.299 49.055 0 94.213-16.568 130.274-44.832-46.132-.975-84.792-31.188-98.112-72.772 6.498.974 12.995 1.624 19.818 1.624 9.421 0 18.843-1.3 27.614-3.573-48.081-9.747-84.143-51.98-84.143-102.985v-1.299c13.969 7.797 30.214 12.67 47.431 13.319-28.264-18.843-46.781-51.005-46.781-87.391 0-19.492 5.197-37.36 14.294-52.954 51.655 63.675 129.3 105.258 216.365 109.807-1.624-7.797-2.599-15.918-2.599-24.04 0-57.828 46.782-104.934 104.934-104.934 30.213 0 57.502 12.67 76.67 33.137 23.715-4.548 46.456-13.32 66.599-25.34-7.798 24.366-24.366 44.833-46.132 57.827 21.117-2.273 41.584-8.122 60.426-16.243-14.292 20.791-32.161 39.308-52.628 54.253z"/></svg></a>
+                </li><li class="socials-item">
+                    <a href="https://t.me/yixiuer" target="_blank" rel="external noopener" title="Telegram"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512" class="icon social-icon"><path d="M248 8C111 8 0 119 0 256s111 248 248 248 248-111 248-248S385 8 248 8zm121.8 169.9l-40.7 191.8c-3 13.6-11.1 16.9-22.4 10.5l-62-45.7-29.9 28.8c-3.3 3.3-6.1 6.1-12.5 6.1l4.4-63.1 114.9-103.8c5-4.4-1.1-6.9-7.7-2.5l-142 89.4-61.2-19.1c-13.3-4.2-13.6-13.3 2.8-19.7l239.1-92.2c11.1-4 20.8 2.7 17.2 19.5z"/></svg></a>
+                </li></ul>
+    
+
+
+
+            
+        </div>
+    </footer>
+
+
+        </div>
+        
+
+        
+
+
+
+
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@8.8.3/dist/mermaid.min.js"></script>
+<script>
+    
+    Array.from(document.getElementsByClassName("language-mermaid")).forEach(
+        (el) => {
+            el.parentElement.outerHTML = `<div class="mermaid">${el.innerText}</div>`;
+        }
+    );
+    let mermaidConfig = {
+        startOnLoad: true,
+        flowchart: {
+            useMaxWidth: false,
+            htmlLabels: true
+        },
+        theme: 'forest'
+    };
+    mermaid.initialize(mermaidConfig);
+</script>
+
+
+
+    
+
+        
+
+        
+            <script>
+    function loadComments() {
+        if (typeof Valine === 'undefined') {
+            var getScript = (options) => {
+                var script = document.createElement('script');
+                script.defer = true;
+                script.crossOrigin = 'anonymous';
+                Object.keys(options).forEach((key) => {
+                    script[key] = options[key];
+                });
+                document.body.appendChild(script);
+            };
+            getScript({
+                src: 'https://cdn.jsdelivr.net/npm/valine@1.4.14/dist/Valine.min.js',
+                onload: () => {
+                    newValine();
+                }
+            });
+        } else {
+            newValine();
+        }
+    }
+    function newValine() {
+        new Valine({
+            el: '#vcomments',
+            appId: 'rArgi8qro88zmWgSe68qAzgL-gzGzoHsz',
+            appKey: 'R6YKDBN8HFTAqWcuSTzrSb6e',
+            placeholder: 'Just go go',
+            path: location.pathname,
+            avatar: 'mm',
+            meta: ["nick","mail","link"],
+            pageSize:  10 ,
+            lang: 'zh-cn',
+            visitor:  true ,
+            highlight:  true ,
+            avatarForce:  false ,
+            recordIP:  false ,
+            serverURLs: '',
+            emojiCDN: '',
+            emojiMaps: {},
+            enableQQ:  false ,
+            requiredFields: []
+        });
+    }
+</script>
+
+        
+
+        
+
+        
+
+    
+
+
+
+    <script src="https://cdn.jsdelivr.net/npm/medium-zoom@latest/dist/medium-zoom.min.js"></script>
+
+<script>
+    let imgNodes = document.querySelectorAll('div.post-body img');
+    imgNodes = Array.from(imgNodes).filter(node => node.parentNode.tagName !== "A");
+
+    mediumZoom(imgNodes, {
+        background: 'hsla(var(--color-bg-h), var(--color-bg-s), var(--color-bg-l), 0.95)'
+    })
+</script>
+
+
+
+
+    <script src="https://cdn.jsdelivr.net/npm/instant.page@5.1.0/instantpage.min.js" type="module" defer></script>
+
+
+
+
+
+
+
+    </body>
+</html>

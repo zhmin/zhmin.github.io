@@ -1,0 +1,1221 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+    <head prefix="og: http://ogp.me/ns# article: http://ogp.me/ns/article#">
+    <meta charset="UTF-8" />
+
+    <meta name="generator" content="Hugo 0.79.0" /><meta name="theme-color" content="#fff" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    
+    <meta name="format-detection" content="telephone=no, date=no, address=no, email=no" />
+    
+    <meta http-equiv="Cache-Control" content="no-transform" />
+    
+    <meta http-equiv="Cache-Control" content="no-siteapp" />
+
+    <title>Kafka 协议格式 | 学习笔记</title>
+
+    <link rel="stylesheet" href="/css/meme.min.81031e6b78ad2f1f534002ebb3b658886fea2f25d8a44d296d1466a2fe52f1c1.css"/>
+
+    
+    
+        <script src="/js/meme.min.120d98bb614adc6beb13bf79f943d2cceffd323f4de1544029228c3dca2e9bda.js"></script>
+
+    
+
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=EB&#43;Garamond:ital,wght@0,400;0,500;0,700;1,400;1,700&amp;family=Noto&#43;Serif&#43;SC:wght@400;500;700&amp;family=Source&#43;Code&#43;Pro:ital,wght@0,400;0,700;1,400;1,700&amp;display=swap" media="print" onload="this.media='all'" />
+        <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=EB&#43;Garamond:ital,wght@0,400;0,500;0,700;1,400;1,700&amp;family=Noto&#43;Serif&#43;SC:wght@400;500;700&amp;family=Source&#43;Code&#43;Pro:ital,wght@0,400;0,700;1,400;1,700&amp;display=swap" /></noscript>
+
+    <meta name="author" content="zhmin" /><meta name="description" content="Kafka 协议格式 Kafka通常作为一个集群存在，集群内部会有着很多的通信，包括客户端与服务端的通信，服务端内部的通信。这些通信都有着固定的协议格式，通过了解这些协议格式，可以使我们对Kafka的原理有着更好……" />
+
+    <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon" />
+    <link rel="mask-icon" href="/icons/safari-pinned-tab.svg" color="#2a6df4" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/icons/apple-touch-icon.png" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-title" content="学习笔记" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="application-name" content="学习笔记" />
+    <meta name="msapplication-starturl" content="../../" />
+    <meta name="msapplication-TileColor" content="#fff" />
+    <meta name="msapplication-TileImage" content="../../icons/mstile-150x150.png" />
+    <link rel="manifest" href="/manifest.json" />
+
+    
+    
+
+    
+    <link rel="canonical" href="https://zhmin.github.io/posts/kafka-protocol/" />
+    
+
+<script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "BlogPosting",
+        "datePublished": "2019-03-04T23:49:00+00:00",
+        "dateModified": "2021-09-12T11:48:25+08:00",
+        "url": "https://zhmin.github.io/posts/kafka-protocol/",
+        "headline": "Kafka 协议格式",
+        "description": "Kafka 协议格式 Kafka通常作为一个集群存在，集群内部会有着很多的通信，包括客户端与服务端的通信，服务端内部的通信。这些通信都有着固定的协议格式，通过了解这些协议格式，可以使我们对Kafka的原理有着更好……",
+        "inLanguage" : "zh-CN",
+        "articleSection": "posts",
+        "wordCount":  3913 ,
+        "image": ["https://zhmin.github.io/kafka-protocol-produce-request.svg","https://zhmin.github.io/kafka-protocol-produce-response.svg"],
+        "author": {
+            "@type": "Person",
+            "description": "无问西东",
+            "image": "https://zhmin.github.io/icons/apple-touch-icon.png",
+            "url": "https://zhmin.github.io/",
+            "name": "zhmin"
+        },
+        "publisher": {
+            "@type": "Organization",
+            "name": "学习笔记",
+            "logo": {
+                "@type": "ImageObject",
+                "url": "https://zhmin.github.io/icons/apple-touch-icon.png"
+            },
+            "url": "https://zhmin.github.io/"
+        },
+        "mainEntityOfPage": {
+            "@type": "WebSite",
+            "@id": "https://zhmin.github.io/"
+        }
+    }
+</script>
+
+    
+    
+
+
+
+<meta property="og:title" content="Kafka 协议格式" />
+<meta property="og:description" content="Kafka 协议格式 Kafka通常作为一个集群存在，集群内部会有着很多的通信，包括客户端与服务端的通信，服务端内部的通信。这些通信都有着固定的协议格式，通过了解这些协议格式，可以使我们对Kafka的原理有着更好……" />
+<meta property="og:url" content="https://zhmin.github.io/posts/kafka-protocol/" />
+<meta property="og:site_name" content="学习笔记" />
+<meta property="og:locale" content="zh" /><meta property="og:image" content="https://zhmin.github.io/kafka-protocol-produce-request.svg" />
+<meta property="og:type" content="article" />
+    <meta property="article:published_time" content="2019-03-04T23:49:00&#43;00:00" />
+    <meta property="article:modified_time" content="2021-09-12T11:48:25&#43;08:00" />
+    
+    <meta property="article:section" content="posts" />
+
+
+
+    
+    
+
+    
+</head>
+
+    <body>
+        <div class="container">
+            
+    <header class="header">
+        
+            <div class="header-wrapper">
+                <div class="header-inner single">
+                    
+    <div class="site-brand">
+        
+            <a href="/" class="brand">学习笔记</a>
+        
+    </div>
+
+                    <nav class="nav">
+    <ul class="menu" id="menu">
+        
+            
+        
+        
+        
+        
+            
+                <li class="menu-item"><a href="/posts/"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon archive"><path d="M32 448c0 17.7 14.3 32 32 32h384c17.7 0 32-14.3 32-32V160H32v288zm160-212c0-6.6 5.4-12 12-12h104c6.6 0 12 5.4 12 12v8c0 6.6-5.4 12-12 12H204c-6.6 0-12-5.4-12-12v-8zM480 32H32C14.3 32 0 46.3 0 64v48c0 8.8 7.2 16 16 16h480c8.8 0 16-7.2 16-16V64c0-17.7-14.3-32-32-32z"/></svg><span class="menu-item-name">文章</span></a>
+                </li>
+            
+        
+            
+                <li class="menu-item"><a href="/categories/"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon th"><path d="M149.333 56v80c0 13.255-10.745 24-24 24H24c-13.255 0-24-10.745-24-24V56c0-13.255 10.745-24 24-24h101.333c13.255 0 24 10.745 24 24zm181.334 240v-80c0-13.255-10.745-24-24-24H205.333c-13.255 0-24 10.745-24 24v80c0 13.255 10.745 24 24 24h101.333c13.256 0 24.001-10.745 24.001-24zm32-240v80c0 13.255 10.745 24 24 24H488c13.255 0 24-10.745 24-24V56c0-13.255-10.745-24-24-24H386.667c-13.255 0-24 10.745-24 24zm-32 80V56c0-13.255-10.745-24-24-24H205.333c-13.255 0-24 10.745-24 24v80c0 13.255 10.745 24 24 24h101.333c13.256 0 24.001-10.745 24.001-24zm-205.334 56H24c-13.255 0-24 10.745-24 24v80c0 13.255 10.745 24 24 24h101.333c13.255 0 24-10.745 24-24v-80c0-13.255-10.745-24-24-24zM0 376v80c0 13.255 10.745 24 24 24h101.333c13.255 0 24-10.745 24-24v-80c0-13.255-10.745-24-24-24H24c-13.255 0-24 10.745-24 24zm386.667-56H488c13.255 0 24-10.745 24-24v-80c0-13.255-10.745-24-24-24H386.667c-13.255 0-24 10.745-24 24v80c0 13.255 10.745 24 24 24zm0 160H488c13.255 0 24-10.745 24-24v-80c0-13.255-10.745-24-24-24H386.667c-13.255 0-24 10.745-24 24v80c0 13.255 10.745 24 24 24zM181.333 376v80c0 13.255 10.745 24 24 24h101.333c13.255 0 24-10.745 24-24v-80c0-13.255-10.745-24-24-24H205.333c-13.255 0-24 10.745-24 24z"/></svg><span class="menu-item-name">分类</span></a>
+                </li>
+            
+        
+            
+                <li class="menu-item"><a href="/tags/"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512" class="icon tags"><path d="M497.941 225.941L286.059 14.059A48 48 0 0 0 252.118 0H48C21.49 0 0 21.49 0 48v204.118a48 48 0 0 0 14.059 33.941l211.882 211.882c18.744 18.745 49.136 18.746 67.882 0l204.118-204.118c18.745-18.745 18.745-49.137 0-67.882zM112 160c-26.51 0-48-21.49-48-48s21.49-48 48-48 48 21.49 48 48-21.49 48-48 48zm513.941 133.823L421.823 497.941c-18.745 18.745-49.137 18.745-67.882 0l-.36-.36L527.64 323.522c16.999-16.999 26.36-39.6 26.36-63.64s-9.362-46.641-26.36-63.64L331.397 0h48.721a48 48 0 0 1 33.941 14.059l211.882 211.882c18.745 18.745 18.745 49.137 0 67.882z"/></svg><span class="menu-item-name">标签</span></a>
+                </li>
+            
+        
+            
+                <li class="menu-item"><a href="/about/"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512" class="icon user-circle"><path d="M248 8C111 8 0 119 0 256s111 248 248 248 248-111 248-248S385 8 248 8zm0 96c48.6 0 88 39.4 88 88s-39.4 88-88 88-88-39.4-88-88 39.4-88 88-88zm0 344c-58.7 0-111.3-26.6-146.5-68.2 18.8-35.4 55.6-59.8 98.5-59.8 2.4 0 4.8.4 7.1 1.1 13 4.2 26.6 6.9 40.9 6.9 14.3 0 28-2.7 40.9-6.9 2.3-.7 4.7-1.1 7.1-1.1 42.9 0 79.7 24.4 98.5 59.8C359.3 421.4 306.7 448 248 448z"/></svg><span class="menu-item-name">关于</span></a>
+                </li>
+            
+        
+            
+                
+                    
+                    
+                        <li class="menu-item">
+                            <a id="theme-switcher" href="#"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon theme-icon-light"><path d="M193.2 104.5l48.8-97.5a18 18 0 0128 0l48.8 97.5 103.4 -34.5a18 18 0 0119.8 19.8l-34.5 103.4l97.5 48.8a18 18 0 010 28l-97.5 48.8 34.5 103.4a18 18 0 01-19.8 19.8l-103.4-34.5-48.8 97.5a18 18 0 01-28 0l-48.8-97.5l-103.4 34.5a18 18 0 01-19.8-19.8l34.5-103.4-97.5-48.8a18 18 0 010-28l97.5-48.8-34.5-103.4a18 18 0 0119.8-19.8zM256 128a128 128 0 10.01 0M256 160a96 96 0 10.01 0"/></svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon theme-icon-dark"><path d="M27 412a256 256 0 10154-407a11.5 11.5 0 00-5 20a201.5 201.5 0 01-134 374a11.5 11.5 0 00-15 13"/></svg></a>
+                        </li>
+                    
+                
+            
+        
+            
+                
+            
+        
+    </ul>
+</nav>
+
+                    
+                </div>
+            </div>
+            
+    <input type="checkbox" id="nav-toggle" aria-hidden="true" />
+    <label for="nav-toggle" class="nav-toggle"></label>
+    <label for="nav-toggle" class="nav-curtain"></label>
+
+
+        
+    </header>
+
+
+
+
+            
+            
+    <main class="main single" id="main">
+    <div class="main-inner">
+
+        
+
+        <article class="content post h-entry" data-align="justify" data-type="posts" data-toc-num="true">
+
+            <h1 class="post-title p-name">Kafka 协议格式</h1>
+
+            
+
+            
+                
+            
+
+            
+                
+
+<div class="post-meta">
+    
+        
+        <time datetime="2019-03-04T23:49:00&#43;00:00" class="post-meta-item published dt-published"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512" class="icon post-meta-icon"><path d="M148 288h-40c-6.6 0-12-5.4-12-12v-40c0-6.6 5.4-12 12-12h40c6.6 0 12 5.4 12 12v40c0 6.6-5.4 12-12 12zm108-12v-40c0-6.6-5.4-12-12-12h-40c-6.6 0-12 5.4-12 12v40c0 6.6 5.4 12 12 12h40c6.6 0 12-5.4 12-12zm96 0v-40c0-6.6-5.4-12-12-12h-40c-6.6 0-12 5.4-12 12v40c0 6.6 5.4 12 12 12h40c6.6 0 12-5.4 12-12zm-96 96v-40c0-6.6-5.4-12-12-12h-40c-6.6 0-12 5.4-12 12v40c0 6.6 5.4 12 12 12h40c6.6 0 12-5.4 12-12zm-96 0v-40c0-6.6-5.4-12-12-12h-40c-6.6 0-12 5.4-12 12v40c0 6.6 5.4 12 12 12h40c6.6 0 12-5.4 12-12zm192 0v-40c0-6.6-5.4-12-12-12h-40c-6.6 0-12 5.4-12 12v40c0 6.6 5.4 12 12 12h40c6.6 0 12-5.4 12-12zm96-260v352c0 26.5-21.5 48-48 48H48c-26.5 0-48-21.5-48-48V112c0-26.5 21.5-48 48-48h48V12c0-6.6 5.4-12 12-12h40c6.6 0 12 5.4 12 12v52h128V12c0-6.6 5.4-12 12-12h40c6.6 0 12 5.4 12 12v52h48c26.5 0 48 21.5 48 48zm-48 346V160H48v298c0 3.3 2.7 6 6 6h340c3.3 0 6-2.7 6-6z"/></svg>&nbsp;2019.3.4</time>
+    
+    
+    
+    
+        
+        
+        
+            
+                <span class="post-meta-item category"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon post-meta-icon"><path d="M464 128H272l-54.63-54.63c-6-6-14.14-9.37-22.63-9.37H48C21.49 64 0 85.49 0 112v288c0 26.51 21.49 48 48 48h416c26.51 0 48-21.49 48-48V176c0-26.51-21.49-48-48-48zm0 272H48V112h140.12l54.63 54.63c6 6 14.14 9.37 22.63 9.37H464v224z"/></svg>&nbsp;<a href="/categories/kafka/" class="category-link p-category">kafka</a></span>
+            
+        
+    
+    
+        
+        <span class="post-meta-item wordcount"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon post-meta-icon"><path d="M497.9 142.1l-46.1 46.1c-4.7 4.7-12.3 4.7-17 0l-111-111c-4.7-4.7-4.7-12.3 0-17l46.1-46.1c18.7-18.7 49.1-18.7 67.9 0l60.1 60.1c18.8 18.7 18.8 49.1 0 67.9zM284.2 99.8L21.6 362.4.4 483.9c-2.9 16.4 11.4 30.6 27.8 27.8l121.5-21.3 262.6-262.6c4.7-4.7 4.7-12.3 0-17l-111-111c-4.8-4.7-12.4-4.7-17.1 0zM124.1 339.9c-5.5-5.5-5.5-14.3 0-19.8l154-154c5.5-5.5 14.3-5.5 19.8 0s5.5 14.3 0 19.8l-154 154c-5.5 5.5-14.3 5.5-19.8 0zM88 424h48v36.3l-64.5 11.3-31.1-31.1L51.7 376H88v48z"/></svg>&nbsp;3913</span>
+    
+    
+        
+        <span class="post-meta-item reading-time"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon post-meta-icon"><path d="M256 8C119 8 8 119 8 256s111 248 248 248 248-111 248-248S393 8 256 8zm0 448c-110.5 0-200-89.5-200-200S145.5 56 256 56s200 89.5 200 200-89.5 200-200 200zm61.8-104.4l-84.9-61.7c-3.1-2.3-4.9-5.9-4.9-9.7V116c0-6.6 5.4-12 12-12h32c6.6 0 12 5.4 12 12v141.7l66.8 48.6c5.4 3.9 6.5 11.4 2.6 16.8L334.6 349c-3.9 5.3-11.4 6.5-16.8 2.6z"/></svg>&nbsp;8&nbsp;分钟</span>
+    
+    
+    
+</div>
+
+            
+
+            <div class="post-body e-content">
+                <h1 id="kafka-协议格式"><a href="#kafka-协议格式" class="anchor-link"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon anchor-icon"><path d="M326.612 185.391c59.747 59.809 58.927 155.698.36 214.59-.11.12-.24.25-.36.37l-67.2 67.2c-59.27 59.27-155.699 59.262-214.96 0-59.27-59.26-59.27-155.7 0-214.96l37.106-37.106c9.84-9.84 26.786-3.3 27.294 10.606.648 17.722 3.826 35.527 9.69 52.721 1.986 5.822.567 12.262-3.783 16.612l-13.087 13.087c-28.026 28.026-28.905 73.66-1.155 101.96 28.024 28.579 74.086 28.749 102.325.51l67.2-67.19c28.191-28.191 28.073-73.757 0-101.83-3.701-3.694-7.429-6.564-10.341-8.569a16.037 16.037 0 0 1-6.947-12.606c-.396-10.567 3.348-21.456 11.698-29.806l21.054-21.055c5.521-5.521 14.182-6.199 20.584-1.731a152.482 152.482 0 0 1 20.522 17.197zM467.547 44.449c-59.261-59.262-155.69-59.27-214.96 0l-67.2 67.2c-.12.12-.25.25-.36.37-58.566 58.892-59.387 154.781.36 214.59a152.454 152.454 0 0 0 20.521 17.196c6.402 4.468 15.064 3.789 20.584-1.731l21.054-21.055c8.35-8.35 12.094-19.239 11.698-29.806a16.037 16.037 0 0 0-6.947-12.606c-2.912-2.005-6.64-4.875-10.341-8.569-28.073-28.073-28.191-73.639 0-101.83l67.2-67.19c28.239-28.239 74.3-28.069 102.325.51 27.75 28.3 26.872 73.934-1.155 101.96l-13.087 13.087c-4.35 4.35-5.769 10.79-3.783 16.612 5.864 17.194 9.042 34.999 9.69 52.721.509 13.906 17.454 20.446 27.294 10.606l37.106-37.106c59.271-59.259 59.271-155.699.001-214.959z"/></svg></a>Kafka 协议格式</h1>
+<p>Kafka通常作为一个集群存在，集群内部会有着很多的通信，包括客户端与服务端的通信，服务端内部的通信。这些通信都有着固定的协议格式，通过了解这些协议格式，可以使我们对Kafka的原理有着更好的理解。本篇文章主要介绍这些协议的基本原理，包括如何定义格式，如何序列化数据。</p>
+<h1 id="定义协议格式"><a href="#定义协议格式" class="anchor-link"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon anchor-icon"><path d="M326.612 185.391c59.747 59.809 58.927 155.698.36 214.59-.11.12-.24.25-.36.37l-67.2 67.2c-59.27 59.27-155.699 59.262-214.96 0-59.27-59.26-59.27-155.7 0-214.96l37.106-37.106c9.84-9.84 26.786-3.3 27.294 10.606.648 17.722 3.826 35.527 9.69 52.721 1.986 5.822.567 12.262-3.783 16.612l-13.087 13.087c-28.026 28.026-28.905 73.66-1.155 101.96 28.024 28.579 74.086 28.749 102.325.51l67.2-67.19c28.191-28.191 28.073-73.757 0-101.83-3.701-3.694-7.429-6.564-10.341-8.569a16.037 16.037 0 0 1-6.947-12.606c-.396-10.567 3.348-21.456 11.698-29.806l21.054-21.055c5.521-5.521 14.182-6.199 20.584-1.731a152.482 152.482 0 0 1 20.522 17.197zM467.547 44.449c-59.261-59.262-155.69-59.27-214.96 0l-67.2 67.2c-.12.12-.25.25-.36.37-58.566 58.892-59.387 154.781.36 214.59a152.454 152.454 0 0 0 20.521 17.196c6.402 4.468 15.064 3.789 20.584-1.731l21.054-21.055c8.35-8.35 12.094-19.239 11.698-29.806a16.037 16.037 0 0 0-6.947-12.606c-2.912-2.005-6.64-4.875-10.341-8.569-28.073-28.073-28.191-73.639 0-101.83l67.2-67.19c28.239-28.239 74.3-28.069 102.325.51 27.75 28.3 26.872 73.934-1.155 101.96l-13.087 13.087c-4.35 4.35-5.769 10.79-3.783 16.612 5.864 17.194 9.042 34.999 9.69 52.721.509 13.906 17.454 20.446 27.294 10.606l37.106-37.106c59.271-59.259 59.271-155.699.001-214.959z"/></svg></a>定义协议格式</h1>
+<p>Kafka对于每一种协议，都有着自己固定的格式。它由固定的字段组成，并且这些字段按照顺序存储，并且有着自己的类型和名称。协议格式由Schema类表示，字段由Field类型。</p>
+<h3 id="字段定义"><a href="#字段定义" class="anchor-link"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon anchor-icon"><path d="M326.612 185.391c59.747 59.809 58.927 155.698.36 214.59-.11.12-.24.25-.36.37l-67.2 67.2c-59.27 59.27-155.699 59.262-214.96 0-59.27-59.26-59.27-155.7 0-214.96l37.106-37.106c9.84-9.84 26.786-3.3 27.294 10.606.648 17.722 3.826 35.527 9.69 52.721 1.986 5.822.567 12.262-3.783 16.612l-13.087 13.087c-28.026 28.026-28.905 73.66-1.155 101.96 28.024 28.579 74.086 28.749 102.325.51l67.2-67.19c28.191-28.191 28.073-73.757 0-101.83-3.701-3.694-7.429-6.564-10.341-8.569a16.037 16.037 0 0 1-6.947-12.606c-.396-10.567 3.348-21.456 11.698-29.806l21.054-21.055c5.521-5.521 14.182-6.199 20.584-1.731a152.482 152.482 0 0 1 20.522 17.197zM467.547 44.449c-59.261-59.262-155.69-59.27-214.96 0l-67.2 67.2c-.12.12-.25.25-.36.37-58.566 58.892-59.387 154.781.36 214.59a152.454 152.454 0 0 0 20.521 17.196c6.402 4.468 15.064 3.789 20.584-1.731l21.054-21.055c8.35-8.35 12.094-19.239 11.698-29.806a16.037 16.037 0 0 0-6.947-12.606c-2.912-2.005-6.64-4.875-10.341-8.569-28.073-28.073-28.191-73.639 0-101.83l67.2-67.19c28.239-28.239 74.3-28.069 102.325.51 27.75 28.3 26.872 73.934-1.155 101.96l-13.087 13.087c-4.35 4.35-5.769 10.79-3.783 16.612 5.864 17.194 9.042 34.999 9.69 52.721.509 13.906 17.454 20.446 27.294 10.606l37.106-37.106c59.271-59.259 59.271-155.699.001-214.959z"/></svg></a>字段定义</h3>
+<p>每个字段都有着数据类型，字段名称。目前数据类型支持常见的Int和String等类型。字段类型由Type类表示，它还负责如何序列化数值。</p>
+<p>以String类型为例，它继承Type基类，注意到write和read方法，对应于数据的写入和读取。</p>
+<div class="highlight"><div class="chroma">
+<div class="table-container"><table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span><span class="lnt">35
+</span><span class="lnt">36
+</span><span class="lnt">37
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-java" data-lang="java">    <span class="kd">public</span> <span class="kd">static</span> <span class="kd">final</span> <span class="n">Type</span> <span class="n">STRING</span> <span class="o">=</span> <span class="k">new</span> <span class="n">Type</span><span class="o">()</span> <span class="o">{</span>
+         
+        <span class="nd">@Override</span>
+        <span class="kd">public</span> <span class="kt">void</span> <span class="nf">write</span><span class="o">(</span><span class="n">ByteBuffer</span> <span class="n">buffer</span><span class="o">,</span> <span class="n">Object</span> <span class="n">o</span><span class="o">)</span> <span class="o">{</span>
+            <span class="c1">// 将string按照utf8编码，生成byte数组
+</span><span class="c1"></span>            <span class="kt">byte</span><span class="o">[]</span> <span class="n">bytes</span> <span class="o">=</span> <span class="n">Utils</span><span class="o">.</span><span class="na">utf8</span><span class="o">((</span><span class="n">String</span><span class="o">)</span> <span class="n">o</span><span class="o">);</span>
+            <span class="c1">// 因为只有2个字节表示string长度，所以需要检查string长度是否超过最大值
+</span><span class="c1"></span>            <span class="k">if</span> <span class="o">(</span><span class="n">bytes</span><span class="o">.</span><span class="na">length</span> <span class="o">&gt;</span> <span class="n">Short</span><span class="o">.</span><span class="na">MAX_VALUE</span><span class="o">)</span>
+                <span class="k">throw</span> <span class="k">new</span> <span class="n">SchemaException</span><span class="o">(</span><span class="s">&#34;String length &#34;</span> <span class="o">+</span> <span class="n">bytes</span><span class="o">.</span><span class="na">length</span> <span class="o">+</span> <span class="s">&#34; is larger than the maximum string length.&#34;</span><span class="o">);</span>
+            <span class="c1">// 写入string长度
+</span><span class="c1"></span>            <span class="n">buffer</span><span class="o">.</span><span class="na">putShort</span><span class="o">((</span><span class="kt">short</span><span class="o">)</span> <span class="n">bytes</span><span class="o">.</span><span class="na">length</span><span class="o">);</span>
+            <span class="c1">// 写入数据
+</span><span class="c1"></span>            <span class="n">buffer</span><span class="o">.</span><span class="na">put</span><span class="o">(</span><span class="n">bytes</span><span class="o">);</span>
+        <span class="o">}</span>
+
+        <span class="nd">@Override</span>
+        <span class="kd">public</span> <span class="n">String</span> <span class="nf">read</span><span class="o">(</span><span class="n">ByteBuffer</span> <span class="n">buffer</span><span class="o">)</span> <span class="o">{</span>
+            <span class="c1">// 读取string长度
+</span><span class="c1"></span>            <span class="kt">short</span> <span class="n">length</span> <span class="o">=</span> <span class="n">buffer</span><span class="o">.</span><span class="na">getShort</span><span class="o">();</span>
+            <span class="c1">// 检测数据长度
+</span><span class="c1"></span>            <span class="k">if</span> <span class="o">(</span><span class="n">length</span> <span class="o">&lt;</span> <span class="n">0</span><span class="o">)</span>
+                <span class="k">throw</span> <span class="k">new</span> <span class="n">SchemaException</span><span class="o">(</span><span class="s">&#34;String length &#34;</span> <span class="o">+</span> <span class="n">length</span> <span class="o">+</span> <span class="s">&#34; cannot be negative&#34;</span><span class="o">);</span>
+            <span class="k">if</span> <span class="o">(</span><span class="n">length</span> <span class="o">&gt;</span> <span class="n">buffer</span><span class="o">.</span><span class="na">remaining</span><span class="o">())</span>
+                <span class="k">throw</span> <span class="k">new</span> <span class="n">SchemaException</span><span class="o">(</span><span class="s">&#34;Error reading string of length &#34;</span> <span class="o">+</span> <span class="n">length</span> <span class="o">+</span> <span class="s">&#34;, only &#34;</span> <span class="o">+</span> <span class="n">buffer</span><span class="o">.</span><span class="na">remaining</span><span class="o">()</span> <span class="o">+</span> <span class="s">&#34; bytes available&#34;</span><span class="o">);</span>
+            <span class="c1">// 读取字符串
+</span><span class="c1"></span>            <span class="n">String</span> <span class="n">result</span> <span class="o">=</span> <span class="n">Utils</span><span class="o">.</span><span class="na">utf8</span><span class="o">(</span><span class="n">buffer</span><span class="o">,</span> <span class="n">length</span><span class="o">);</span>
+            <span class="c1">// 移动buffer的读取位置
+</span><span class="c1"></span>            <span class="n">buffer</span><span class="o">.</span><span class="na">position</span><span class="o">(</span><span class="n">buffer</span><span class="o">.</span><span class="na">position</span><span class="o">()</span> <span class="o">+</span> <span class="n">length</span><span class="o">);</span>
+            <span class="k">return</span> <span class="n">result</span><span class="o">;</span>
+        <span class="o">}</span>
+
+        <span class="nd">@Override</span>
+        <span class="kd">public</span> <span class="kt">int</span> <span class="nf">sizeOf</span><span class="o">(</span><span class="n">Object</span> <span class="n">o</span><span class="o">)</span> <span class="o">{</span>
+            <span class="c1">// 返回整个字段的长度
+</span><span class="c1"></span>            <span class="k">return</span> <span class="n">2</span> <span class="o">+</span> <span class="n">Utils</span><span class="o">.</span><span class="na">utf8Length</span><span class="o">((</span><span class="n">String</span><span class="o">)</span> <span class="n">o</span><span class="o">);</span>
+        <span class="o">}</span>
+    <span class="o">};</span>
+</code></pre></td></tr></table></div>
+</div>
+</div><p>字段都是由Field的基类表示，每个字段都对应着一个Type。Field的原理也很简单，它没有方法，只是包含了一些属性</p>
+<div class="highlight"><div class="chroma">
+<div class="table-container"><table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">Field</span> <span class="o">{</span>
+    <span class="c1">// 字段名称
+</span><span class="c1"></span>    <span class="kd">public</span> <span class="kd">final</span> <span class="n">String</span> <span class="n">name</span><span class="o">;</span>
+    <span class="c1">// 字段注释
+</span><span class="c1"></span>    <span class="kd">public</span> <span class="kd">final</span> <span class="n">String</span> <span class="n">docString</span><span class="o">;</span>
+    <span class="c1">// 字段类型
+</span><span class="c1"></span>    <span class="kd">public</span> <span class="kd">final</span> <span class="n">Type</span> <span class="n">type</span><span class="o">;</span>
+    <span class="c1">// 是否有默认值
+</span><span class="c1"></span>    <span class="kd">public</span> <span class="kd">final</span> <span class="kt">boolean</span> <span class="n">hasDefaultValue</span><span class="o">;</span>
+    <span class="c1">// 默认值
+</span><span class="c1"></span>    <span class="kd">public</span> <span class="kd">final</span> <span class="n">Object</span> <span class="n">defaultValue</span><span class="o">;</span>
+<span class="o">}</span>
+</code></pre></td></tr></table></div>
+</div>
+</div><p>以Int32字段为例，它指定了字段类型为Type.INT32</p>
+<div class="highlight"><div class="chroma">
+<div class="table-container"><table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span><span class="lnt">9
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">static</span> <span class="kd">class</span> <span class="nc">Int32</span> <span class="kd">extends</span> <span class="n">Field</span> <span class="o">{</span>
+    <span class="kd">public</span> <span class="nf">Int32</span><span class="o">(</span><span class="n">String</span> <span class="n">name</span><span class="o">,</span> <span class="n">String</span> <span class="n">docString</span><span class="o">)</span> <span class="o">{</span>
+        <span class="kd">super</span><span class="o">(</span><span class="n">name</span><span class="o">,</span> <span class="n">Type</span><span class="o">.</span><span class="na">INT32</span><span class="o">,</span> <span class="n">docString</span><span class="o">,</span> <span class="kc">false</span><span class="o">,</span> <span class="kc">null</span><span class="o">);</span>
+    <span class="o">}</span>
+
+    <span class="kd">public</span> <span class="nf">Int32</span><span class="o">(</span><span class="n">String</span> <span class="n">name</span><span class="o">,</span> <span class="n">String</span> <span class="n">docString</span><span class="o">,</span> <span class="kt">int</span> <span class="n">defaultValue</span><span class="o">)</span> <span class="o">{</span>
+        <span class="kd">super</span><span class="o">(</span><span class="n">name</span><span class="o">,</span> <span class="n">Type</span><span class="o">.</span><span class="na">INT32</span><span class="o">,</span> <span class="n">docString</span><span class="o">,</span> <span class="kc">true</span><span class="o">,</span> <span class="n">defaultValue</span><span class="o">);</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+</code></pre></td></tr></table></div>
+</div>
+</div><p>这里还需介绍一个特殊的字段类型，它表示数组。</p>
+<div class="highlight"><div class="chroma">
+<div class="table-container"><table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span><span class="lnt">35
+</span><span class="lnt">36
+</span><span class="lnt">37
+</span><span class="lnt">38
+</span><span class="lnt">39
+</span><span class="lnt">40
+</span><span class="lnt">41
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">ArrayOf</span> <span class="kd">extends</span> <span class="n">Type</span> <span class="o">{</span>
+    <span class="c1">// 数组元素的类型
+</span><span class="c1"></span>    <span class="kd">private</span> <span class="kd">final</span> <span class="n">Type</span> <span class="n">type</span><span class="o">;</span>
+    <span class="c1">// 是否允许数组为空
+</span><span class="c1"></span>    <span class="kd">private</span> <span class="kd">final</span> <span class="kt">boolean</span> <span class="n">nullable</span><span class="o">;</span>
+
+    <span class="nd">@Override</span>
+    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">write</span><span class="o">(</span><span class="n">ByteBuffer</span> <span class="n">buffer</span><span class="o">,</span> <span class="n">Object</span> <span class="n">o</span><span class="o">)</span> <span class="o">{</span>
+        <span class="c1">// 如果值为null，那么数组长度为-1表示这种情况
+</span><span class="c1"></span>        <span class="k">if</span> <span class="o">(</span><span class="n">o</span> <span class="o">==</span> <span class="kc">null</span><span class="o">)</span> <span class="o">{</span>
+            <span class="n">buffer</span><span class="o">.</span><span class="na">putInt</span><span class="o">(-</span><span class="n">1</span><span class="o">);</span>
+            <span class="k">return</span><span class="o">;</span>
+        <span class="o">}</span>
+        <span class="n">Object</span><span class="o">[]</span> <span class="n">objs</span> <span class="o">=</span> <span class="o">(</span><span class="n">Object</span><span class="o">[])</span> <span class="n">o</span><span class="o">;</span>
+        <span class="c1">// 获取数组长度，并且写入
+</span><span class="c1"></span>        <span class="kt">int</span> <span class="n">size</span> <span class="o">=</span> <span class="n">objs</span><span class="o">.</span><span class="na">length</span><span class="o">;</span>
+        <span class="n">buffer</span><span class="o">.</span><span class="na">putInt</span><span class="o">(</span><span class="n">size</span><span class="o">);</span>
+        <span class="c1">// 遍历数组，依次将元素写入buffer
+</span><span class="c1"></span>        <span class="k">for</span> <span class="o">(</span><span class="n">Object</span> <span class="n">obj</span> <span class="o">:</span> <span class="n">objs</span><span class="o">)</span>
+            <span class="n">type</span><span class="o">.</span><span class="na">write</span><span class="o">(</span><span class="n">buffer</span><span class="o">,</span> <span class="n">obj</span><span class="o">);</span>
+    <span class="o">}</span>
+
+    <span class="nd">@Override</span>
+    <span class="kd">public</span> <span class="n">Object</span> <span class="nf">read</span><span class="o">(</span><span class="n">ByteBuffer</span> <span class="n">buffer</span><span class="o">)</span> <span class="o">{</span>
+        <span class="c1">// 读取数据长度
+</span><span class="c1"></span>        <span class="kt">int</span> <span class="n">size</span> <span class="o">=</span> <span class="n">buffer</span><span class="o">.</span><span class="na">getInt</span><span class="o">();</span>
+        <span class="c1">// 检测数组是否为空
+</span><span class="c1"></span>        <span class="k">if</span> <span class="o">(</span><span class="n">size</span> <span class="o">&lt;</span> <span class="n">0</span> <span class="o">&amp;&amp;</span> <span class="n">isNullable</span><span class="o">())</span>
+            <span class="k">return</span> <span class="kc">null</span><span class="o">;</span>
+        <span class="k">else</span> <span class="k">if</span> <span class="o">(</span><span class="n">size</span> <span class="o">&lt;</span> <span class="n">0</span><span class="o">)</span>
+            <span class="k">throw</span> <span class="k">new</span> <span class="n">SchemaException</span><span class="o">(</span><span class="s">&#34;Array size &#34;</span> <span class="o">+</span> <span class="n">size</span> <span class="o">+</span> <span class="s">&#34; cannot be negative&#34;</span><span class="o">);</span>
+        <span class="c1">// 检测数据的长度，这里只是粗略的检测，因为一个元素至少是一个字节(这种情况表示数据类型为Int8)
+</span><span class="c1"></span>        <span class="k">if</span> <span class="o">(</span><span class="n">size</span> <span class="o">&gt;</span> <span class="n">buffer</span><span class="o">.</span><span class="na">remaining</span><span class="o">())</span>
+            <span class="k">throw</span> <span class="k">new</span> <span class="n">SchemaException</span><span class="o">(</span><span class="s">&#34;Error reading array of size &#34;</span> <span class="o">+</span> <span class="n">size</span> <span class="o">+</span> <span class="s">&#34;, only &#34;</span> <span class="o">+</span> <span class="n">buffer</span><span class="o">.</span><span class="na">remaining</span><span class="o">()</span> <span class="o">+</span> <span class="s">&#34; bytes available&#34;</span><span class="o">);</span>
+        <span class="c1">// 依次读取数据，生成数组
+</span><span class="c1"></span>        <span class="n">Object</span><span class="o">[]</span> <span class="n">objs</span> <span class="o">=</span> <span class="k">new</span> <span class="n">Object</span><span class="o">[</span><span class="n">size</span><span class="o">];</span>
+        <span class="k">for</span> <span class="o">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="n">0</span><span class="o">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">size</span><span class="o">;</span> <span class="n">i</span><span class="o">++)</span>
+            <span class="n">objs</span><span class="o">[</span><span class="n">i</span><span class="o">]</span> <span class="o">=</span> <span class="n">type</span><span class="o">.</span><span class="na">read</span><span class="o">(</span><span class="n">buffer</span><span class="o">);</span>
+        <span class="k">return</span> <span class="n">objs</span><span class="o">;</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+</code></pre></td></tr></table></div>
+</div>
+</div><h3 id="格式定义"><a href="#格式定义" class="anchor-link"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon anchor-icon"><path d="M326.612 185.391c59.747 59.809 58.927 155.698.36 214.59-.11.12-.24.25-.36.37l-67.2 67.2c-59.27 59.27-155.699 59.262-214.96 0-59.27-59.26-59.27-155.7 0-214.96l37.106-37.106c9.84-9.84 26.786-3.3 27.294 10.606.648 17.722 3.826 35.527 9.69 52.721 1.986 5.822.567 12.262-3.783 16.612l-13.087 13.087c-28.026 28.026-28.905 73.66-1.155 101.96 28.024 28.579 74.086 28.749 102.325.51l67.2-67.19c28.191-28.191 28.073-73.757 0-101.83-3.701-3.694-7.429-6.564-10.341-8.569a16.037 16.037 0 0 1-6.947-12.606c-.396-10.567 3.348-21.456 11.698-29.806l21.054-21.055c5.521-5.521 14.182-6.199 20.584-1.731a152.482 152.482 0 0 1 20.522 17.197zM467.547 44.449c-59.261-59.262-155.69-59.27-214.96 0l-67.2 67.2c-.12.12-.25.25-.36.37-58.566 58.892-59.387 154.781.36 214.59a152.454 152.454 0 0 0 20.521 17.196c6.402 4.468 15.064 3.789 20.584-1.731l21.054-21.055c8.35-8.35 12.094-19.239 11.698-29.806a16.037 16.037 0 0 0-6.947-12.606c-2.912-2.005-6.64-4.875-10.341-8.569-28.073-28.073-28.191-73.639 0-101.83l67.2-67.19c28.239-28.239 74.3-28.069 102.325.51 27.75 28.3 26.872 73.934-1.155 101.96l-13.087 13.087c-4.35 4.35-5.769 10.79-3.783 16.612 5.864 17.194 9.042 34.999 9.69 52.721.509 13.906 17.454 20.446 27.294 10.606l37.106-37.106c59.271-59.259 59.271-155.699.001-214.959z"/></svg></a>格式定义</h3>
+<p>上面讲完了字段，协议的格式也是由这些字段组成。Schema中的字段，使用了BoundField类表示。其实BoundField只是简单包含了Field，表示这个字段属于某个Schema。</p>
+<div class="highlight"><div class="chroma">
+<div class="table-container"><table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">Schema</span> <span class="kd">extends</span> <span class="n">Type</span> <span class="o">{</span>
+    <span class="c1">// 字段列表
+</span><span class="c1"></span>    <span class="kd">private</span> <span class="kd">final</span> <span class="n">BoundField</span><span class="o">[]</span> <span class="n">fields</span><span class="o">;</span>
+    <span class="c1">// 可以根据名称找到字段
+</span><span class="c1"></span>    <span class="kd">private</span> <span class="kd">final</span> <span class="n">Map</span><span class="o">&lt;</span><span class="n">String</span><span class="o">,</span> <span class="n">BoundField</span><span class="o">&gt;</span> <span class="n">fieldsByName</span><span class="o">;</span>
+
+    <span class="kd">public</span> <span class="nf">Schema</span><span class="o">(</span><span class="n">Field</span><span class="o">...</span> <span class="n">fs</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">this</span><span class="o">.</span><span class="na">fields</span> <span class="o">=</span> <span class="k">new</span> <span class="n">BoundField</span><span class="o">[</span><span class="n">fs</span><span class="o">.</span><span class="na">length</span><span class="o">];</span>
+        <span class="k">this</span><span class="o">.</span><span class="na">fieldsByName</span> <span class="o">=</span> <span class="k">new</span> <span class="n">HashMap</span><span class="o">&lt;&gt;();</span>
+        <span class="k">for</span> <span class="o">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="n">0</span><span class="o">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="k">this</span><span class="o">.</span><span class="na">fields</span><span class="o">.</span><span class="na">length</span><span class="o">;</span> <span class="n">i</span><span class="o">++)</span> <span class="o">{</span>
+            <span class="n">Field</span> <span class="n">def</span> <span class="o">=</span> <span class="n">fs</span><span class="o">[</span><span class="n">i</span><span class="o">];</span>
+            <span class="k">if</span> <span class="o">(</span><span class="n">fieldsByName</span><span class="o">.</span><span class="na">containsKey</span><span class="o">(</span><span class="n">def</span><span class="o">.</span><span class="na">name</span><span class="o">))</span>
+                <span class="k">throw</span> <span class="k">new</span> <span class="n">SchemaException</span><span class="o">(</span><span class="s">&#34;Schema contains a duplicate field: &#34;</span> <span class="o">+</span> <span class="n">def</span><span class="o">.</span><span class="na">name</span><span class="o">);</span>
+            <span class="c1">// 实例化BoundField
+</span><span class="c1"></span>            <span class="k">this</span><span class="o">.</span><span class="na">fields</span><span class="o">[</span><span class="n">i</span><span class="o">]</span> <span class="o">=</span> <span class="k">new</span> <span class="n">BoundField</span><span class="o">(</span><span class="n">def</span><span class="o">,</span> <span class="k">this</span><span class="o">,</span> <span class="n">i</span><span class="o">);</span>
+            <span class="k">this</span><span class="o">.</span><span class="na">fieldsByName</span><span class="o">.</span><span class="na">put</span><span class="o">(</span><span class="n">def</span><span class="o">.</span><span class="na">name</span><span class="o">,</span> <span class="k">this</span><span class="o">.</span><span class="na">fields</span><span class="o">[</span><span class="n">i</span><span class="o">]);</span>
+        <span class="o">}</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+</code></pre></td></tr></table></div>
+</div>
+</div><p>上面注意到Schema也是Type的子类，说明Schema也是一种类型。既然Schema包含了多个字段，而且这些字段的类型可以是Schema，那么表示Schema也可以嵌套了。</p>
+<p>Schema的数据读写原理很简单，就是按照字段的顺序依次读写。</p>
+<h2 id="数据实例"><a href="#数据实例" class="anchor-link"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon anchor-icon"><path d="M326.612 185.391c59.747 59.809 58.927 155.698.36 214.59-.11.12-.24.25-.36.37l-67.2 67.2c-59.27 59.27-155.699 59.262-214.96 0-59.27-59.26-59.27-155.7 0-214.96l37.106-37.106c9.84-9.84 26.786-3.3 27.294 10.606.648 17.722 3.826 35.527 9.69 52.721 1.986 5.822.567 12.262-3.783 16.612l-13.087 13.087c-28.026 28.026-28.905 73.66-1.155 101.96 28.024 28.579 74.086 28.749 102.325.51l67.2-67.19c28.191-28.191 28.073-73.757 0-101.83-3.701-3.694-7.429-6.564-10.341-8.569a16.037 16.037 0 0 1-6.947-12.606c-.396-10.567 3.348-21.456 11.698-29.806l21.054-21.055c5.521-5.521 14.182-6.199 20.584-1.731a152.482 152.482 0 0 1 20.522 17.197zM467.547 44.449c-59.261-59.262-155.69-59.27-214.96 0l-67.2 67.2c-.12.12-.25.25-.36.37-58.566 58.892-59.387 154.781.36 214.59a152.454 152.454 0 0 0 20.521 17.196c6.402 4.468 15.064 3.789 20.584-1.731l21.054-21.055c8.35-8.35 12.094-19.239 11.698-29.806a16.037 16.037 0 0 0-6.947-12.606c-2.912-2.005-6.64-4.875-10.341-8.569-28.073-28.073-28.191-73.639 0-101.83l67.2-67.19c28.239-28.239 74.3-28.069 102.325.51 27.75 28.3 26.872 73.934-1.155 101.96l-13.087 13.087c-4.35 4.35-5.769 10.79-3.783 16.612 5.864 17.194 9.042 34.999 9.69 52.721.509 13.906 17.454 20.446 27.294 10.606l37.106-37.106c59.271-59.259 59.271-155.699.001-214.959z"/></svg></a>数据实例</h2>
+<p>上面讲述了Schema是如何协议格式的，那么一个具体的协议数据是由Struct类表示。它的每个字段的值，按照顺序存储到Object数组中。</p>
+<p>注意到两个特殊的字段类型，如果字段是Schema类型，那么对应的Object值是Struct实例。如果是数组类型，那么对于的Object值是Struct数组。</p>
+<div class="highlight"><div class="chroma">
+<div class="table-container"><table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">Struct</span> <span class="o">{</span>
+    <span class="kd">private</span> <span class="kd">final</span> <span class="n">Schema</span> <span class="n">schema</span><span class="o">;</span>
+    <span class="kd">private</span> <span class="kd">final</span> <span class="n">Object</span><span class="o">[]</span> <span class="n">values</span><span class="o">;</span>
+<span class="o">}</span>
+</code></pre></td></tr></table></div>
+</div>
+</div><h2 id="请求协议"><a href="#请求协议" class="anchor-link"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon anchor-icon"><path d="M326.612 185.391c59.747 59.809 58.927 155.698.36 214.59-.11.12-.24.25-.36.37l-67.2 67.2c-59.27 59.27-155.699 59.262-214.96 0-59.27-59.26-59.27-155.7 0-214.96l37.106-37.106c9.84-9.84 26.786-3.3 27.294 10.606.648 17.722 3.826 35.527 9.69 52.721 1.986 5.822.567 12.262-3.783 16.612l-13.087 13.087c-28.026 28.026-28.905 73.66-1.155 101.96 28.024 28.579 74.086 28.749 102.325.51l67.2-67.19c28.191-28.191 28.073-73.757 0-101.83-3.701-3.694-7.429-6.564-10.341-8.569a16.037 16.037 0 0 1-6.947-12.606c-.396-10.567 3.348-21.456 11.698-29.806l21.054-21.055c5.521-5.521 14.182-6.199 20.584-1.731a152.482 152.482 0 0 1 20.522 17.197zM467.547 44.449c-59.261-59.262-155.69-59.27-214.96 0l-67.2 67.2c-.12.12-.25.25-.36.37-58.566 58.892-59.387 154.781.36 214.59a152.454 152.454 0 0 0 20.521 17.196c6.402 4.468 15.064 3.789 20.584-1.731l21.054-21.055c8.35-8.35 12.094-19.239 11.698-29.806a16.037 16.037 0 0 0-6.947-12.606c-2.912-2.005-6.64-4.875-10.341-8.569-28.073-28.073-28.191-73.639 0-101.83l67.2-67.19c28.239-28.239 74.3-28.069 102.325.51 27.75 28.3 26.872 73.934-1.155 101.96l-13.087 13.087c-4.35 4.35-5.769 10.79-3.783 16.612 5.864 17.194 9.042 34.999 9.69 52.721.509 13.906 17.454 20.446 27.294 10.606l37.106-37.106c59.271-59.259 59.271-155.699.001-214.959z"/></svg></a>请求协议</h2>
+<p>Kafka的所有请求也有着自己固定的格式，但是这些请求也有部分数据的格式是相同的，Kafka将这部分数据提取为请求头。所以一个完成的Kafka请求是由请求头和请求体两部分组成的。下面首先来看看请求头。</p>
+<h3 id="请求头格式"><a href="#请求头格式" class="anchor-link"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon anchor-icon"><path d="M326.612 185.391c59.747 59.809 58.927 155.698.36 214.59-.11.12-.24.25-.36.37l-67.2 67.2c-59.27 59.27-155.699 59.262-214.96 0-59.27-59.26-59.27-155.7 0-214.96l37.106-37.106c9.84-9.84 26.786-3.3 27.294 10.606.648 17.722 3.826 35.527 9.69 52.721 1.986 5.822.567 12.262-3.783 16.612l-13.087 13.087c-28.026 28.026-28.905 73.66-1.155 101.96 28.024 28.579 74.086 28.749 102.325.51l67.2-67.19c28.191-28.191 28.073-73.757 0-101.83-3.701-3.694-7.429-6.564-10.341-8.569a16.037 16.037 0 0 1-6.947-12.606c-.396-10.567 3.348-21.456 11.698-29.806l21.054-21.055c5.521-5.521 14.182-6.199 20.584-1.731a152.482 152.482 0 0 1 20.522 17.197zM467.547 44.449c-59.261-59.262-155.69-59.27-214.96 0l-67.2 67.2c-.12.12-.25.25-.36.37-58.566 58.892-59.387 154.781.36 214.59a152.454 152.454 0 0 0 20.521 17.196c6.402 4.468 15.064 3.789 20.584-1.731l21.054-21.055c8.35-8.35 12.094-19.239 11.698-29.806a16.037 16.037 0 0 0-6.947-12.606c-2.912-2.005-6.64-4.875-10.341-8.569-28.073-28.073-28.191-73.639 0-101.83l67.2-67.19c28.239-28.239 74.3-28.069 102.325.51 27.75 28.3 26.872 73.934-1.155 101.96l-13.087 13.087c-4.35 4.35-5.769 10.79-3.783 16.612 5.864 17.194 9.042 34.999 9.69 52.721.509 13.906 17.454 20.446 27.294 10.606l37.106-37.106c59.271-59.259 59.271-155.699.001-214.959z"/></svg></a>请求头格式</h3>
+<p>在kafka的请求中，有一个请求比较特殊，是关闭服务的请求。Kafka单独为它设置了一个请求头。其余的请求都共用一个请求头，由RequestHeader的SCHEMA实例表示。</p>
+<div class="highlight"><div class="chroma">
+<div class="table-container"><table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">RequestHeader</span> <span class="kd">extends</span> <span class="n">AbstractRequestResponse</span> <span class="o">{</span>
+    
+    <span class="kd">private</span> <span class="kd">static</span> <span class="kd">final</span> <span class="n">String</span> <span class="n">API_KEY_FIELD_NAME</span> <span class="o">=</span> <span class="s">&#34;api_key&#34;</span><span class="o">;</span>
+    <span class="kd">private</span> <span class="kd">static</span> <span class="kd">final</span> <span class="n">String</span> <span class="n">API_VERSION_FIELD_NAME</span> <span class="o">=</span> <span class="s">&#34;api_version&#34;</span><span class="o">;</span>
+    <span class="kd">private</span> <span class="kd">static</span> <span class="kd">final</span> <span class="n">String</span> <span class="n">CLIENT_ID_FIELD_NAME</span> <span class="o">=</span> <span class="s">&#34;client_id&#34;</span><span class="o">;</span>
+    <span class="kd">private</span> <span class="kd">static</span> <span class="kd">final</span> <span class="n">String</span> <span class="n">CORRELATION_ID_FIELD_NAME</span> <span class="o">=</span> <span class="s">&#34;correlation_id&#34;</span><span class="o">;</span>
+
+    <span class="kd">public</span> <span class="kd">static</span> <span class="kd">final</span> <span class="n">Schema</span> <span class="n">SCHEMA</span> <span class="o">=</span> <span class="k">new</span> <span class="n">Schema</span><span class="o">(</span>
+            <span class="k">new</span> <span class="n">Field</span><span class="o">(</span><span class="n">API_KEY_FIELD_NAME</span><span class="o">,</span> <span class="n">INT16</span><span class="o">,</span> <span class="s">&#34;The id of the request type.&#34;</span><span class="o">),</span>
+            <span class="k">new</span> <span class="n">Field</span><span class="o">(</span><span class="n">API_VERSION_FIELD_NAME</span><span class="o">,</span> <span class="n">INT16</span><span class="o">,</span> <span class="s">&#34;The version of the API.&#34;</span><span class="o">),</span>
+            <span class="k">new</span> <span class="n">Field</span><span class="o">(</span><span class="n">CORRELATION_ID_FIELD_NAME</span><span class="o">,</span> <span class="n">INT32</span><span class="o">,</span> <span class="s">&#34;A user-supplied integer value that will be passed back with the response&#34;</span><span class="o">),</span>
+            <span class="k">new</span> <span class="n">Field</span><span class="o">(</span><span class="n">CLIENT_ID_FIELD_NAME</span><span class="o">,</span> <span class="n">NULLABLE_STRING</span><span class="o">,</span> <span class="s">&#34;A user specified identifier for the client making the request.&#34;</span><span class="o">,</span> <span class="s">&#34;&#34;</span><span class="o">));</span>
+<span class="o">}</span>
+</code></pre></td></tr></table></div>
+</div>
+</div><p>它有四个字段，含义如下：</p>
+<ul>
+<li>api_key， 请求类型 id</li>
+<li>api_version，请求版本</li>
+<li>correlation_id， 序号，有客户端生成，服务器发送响应会携带这个序号</li>
+<li>client_id，客户端 id，指明由哪个客户发送请求的</li>
+</ul>
+<h3 id="请求体"><a href="#请求体" class="anchor-link"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon anchor-icon"><path d="M326.612 185.391c59.747 59.809 58.927 155.698.36 214.59-.11.12-.24.25-.36.37l-67.2 67.2c-59.27 59.27-155.699 59.262-214.96 0-59.27-59.26-59.27-155.7 0-214.96l37.106-37.106c9.84-9.84 26.786-3.3 27.294 10.606.648 17.722 3.826 35.527 9.69 52.721 1.986 5.822.567 12.262-3.783 16.612l-13.087 13.087c-28.026 28.026-28.905 73.66-1.155 101.96 28.024 28.579 74.086 28.749 102.325.51l67.2-67.19c28.191-28.191 28.073-73.757 0-101.83-3.701-3.694-7.429-6.564-10.341-8.569a16.037 16.037 0 0 1-6.947-12.606c-.396-10.567 3.348-21.456 11.698-29.806l21.054-21.055c5.521-5.521 14.182-6.199 20.584-1.731a152.482 152.482 0 0 1 20.522 17.197zM467.547 44.449c-59.261-59.262-155.69-59.27-214.96 0l-67.2 67.2c-.12.12-.25.25-.36.37-58.566 58.892-59.387 154.781.36 214.59a152.454 152.454 0 0 0 20.521 17.196c6.402 4.468 15.064 3.789 20.584-1.731l21.054-21.055c8.35-8.35 12.094-19.239 11.698-29.806a16.037 16.037 0 0 0-6.947-12.606c-2.912-2.005-6.64-4.875-10.341-8.569-28.073-28.073-28.191-73.639 0-101.83l67.2-67.19c28.239-28.239 74.3-28.069 102.325.51 27.75 28.3 26.872 73.934-1.155 101.96l-13.087 13.087c-4.35 4.35-5.769 10.79-3.783 16.612 5.864 17.194 9.042 34.999 9.69 52.721.509 13.906 17.454 20.446 27.294 10.606l37.106-37.106c59.271-59.259 59.271-155.699.001-214.959z"/></svg></a>请求体</h3>
+<p>Kafka的每个请求对应的请求体格式都不一样，每个请求都包含了一个内部类Builder，用来构建请求体。</p>
+<p>Kafka的所有请求都会继承AbstractRequest类，并且在内部还会有继承AbstractRequest的Builder类的子类。</p>
+<div class="highlight"><div class="chroma">
+<div class="table-container"><table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">abstract</span> <span class="kd">class</span> <span class="nc">AbstractRequest</span> <span class="kd">extends</span> <span class="n">AbstractRequestResponse</span> <span class="o">{</span>
+    
+    <span class="c1">// 构建该请求的Builder
+</span><span class="c1"></span>    <span class="kd">public</span> <span class="kd">static</span> <span class="kd">abstract</span> <span class="kd">class</span> <span class="nc">Builder</span><span class="o">&lt;</span><span class="n">T</span> <span class="kd">extends</span> <span class="n">AbstractRequest</span><span class="o">&gt;</span> <span class="o">{</span>
+        <span class="c1">// ApiKeys是枚举类，表示请求类型
+</span><span class="c1"></span>        <span class="kd">private</span> <span class="kd">final</span> <span class="n">ApiKeys</span> <span class="n">apiKey</span><span class="o">;</span>
+        <span class="c1">// 请求版本的要求
+</span><span class="c1"></span>        <span class="kd">private</span> <span class="kd">final</span> <span class="kt">short</span> <span class="n">oldestAllowedVersion</span><span class="o">;</span>
+        <span class="kd">private</span> <span class="kd">final</span> <span class="kt">short</span> <span class="n">latestAllowedVersion</span><span class="o">;</span>
+        
+        <span class="c1">//子类需要实现buidl方法，构造请求
+</span><span class="c1"></span>        <span class="kd">public</span> <span class="kd">abstract</span> <span class="n">T</span> <span class="nf">build</span><span class="o">(</span><span class="kt">short</span> <span class="n">version</span><span class="o">);</span>
+    <span class="o">}</span>
+    
+    <span class="c1">// 子类需要实现toStruct方法，才能利用Struct序列化请求
+</span><span class="c1"></span>    <span class="kd">protected</span> <span class="kd">abstract</span> <span class="n">Struct</span> <span class="nf">toStruct</span><span class="o">();</span>
+<span class="o">}</span>    
+</code></pre></td></tr></table></div>
+</div>
+</div><p>我们以ProduceRequest为例，它表示向kafka添加数据的请求。它的请求格式比较复杂，最新版的格式，如下图所示</p>
+<p><img src="kafka-protocol-produce-request.svg" alt="produce-request"></p>
+<div class="highlight"><div class="chroma">
+<div class="table-container"><table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">ProduceRequest</span> <span class="kd">extends</span> <span class="n">AbstractRequest</span> <span class="o">{</span>
+    <span class="kd">private</span> <span class="kd">static</span> <span class="kd">final</span> <span class="n">String</span> <span class="n">ACKS_KEY_NAME</span> <span class="o">=</span> <span class="s">&#34;acks&#34;</span><span class="o">;</span>
+    <span class="kd">private</span> <span class="kd">static</span> <span class="kd">final</span> <span class="n">String</span> <span class="n">TIMEOUT_KEY_NAME</span> <span class="o">=</span> <span class="s">&#34;timeout&#34;</span><span class="o">;</span>
+    <span class="kd">private</span> <span class="kd">static</span> <span class="kd">final</span> <span class="n">String</span> <span class="n">TOPIC_DATA_KEY_NAME</span> <span class="o">=</span> <span class="s">&#34;topic_data&#34;</span><span class="o">;</span>
+
+    <span class="c1">// topic level field names
+</span><span class="c1"></span>    <span class="kd">private</span> <span class="kd">static</span> <span class="kd">final</span> <span class="n">String</span> <span class="n">PARTITION_DATA_KEY_NAME</span> <span class="o">=</span> <span class="s">&#34;data&#34;</span><span class="o">;</span>
+
+    <span class="c1">// partition level field names
+</span><span class="c1"></span>    <span class="kd">private</span> <span class="kd">static</span> <span class="kd">final</span> <span class="n">String</span> <span class="n">RECORD_SET_KEY_NAME</span> <span class="o">=</span> <span class="s">&#34;record_set&#34;</span><span class="o">;</span>
+
+    <span class="c1">// 每个topic的数据格式
+</span><span class="c1"></span>    <span class="kd">private</span> <span class="kd">static</span> <span class="kd">final</span> <span class="n">Schema</span> <span class="n">TOPIC_PRODUCE_DATA_V0</span> <span class="o">=</span> <span class="k">new</span> <span class="n">Schema</span><span class="o">(</span>
+            <span class="n">TOPIC_NAME</span><span class="o">,</span>
+            <span class="k">new</span> <span class="n">Field</span><span class="o">(</span><span class="n">PARTITION_DATA_KEY_NAME</span><span class="o">,</span> <span class="k">new</span> <span class="n">ArrayOf</span><span class="o">(</span><span class="k">new</span> <span class="n">Schema</span><span class="o">(</span>
+                    <span class="n">PARTITION_ID</span><span class="o">,</span>
+                    <span class="k">new</span> <span class="n">Field</span><span class="o">(</span><span class="n">RECORD_SET_KEY_NAME</span><span class="o">,</span> <span class="n">RECORDS</span><span class="o">)))));</span>
+    <span class="c1">// 最新版的请求格式
+</span><span class="c1"></span>    <span class="kd">private</span> <span class="kd">static</span> <span class="kd">final</span> <span class="n">Schema</span> <span class="n">PRODUCE_REQUEST_V3</span> <span class="o">=</span> <span class="k">new</span> <span class="n">Schema</span><span class="o">(</span>
+            <span class="n">CommonFields</span><span class="o">.</span><span class="na">NULLABLE_TRANSACTIONAL_ID</span><span class="o">,</span>
+            <span class="k">new</span> <span class="n">Field</span><span class="o">(</span><span class="n">ACKS_KEY_NAME</span><span class="o">,</span> <span class="n">INT16</span><span class="o">,</span> <span class="s">&#34;...&#34;</span><span class="o">),</span>
+            <span class="k">new</span> <span class="n">Field</span><span class="o">(</span><span class="n">TIMEOUT_KEY_NAME</span><span class="o">,</span> <span class="n">INT32</span><span class="o">,</span> <span class="s">&#34;The time to await a response in ms.&#34;</span><span class="o">),</span>
+            <span class="c1">// TOPIC_PRODUCE_DATA_V0数组类型
+</span><span class="c1"></span>            <span class="k">new</span> <span class="n">Field</span><span class="o">(</span><span class="n">TOPIC_DATA_KEY_NAME</span><span class="o">,</span> <span class="k">new</span> <span class="n">ArrayOf</span><span class="o">(</span><span class="n">TOPIC_PRODUCE_DATA_V0</span><span class="o">)));</span>                    <span class="o">}</span>
+          
+</code></pre></td></tr></table></div>
+</div>
+</div><p>继续看它的toStruct方法，ProduceRequest会从上往下一层层的生成Struct实例。遇到Schema类型的字段，则生成Struct实例。遇到数组类型的字段，则生成Object数组。</p>
+<div class="highlight"><div class="chroma">
+<div class="table-container"><table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span><span class="lnt">35
+</span><span class="lnt">36
+</span><span class="lnt">37
+</span><span class="lnt">38
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-java" data-lang="java"><span class="nd">@Override</span>
+<span class="kd">public</span> <span class="n">Struct</span> <span class="nf">toStruct</span><span class="o">()</span> <span class="o">{</span>
+    <span class="c1">// Store it in a local variable to protect against concurrent updates
+</span><span class="c1"></span>    <span class="n">Map</span><span class="o">&lt;</span><span class="n">TopicPartition</span><span class="o">,</span> <span class="n">MemoryRecords</span><span class="o">&gt;</span> <span class="n">partitionRecords</span> <span class="o">=</span> <span class="n">partitionRecordsOrFail</span><span class="o">();</span>
+    <span class="kt">short</span> <span class="n">version</span> <span class="o">=</span> <span class="n">version</span><span class="o">();</span>
+    <span class="c1">// requestSchema方法会根据版本，返回对应的Schema
+</span><span class="c1"></span>    <span class="n">Struct</span> <span class="n">struct</span> <span class="o">=</span> <span class="k">new</span> <span class="n">Struct</span><span class="o">(</span><span class="n">ApiKeys</span><span class="o">.</span><span class="na">PRODUCE</span><span class="o">.</span><span class="na">requestSchema</span><span class="o">(</span><span class="n">version</span><span class="o">));</span>
+    
+    <span class="n">Map</span><span class="o">&lt;</span><span class="n">String</span><span class="o">,</span> <span class="n">Map</span><span class="o">&lt;</span><span class="n">Integer</span><span class="o">,</span> <span class="n">MemoryRecords</span><span class="o">&gt;&gt;</span> <span class="n">recordsByTopic</span> <span class="o">=</span> <span class="n">CollectionUtils</span><span class="o">.</span><span class="na">groupDataByTopic</span><span class="o">(</span><span class="n">partitionRecords</span><span class="o">);</span>
+    <span class="c1">// 设置对应的属性
+</span><span class="c1"></span>    <span class="n">struct</span><span class="o">.</span><span class="na">set</span><span class="o">(</span><span class="n">ACKS_KEY_NAME</span><span class="o">,</span> <span class="n">acks</span><span class="o">);</span>
+    <span class="n">struct</span><span class="o">.</span><span class="na">set</span><span class="o">(</span><span class="n">TIMEOUT_KEY_NAME</span><span class="o">,</span> <span class="n">timeout</span><span class="o">);</span>
+    <span class="n">struct</span><span class="o">.</span><span class="na">setIfExists</span><span class="o">(</span><span class="n">NULLABLE_TRANSACTIONAL_ID</span><span class="o">,</span> <span class="n">transactionalId</span><span class="o">);</span>
+
+    <span class="n">List</span><span class="o">&lt;</span><span class="n">Struct</span><span class="o">&gt;</span> <span class="n">topicDatas</span> <span class="o">=</span> <span class="k">new</span> <span class="n">ArrayList</span><span class="o">&lt;&gt;(</span><span class="n">recordsByTopic</span><span class="o">.</span><span class="na">size</span><span class="o">());</span>
+    <span class="k">for</span> <span class="o">(</span><span class="n">Map</span><span class="o">.</span><span class="na">Entry</span><span class="o">&lt;</span><span class="n">String</span><span class="o">,</span> <span class="n">Map</span><span class="o">&lt;</span><span class="n">Integer</span><span class="o">,</span> <span class="n">MemoryRecords</span><span class="o">&gt;&gt;</span> <span class="n">topicEntry</span> <span class="o">:</span> <span class="n">recordsByTopic</span><span class="o">.</span><span class="na">entrySet</span><span class="o">())</span> <span class="o">{</span>
+        <span class="c1">// 因为TOPIC_DATA_KEY_NAME字段是Schema类型的，这里调用了instance方法实例化Struct
+</span><span class="c1"></span>        <span class="n">Struct</span> <span class="n">topicData</span> <span class="o">=</span> <span class="n">struct</span><span class="o">.</span><span class="na">instance</span><span class="o">(</span><span class="n">TOPIC_DATA_KEY_NAME</span><span class="o">);</span>
+        
+        <span class="n">topicData</span><span class="o">.</span><span class="na">set</span><span class="o">(</span><span class="n">TOPIC_NAME</span><span class="o">,</span> <span class="n">topicEntry</span><span class="o">.</span><span class="na">getKey</span><span class="o">());</span>
+        <span class="n">List</span><span class="o">&lt;</span><span class="n">Struct</span><span class="o">&gt;</span> <span class="n">partitionArray</span> <span class="o">=</span> <span class="k">new</span> <span class="n">ArrayList</span><span class="o">&lt;&gt;();</span>
+        <span class="k">for</span> <span class="o">(</span><span class="n">Map</span><span class="o">.</span><span class="na">Entry</span><span class="o">&lt;</span><span class="n">Integer</span><span class="o">,</span> <span class="n">MemoryRecords</span><span class="o">&gt;</span> <span class="n">partitionEntry</span> <span class="o">:</span> <span class="n">topicEntry</span><span class="o">.</span><span class="na">getValue</span><span class="o">().</span><span class="na">entrySet</span><span class="o">())</span> <span class="o">{</span>
+            <span class="n">MemoryRecords</span> <span class="n">records</span> <span class="o">=</span> <span class="n">partitionEntry</span><span class="o">.</span><span class="na">getValue</span><span class="o">();</span>
+            <span class="c1">// 因为PARTITION_DATA_KEY_NAME字段是Schema类型，这里调用了instance实例化Struct
+</span><span class="c1"></span>            <span class="n">Struct</span> <span class="n">part</span> <span class="o">=</span> <span class="n">topicData</span><span class="o">.</span><span class="na">instance</span><span class="o">(</span><span class="n">PARTITION_DATA_KEY_NAME</span><span class="o">)</span>
+                    <span class="o">.</span><span class="na">set</span><span class="o">(</span><span class="n">PARTITION_ID</span><span class="o">,</span> <span class="n">partitionEntry</span><span class="o">.</span><span class="na">getKey</span><span class="o">())</span>
+                    <span class="o">.</span><span class="na">set</span><span class="o">(</span><span class="n">RECORD_SET_KEY_NAME</span><span class="o">,</span> <span class="n">records</span><span class="o">);</span>
+            <span class="c1">// 添加partition数据
+</span><span class="c1"></span>            <span class="n">partitionArray</span><span class="o">.</span><span class="na">add</span><span class="o">(</span><span class="n">part</span><span class="o">);</span>
+        <span class="o">}</span>
+        <span class="c1">// 设置PARTITION_DATA_KEY_NAME字段
+</span><span class="c1"></span>        <span class="n">topicData</span><span class="o">.</span><span class="na">set</span><span class="o">(</span><span class="n">PARTITION_DATA_KEY_NAME</span><span class="o">,</span> <span class="n">partitionArray</span><span class="o">.</span><span class="na">toArray</span><span class="o">());</span>
+        <span class="n">topicDatas</span><span class="o">.</span><span class="na">add</span><span class="o">(</span><span class="n">topicData</span><span class="o">);</span>
+    <span class="o">}</span>
+    <span class="c1">// 设置topic字段的数据
+</span><span class="c1"></span>    <span class="n">struct</span><span class="o">.</span><span class="na">set</span><span class="o">(</span><span class="n">TOPIC_DATA_KEY_NAME</span><span class="o">,</span> <span class="n">topicDatas</span><span class="o">.</span><span class="na">toArray</span><span class="o">());</span>
+    <span class="k">return</span> <span class="n">struct</span><span class="o">;</span>
+<span class="o">}</span>
+</code></pre></td></tr></table></div>
+</div>
+</div><p>同样ProduceRequest内部也实现了Buidler类，它的build方法实例化并返回了ProduceRequest对象</p>
+<div class="highlight"><div class="chroma">
+<div class="table-container"><table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">ProduceRequest</span> <span class="kd">extends</span> <span class="n">AbstractRequest</span> <span class="o">{</span>
+    <span class="kd">public</span> <span class="kd">static</span> <span class="kd">class</span> <span class="nc">Builder</span> <span class="kd">extends</span> <span class="n">AbstractRequest</span><span class="o">.</span><span class="na">Builder</span><span class="o">&lt;</span><span class="n">ProduceRequest</span><span class="o">&gt;</span> <span class="o">{</span>
+        <span class="kd">private</span> <span class="kd">final</span> <span class="kt">short</span> <span class="n">acks</span><span class="o">;</span>
+        <span class="kd">private</span> <span class="kd">final</span> <span class="kt">int</span> <span class="n">timeout</span><span class="o">;</span>
+        <span class="kd">private</span> <span class="kd">final</span> <span class="n">Map</span><span class="o">&lt;</span><span class="n">TopicPartition</span><span class="o">,</span> <span class="n">MemoryRecords</span><span class="o">&gt;</span> <span class="n">partitionRecords</span><span class="o">;</span>
+        <span class="kd">private</span> <span class="kd">final</span> <span class="n">String</span> <span class="n">transactionalId</span><span class="o">;</span> 
+        
+        <span class="nd">@Override</span>
+        <span class="kd">public</span> <span class="n">ProduceRequest</span> <span class="nf">build</span><span class="o">(</span><span class="kt">short</span> <span class="n">version</span><span class="o">)</span> <span class="o">{</span>
+            <span class="k">return</span> <span class="k">new</span> <span class="n">ProduceRequest</span><span class="o">(</span><span class="n">version</span><span class="o">,</span> <span class="n">acks</span><span class="o">,</span> <span class="n">timeout</span><span class="o">,</span> <span class="n">partitionRecords</span><span class="o">,</span> <span class="n">transactionalId</span><span class="o">);</span>
+        <span class="o">}</span>        
+    <span class="o">}</span>
+<span class="o">}</span>
+</code></pre></td></tr></table></div>
+</div>
+</div><h3 id="序列化"><a href="#序列化" class="anchor-link"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon anchor-icon"><path d="M326.612 185.391c59.747 59.809 58.927 155.698.36 214.59-.11.12-.24.25-.36.37l-67.2 67.2c-59.27 59.27-155.699 59.262-214.96 0-59.27-59.26-59.27-155.7 0-214.96l37.106-37.106c9.84-9.84 26.786-3.3 27.294 10.606.648 17.722 3.826 35.527 9.69 52.721 1.986 5.822.567 12.262-3.783 16.612l-13.087 13.087c-28.026 28.026-28.905 73.66-1.155 101.96 28.024 28.579 74.086 28.749 102.325.51l67.2-67.19c28.191-28.191 28.073-73.757 0-101.83-3.701-3.694-7.429-6.564-10.341-8.569a16.037 16.037 0 0 1-6.947-12.606c-.396-10.567 3.348-21.456 11.698-29.806l21.054-21.055c5.521-5.521 14.182-6.199 20.584-1.731a152.482 152.482 0 0 1 20.522 17.197zM467.547 44.449c-59.261-59.262-155.69-59.27-214.96 0l-67.2 67.2c-.12.12-.25.25-.36.37-58.566 58.892-59.387 154.781.36 214.59a152.454 152.454 0 0 0 20.521 17.196c6.402 4.468 15.064 3.789 20.584-1.731l21.054-21.055c8.35-8.35 12.094-19.239 11.698-29.806a16.037 16.037 0 0 0-6.947-12.606c-2.912-2.005-6.64-4.875-10.341-8.569-28.073-28.073-28.191-73.639 0-101.83l67.2-67.19c28.239-28.239 74.3-28.069 102.325.51 27.75 28.3 26.872 73.934-1.155 101.96l-13.087 13.087c-4.35 4.35-5.769 10.79-3.783 16.612 5.864 17.194 9.042 34.999 9.69 52.721.509 13.906 17.454 20.446 27.294 10.606l37.106-37.106c59.271-59.259 59.271-155.699.001-214.959z"/></svg></a>序列化</h3>
+<p>Kafka通过Builder构建完请求体后，会将请求体一起序列化。AbstractRequest基类的serialize方法，会序列化请求。</p>
+<div class="highlight"><div class="chroma">
+<div class="table-container"><table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">abstract</span> <span class="kd">class</span> <span class="nc">AbstractRequest</span> <span class="kd">extends</span> <span class="n">AbstractRequestResponse</span> <span class="o">{</span>
+    
+    <span class="kd">public</span> <span class="n">ByteBuffer</span> <span class="nf">serialize</span><span class="o">(</span><span class="n">RequestHeader</span> <span class="n">header</span><span class="o">)</span> <span class="o">{</span>
+        <span class="c1">// 接收请求头，然后调用父类的serialize序列化请求
+</span><span class="c1"></span>        <span class="k">return</span> <span class="n">serialize</span><span class="o">(</span><span class="n">header</span><span class="o">.</span><span class="na">toStruct</span><span class="o">(),</span> <span class="n">toStruct</span><span class="o">());</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+
+<span class="kd">public</span> <span class="kd">abstract</span> <span class="kd">class</span> <span class="nc">AbstractRequestResponse</span> <span class="o">{</span>
+    <span class="c1">// 将请求头和请求体，序列化到ByteBuffer
+</span><span class="c1"></span>    <span class="kd">public</span> <span class="kd">static</span> <span class="n">ByteBuffer</span> <span class="nf">serialize</span><span class="o">(</span><span class="n">Struct</span> <span class="n">headerStruct</span><span class="o">,</span> <span class="n">Struct</span> <span class="n">bodyStruct</span><span class="o">)</span> <span class="o">{</span>
+        <span class="n">ByteBuffer</span> <span class="n">buffer</span> <span class="o">=</span> <span class="n">ByteBuffer</span><span class="o">.</span><span class="na">allocate</span><span class="o">(</span><span class="n">headerStruct</span><span class="o">.</span><span class="na">sizeOf</span><span class="o">()</span> <span class="o">+</span> <span class="n">bodyStruct</span><span class="o">.</span><span class="na">sizeOf</span><span class="o">());</span>
+        <span class="n">headerStruct</span><span class="o">.</span><span class="na">writeTo</span><span class="o">(</span><span class="n">buffer</span><span class="o">);</span>
+        <span class="n">bodyStruct</span><span class="o">.</span><span class="na">writeTo</span><span class="o">(</span><span class="n">buffer</span><span class="o">);</span>
+        <span class="n">buffer</span><span class="o">.</span><span class="na">rewind</span><span class="o">();</span>
+        <span class="k">return</span> <span class="n">buffer</span><span class="o">;</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+</code></pre></td></tr></table></div>
+</div>
+</div><h2 id="响应协议"><a href="#响应协议" class="anchor-link"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon anchor-icon"><path d="M326.612 185.391c59.747 59.809 58.927 155.698.36 214.59-.11.12-.24.25-.36.37l-67.2 67.2c-59.27 59.27-155.699 59.262-214.96 0-59.27-59.26-59.27-155.7 0-214.96l37.106-37.106c9.84-9.84 26.786-3.3 27.294 10.606.648 17.722 3.826 35.527 9.69 52.721 1.986 5.822.567 12.262-3.783 16.612l-13.087 13.087c-28.026 28.026-28.905 73.66-1.155 101.96 28.024 28.579 74.086 28.749 102.325.51l67.2-67.19c28.191-28.191 28.073-73.757 0-101.83-3.701-3.694-7.429-6.564-10.341-8.569a16.037 16.037 0 0 1-6.947-12.606c-.396-10.567 3.348-21.456 11.698-29.806l21.054-21.055c5.521-5.521 14.182-6.199 20.584-1.731a152.482 152.482 0 0 1 20.522 17.197zM467.547 44.449c-59.261-59.262-155.69-59.27-214.96 0l-67.2 67.2c-.12.12-.25.25-.36.37-58.566 58.892-59.387 154.781.36 214.59a152.454 152.454 0 0 0 20.521 17.196c6.402 4.468 15.064 3.789 20.584-1.731l21.054-21.055c8.35-8.35 12.094-19.239 11.698-29.806a16.037 16.037 0 0 0-6.947-12.606c-2.912-2.005-6.64-4.875-10.341-8.569-28.073-28.073-28.191-73.639 0-101.83l67.2-67.19c28.239-28.239 74.3-28.069 102.325.51 27.75 28.3 26.872 73.934-1.155 101.96l-13.087 13.087c-4.35 4.35-5.769 10.79-3.783 16.612 5.864 17.194 9.042 34.999 9.69 52.721.509 13.906 17.454 20.446 27.294 10.606l37.106-37.106c59.271-59.259 59.271-155.699.001-214.959z"/></svg></a>响应协议</h2>
+<p>kafka的响应协议通请求协议一样，分为响应头部和响应体两部分。</p>
+<h3 id="响应头部"><a href="#响应头部" class="anchor-link"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon anchor-icon"><path d="M326.612 185.391c59.747 59.809 58.927 155.698.36 214.59-.11.12-.24.25-.36.37l-67.2 67.2c-59.27 59.27-155.699 59.262-214.96 0-59.27-59.26-59.27-155.7 0-214.96l37.106-37.106c9.84-9.84 26.786-3.3 27.294 10.606.648 17.722 3.826 35.527 9.69 52.721 1.986 5.822.567 12.262-3.783 16.612l-13.087 13.087c-28.026 28.026-28.905 73.66-1.155 101.96 28.024 28.579 74.086 28.749 102.325.51l67.2-67.19c28.191-28.191 28.073-73.757 0-101.83-3.701-3.694-7.429-6.564-10.341-8.569a16.037 16.037 0 0 1-6.947-12.606c-.396-10.567 3.348-21.456 11.698-29.806l21.054-21.055c5.521-5.521 14.182-6.199 20.584-1.731a152.482 152.482 0 0 1 20.522 17.197zM467.547 44.449c-59.261-59.262-155.69-59.27-214.96 0l-67.2 67.2c-.12.12-.25.25-.36.37-58.566 58.892-59.387 154.781.36 214.59a152.454 152.454 0 0 0 20.521 17.196c6.402 4.468 15.064 3.789 20.584-1.731l21.054-21.055c8.35-8.35 12.094-19.239 11.698-29.806a16.037 16.037 0 0 0-6.947-12.606c-2.912-2.005-6.64-4.875-10.341-8.569-28.073-28.073-28.191-73.639 0-101.83l67.2-67.19c28.239-28.239 74.3-28.069 102.325.51 27.75 28.3 26.872 73.934-1.155 101.96l-13.087 13.087c-4.35 4.35-5.769 10.79-3.783 16.612 5.864 17.194 9.042 34.999 9.69 52.721.509 13.906 17.454 20.446 27.294 10.606l37.106-37.106c59.271-59.259 59.271-155.699.001-214.959z"/></svg></a>响应头部</h3>
+<p>响应头部很简单，只是包含了从客户端发来的correlation_id</p>
+<div class="highlight"><div class="chroma">
+<div class="table-container"><table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">ResponseHeader</span> <span class="kd">extends</span> <span class="n">AbstractRequestResponse</span> <span class="o">{</span>
+    <span class="kd">public</span> <span class="kd">static</span> <span class="kd">final</span> <span class="n">Schema</span> <span class="n">SCHEMA</span> <span class="o">=</span> <span class="k">new</span> <span class="n">Schema</span><span class="o">(</span>
+            <span class="k">new</span> <span class="n">Field</span><span class="o">(</span><span class="s">&#34;correlation_id&#34;</span><span class="o">,</span> <span class="n">INT32</span><span class="o">,</span> <span class="s">&#34;The user-supplied value passed in with the request&#34;</span><span class="o">));</span>
+<span class="o">}</span>
+</code></pre></td></tr></table></div>
+</div>
+</div><h3 id="响应体"><a href="#响应体" class="anchor-link"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon anchor-icon"><path d="M326.612 185.391c59.747 59.809 58.927 155.698.36 214.59-.11.12-.24.25-.36.37l-67.2 67.2c-59.27 59.27-155.699 59.262-214.96 0-59.27-59.26-59.27-155.7 0-214.96l37.106-37.106c9.84-9.84 26.786-3.3 27.294 10.606.648 17.722 3.826 35.527 9.69 52.721 1.986 5.822.567 12.262-3.783 16.612l-13.087 13.087c-28.026 28.026-28.905 73.66-1.155 101.96 28.024 28.579 74.086 28.749 102.325.51l67.2-67.19c28.191-28.191 28.073-73.757 0-101.83-3.701-3.694-7.429-6.564-10.341-8.569a16.037 16.037 0 0 1-6.947-12.606c-.396-10.567 3.348-21.456 11.698-29.806l21.054-21.055c5.521-5.521 14.182-6.199 20.584-1.731a152.482 152.482 0 0 1 20.522 17.197zM467.547 44.449c-59.261-59.262-155.69-59.27-214.96 0l-67.2 67.2c-.12.12-.25.25-.36.37-58.566 58.892-59.387 154.781.36 214.59a152.454 152.454 0 0 0 20.521 17.196c6.402 4.468 15.064 3.789 20.584-1.731l21.054-21.055c8.35-8.35 12.094-19.239 11.698-29.806a16.037 16.037 0 0 0-6.947-12.606c-2.912-2.005-6.64-4.875-10.341-8.569-28.073-28.073-28.191-73.639 0-101.83l67.2-67.19c28.239-28.239 74.3-28.069 102.325.51 27.75 28.3 26.872 73.934-1.155 101.96l-13.087 13.087c-4.35 4.35-5.769 10.79-3.783 16.612 5.864 17.194 9.042 34.999 9.69 52.721.509 13.906 17.454 20.446 27.294 10.606l37.106-37.106c59.271-59.259 59.271-155.699.001-214.959z"/></svg></a>响应体</h3>
+<p>Kafka的响应体都是由AbstractResponse的子类，有下列重要方法</p>
+<div class="highlight"><div class="chroma">
+<div class="table-container"><table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">abstract</span> <span class="kd">class</span> <span class="nc">AbstractResponse</span> <span class="kd">extends</span> <span class="n">AbstractRequestResponse</span> <span class="o">{</span>
+    <span class="c1">// 序列化并且保存到NetworkSend，后面会由网络发送出去
+</span><span class="c1"></span>    <span class="kd">protected</span> <span class="n">Send</span> <span class="nf">toSend</span><span class="o">(</span><span class="n">String</span> <span class="n">destination</span><span class="o">,</span> <span class="n">ResponseHeader</span> <span class="n">header</span><span class="o">,</span> <span class="kt">short</span> <span class="n">apiVersion</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">return</span> <span class="k">new</span> <span class="n">NetworkSend</span><span class="o">(</span><span class="n">destination</span><span class="o">,</span> <span class="n">serialize</span><span class="o">(</span><span class="n">apiVersion</span><span class="o">,</span> <span class="n">header</span><span class="o">));</span>
+    <span class="o">}</span>
+    
+    <span class="c1">// 接收响应头部，并且序列化到buffer
+</span><span class="c1"></span>    <span class="kd">public</span> <span class="n">ByteBuffer</span> <span class="nf">serialize</span><span class="o">(</span><span class="kt">short</span> <span class="n">version</span><span class="o">,</span> <span class="n">ResponseHeader</span> <span class="n">responseHeader</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">return</span> <span class="n">serialize</span><span class="o">(</span><span class="n">responseHeader</span><span class="o">.</span><span class="na">toStruct</span><span class="o">(),</span> <span class="n">toStruct</span><span class="o">(</span><span class="n">version</span><span class="o">));</span>
+    <span class="o">}</span>
+    
+    <span class="c1">// 转化为struct实例
+</span><span class="c1"></span>    <span class="kd">protected</span> <span class="kd">abstract</span> <span class="n">Struct</span> <span class="nf">toStruct</span><span class="o">(</span><span class="kt">short</span> <span class="n">version</span><span class="o">);</span>
+<span class="o">}</span>
+    
+</code></pre></td></tr></table></div>
+</div>
+</div><p>以ProduceResponse响应为例，它的格式如下图所示：</p>
+<p><img src="kafka-protocol-produce-response.svg" alt="produce-response"></p>
+<div class="highlight"><div class="chroma">
+<div class="table-container"><table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">ProduceResponse</span> <span class="kd">extends</span> <span class="n">AbstractResponse</span> <span class="o">{</span>
+
+    <span class="kd">private</span> <span class="kd">static</span> <span class="kd">final</span> <span class="n">String</span> <span class="n">RESPONSES_KEY_NAME</span> <span class="o">=</span> <span class="s">&#34;responses&#34;</span><span class="o">;</span>
+    <span class="kd">private</span> <span class="kd">static</span> <span class="kd">final</span> <span class="n">String</span> <span class="n">PARTITION_RESPONSES_KEY_NAME</span> <span class="o">=</span> <span class="s">&#34;partition_responses&#34;</span><span class="o">;</span>
+    <span class="kd">private</span> <span class="kd">static</span> <span class="kd">final</span> <span class="n">String</span> <span class="n">BASE_OFFSET_KEY_NAME</span> <span class="o">=</span> <span class="s">&#34;base_offset&#34;</span><span class="o">;</span>
+    <span class="kd">private</span> <span class="kd">static</span> <span class="kd">final</span> <span class="n">String</span> <span class="n">LOG_APPEND_TIME_KEY_NAME</span> <span class="o">=</span> <span class="s">&#34;log_append_time&#34;</span><span class="o">;</span>
+    
+    <span class="kd">private</span> <span class="kd">static</span> <span class="kd">final</span> <span class="n">Schema</span> <span class="n">PRODUCE_RESPONSE_V2</span> <span class="o">=</span> <span class="k">new</span> <span class="n">Schema</span><span class="o">(</span>
+            <span class="k">new</span> <span class="n">Field</span><span class="o">(</span><span class="n">RESPONSES_KEY_NAME</span><span class="o">,</span> <span class="k">new</span> <span class="n">ArrayOf</span><span class="o">(</span><span class="k">new</span> <span class="n">Schema</span><span class="o">(</span>
+                    <span class="n">TOPIC_NAME</span><span class="o">,</span>
+                    <span class="k">new</span> <span class="n">Field</span><span class="o">(</span><span class="n">PARTITION_RESPONSES_KEY_NAME</span><span class="o">,</span> <span class="k">new</span> <span class="n">ArrayOf</span><span class="o">(</span><span class="k">new</span> <span class="n">Schema</span><span class="o">(</span>
+                            <span class="n">PARTITION_ID</span><span class="o">,</span>
+                            <span class="n">ERROR_CODE</span><span class="o">,</span>
+                            <span class="k">new</span> <span class="n">Field</span><span class="o">(</span><span class="n">BASE_OFFSET_KEY_NAME</span><span class="o">,</span> <span class="n">INT64</span><span class="o">),</span>
+                            <span class="k">new</span> <span class="n">Field</span><span class="o">(</span><span class="n">LOG_APPEND_TIME_KEY_NAME</span><span class="o">,</span> <span class="n">INT64</span><span class="o">,</span> <span class="s">&#34;...&#34;</span><span class="o">))))))),</span>
+            <span class="n">THROTTLE_TIME_MS</span><span class="o">);</span>
+
+    <span class="kd">private</span> <span class="kd">static</span> <span class="kd">final</span> <span class="n">Schema</span> <span class="n">PRODUCE_RESPONSE_V3</span> <span class="o">=</span> <span class="n">PRODUCE_RESPONSE_V2</span><span class="o">;</span>
+<span class="o">}</span>
+</code></pre></td></tr></table></div>
+</div>
+</div><p>ProduceResponse的toStruct方法的原理，同ProduceRequest的原理相同。</p>
+<p>ProduceResponse的序列化的原理，同ProduceRequest的原理相同。</p>
+<h2 id="总结"><a href="#总结" class="anchor-link"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon anchor-icon"><path d="M326.612 185.391c59.747 59.809 58.927 155.698.36 214.59-.11.12-.24.25-.36.37l-67.2 67.2c-59.27 59.27-155.699 59.262-214.96 0-59.27-59.26-59.27-155.7 0-214.96l37.106-37.106c9.84-9.84 26.786-3.3 27.294 10.606.648 17.722 3.826 35.527 9.69 52.721 1.986 5.822.567 12.262-3.783 16.612l-13.087 13.087c-28.026 28.026-28.905 73.66-1.155 101.96 28.024 28.579 74.086 28.749 102.325.51l67.2-67.19c28.191-28.191 28.073-73.757 0-101.83-3.701-3.694-7.429-6.564-10.341-8.569a16.037 16.037 0 0 1-6.947-12.606c-.396-10.567 3.348-21.456 11.698-29.806l21.054-21.055c5.521-5.521 14.182-6.199 20.584-1.731a152.482 152.482 0 0 1 20.522 17.197zM467.547 44.449c-59.261-59.262-155.69-59.27-214.96 0l-67.2 67.2c-.12.12-.25.25-.36.37-58.566 58.892-59.387 154.781.36 214.59a152.454 152.454 0 0 0 20.521 17.196c6.402 4.468 15.064 3.789 20.584-1.731l21.054-21.055c8.35-8.35 12.094-19.239 11.698-29.806a16.037 16.037 0 0 0-6.947-12.606c-2.912-2.005-6.64-4.875-10.341-8.569-28.073-28.073-28.191-73.639 0-101.83l67.2-67.19c28.239-28.239 74.3-28.069 102.325.51 27.75 28.3 26.872 73.934-1.155 101.96l-13.087 13.087c-4.35 4.35-5.769 10.79-3.783 16.612 5.864 17.194 9.042 34.999 9.69 52.721.509 13.906 17.454 20.446 27.294 10.606l37.106-37.106c59.271-59.259 59.271-155.699.001-214.959z"/></svg></a>总结</h2>
+<p>通过上面协议原理的了解，我们在分析请求和响应的时候，可以直接查看它们的格式。所有kafka的请求和响应，都定义在org.apache.kafka.common.requests包里面。</p>
+
+            </div>
+
+            
+    
+    
+        <ul class="post-copyright">
+            <li class="copyright-item author"><span class="copyright-item-text">作者</span>：<a href="https://zhmin.github.io/" class="p-author h-card" target="_blank" rel="noopener">zhmin</a></li>
+            
+                
+                
+                
+                
+                <li class="copyright-item link"><span class="copyright-item-text">链接</span>：<a href="/posts/kafka-protocol/" target="_blank" rel="noopener">https://zhmin.github.io/posts/kafka-protocol/</a></li>
+            
+            
+        </ul>
+    
+
+
+
+        </article>
+
+        
+
+        
+    <div class="updated-badge-container">
+        <span title="Updated @ 2021-09-12 11:48:25 CST" style="cursor:help">
+
+<svg xmlns="http://www.w3.org/2000/svg" width="130" height="20" class="updated-badge"><linearGradient id="b" x2="0" y2="100%"><stop offset="0" stop-color="#bbb" stop-opacity=".1"/><stop offset="1" stop-opacity=".1"/></linearGradient><clipPath id="a"><rect width="130" height="20" rx="3" fill="#fff"/></clipPath><g clip-path="url(#a)"><path class="updated-badge-left" d="M0 0h55v20H0z"/><path class="updated-badge-right" d="M55 0h75v20H55z"/><path fill="url(#b)" d="M0 0h130v20H0z"/></g><g fill="#fff" text-anchor="middle" font-size="110"><text x="285" y="150" fill="#010101" fill-opacity=".3" textLength="450" transform="scale(.1)">updated</text><text x="285" y="140" textLength="450" transform="scale(.1)">updated</text><text x="915" y="150" fill="#010101" fill-opacity=".3" textLength="650" transform="scale(.1)">2021-09-12</text><text x="915" y="140" textLength="650" transform="scale(.1)">2021-09-12</text></g></svg>
+        </span></div>
+
+
+
+        
+
+
+        
+
+
+        
+    
+    
+        <div class="related-posts">
+            <h2 class="related-title">相关文章：<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon related-icon"><path d="M256 8C119 8 8 119 8 256s111 248 248 248 248-111 248-248S393 8 256 8zm144 276c0 6.6-5.4 12-12 12h-92v92c0 6.6-5.4 12-12 12h-56c-6.6 0-12-5.4-12-12v-92h-92c-6.6 0-12-5.4-12-12v-56c0-6.6 5.4-12 12-12h92v-92c0-6.6 5.4-12 12-12h56c6.6 0 12 5.4 12 12v92h92c6.6 0 12 5.4 12 12v56z"/></svg></h2>
+            <ul class="related-list">
+                
+                    <li class="related-item">
+                        <a href="/posts/kafka-client-buffer-manage/" class="related-link">Kafka 客户端的缓存管理</a>
+                    </li>
+                
+                    <li class="related-item">
+                        <a href="/posts/kafka-transaction/" class="related-link">Kafka 事务实现原理</a>
+                    </li>
+                
+                    <li class="related-item">
+                        <a href="/posts/kafka-schema-registry/" class="related-link">Kafka Schema Registry 原理</a>
+                    </li>
+                
+                    <li class="related-item">
+                        <a href="/posts/kafka-consumer-transaction/" class="related-link">Kafka Consumer 读取事务消息</a>
+                    </li>
+                
+                    <li class="related-item">
+                        <a href="/posts/kafka-producer-idempotence/" class="related-link">Kafka Producer 幂等性原理</a>
+                    </li>
+                
+            </ul>
+        </div>
+    
+
+
+
+        
+    
+
+
+
+        
+
+
+        
+
+
+        
+    
+        
+        
+    
+    
+    
+    
+        <ul class="post-nav">
+            
+                <li class="post-nav-prev">
+                    <a href="/posts/kafka-networkclient/" rel="prev">&lt; Kafka NetworkClient 原理</a>
+                </li>
+            
+            
+                <li class="post-nav-next">
+                    <a href="/posts/spark-rpc-server/" rel="next">Spark Rpc 服务端原理 &gt;</a>
+                </li>
+            
+        </ul>
+    
+
+
+
+        
+    
+
+        
+
+        
+
+        
+            <div id="vcomments"></div>
+        
+
+        
+
+        
+    
+
+
+
+    </div>
+</main>
+
+
+            
+    <div id="back-to-top" class="back-to-top">
+        <a href="#"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512" class="icon arrow-up"><path d="M34.9 289.5l-22.2-22.2c-9.4-9.4-9.4-24.6 0-33.9L207 39c9.4-9.4 24.6-9.4 33.9 0l194.3 194.3c9.4 9.4 9.4 24.6 0 33.9L413 289.4c-9.5 9.5-25 9.3-34.3-.4L264 168.6V456c0 13.3-10.7 24-24 24h-32c-13.3 0-24-10.7-24-24V168.6L69.2 289.1c-9.3 9.8-24.8 10-34.3.4z"/></svg></a>
+    </div>
+
+
+            
+    <footer id="footer" class="footer">
+        <div class="footer-inner">
+            <div class="site-info">©&nbsp;2019–2021&nbsp;<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon footer-icon"><path d="M462.3 62.6C407.5 15.9 326 24.3 275.7 76.2L256 96.5l-19.7-20.3C186.1 24.3 104.5 15.9 49.7 62.6c-62.8 53.6-66.1 149.8-9.9 207.9l193.5 199.8c12.5 12.9 32.8 12.9 45.3 0l193.5-199.8c56.3-58.1 53-154.3-9.8-207.9z"/></svg>&nbsp;zhmin</div><div class="site-copyright"></div>
+
+            
+    
+        <ul class="socials"><li class="socials-item">
+                    <a href="/rss.xml" target="_blank" rel="external noopener" title="RSS"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" class="icon social-icon"><path d="M19.199 24C19.199 13.467 10.533 4.8 0 4.8V0c13.165 0 24 10.835 24 24h-4.801zM3.291 17.415c1.814 0 3.293 1.479 3.293 3.295 0 1.813-1.485 3.29-3.301 3.29C1.47 24 0 22.526 0 20.71s1.475-3.294 3.291-3.295zM15.909 24h-4.665c0-6.169-5.075-11.245-11.244-11.245V8.09c8.727 0 15.909 7.184 15.909 15.91z"/></svg></a>
+                </li><li class="socials-item">
+                    <a href="mailto:reuixiy@gmail.com" target="_blank" rel="external noopener" title="Email"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon social-icon"><path d="M464 64H48C21.49 64 0 85.49 0 112v288c0 26.51 21.49 48 48 48h416c26.51 0 48-21.49 48-48V112c0-26.51-21.49-48-48-48zm0 48v40.805c-22.422 18.259-58.168 46.651-134.587 106.49-16.841 13.247-50.201 45.072-73.413 44.701-23.208.375-56.579-31.459-73.413-44.701C106.18 199.465 70.425 171.067 48 152.805V112h416zM48 400V214.398c22.914 18.251 55.409 43.862 104.938 82.646 21.857 17.205 60.134 55.186 103.062 54.955 42.717.231 80.509-37.199 103.053-54.947 49.528-38.783 82.032-64.401 104.947-82.653V400H48z"/></svg></a>
+                </li><li class="socials-item">
+                    <a href="https://github.com/reuixiy" target="_blank" rel="external noopener" title="GitHub"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" class="icon social-icon"><path d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"/></svg></a>
+                </li><li class="socials-item">
+                    <a href="https://twitter.com/reuixiy" target="_blank" rel="external noopener" title="Twitter"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon social-icon"><path d="M459.37 151.716c.325 4.548.325 9.097.325 13.645 0 138.72-105.583 298.558-298.558 298.558-59.452 0-114.68-17.219-161.137-47.106 8.447.974 16.568 1.299 25.34 1.299 49.055 0 94.213-16.568 130.274-44.832-46.132-.975-84.792-31.188-98.112-72.772 6.498.974 12.995 1.624 19.818 1.624 9.421 0 18.843-1.3 27.614-3.573-48.081-9.747-84.143-51.98-84.143-102.985v-1.299c13.969 7.797 30.214 12.67 47.431 13.319-28.264-18.843-46.781-51.005-46.781-87.391 0-19.492 5.197-37.36 14.294-52.954 51.655 63.675 129.3 105.258 216.365 109.807-1.624-7.797-2.599-15.918-2.599-24.04 0-57.828 46.782-104.934 104.934-104.934 30.213 0 57.502 12.67 76.67 33.137 23.715-4.548 46.456-13.32 66.599-25.34-7.798 24.366-24.366 44.833-46.132 57.827 21.117-2.273 41.584-8.122 60.426-16.243-14.292 20.791-32.161 39.308-52.628 54.253z"/></svg></a>
+                </li><li class="socials-item">
+                    <a href="https://t.me/yixiuer" target="_blank" rel="external noopener" title="Telegram"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512" class="icon social-icon"><path d="M248 8C111 8 0 119 0 256s111 248 248 248 248-111 248-248S385 8 248 8zm121.8 169.9l-40.7 191.8c-3 13.6-11.1 16.9-22.4 10.5l-62-45.7-29.9 28.8c-3.3 3.3-6.1 6.1-12.5 6.1l4.4-63.1 114.9-103.8c5-4.4-1.1-6.9-7.7-2.5l-142 89.4-61.2-19.1c-13.3-4.2-13.6-13.3 2.8-19.7l239.1-92.2c11.1-4 20.8 2.7 17.2 19.5z"/></svg></a>
+                </li></ul>
+    
+
+
+
+            
+        </div>
+    </footer>
+
+
+        </div>
+        
+
+        
+
+
+
+
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@8.8.3/dist/mermaid.min.js"></script>
+<script>
+    
+    Array.from(document.getElementsByClassName("language-mermaid")).forEach(
+        (el) => {
+            el.parentElement.outerHTML = `<div class="mermaid">${el.innerText}</div>`;
+        }
+    );
+    let mermaidConfig = {
+        startOnLoad: true,
+        flowchart: {
+            useMaxWidth: false,
+            htmlLabels: true
+        },
+        theme: 'forest'
+    };
+    mermaid.initialize(mermaidConfig);
+</script>
+
+
+
+    
+
+        
+
+        
+            <script>
+    function loadComments() {
+        if (typeof Valine === 'undefined') {
+            var getScript = (options) => {
+                var script = document.createElement('script');
+                script.defer = true;
+                script.crossOrigin = 'anonymous';
+                Object.keys(options).forEach((key) => {
+                    script[key] = options[key];
+                });
+                document.body.appendChild(script);
+            };
+            getScript({
+                src: 'https://cdn.jsdelivr.net/npm/valine@1.4.14/dist/Valine.min.js',
+                onload: () => {
+                    newValine();
+                }
+            });
+        } else {
+            newValine();
+        }
+    }
+    function newValine() {
+        new Valine({
+            el: '#vcomments',
+            appId: 'rArgi8qro88zmWgSe68qAzgL-gzGzoHsz',
+            appKey: 'R6YKDBN8HFTAqWcuSTzrSb6e',
+            placeholder: 'Just go go',
+            path: location.pathname,
+            avatar: 'mm',
+            meta: ["nick","mail","link"],
+            pageSize:  10 ,
+            lang: 'zh-cn',
+            visitor:  true ,
+            highlight:  true ,
+            avatarForce:  false ,
+            recordIP:  false ,
+            serverURLs: '',
+            emojiCDN: '',
+            emojiMaps: {},
+            enableQQ:  false ,
+            requiredFields: []
+        });
+    }
+</script>
+
+        
+
+        
+
+        
+
+    
+
+
+
+    <script src="https://cdn.jsdelivr.net/npm/medium-zoom@latest/dist/medium-zoom.min.js"></script>
+
+<script>
+    let imgNodes = document.querySelectorAll('div.post-body img');
+    imgNodes = Array.from(imgNodes).filter(node => node.parentNode.tagName !== "A");
+
+    mediumZoom(imgNodes, {
+        background: 'hsla(var(--color-bg-h), var(--color-bg-s), var(--color-bg-l), 0.95)'
+    })
+</script>
+
+
+
+
+    <script src="https://cdn.jsdelivr.net/npm/instant.page@5.1.0/instantpage.min.js" type="module" defer></script>
+
+
+
+
+
+
+
+    </body>
+</html>

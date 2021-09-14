@@ -1,0 +1,1890 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+    <head prefix="og: http://ogp.me/ns# article: http://ogp.me/ns/article#">
+    <meta charset="UTF-8" />
+
+    <meta name="generator" content="Hugo 0.79.0" /><meta name="theme-color" content="#fff" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    
+    <meta name="format-detection" content="telephone=no, date=no, address=no, email=no" />
+    
+    <meta http-equiv="Cache-Control" content="no-transform" />
+    
+    <meta http-equiv="Cache-Control" content="no-siteapp" />
+
+    <title>Kafka Consumer 管理 Offset 原理 | 学习笔记</title>
+
+    <link rel="stylesheet" href="/css/meme.min.81031e6b78ad2f1f534002ebb3b658886fea2f25d8a44d296d1466a2fe52f1c1.css"/>
+
+    
+    
+        <script src="/js/meme.min.120d98bb614adc6beb13bf79f943d2cceffd323f4de1544029228c3dca2e9bda.js"></script>
+
+    
+
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=EB&#43;Garamond:ital,wght@0,400;0,500;0,700;1,400;1,700&amp;family=Noto&#43;Serif&#43;SC:wght@400;500;700&amp;family=Source&#43;Code&#43;Pro:ital,wght@0,400;0,700;1,400;1,700&amp;display=swap" media="print" onload="this.media='all'" />
+        <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=EB&#43;Garamond:ital,wght@0,400;0,500;0,700;1,400;1,700&amp;family=Noto&#43;Serif&#43;SC:wght@400;500;700&amp;family=Source&#43;Code&#43;Pro:ital,wght@0,400;0,700;1,400;1,700&amp;display=swap" /></noscript>
+
+    <meta name="author" content="zhmin" /><meta name="description" content="Kafka Consumer 管理 Offset 原理 Consumer 元数据 Consumer本地也保存了关于管理Offset的元数据，它分为两部分，订阅信息和分区信息。consumer拉取消息之前，首先要确认分配到了哪些分区，这些数据就属于订阅相关的信息……" />
+
+    <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon" />
+    <link rel="mask-icon" href="/icons/safari-pinned-tab.svg" color="#2a6df4" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/icons/apple-touch-icon.png" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-title" content="学习笔记" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="application-name" content="学习笔记" />
+    <meta name="msapplication-starturl" content="../../" />
+    <meta name="msapplication-TileColor" content="#fff" />
+    <meta name="msapplication-TileImage" content="../../icons/mstile-150x150.png" />
+    <link rel="manifest" href="/manifest.json" />
+
+    
+    
+
+    
+    <link rel="canonical" href="https://zhmin.github.io/posts/kafka-consumer-offset/" />
+    
+
+<script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "BlogPosting",
+        "datePublished": "2019-04-08T23:02:09+00:00",
+        "dateModified": "2021-09-12T11:48:25+08:00",
+        "url": "https://zhmin.github.io/posts/kafka-consumer-offset/",
+        "headline": "Kafka Consumer 管理 Offset 原理",
+        "description": "Kafka Consumer 管理 Offset 原理 Consumer 元数据 Consumer本地也保存了关于管理Offset的元数据，它分为两部分，订阅信息和分区信息。consumer拉取消息之前，首先要确认分配到了哪些分区，这些数据就属于订阅相关的信息……",
+        "inLanguage" : "zh-CN",
+        "articleSection": "posts",
+        "wordCount":  6015 ,
+        "image": "https://zhmin.github.io/icons/apple-touch-icon.png",
+        "author": {
+            "@type": "Person",
+            "description": "无问西东",
+            "image": "https://zhmin.github.io/icons/apple-touch-icon.png",
+            "url": "https://zhmin.github.io/",
+            "name": "zhmin"
+        },
+        "publisher": {
+            "@type": "Organization",
+            "name": "学习笔记",
+            "logo": {
+                "@type": "ImageObject",
+                "url": "https://zhmin.github.io/icons/apple-touch-icon.png"
+            },
+            "url": "https://zhmin.github.io/"
+        },
+        "mainEntityOfPage": {
+            "@type": "WebSite",
+            "@id": "https://zhmin.github.io/"
+        }
+    }
+</script>
+
+    
+    
+
+
+
+<meta property="og:title" content="Kafka Consumer 管理 Offset 原理" />
+<meta property="og:description" content="Kafka Consumer 管理 Offset 原理 Consumer 元数据 Consumer本地也保存了关于管理Offset的元数据，它分为两部分，订阅信息和分区信息。consumer拉取消息之前，首先要确认分配到了哪些分区，这些数据就属于订阅相关的信息……" />
+<meta property="og:url" content="https://zhmin.github.io/posts/kafka-consumer-offset/" />
+<meta property="og:site_name" content="学习笔记" />
+<meta property="og:locale" content="zh" /><meta property="og:image" content="https://zhmin.github.io/icons/apple-touch-icon.png" />
+    <meta property="og:type" content="article" />
+    <meta property="article:published_time" content="2019-04-08T23:02:09&#43;00:00" />
+    <meta property="article:modified_time" content="2021-09-12T11:48:25&#43;08:00" />
+    
+    <meta property="article:section" content="posts" />
+
+
+
+    
+    
+
+    
+</head>
+
+    <body>
+        <div class="container">
+            
+    <header class="header">
+        
+            <div class="header-wrapper">
+                <div class="header-inner single">
+                    
+    <div class="site-brand">
+        
+            <a href="/" class="brand">学习笔记</a>
+        
+    </div>
+
+                    <nav class="nav">
+    <ul class="menu" id="menu">
+        
+            
+        
+        
+        
+        
+            
+                <li class="menu-item"><a href="/posts/"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon archive"><path d="M32 448c0 17.7 14.3 32 32 32h384c17.7 0 32-14.3 32-32V160H32v288zm160-212c0-6.6 5.4-12 12-12h104c6.6 0 12 5.4 12 12v8c0 6.6-5.4 12-12 12H204c-6.6 0-12-5.4-12-12v-8zM480 32H32C14.3 32 0 46.3 0 64v48c0 8.8 7.2 16 16 16h480c8.8 0 16-7.2 16-16V64c0-17.7-14.3-32-32-32z"/></svg><span class="menu-item-name">文章</span></a>
+                </li>
+            
+        
+            
+                <li class="menu-item"><a href="/categories/"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon th"><path d="M149.333 56v80c0 13.255-10.745 24-24 24H24c-13.255 0-24-10.745-24-24V56c0-13.255 10.745-24 24-24h101.333c13.255 0 24 10.745 24 24zm181.334 240v-80c0-13.255-10.745-24-24-24H205.333c-13.255 0-24 10.745-24 24v80c0 13.255 10.745 24 24 24h101.333c13.256 0 24.001-10.745 24.001-24zm32-240v80c0 13.255 10.745 24 24 24H488c13.255 0 24-10.745 24-24V56c0-13.255-10.745-24-24-24H386.667c-13.255 0-24 10.745-24 24zm-32 80V56c0-13.255-10.745-24-24-24H205.333c-13.255 0-24 10.745-24 24v80c0 13.255 10.745 24 24 24h101.333c13.256 0 24.001-10.745 24.001-24zm-205.334 56H24c-13.255 0-24 10.745-24 24v80c0 13.255 10.745 24 24 24h101.333c13.255 0 24-10.745 24-24v-80c0-13.255-10.745-24-24-24zM0 376v80c0 13.255 10.745 24 24 24h101.333c13.255 0 24-10.745 24-24v-80c0-13.255-10.745-24-24-24H24c-13.255 0-24 10.745-24 24zm386.667-56H488c13.255 0 24-10.745 24-24v-80c0-13.255-10.745-24-24-24H386.667c-13.255 0-24 10.745-24 24v80c0 13.255 10.745 24 24 24zm0 160H488c13.255 0 24-10.745 24-24v-80c0-13.255-10.745-24-24-24H386.667c-13.255 0-24 10.745-24 24v80c0 13.255 10.745 24 24 24zM181.333 376v80c0 13.255 10.745 24 24 24h101.333c13.255 0 24-10.745 24-24v-80c0-13.255-10.745-24-24-24H205.333c-13.255 0-24 10.745-24 24z"/></svg><span class="menu-item-name">分类</span></a>
+                </li>
+            
+        
+            
+                <li class="menu-item"><a href="/tags/"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512" class="icon tags"><path d="M497.941 225.941L286.059 14.059A48 48 0 0 0 252.118 0H48C21.49 0 0 21.49 0 48v204.118a48 48 0 0 0 14.059 33.941l211.882 211.882c18.744 18.745 49.136 18.746 67.882 0l204.118-204.118c18.745-18.745 18.745-49.137 0-67.882zM112 160c-26.51 0-48-21.49-48-48s21.49-48 48-48 48 21.49 48 48-21.49 48-48 48zm513.941 133.823L421.823 497.941c-18.745 18.745-49.137 18.745-67.882 0l-.36-.36L527.64 323.522c16.999-16.999 26.36-39.6 26.36-63.64s-9.362-46.641-26.36-63.64L331.397 0h48.721a48 48 0 0 1 33.941 14.059l211.882 211.882c18.745 18.745 18.745 49.137 0 67.882z"/></svg><span class="menu-item-name">标签</span></a>
+                </li>
+            
+        
+            
+                <li class="menu-item"><a href="/about/"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512" class="icon user-circle"><path d="M248 8C111 8 0 119 0 256s111 248 248 248 248-111 248-248S385 8 248 8zm0 96c48.6 0 88 39.4 88 88s-39.4 88-88 88-88-39.4-88-88 39.4-88 88-88zm0 344c-58.7 0-111.3-26.6-146.5-68.2 18.8-35.4 55.6-59.8 98.5-59.8 2.4 0 4.8.4 7.1 1.1 13 4.2 26.6 6.9 40.9 6.9 14.3 0 28-2.7 40.9-6.9 2.3-.7 4.7-1.1 7.1-1.1 42.9 0 79.7 24.4 98.5 59.8C359.3 421.4 306.7 448 248 448z"/></svg><span class="menu-item-name">关于</span></a>
+                </li>
+            
+        
+            
+                
+                    
+                    
+                        <li class="menu-item">
+                            <a id="theme-switcher" href="#"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon theme-icon-light"><path d="M193.2 104.5l48.8-97.5a18 18 0 0128 0l48.8 97.5 103.4 -34.5a18 18 0 0119.8 19.8l-34.5 103.4l97.5 48.8a18 18 0 010 28l-97.5 48.8 34.5 103.4a18 18 0 01-19.8 19.8l-103.4-34.5-48.8 97.5a18 18 0 01-28 0l-48.8-97.5l-103.4 34.5a18 18 0 01-19.8-19.8l34.5-103.4-97.5-48.8a18 18 0 010-28l97.5-48.8-34.5-103.4a18 18 0 0119.8-19.8zM256 128a128 128 0 10.01 0M256 160a96 96 0 10.01 0"/></svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon theme-icon-dark"><path d="M27 412a256 256 0 10154-407a11.5 11.5 0 00-5 20a201.5 201.5 0 01-134 374a11.5 11.5 0 00-15 13"/></svg></a>
+                        </li>
+                    
+                
+            
+        
+            
+                
+            
+        
+    </ul>
+</nav>
+
+                    
+                </div>
+            </div>
+            
+    <input type="checkbox" id="nav-toggle" aria-hidden="true" />
+    <label for="nav-toggle" class="nav-toggle"></label>
+    <label for="nav-toggle" class="nav-curtain"></label>
+
+
+        
+    </header>
+
+
+
+
+            
+            
+    <main class="main single" id="main">
+    <div class="main-inner">
+
+        
+
+        <article class="content post h-entry" data-align="justify" data-type="posts" data-toc-num="true">
+
+            <h1 class="post-title p-name">Kafka Consumer 管理 Offset 原理</h1>
+
+            
+
+            
+                
+            
+
+            
+                
+
+<div class="post-meta">
+    
+        
+        <time datetime="2019-04-08T23:02:09&#43;00:00" class="post-meta-item published dt-published"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512" class="icon post-meta-icon"><path d="M148 288h-40c-6.6 0-12-5.4-12-12v-40c0-6.6 5.4-12 12-12h40c6.6 0 12 5.4 12 12v40c0 6.6-5.4 12-12 12zm108-12v-40c0-6.6-5.4-12-12-12h-40c-6.6 0-12 5.4-12 12v40c0 6.6 5.4 12 12 12h40c6.6 0 12-5.4 12-12zm96 0v-40c0-6.6-5.4-12-12-12h-40c-6.6 0-12 5.4-12 12v40c0 6.6 5.4 12 12 12h40c6.6 0 12-5.4 12-12zm-96 96v-40c0-6.6-5.4-12-12-12h-40c-6.6 0-12 5.4-12 12v40c0 6.6 5.4 12 12 12h40c6.6 0 12-5.4 12-12zm-96 0v-40c0-6.6-5.4-12-12-12h-40c-6.6 0-12 5.4-12 12v40c0 6.6 5.4 12 12 12h40c6.6 0 12-5.4 12-12zm192 0v-40c0-6.6-5.4-12-12-12h-40c-6.6 0-12 5.4-12 12v40c0 6.6 5.4 12 12 12h40c6.6 0 12-5.4 12-12zm96-260v352c0 26.5-21.5 48-48 48H48c-26.5 0-48-21.5-48-48V112c0-26.5 21.5-48 48-48h48V12c0-6.6 5.4-12 12-12h40c6.6 0 12 5.4 12 12v52h128V12c0-6.6 5.4-12 12-12h40c6.6 0 12 5.4 12 12v52h48c26.5 0 48 21.5 48 48zm-48 346V160H48v298c0 3.3 2.7 6 6 6h340c3.3 0 6-2.7 6-6z"/></svg>&nbsp;2019.4.8</time>
+    
+    
+    
+    
+        
+        
+        
+            
+                <span class="post-meta-item category"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon post-meta-icon"><path d="M464 128H272l-54.63-54.63c-6-6-14.14-9.37-22.63-9.37H48C21.49 64 0 85.49 0 112v288c0 26.51 21.49 48 48 48h416c26.51 0 48-21.49 48-48V176c0-26.51-21.49-48-48-48zm0 272H48V112h140.12l54.63 54.63c6 6 14.14 9.37 22.63 9.37H464v224z"/></svg>&nbsp;<a href="/categories/kafka/" class="category-link p-category">kafka</a></span>
+            
+        
+    
+    
+        
+        <span class="post-meta-item wordcount"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon post-meta-icon"><path d="M497.9 142.1l-46.1 46.1c-4.7 4.7-12.3 4.7-17 0l-111-111c-4.7-4.7-4.7-12.3 0-17l46.1-46.1c18.7-18.7 49.1-18.7 67.9 0l60.1 60.1c18.8 18.7 18.8 49.1 0 67.9zM284.2 99.8L21.6 362.4.4 483.9c-2.9 16.4 11.4 30.6 27.8 27.8l121.5-21.3 262.6-262.6c4.7-4.7 4.7-12.3 0-17l-111-111c-4.8-4.7-12.4-4.7-17.1 0zM124.1 339.9c-5.5-5.5-5.5-14.3 0-19.8l154-154c5.5-5.5 14.3-5.5 19.8 0s5.5 14.3 0 19.8l-154 154c-5.5 5.5-14.3 5.5-19.8 0zM88 424h48v36.3l-64.5 11.3-31.1-31.1L51.7 376H88v48z"/></svg>&nbsp;6015</span>
+    
+    
+        
+        <span class="post-meta-item reading-time"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon post-meta-icon"><path d="M256 8C119 8 8 119 8 256s111 248 248 248 248-111 248-248S393 8 256 8zm0 448c-110.5 0-200-89.5-200-200S145.5 56 256 56s200 89.5 200 200-89.5 200-200 200zm61.8-104.4l-84.9-61.7c-3.1-2.3-4.9-5.9-4.9-9.7V116c0-6.6 5.4-12 12-12h32c6.6 0 12 5.4 12 12v141.7l66.8 48.6c5.4 3.9 6.5 11.4 2.6 16.8L334.6 349c-3.9 5.3-11.4 6.5-16.8 2.6z"/></svg>&nbsp;13&nbsp;分钟</span>
+    
+    
+    
+</div>
+
+            
+
+            <div class="post-body e-content">
+                <h1 id="kafka-consumer-管理-offset-原理"><a href="#kafka-consumer-管理-offset-原理" class="anchor-link"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon anchor-icon"><path d="M326.612 185.391c59.747 59.809 58.927 155.698.36 214.59-.11.12-.24.25-.36.37l-67.2 67.2c-59.27 59.27-155.699 59.262-214.96 0-59.27-59.26-59.27-155.7 0-214.96l37.106-37.106c9.84-9.84 26.786-3.3 27.294 10.606.648 17.722 3.826 35.527 9.69 52.721 1.986 5.822.567 12.262-3.783 16.612l-13.087 13.087c-28.026 28.026-28.905 73.66-1.155 101.96 28.024 28.579 74.086 28.749 102.325.51l67.2-67.19c28.191-28.191 28.073-73.757 0-101.83-3.701-3.694-7.429-6.564-10.341-8.569a16.037 16.037 0 0 1-6.947-12.606c-.396-10.567 3.348-21.456 11.698-29.806l21.054-21.055c5.521-5.521 14.182-6.199 20.584-1.731a152.482 152.482 0 0 1 20.522 17.197zM467.547 44.449c-59.261-59.262-155.69-59.27-214.96 0l-67.2 67.2c-.12.12-.25.25-.36.37-58.566 58.892-59.387 154.781.36 214.59a152.454 152.454 0 0 0 20.521 17.196c6.402 4.468 15.064 3.789 20.584-1.731l21.054-21.055c8.35-8.35 12.094-19.239 11.698-29.806a16.037 16.037 0 0 0-6.947-12.606c-2.912-2.005-6.64-4.875-10.341-8.569-28.073-28.073-28.191-73.639 0-101.83l67.2-67.19c28.239-28.239 74.3-28.069 102.325.51 27.75 28.3 26.872 73.934-1.155 101.96l-13.087 13.087c-4.35 4.35-5.769 10.79-3.783 16.612 5.864 17.194 9.042 34.999 9.69 52.721.509 13.906 17.454 20.446 27.294 10.606l37.106-37.106c59.271-59.259 59.271-155.699.001-214.959z"/></svg></a>Kafka Consumer 管理 Offset 原理</h1>
+<h2 id="consumer-元数据"><a href="#consumer-元数据" class="anchor-link"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon anchor-icon"><path d="M326.612 185.391c59.747 59.809 58.927 155.698.36 214.59-.11.12-.24.25-.36.37l-67.2 67.2c-59.27 59.27-155.699 59.262-214.96 0-59.27-59.26-59.27-155.7 0-214.96l37.106-37.106c9.84-9.84 26.786-3.3 27.294 10.606.648 17.722 3.826 35.527 9.69 52.721 1.986 5.822.567 12.262-3.783 16.612l-13.087 13.087c-28.026 28.026-28.905 73.66-1.155 101.96 28.024 28.579 74.086 28.749 102.325.51l67.2-67.19c28.191-28.191 28.073-73.757 0-101.83-3.701-3.694-7.429-6.564-10.341-8.569a16.037 16.037 0 0 1-6.947-12.606c-.396-10.567 3.348-21.456 11.698-29.806l21.054-21.055c5.521-5.521 14.182-6.199 20.584-1.731a152.482 152.482 0 0 1 20.522 17.197zM467.547 44.449c-59.261-59.262-155.69-59.27-214.96 0l-67.2 67.2c-.12.12-.25.25-.36.37-58.566 58.892-59.387 154.781.36 214.59a152.454 152.454 0 0 0 20.521 17.196c6.402 4.468 15.064 3.789 20.584-1.731l21.054-21.055c8.35-8.35 12.094-19.239 11.698-29.806a16.037 16.037 0 0 0-6.947-12.606c-2.912-2.005-6.64-4.875-10.341-8.569-28.073-28.073-28.191-73.639 0-101.83l67.2-67.19c28.239-28.239 74.3-28.069 102.325.51 27.75 28.3 26.872 73.934-1.155 101.96l-13.087 13.087c-4.35 4.35-5.769 10.79-3.783 16.612 5.864 17.194 9.042 34.999 9.69 52.721.509 13.906 17.454 20.446 27.294 10.606l37.106-37.106c59.271-59.259 59.271-155.699.001-214.959z"/></svg></a>Consumer 元数据</h2>
+<p>Consumer本地也保存了关于管理Offset的元数据，它分为两部分，订阅信息和分区信息。consumer拉取消息之前，首先要确认分配到了哪些分区，这些数据就属于订阅相关的信息。之后consumer拉取消息后，会更新客户端本地的offset，这些数据就属于分区相关的信息。</p>
+<h3 id="订阅信息"><a href="#订阅信息" class="anchor-link"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon anchor-icon"><path d="M326.612 185.391c59.747 59.809 58.927 155.698.36 214.59-.11.12-.24.25-.36.37l-67.2 67.2c-59.27 59.27-155.699 59.262-214.96 0-59.27-59.26-59.27-155.7 0-214.96l37.106-37.106c9.84-9.84 26.786-3.3 27.294 10.606.648 17.722 3.826 35.527 9.69 52.721 1.986 5.822.567 12.262-3.783 16.612l-13.087 13.087c-28.026 28.026-28.905 73.66-1.155 101.96 28.024 28.579 74.086 28.749 102.325.51l67.2-67.19c28.191-28.191 28.073-73.757 0-101.83-3.701-3.694-7.429-6.564-10.341-8.569a16.037 16.037 0 0 1-6.947-12.606c-.396-10.567 3.348-21.456 11.698-29.806l21.054-21.055c5.521-5.521 14.182-6.199 20.584-1.731a152.482 152.482 0 0 1 20.522 17.197zM467.547 44.449c-59.261-59.262-155.69-59.27-214.96 0l-67.2 67.2c-.12.12-.25.25-.36.37-58.566 58.892-59.387 154.781.36 214.59a152.454 152.454 0 0 0 20.521 17.196c6.402 4.468 15.064 3.789 20.584-1.731l21.054-21.055c8.35-8.35 12.094-19.239 11.698-29.806a16.037 16.037 0 0 0-6.947-12.606c-2.912-2.005-6.64-4.875-10.341-8.569-28.073-28.073-28.191-73.639 0-101.83l67.2-67.19c28.239-28.239 74.3-28.069 102.325.51 27.75 28.3 26.872 73.934-1.155 101.96l-13.087 13.087c-4.35 4.35-5.769 10.79-3.783 16.612 5.864 17.194 9.042 34.999 9.69 52.721.509 13.906 17.454 20.446 27.294 10.606l37.106-37.106c59.271-59.259 59.271-155.699.001-214.959z"/></svg></a>订阅信息</h3>
+<p>Consumer有两种消费模式，订阅模式和分配模式。订阅模式是consumer只需要指定哪些topic需要订阅，由GroupCoordinator分配分区。分配模式是consumer自己指定哪些分区。这些信息都是保存在SubscriptionState类里</p>
+<div class="highlight"><div class="chroma">
+<div class="table-container"><table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">SubscriptionState</span> <span class="o">{</span>
+    <span class="c1">// 订阅类型
+</span><span class="c1"></span>    <span class="c1">// AUTO_TOPICS 属于订阅模式，它指定哪些topic
+</span><span class="c1"></span>    <span class="c1">// AUTO_PATTERN 属于订阅模式，它使用正则匹配topic
+</span><span class="c1"></span>    <span class="c1">// USER_ASSIGNED 属于分配模式
+</span><span class="c1"></span>    <span class="kd">private</span> <span class="kd">enum</span> <span class="n">SubscriptionType</span> <span class="o">{</span>
+        <span class="n">NONE</span><span class="o">,</span> <span class="n">AUTO_TOPICS</span><span class="o">,</span> <span class="n">AUTO_PATTERN</span><span class="o">,</span> <span class="n">USER_ASSIGNED</span>
+    <span class="o">}</span>
+    
+    <span class="c1">// 采用哪种订阅模式
+</span><span class="c1"></span>    <span class="kd">private</span> <span class="n">SubscriptionType</span> <span class="n">subscriptionType</span><span class="o">;</span>
+
+    <span class="c1">// 订阅的正则表达式，只有订阅类型为AUTO_PATTERN，才会被使用
+</span><span class="c1"></span>    <span class="kd">private</span> <span class="n">Pattern</span> <span class="n">subscribedPattern</span><span class="o">;</span>
+
+    <span class="c1">// 订阅的topic名称列表，只有订阅类型为AUTO_TOPICS，才会被使用
+</span><span class="c1"></span>    <span class="kd">private</span> <span class="n">Set</span><span class="o">&lt;</span><span class="n">String</span><span class="o">&gt;</span> <span class="n">subscription</span><span class="o">;</span>
+<span class="o">}</span>
+</code></pre></td></tr></table></div>
+</div>
+</div><p>当consumer使用订阅模式，收到服务端返回的分区分配结果后，会保存起来。我们回想一下ConsumerCoordinator的原理，当它收到分配结果后，会调用onJoinComplete回调函数，这里会处理分配结果。</p>
+<div class="highlight"><div class="chroma">
+<div class="table-container"><table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">final</span> <span class="kd">class</span> <span class="nc">ConsumerCoordinator</span> <span class="kd">extends</span> <span class="n">AbstractCoordinator</span> <span class="o">{</span>
+  
+    <span class="kd">private</span> <span class="kd">final</span> <span class="n">SubscriptionState</span> <span class="n">subscriptions</span><span class="o">;</span>    
+    
+    <span class="nd">@Override</span>
+    <span class="kd">protected</span> <span class="kt">void</span> <span class="nf">onJoinComplete</span><span class="o">(</span><span class="kt">int</span> <span class="n">generation</span><span class="o">,</span>
+                                  <span class="n">String</span> <span class="n">memberId</span><span class="o">,</span>   <span class="c1">// 该成员 id
+</span><span class="c1"></span>                                  <span class="n">String</span> <span class="n">assignmentStrategy</span><span class="o">,</span>   <span class="c1">// 分配算法
+</span><span class="c1"></span>                                  <span class="n">ByteBuffer</span> <span class="n">assignmentBuffer</span><span class="o">)</span> <span class="o">{</span>   <span class="c1">// 序列化之后的分配结果
+</span><span class="c1"></span>        <span class="c1">// 解析分配结果
+</span><span class="c1"></span>        <span class="n">Assignment</span> <span class="n">assignment</span> <span class="o">=</span> <span class="n">ConsumerProtocol</span><span class="o">.</span><span class="na">deserializeAssignment</span><span class="o">(</span><span class="n">assignmentBuffer</span><span class="o">);</span>
+        <span class="c1">// 保存到SubscriptionState类
+</span><span class="c1"></span>        <span class="n">subscriptions</span><span class="o">.</span><span class="na">assignFromSubscribed</span><span class="o">(</span><span class="n">assignment</span><span class="o">.</span><span class="na">partitions</span><span class="o">());</span>                                       <span class="o">......</span>
+    <span class="o">}</span>
+<span class="o">}</span>                                 
+</code></pre></td></tr></table></div>
+</div>
+</div><p>SubscriptionState提供了assignFromSubscribed方法，来保存订阅模式的分配结果</p>
+<div class="highlight"><div class="chroma">
+<div class="table-container"><table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">SubscriptionState</span> <span class="o">{</span>
+    <span class="c1">// 分配的分区信息
+</span><span class="c1"></span>    <span class="kd">private</span> <span class="kd">final</span> <span class="n">PartitionStates</span><span class="o">&lt;</span><span class="n">TopicPartitionState</span><span class="o">&gt;</span> <span class="n">assignment</span><span class="o">;</span>
+
+    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">assignFromSubscribed</span><span class="o">(</span><span class="n">Collection</span><span class="o">&lt;</span><span class="n">TopicPartition</span><span class="o">&gt;</span> <span class="n">assignments</span><span class="o">)</span> <span class="o">{</span>
+        <span class="c1">// 为这些分区，初始化分区信息 TopicPartitionState
+</span><span class="c1"></span>        <span class="n">Map</span><span class="o">&lt;</span><span class="n">TopicPartition</span><span class="o">,</span> <span class="n">TopicPartitionState</span><span class="o">&gt;</span> <span class="n">assignedPartitionStates</span> <span class="o">=</span> <span class="n">partitionToStateMap</span><span class="o">(</span><span class="n">assignments</span><span class="o">);</span>
+        <span class="c1">// 触发回调函数
+</span><span class="c1"></span>        <span class="n">fireOnAssignment</span><span class="o">(</span><span class="n">assignedPartitionStates</span><span class="o">.</span><span class="na">keySet</span><span class="o">());</span>
+        <span class="c1">// 保存这些分区的信息
+</span><span class="c1"></span>        <span class="k">this</span><span class="o">.</span><span class="na">assignment</span><span class="o">.</span><span class="na">set</span><span class="o">(</span><span class="n">assignedPartitionStates</span><span class="o">);</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+</code></pre></td></tr></table></div>
+</div>
+</div><p>当consumer使用分配模式时，必须手动指定分区。KafkaConsumer类提供了assign方法来指定分区</p>
+<div class="highlight"><div class="chroma">
+<div class="table-container"><table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span><span class="lnt">35
+</span><span class="lnt">36
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">KafkaConsumer</span><span class="o">&lt;</span><span class="n">K</span><span class="o">,</span> <span class="n">V</span><span class="o">&gt;</span> <span class="kd">implements</span> <span class="n">Consumer</span><span class="o">&lt;</span><span class="n">K</span><span class="o">,</span> <span class="n">V</span><span class="o">&gt;</span> <span class="o">{</span>
+
+    <span class="nd">@Override</span>
+    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">assign</span><span class="o">(</span><span class="n">Collection</span><span class="o">&lt;</span><span class="n">TopicPartition</span><span class="o">&gt;</span> <span class="n">partitions</span><span class="o">)</span> <span class="o">{</span>
+        <span class="n">acquireAndEnsureOpen</span><span class="o">();</span>
+        <span class="k">try</span> <span class="o">{</span>
+            <span class="c1">// 检查指定的分区不为 null
+</span><span class="c1"></span>            <span class="k">if</span> <span class="o">(</span><span class="n">partitions</span> <span class="o">==</span> <span class="kc">null</span><span class="o">)</span> <span class="o">{</span>
+                <span class="k">throw</span> <span class="k">new</span> <span class="n">IllegalArgumentException</span><span class="o">(</span><span class="s">&#34;Topic partition collection to assign to cannot be null&#34;</span><span class="o">);</span>
+            <span class="o">}</span> <span class="k">else</span> <span class="k">if</span> <span class="o">(</span><span class="n">partitions</span><span class="o">.</span><span class="na">isEmpty</span><span class="o">())</span> <span class="o">{</span>
+                <span class="c1">//如果 partitions 为空，那么表明是不在消费消息
+</span><span class="c1"></span>                <span class="k">this</span><span class="o">.</span><span class="na">unsubscribe</span><span class="o">();</span>
+            <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
+                <span class="c1">// 指定的分区涉及到的topic列表
+</span><span class="c1"></span>                <span class="n">Set</span><span class="o">&lt;</span><span class="n">String</span><span class="o">&gt;</span> <span class="n">topics</span> <span class="o">=</span> <span class="k">new</span> <span class="n">HashSet</span><span class="o">&lt;&gt;();</span>
+                <span class="k">for</span> <span class="o">(</span><span class="n">TopicPartition</span> <span class="n">tp</span> <span class="o">:</span> <span class="n">partitions</span><span class="o">)</span> <span class="o">{</span>
+                    <span class="n">String</span> <span class="n">topic</span> <span class="o">=</span> <span class="o">(</span><span class="n">tp</span> <span class="o">!=</span> <span class="kc">null</span><span class="o">)</span> <span class="o">?</span> <span class="n">tp</span><span class="o">.</span><span class="na">topic</span><span class="o">()</span> <span class="o">:</span> <span class="kc">null</span><span class="o">;</span>
+                    <span class="k">if</span> <span class="o">(</span><span class="n">topic</span> <span class="o">==</span> <span class="kc">null</span> <span class="o">||</span> <span class="n">topic</span><span class="o">.</span><span class="na">trim</span><span class="o">().</span><span class="na">isEmpty</span><span class="o">())</span>
+                        <span class="k">throw</span> <span class="k">new</span> <span class="n">IllegalArgumentException</span><span class="o">(</span><span class="s">&#34;Topic partitions to assign to cannot have null or empty topic&#34;</span><span class="o">);</span>
+                    <span class="n">topics</span><span class="o">.</span><span class="na">add</span><span class="o">(</span><span class="n">topic</span><span class="o">);</span>
+                <span class="o">}</span>
+
+                <span class="c1">// make sure the offsets of topic partitions the consumer is unsubscribing from
+</span><span class="c1"></span>                <span class="c1">// are committed since there will be no following rebalance
+</span><span class="c1"></span>                <span class="k">this</span><span class="o">.</span><span class="na">coordinator</span><span class="o">.</span><span class="na">maybeAutoCommitOffsetsAsync</span><span class="o">(</span><span class="n">time</span><span class="o">.</span><span class="na">milliseconds</span><span class="o">());</span>
+
+                <span class="c1">// 将分区保存到SubscriptionState里
+</span><span class="c1"></span>                <span class="k">this</span><span class="o">.</span><span class="na">subscriptions</span><span class="o">.</span><span class="na">assignFromUser</span><span class="o">(</span><span class="k">new</span> <span class="n">HashSet</span><span class="o">&lt;&gt;(</span><span class="n">partitions</span><span class="o">));</span>
+                <span class="c1">// 更新Metadata获取哪些topic的元数据
+</span><span class="c1"></span>                <span class="n">metadata</span><span class="o">.</span><span class="na">setTopics</span><span class="o">(</span><span class="n">topics</span><span class="o">);</span>
+            <span class="o">}</span>
+        <span class="o">}</span> <span class="k">finally</span> <span class="o">{</span>
+            <span class="n">release</span><span class="o">();</span>
+        <span class="o">}</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+</code></pre></td></tr></table></div>
+</div>
+</div><p>SubscriptionState提供了assignFromSubscribed方法，来保存订阅模式的分配结果</p>
+<div class="highlight"><div class="chroma">
+<div class="table-container"><table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">SubscriptionState</span> <span class="o">{</span>
+  
+    <span class="kd">private</span> <span class="kd">final</span> <span class="n">PartitionStates</span><span class="o">&lt;</span><span class="n">TopicPartitionState</span><span class="o">&gt;</span> <span class="n">assignment</span><span class="o">;</span>
+    
+    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">assignFromUser</span><span class="o">(</span><span class="n">Set</span><span class="o">&lt;</span><span class="n">TopicPartition</span><span class="o">&gt;</span> <span class="n">partitions</span><span class="o">)</span> <span class="o">{</span>
+        <span class="c1">// 设置订阅类型为 USER_ASSIGNED
+</span><span class="c1"></span>        <span class="n">setSubscriptionType</span><span class="o">(</span><span class="n">SubscriptionType</span><span class="o">.</span><span class="na">USER_ASSIGNED</span><span class="o">);</span>
+
+        <span class="k">if</span> <span class="o">(!</span><span class="k">this</span><span class="o">.</span><span class="na">assignment</span><span class="o">.</span><span class="na">partitionSet</span><span class="o">().</span><span class="na">equals</span><span class="o">(</span><span class="n">partitions</span><span class="o">))</span> <span class="o">{</span>
+            <span class="c1">// 执行回调函数
+</span><span class="c1"></span>            <span class="n">fireOnAssignment</span><span class="o">(</span><span class="n">partitions</span><span class="o">);</span>
+            <span class="c1">// 为每个分区，初始化分区信息
+</span><span class="c1"></span>            <span class="n">Map</span><span class="o">&lt;</span><span class="n">TopicPartition</span><span class="o">,</span> <span class="n">TopicPartitionState</span><span class="o">&gt;</span> <span class="n">partitionToState</span> <span class="o">=</span> <span class="k">new</span> <span class="n">HashMap</span><span class="o">&lt;&gt;();</span>
+            <span class="k">for</span> <span class="o">(</span><span class="n">TopicPartition</span> <span class="n">partition</span> <span class="o">:</span> <span class="n">partitions</span><span class="o">)</span> <span class="o">{</span>
+                <span class="n">TopicPartitionState</span> <span class="n">state</span> <span class="o">=</span> <span class="n">assignment</span><span class="o">.</span><span class="na">stateValue</span><span class="o">(</span><span class="n">partition</span><span class="o">);</span>
+                <span class="k">if</span> <span class="o">(</span><span class="n">state</span> <span class="o">==</span> <span class="kc">null</span><span class="o">)</span>
+                    <span class="n">state</span> <span class="o">=</span> <span class="k">new</span> <span class="n">TopicPartitionState</span><span class="o">();</span>
+                <span class="n">partitionToState</span><span class="o">.</span><span class="na">put</span><span class="o">(</span><span class="n">partition</span><span class="o">,</span> <span class="n">state</span><span class="o">);</span>
+            <span class="o">}</span>
+            <span class="c1">// 保存到assignment
+</span><span class="c1"></span>            <span class="k">this</span><span class="o">.</span><span class="na">assignment</span><span class="o">.</span><span class="na">set</span><span class="o">(</span><span class="n">partitionToState</span><span class="o">);</span>
+        <span class="o">}</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+</code></pre></td></tr></table></div>
+</div>
+</div><h3 id="分区信息"><a href="#分区信息" class="anchor-link"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon anchor-icon"><path d="M326.612 185.391c59.747 59.809 58.927 155.698.36 214.59-.11.12-.24.25-.36.37l-67.2 67.2c-59.27 59.27-155.699 59.262-214.96 0-59.27-59.26-59.27-155.7 0-214.96l37.106-37.106c9.84-9.84 26.786-3.3 27.294 10.606.648 17.722 3.826 35.527 9.69 52.721 1.986 5.822.567 12.262-3.783 16.612l-13.087 13.087c-28.026 28.026-28.905 73.66-1.155 101.96 28.024 28.579 74.086 28.749 102.325.51l67.2-67.19c28.191-28.191 28.073-73.757 0-101.83-3.701-3.694-7.429-6.564-10.341-8.569a16.037 16.037 0 0 1-6.947-12.606c-.396-10.567 3.348-21.456 11.698-29.806l21.054-21.055c5.521-5.521 14.182-6.199 20.584-1.731a152.482 152.482 0 0 1 20.522 17.197zM467.547 44.449c-59.261-59.262-155.69-59.27-214.96 0l-67.2 67.2c-.12.12-.25.25-.36.37-58.566 58.892-59.387 154.781.36 214.59a152.454 152.454 0 0 0 20.521 17.196c6.402 4.468 15.064 3.789 20.584-1.731l21.054-21.055c8.35-8.35 12.094-19.239 11.698-29.806a16.037 16.037 0 0 0-6.947-12.606c-2.912-2.005-6.64-4.875-10.341-8.569-28.073-28.073-28.191-73.639 0-101.83l67.2-67.19c28.239-28.239 74.3-28.069 102.325.51 27.75 28.3 26.872 73.934-1.155 101.96l-13.087 13.087c-4.35 4.35-5.769 10.79-3.783 16.612 5.864 17.194 9.042 34.999 9.69 52.721.509 13.906 17.454 20.446 27.294 10.606l37.106-37.106c59.271-59.259 59.271-155.699.001-214.959z"/></svg></a>分区信息</h3>
+<p>consumer为分配的分区，保存了对应的信息，以TopicPartitionState类表示。这些分区的消息都会保存在SubscriptionState类里。</p>
+<div class="highlight"><div class="chroma">
+<div class="table-container"><table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span><span class="lnt">9
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-java" data-lang="java"><span class="kd">private</span> <span class="kd">static</span> <span class="kd">class</span> <span class="nc">TopicPartitionState</span> <span class="o">{</span>
+    <span class="kd">private</span> <span class="n">Long</span> <span class="n">position</span><span class="o">;</span> <span class="c1">// 消费位置
+</span><span class="c1"></span>    <span class="kd">private</span> <span class="n">Long</span> <span class="n">highWatermark</span><span class="o">;</span> <span class="c1">// 高水位
+</span><span class="c1"></span>    <span class="kd">private</span> <span class="n">Long</span> <span class="n">logStartOffset</span><span class="o">;</span> <span class="c1">// the log start offset
+</span><span class="c1"></span>    <span class="kd">private</span> <span class="n">Long</span> <span class="n">lastStableOffset</span><span class="o">;</span>
+    <span class="kd">private</span> <span class="kt">boolean</span> <span class="n">paused</span><span class="o">;</span>  <span class="c1">// whether this partition has been paused by the user
+</span><span class="c1"></span>    <span class="kd">private</span> <span class="n">OffsetResetStrategy</span> <span class="n">resetStrategy</span><span class="o">;</span>  <span class="c1">// 如何初始化consumer的消费位置
+</span><span class="c1"></span>    <span class="kd">private</span> <span class="n">Long</span> <span class="n">nextAllowedRetryTimeMs</span><span class="o">;</span>
+<span class="o">}</span>
+</code></pre></td></tr></table></div>
+</div>
+</div><h2 id="获取-offset-初始值"><a href="#获取-offset-初始值" class="anchor-link"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon anchor-icon"><path d="M326.612 185.391c59.747 59.809 58.927 155.698.36 214.59-.11.12-.24.25-.36.37l-67.2 67.2c-59.27 59.27-155.699 59.262-214.96 0-59.27-59.26-59.27-155.7 0-214.96l37.106-37.106c9.84-9.84 26.786-3.3 27.294 10.606.648 17.722 3.826 35.527 9.69 52.721 1.986 5.822.567 12.262-3.783 16.612l-13.087 13.087c-28.026 28.026-28.905 73.66-1.155 101.96 28.024 28.579 74.086 28.749 102.325.51l67.2-67.19c28.191-28.191 28.073-73.757 0-101.83-3.701-3.694-7.429-6.564-10.341-8.569a16.037 16.037 0 0 1-6.947-12.606c-.396-10.567 3.348-21.456 11.698-29.806l21.054-21.055c5.521-5.521 14.182-6.199 20.584-1.731a152.482 152.482 0 0 1 20.522 17.197zM467.547 44.449c-59.261-59.262-155.69-59.27-214.96 0l-67.2 67.2c-.12.12-.25.25-.36.37-58.566 58.892-59.387 154.781.36 214.59a152.454 152.454 0 0 0 20.521 17.196c6.402 4.468 15.064 3.789 20.584-1.731l21.054-21.055c8.35-8.35 12.094-19.239 11.698-29.806a16.037 16.037 0 0 0-6.947-12.606c-2.912-2.005-6.64-4.875-10.341-8.569-28.073-28.073-28.191-73.639 0-101.83l67.2-67.19c28.239-28.239 74.3-28.069 102.325.51 27.75 28.3 26.872 73.934-1.155 101.96l-13.087 13.087c-4.35 4.35-5.769 10.79-3.783 16.612 5.864 17.194 9.042 34.999 9.69 52.721.509 13.906 17.454 20.446 27.294 10.606l37.106-37.106c59.271-59.259 59.271-155.699.001-214.959z"/></svg></a>获取 Offset 初始值</h2>
+<p>KafkaConsumer每次发送请求时，都需要先指定开始位置。如果该consumer所属的组，有消费记录，那么就会上次消费位置开始。如果没有，则需要根据auto.offset.reset配置项，来判断从分区的开始位置，还是分区的最新位置读取。</p>
+<p>KafkaConsumer 的 poll 方法负责拉取数据。poll 方法每次都会先检查分区的初始消费位置，负责检查消费位置由updateAssignmentMetadataIfNeeded方法实现。</p>
+<div class="highlight"><div class="chroma">
+<div class="table-container"><table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">KafkaConsumer</span><span class="o">&lt;</span><span class="n">K</span><span class="o">,</span> <span class="n">V</span><span class="o">&gt;</span> <span class="kd">implements</span> <span class="n">Consumer</span><span class="o">&lt;</span><span class="n">K</span><span class="o">,</span> <span class="n">V</span><span class="o">&gt;</span> <span class="o">{</span>
+    
+    <span class="kd">private</span> <span class="kd">final</span> <span class="n">ConsumerCoordinator</span> <span class="n">coordinator</span><span class="o">;</span>    
+    <span class="kd">private</span> <span class="kd">final</span> <span class="n">SubscriptionState</span> <span class="n">subscriptions</span><span class="o">;</span>
+        
+    <span class="kt">boolean</span> <span class="nf">updateAssignmentMetadataIfNeeded</span><span class="o">(</span><span class="kd">final</span> <span class="kt">long</span> <span class="n">timeoutMs</span><span class="o">)</span> <span class="o">{</span>
+        <span class="kd">final</span> <span class="kt">long</span> <span class="n">startMs</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="na">milliseconds</span><span class="o">();</span>
+        <span class="c1">// 调用coordinator的poll方法，处理组相关的事件
+</span><span class="c1"></span>        <span class="c1">// 返回ture表示已经成功加入组并且获得分配结果了
+</span><span class="c1"></span>        <span class="k">if</span> <span class="o">(!</span><span class="n">coordinator</span><span class="o">.</span><span class="na">poll</span><span class="o">(</span><span class="n">timeoutMs</span><span class="o">))</span> <span class="o">{</span>
+            <span class="k">return</span> <span class="kc">false</span><span class="o">;</span>
+        <span class="o">}</span>
+        <span class="c1">// 调用updateFetchPositions，来获取消费位置
+</span><span class="c1"></span>        <span class="k">return</span> <span class="n">updateFetchPositions</span><span class="o">(</span><span class="n">remainingTimeAtLeastZero</span><span class="o">(</span><span class="n">timeoutMs</span><span class="o">,</span> <span class="n">time</span><span class="o">.</span><span class="na">milliseconds</span><span class="o">()</span> <span class="o">-</span> <span class="n">startMs</span><span class="o">));</span>
+    <span class="o">}</span>
+    
+    <span class="kd">private</span> <span class="kt">boolean</span> <span class="nf">updateFetchPositions</span><span class="o">(</span><span class="kd">final</span> <span class="kt">long</span> <span class="n">timeoutMs</span><span class="o">)</span> <span class="o">{</span>
+        <span class="c1">// 查看SubscriptionState是否已经获取了消费位置，如果有则直接返回
+</span><span class="c1"></span>        <span class="n">cachedSubscriptionHashAllFetchPositions</span> <span class="o">=</span> <span class="n">subscriptions</span><span class="o">.</span><span class="na">hasAllFetchPositions</span><span class="o">();</span>
+        <span class="k">if</span> <span class="o">(</span><span class="n">cachedSubscriptionHashAllFetchPositions</span><span class="o">)</span> <span class="k">return</span> <span class="kc">true</span><span class="o">;</span>
+
+        <span class="c1">// 这里通过coordinator获取，该consumer组的消费位置
+</span><span class="c1"></span>        <span class="k">if</span> <span class="o">(!</span><span class="n">coordinator</span><span class="o">.</span><span class="na">refreshCommittedOffsetsIfNeeded</span><span class="o">(</span><span class="n">timeoutMs</span><span class="o">))</span> <span class="k">return</span> <span class="kc">false</span><span class="o">;</span>
+
+        <span class="c1">// 如果consumer组没有消费位置，那么需要获取它的位置初始化策略
+</span><span class="c1"></span>        <span class="n">subscriptions</span><span class="o">.</span><span class="na">resetMissingPositions</span><span class="o">();</span>
+
+        <span class="c1">// 获取分区的开始位置或者末尾位置
+</span><span class="c1"></span>        <span class="n">fetcher</span><span class="o">.</span><span class="na">resetOffsetsIfNeeded</span><span class="o">();</span>
+
+        <span class="k">return</span> <span class="kc">true</span><span class="o">;</span>
+    <span class="o">}</span>
+    
+<span class="o">}</span>    
+</code></pre></td></tr></table></div>
+</div>
+</div><h3 id="coordinator-获取消费位置"><a href="#coordinator-获取消费位置" class="anchor-link"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon anchor-icon"><path d="M326.612 185.391c59.747 59.809 58.927 155.698.36 214.59-.11.12-.24.25-.36.37l-67.2 67.2c-59.27 59.27-155.699 59.262-214.96 0-59.27-59.26-59.27-155.7 0-214.96l37.106-37.106c9.84-9.84 26.786-3.3 27.294 10.606.648 17.722 3.826 35.527 9.69 52.721 1.986 5.822.567 12.262-3.783 16.612l-13.087 13.087c-28.026 28.026-28.905 73.66-1.155 101.96 28.024 28.579 74.086 28.749 102.325.51l67.2-67.19c28.191-28.191 28.073-73.757 0-101.83-3.701-3.694-7.429-6.564-10.341-8.569a16.037 16.037 0 0 1-6.947-12.606c-.396-10.567 3.348-21.456 11.698-29.806l21.054-21.055c5.521-5.521 14.182-6.199 20.584-1.731a152.482 152.482 0 0 1 20.522 17.197zM467.547 44.449c-59.261-59.262-155.69-59.27-214.96 0l-67.2 67.2c-.12.12-.25.25-.36.37-58.566 58.892-59.387 154.781.36 214.59a152.454 152.454 0 0 0 20.521 17.196c6.402 4.468 15.064 3.789 20.584-1.731l21.054-21.055c8.35-8.35 12.094-19.239 11.698-29.806a16.037 16.037 0 0 0-6.947-12.606c-2.912-2.005-6.64-4.875-10.341-8.569-28.073-28.073-28.191-73.639 0-101.83l67.2-67.19c28.239-28.239 74.3-28.069 102.325.51 27.75 28.3 26.872 73.934-1.155 101.96l-13.087 13.087c-4.35 4.35-5.769 10.79-3.783 16.612 5.864 17.194 9.042 34.999 9.69 52.721.509 13.906 17.454 20.446 27.294 10.606l37.106-37.106c59.271-59.259 59.271-155.699.001-214.959z"/></svg></a>coordinator 获取消费位置</h3>
+<p>KafkaConsumer 会优先查看该组，是否有消费记录。coordinator的refreshCommittedOffsetsIfNeeded方法，负责向GroupCoordinator请求上次消费位置，并且结果保存到SubscriptionState里。</p>
+<div class="highlight"><div class="chroma">
+<div class="table-container"><table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span><span class="lnt">35
+</span><span class="lnt">36
+</span><span class="lnt">37
+</span><span class="lnt">38
+</span><span class="lnt">39
+</span><span class="lnt">40
+</span><span class="lnt">41
+</span><span class="lnt">42
+</span><span class="lnt">43
+</span><span class="lnt">44
+</span><span class="lnt">45
+</span><span class="lnt">46
+</span><span class="lnt">47
+</span><span class="lnt">48
+</span><span class="lnt">49
+</span><span class="lnt">50
+</span><span class="lnt">51
+</span><span class="lnt">52
+</span><span class="lnt">53
+</span><span class="lnt">54
+</span><span class="lnt">55
+</span><span class="lnt">56
+</span><span class="lnt">57
+</span><span class="lnt">58
+</span><span class="lnt">59
+</span><span class="lnt">60
+</span><span class="lnt">61
+</span><span class="lnt">62
+</span><span class="lnt">63
+</span><span class="lnt">64
+</span><span class="lnt">65
+</span><span class="lnt">66
+</span><span class="lnt">67
+</span><span class="lnt">68
+</span><span class="lnt">69
+</span><span class="lnt">70
+</span><span class="lnt">71
+</span><span class="lnt">72
+</span><span class="lnt">73
+</span><span class="lnt">74
+</span><span class="lnt">75
+</span><span class="lnt">76
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">final</span> <span class="kd">class</span> <span class="nc">ConsumerCoordinator</span> <span class="kd">extends</span> <span class="n">AbstractCoordinator</span> <span class="o">{</span>
+    
+    <span class="kd">private</span> <span class="kd">final</span> <span class="n">SubscriptionState</span> <span class="n">subscriptions</span><span class="o">;</span>
+    
+    <span class="c1">// 正在发送的获取消费位置的请求
+</span><span class="c1"></span>    <span class="kd">private</span> <span class="n">PendingCommittedOffsetRequest</span> <span class="n">pendingCommittedOffsetRequest</span> <span class="o">=</span> <span class="kc">null</span><span class="o">;</span>
+
+    <span class="kd">public</span> <span class="kt">boolean</span> <span class="nf">refreshCommittedOffsetsIfNeeded</span><span class="o">(</span><span class="kd">final</span> <span class="kt">long</span> <span class="n">timeoutMs</span><span class="o">)</span> <span class="o">{</span>
+        <span class="c1">// 查看有哪些分区，它的消费位置还没初始化
+</span><span class="c1"></span>        <span class="kd">final</span> <span class="n">Set</span><span class="o">&lt;</span><span class="n">TopicPartition</span><span class="o">&gt;</span> <span class="n">missingFetchPositions</span> <span class="o">=</span> <span class="n">subscriptions</span><span class="o">.</span><span class="na">missingFetchPositions</span><span class="o">();</span>
+        <span class="c1">// 发送请求，获取消费位置
+</span><span class="c1"></span>        <span class="kd">final</span> <span class="n">Map</span><span class="o">&lt;</span><span class="n">TopicPartition</span><span class="o">,</span> <span class="n">OffsetAndMetadata</span><span class="o">&gt;</span> <span class="n">offsets</span> <span class="o">=</span> <span class="n">fetchCommittedOffsets</span><span class="o">(</span><span class="n">missingFetchPositions</span><span class="o">,</span> <span class="n">timeoutMs</span><span class="o">);</span>
+        <span class="k">if</span> <span class="o">(</span><span class="n">offsets</span> <span class="o">==</span> <span class="kc">null</span><span class="o">)</span> <span class="k">return</span> <span class="kc">false</span><span class="o">;</span>
+        <span class="c1">// 遍历响应
+</span><span class="c1"></span>        <span class="k">for</span> <span class="o">(</span><span class="kd">final</span> <span class="n">Map</span><span class="o">.</span><span class="na">Entry</span><span class="o">&lt;</span><span class="n">TopicPartition</span><span class="o">,</span> <span class="n">OffsetAndMetadata</span><span class="o">&gt;</span> <span class="n">entry</span> <span class="o">:</span> <span class="n">offsets</span><span class="o">.</span><span class="na">entrySet</span><span class="o">())</span> <span class="o">{</span>
+            <span class="kd">final</span> <span class="n">TopicPartition</span> <span class="n">tp</span> <span class="o">=</span> <span class="n">entry</span><span class="o">.</span><span class="na">getKey</span><span class="o">();</span>
+            <span class="kd">final</span> <span class="kt">long</span> <span class="n">offset</span> <span class="o">=</span> <span class="n">entry</span><span class="o">.</span><span class="na">getValue</span><span class="o">().</span><span class="na">offset</span><span class="o">();</span>
+            <span class="c1">// 将消费位置设置保存到SubscriptionState
+</span><span class="c1"></span>            <span class="k">this</span><span class="o">.</span><span class="na">subscriptions</span><span class="o">.</span><span class="na">seek</span><span class="o">(</span><span class="n">tp</span><span class="o">,</span> <span class="n">offset</span><span class="o">);</span>
+        <span class="o">}</span>
+        <span class="k">return</span> <span class="kc">true</span><span class="o">;</span>
+    <span class="o">}</span>
+
+    <span class="c1">// 向GroupCoordinator发送请求
+</span><span class="c1"></span>    <span class="kd">public</span> <span class="n">Map</span><span class="o">&lt;</span><span class="n">TopicPartition</span><span class="o">,</span> <span class="n">OffsetAndMetadata</span><span class="o">&gt;</span> <span class="nf">fetchCommittedOffsets</span><span class="o">(</span><span class="kd">final</span> <span class="n">Set</span><span class="o">&lt;</span><span class="n">TopicPartition</span><span class="o">&gt;</span> <span class="n">partitions</span><span class="o">,</span> <span class="kd">final</span> <span class="kt">long</span> <span class="n">timeoutMs</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">if</span> <span class="o">(</span><span class="n">partitions</span><span class="o">.</span><span class="na">isEmpty</span><span class="o">())</span> <span class="k">return</span> <span class="n">Collections</span><span class="o">.</span><span class="na">emptyMap</span><span class="o">();</span>
+
+        <span class="kd">final</span> <span class="n">Generation</span> <span class="n">generation</span> <span class="o">=</span> <span class="n">generation</span><span class="o">();</span>
+        <span class="k">if</span> <span class="o">(</span><span class="n">pendingCommittedOffsetRequest</span> <span class="o">!=</span> <span class="kc">null</span> <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="n">pendingCommittedOffsetRequest</span><span class="o">.</span><span class="na">sameRequest</span><span class="o">(</span><span class="n">partitions</span><span class="o">,</span> <span class="n">generation</span><span class="o">))</span> <span class="o">{</span>
+            <span class="c1">// 如果之前的消费位置请求，和此次请求的内容不一样，
+</span><span class="c1"></span>            <span class="c1">// 那么就重新请求，并且删除掉旧有请求
+</span><span class="c1"></span>            <span class="n">pendingCommittedOffsetRequest</span> <span class="o">=</span> <span class="kc">null</span><span class="o">;</span>
+        <span class="o">}</span>
+
+        <span class="kd">final</span> <span class="kt">long</span> <span class="n">startMs</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="na">milliseconds</span><span class="o">();</span>
+        <span class="kt">long</span> <span class="n">elapsedTime</span> <span class="o">=</span> <span class="n">0L</span><span class="o">;</span>
+
+        <span class="k">while</span> <span class="o">(</span><span class="kc">true</span><span class="o">)</span> <span class="o">{</span>
+            <span class="c1">// 保证与GroupCoordinator的连接
+</span><span class="c1"></span>            <span class="k">if</span> <span class="o">(!</span><span class="n">ensureCoordinatorReady</span><span class="o">(</span><span class="n">remainingTimeAtLeastZero</span><span class="o">(</span><span class="n">timeoutMs</span><span class="o">,</span> <span class="n">elapsedTime</span><span class="o">)))</span> <span class="k">return</span> <span class="kc">null</span><span class="o">;</span>
+            <span class="n">elapsedTime</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="na">milliseconds</span><span class="o">()</span> <span class="o">-</span> <span class="n">startMs</span><span class="o">;</span>
+            
+            <span class="kd">final</span> <span class="n">RequestFuture</span><span class="o">&lt;</span><span class="n">Map</span><span class="o">&lt;</span><span class="n">TopicPartition</span><span class="o">,</span> <span class="n">OffsetAndMetadata</span><span class="o">&gt;&gt;</span> <span class="n">future</span><span class="o">;</span>
+            <span class="k">if</span> <span class="o">(</span><span class="n">pendingCommittedOffsetRequest</span> <span class="o">!=</span> <span class="kc">null</span><span class="o">)</span> <span class="o">{</span>
+                <span class="c1">// 如果有正在发送的请求，那么就不再发送请求
+</span><span class="c1"></span>                <span class="n">future</span> <span class="o">=</span> <span class="n">pendingCommittedOffsetRequest</span><span class="o">.</span><span class="na">response</span><span class="o">;</span>
+            <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
+                <span class="c1">// 如果没有正在发送的请求，那么就需要发送请求
+</span><span class="c1"></span>                <span class="n">future</span> <span class="o">=</span> <span class="n">sendOffsetFetchRequest</span><span class="o">(</span><span class="n">partitions</span><span class="o">);</span>
+                <span class="n">pendingCommittedOffsetRequest</span> <span class="o">=</span> <span class="k">new</span> <span class="n">PendingCommittedOffsetRequest</span><span class="o">(</span><span class="n">partitions</span><span class="o">,</span> <span class="n">generation</span><span class="o">,</span> <span class="n">future</span><span class="o">);</span>
+
+            <span class="o">}</span>
+            <span class="c1">// 等待请求完成
+</span><span class="c1"></span>            <span class="n">client</span><span class="o">.</span><span class="na">poll</span><span class="o">(</span><span class="n">future</span><span class="o">,</span> <span class="n">remainingTimeAtLeastZero</span><span class="o">(</span><span class="n">timeoutMs</span><span class="o">,</span> <span class="n">elapsedTime</span><span class="o">));</span>
+
+            <span class="c1">// 如果请求完成，则返回响应
+</span><span class="c1"></span>            <span class="c1">// 如果未完成，则返回null
+</span><span class="c1"></span>            <span class="k">if</span> <span class="o">(</span><span class="n">future</span><span class="o">.</span><span class="na">isDone</span><span class="o">())</span> <span class="o">{</span>
+                <span class="n">pendingCommittedOffsetRequest</span> <span class="o">=</span> <span class="kc">null</span><span class="o">;</span>
+
+                <span class="k">if</span> <span class="o">(</span><span class="n">future</span><span class="o">.</span><span class="na">succeeded</span><span class="o">())</span> <span class="o">{</span>
+                    <span class="k">return</span> <span class="n">future</span><span class="o">.</span><span class="na">value</span><span class="o">();</span>
+                <span class="o">}</span> <span class="k">else</span> <span class="k">if</span> <span class="o">(!</span><span class="n">future</span><span class="o">.</span><span class="na">isRetriable</span><span class="o">())</span> <span class="o">{</span>
+                    <span class="k">throw</span> <span class="n">future</span><span class="o">.</span><span class="na">exception</span><span class="o">();</span>
+                <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
+                    <span class="n">elapsedTime</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="na">milliseconds</span><span class="o">()</span> <span class="o">-</span> <span class="n">startMs</span><span class="o">;</span>
+                    <span class="kd">final</span> <span class="kt">long</span> <span class="n">sleepTime</span> <span class="o">=</span> <span class="n">Math</span><span class="o">.</span><span class="na">min</span><span class="o">(</span><span class="n">retryBackoffMs</span><span class="o">,</span> <span class="n">remainingTimeAtLeastZero</span><span class="o">(</span><span class="n">startMs</span><span class="o">,</span> <span class="n">elapsedTime</span><span class="o">));</span>
+                    <span class="n">time</span><span class="o">.</span><span class="na">sleep</span><span class="o">(</span><span class="n">sleepTime</span><span class="o">);</span>
+                    <span class="n">elapsedTime</span> <span class="o">+=</span> <span class="n">sleepTime</span><span class="o">;</span>
+                <span class="o">}</span>
+            <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
+                <span class="k">return</span> <span class="kc">null</span><span class="o">;</span>
+            <span class="o">}</span>
+        <span class="o">}</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+</code></pre></td></tr></table></div>
+</div>
+</div><p>消费位置的请求格式由OffsetFetchRequest表示，它主要包含以下字段</p>
+<div class="highlight"><div class="chroma">
+<div class="table-container"><table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">OffsetFetchRequest</span> <span class="kd">extends</span> <span class="n">AbstractRequest</span> <span class="o">{</span>
+    <span class="kd">private</span> <span class="kd">final</span> <span class="n">String</span> <span class="n">groupId</span><span class="o">;</span>  <span class="c1">// consumer组的名称
+</span><span class="c1"></span>    <span class="kd">private</span> <span class="kd">final</span> <span class="n">List</span><span class="o">&lt;</span><span class="n">TopicPartition</span><span class="o">&gt;</span> <span class="n">partitions</span><span class="o">;</span>  <span class="c1">// 请求的分区列表
+</span><span class="c1"></span><span class="o">}</span>
+</code></pre></td></tr></table></div>
+</div>
+</div><p>消费位置的响应格式由OffsetFetchResponse表示，它主要包含以下字段</p>
+<div class="highlight"><div class="chroma">
+<div class="table-container"><table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">OffsetFetchResponse</span> <span class="kd">extends</span> <span class="n">AbstractResponse</span> <span class="o">{</span>
+    
+    <span class="kd">private</span> <span class="kd">final</span> <span class="n">Errors</span> <span class="n">error</span><span class="o">;</span> <span class="c1">// 是否响应出错
+</span><span class="c1"></span>    
+    <span class="kd">private</span> <span class="kd">final</span> <span class="n">Map</span><span class="o">&lt;</span><span class="n">TopicPartition</span><span class="o">,</span> <span class="n">PartitionData</span><span class="o">&gt;</span> <span class="n">responseData</span><span class="o">;</span> <span class="c1">// 分区的消费信息
+</span><span class="c1"></span>    
+    <span class="kd">public</span> <span class="kd">static</span> <span class="kd">final</span> <span class="kd">class</span> <span class="nc">PartitionData</span> <span class="o">{</span>
+        <span class="kd">public</span> <span class="kd">final</span> <span class="kt">long</span> <span class="n">offset</span><span class="o">;</span> <span class="c1">// 消费位置
+</span><span class="c1"></span>        <span class="kd">public</span> <span class="kd">final</span> <span class="n">String</span> <span class="n">metadata</span><span class="o">;</span>  <span class="c1">// consumer的自定义数据
+</span><span class="c1"></span>        <span class="kd">public</span> <span class="kd">final</span> <span class="n">Errors</span> <span class="n">error</span><span class="o">;</span>  <span class="c1">// 该分区的响应是否出错
+</span><span class="c1"></span>    <span class="o">}</span>
+<span class="o">}</span>
+</code></pre></td></tr></table></div>
+</div>
+</div><h3 id="消费位置初始化"><a href="#消费位置初始化" class="anchor-link"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon anchor-icon"><path d="M326.612 185.391c59.747 59.809 58.927 155.698.36 214.59-.11.12-.24.25-.36.37l-67.2 67.2c-59.27 59.27-155.699 59.262-214.96 0-59.27-59.26-59.27-155.7 0-214.96l37.106-37.106c9.84-9.84 26.786-3.3 27.294 10.606.648 17.722 3.826 35.527 9.69 52.721 1.986 5.822.567 12.262-3.783 16.612l-13.087 13.087c-28.026 28.026-28.905 73.66-1.155 101.96 28.024 28.579 74.086 28.749 102.325.51l67.2-67.19c28.191-28.191 28.073-73.757 0-101.83-3.701-3.694-7.429-6.564-10.341-8.569a16.037 16.037 0 0 1-6.947-12.606c-.396-10.567 3.348-21.456 11.698-29.806l21.054-21.055c5.521-5.521 14.182-6.199 20.584-1.731a152.482 152.482 0 0 1 20.522 17.197zM467.547 44.449c-59.261-59.262-155.69-59.27-214.96 0l-67.2 67.2c-.12.12-.25.25-.36.37-58.566 58.892-59.387 154.781.36 214.59a152.454 152.454 0 0 0 20.521 17.196c6.402 4.468 15.064 3.789 20.584-1.731l21.054-21.055c8.35-8.35 12.094-19.239 11.698-29.806a16.037 16.037 0 0 0-6.947-12.606c-2.912-2.005-6.64-4.875-10.341-8.569-28.073-28.073-28.191-73.639 0-101.83l67.2-67.19c28.239-28.239 74.3-28.069 102.325.51 27.75 28.3 26.872 73.934-1.155 101.96l-13.087 13.087c-4.35 4.35-5.769 10.79-3.783 16.612 5.864 17.194 9.042 34.999 9.69 52.721.509 13.906 17.454 20.446 27.294 10.606l37.106-37.106c59.271-59.259 59.271-155.699.001-214.959z"/></svg></a>消费位置初始化</h3>
+<p>消费位置初始化策略，由枚举OffsetResetStrategy表示。 它有下面三种</p>
+<div class="highlight"><div class="chroma">
+<div class="table-container"><table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">enum</span> <span class="n">OffsetResetStrategy</span> <span class="o">{</span>
+    <span class="n">LATEST</span><span class="o">,</span> <span class="n">EARLIEST</span><span class="o">,</span> <span class="n">NONE</span>
+<span class="o">}</span>
+</code></pre></td></tr></table></div>
+</div>
+</div><p>LATEST 策略 ： 选择此时分区的末尾位置。因为有可能会有新的数据添加进来，这样末尾位置就会改变，所以只选择此时的位置。</p>
+<p>EARLIEST 策略：选择此时目前分区的开始位置。因为有可能会有旧的数据被删除，这样开始位置就会改变，所以只选择此时的位置。</p>
+<p>NONE 策略：表示没有指定</p>
+<p>KafkaConsumer会在初始化时，指定策略。</p>
+<div class="highlight"><div class="chroma">
+<div class="table-container"><table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span><span class="lnt">9
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">KafkaConsumer</span><span class="o">&lt;</span><span class="n">K</span><span class="o">,</span> <span class="n">V</span><span class="o">&gt;</span> <span class="kd">implements</span> <span class="n">Consumer</span><span class="o">&lt;</span><span class="n">K</span><span class="o">,</span> <span class="n">V</span><span class="o">&gt;</span> <span class="o">{</span>
+    <span class="kd">private</span> <span class="nf">KafkaConsumer</span><span class="o">(</span><span class="n">ConsumerConfig</span> <span class="n">config</span><span class="o">,</span> <span class="n">Deserializer</span><span class="o">&lt;</span><span class="n">K</span><span class="o">&gt;</span> <span class="n">keyDeserializer</span><span class="o">,</span> <span class="n">Deserializer</span><span class="o">&lt;</span><span class="n">V</span><span class="o">&gt;</span> <span class="n">valueDeserializer</span><span class="o">)</span> <span class="o">{</span>
+        <span class="o">......</span>
+        <span class="c1">// 根据配置选项，实例化策略
+</span><span class="c1"></span>        <span class="n">OffsetResetStrategy</span> <span class="n">offsetResetStrategy</span> <span class="o">=</span> <span class="n">OffsetResetStrategy</span><span class="o">.</span><span class="na">valueOf</span><span class="o">(</span><span class="n">config</span><span class="o">.</span><span class="na">getString</span><span class="o">(</span><span class="n">ConsumerConfig</span><span class="o">.</span><span class="na">AUTO_OFFSET_RESET_CONFIG</span><span class="o">).</span><span class="na">toUpperCase</span><span class="o">(</span><span class="n">Locale</span><span class="o">.</span><span class="na">ROOT</span><span class="o">));</span>
+        <span class="c1">// 实例化SubscriptionState时，保存策略保存
+</span><span class="c1"></span>        <span class="k">this</span><span class="o">.</span><span class="na">subscriptions</span> <span class="o">=</span> <span class="k">new</span> <span class="n">SubscriptionState</span><span class="o">(</span><span class="n">offsetResetStrategy</span><span class="o">);</span>
+        <span class="o">.....</span>   
+    <span class="o">}</span>
+</code></pre></td></tr></table></div>
+</div>
+</div><p>SubscriptionState将策略保存到 defaultResetStrategy 属性，并且它提供了resetMissingPositions方法，为每个分区设置默认策略。</p>
+<div class="highlight"><div class="chroma">
+<div class="table-container"><table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">SubscriptionState</span> <span class="o">{</span>
+
+    <span class="kd">private</span> <span class="kd">final</span> <span class="n">OffsetResetStrategy</span> <span class="n">defaultResetStrategy</span><span class="o">;</span>
+    
+    <span class="kd">public</span> <span class="nf">SubscriptionState</span><span class="o">(</span><span class="n">OffsetResetStrategy</span> <span class="n">defaultResetStrategy</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">this</span><span class="o">.</span><span class="na">defaultResetStrategy</span> <span class="o">=</span> <span class="n">defaultResetStrategy</span><span class="o">;</span>
+        <span class="o">......</span>
+    <span class="o">}</span>
+
+    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">resetMissingPositions</span><span class="o">()</span> <span class="o">{</span>
+        <span class="kd">final</span> <span class="n">Set</span><span class="o">&lt;</span><span class="n">TopicPartition</span><span class="o">&gt;</span> <span class="n">partitionsWithNoOffsets</span> <span class="o">=</span> <span class="k">new</span> <span class="n">HashSet</span><span class="o">&lt;&gt;();</span>
+        <span class="c1">// 遍历分区信息列表
+</span><span class="c1"></span>        <span class="k">for</span> <span class="o">(</span><span class="n">PartitionStates</span><span class="o">.</span><span class="na">PartitionState</span><span class="o">&lt;</span><span class="n">TopicPartitionState</span><span class="o">&gt;</span> <span class="n">state</span> <span class="o">:</span> <span class="n">assignment</span><span class="o">.</span><span class="na">partitionStates</span><span class="o">())</span> <span class="o">{</span>
+            <span class="n">TopicPartition</span> <span class="n">tp</span> <span class="o">=</span> <span class="n">state</span><span class="o">.</span><span class="na">topicPartition</span><span class="o">();</span>
+            <span class="n">TopicPartitionState</span> <span class="n">partitionState</span> <span class="o">=</span> <span class="n">state</span><span class="o">.</span><span class="na">value</span><span class="o">();</span>
+            
+            <span class="k">if</span> <span class="o">(</span><span class="n">partitionState</span><span class="o">.</span><span class="na">isMissingPosition</span><span class="o">())</span> <span class="o">{</span>
+                <span class="c1">// 如果消费位置没有指定，并且还没有默认策略，那么就会报错
+</span><span class="c1"></span>                <span class="k">if</span> <span class="o">(</span><span class="n">defaultResetStrategy</span> <span class="o">==</span> <span class="n">OffsetResetStrategy</span><span class="o">.</span><span class="na">NONE</span><span class="o">)</span>
+                    <span class="n">partitionsWithNoOffsets</span><span class="o">.</span><span class="na">add</span><span class="o">(</span><span class="n">tp</span><span class="o">);</span>
+                <span class="k">else</span>
+                    <span class="c1">// 设置分区的策略
+</span><span class="c1"></span>                    <span class="n">partitionState</span><span class="o">.</span><span class="na">reset</span><span class="o">(</span><span class="n">defaultResetStrategy</span><span class="o">);</span>
+            <span class="o">}</span>
+        <span class="o">}</span>
+
+        <span class="k">if</span> <span class="o">(!</span><span class="n">partitionsWithNoOffsets</span><span class="o">.</span><span class="na">isEmpty</span><span class="o">())</span>
+            <span class="k">throw</span> <span class="k">new</span> <span class="n">NoOffsetForPartitionException</span><span class="o">(</span><span class="n">partitionsWithNoOffsets</span><span class="o">);</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+</code></pre></td></tr></table></div>
+</div>
+</div><p>当分区都设置好了策略，Fetcher会根据策略，发送请求获取消费的初始位置。请求格式如下：</p>
+<div class="table-container"><table>
+<thead>
+<tr>
+<th>字段</th>
+<th>类型</th>
+<th>注释</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>replica_id</td>
+<td>String</td>
+<td>服务地址</td>
+</tr>
+<tr>
+<td>topics</td>
+<td>LIST_OFFSET_REQUEST_TOPIC 列表</td>
+<td>请求topic的信息列表</td>
+</tr>
+</tbody>
+</table></div>
+<p>LIST_OFFSET_REQUEST_TOPIC 格式</p>
+<div class="table-container"><table>
+<thead>
+<tr>
+<th>字段</th>
+<th>类型</th>
+<th>注释</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>topic</td>
+<td>String</td>
+<td>topic名称</td>
+</tr>
+<tr>
+<td>partitions</td>
+<td>LIST_OFFSET_REQUEST_PARTITION 列表</td>
+<td>分区信息列表</td>
+</tr>
+</tbody>
+</table></div>
+<p>LIST_OFFSET_REQUEST_PARTITION 格式</p>
+<div class="table-container"><table>
+<thead>
+<tr>
+<th>字段</th>
+<th>类型</th>
+<th>注释</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>partition</td>
+<td>String</td>
+<td>分区 id</td>
+</tr>
+<tr>
+<td>timestamp</td>
+<td>String</td>
+<td>查找记录的时间点</td>
+</tr>
+</tbody>
+</table></div>
+<p>注意到这里的 timestamp 字段，比较特殊。当timestamp的值为 -2，那么表示请求该分区的开始位置。如果为 -1，表示请求该分区的末尾位置。</p>
+<p>Fetcher会根据策略，设置好timestamp字段，然后发送请求。当收到响应后，会把结果存储到SubscriptionState。</p>
+<div class="highlight"><div class="chroma">
+<div class="table-container"><table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span><span class="lnt">35
+</span><span class="lnt">36
+</span><span class="lnt">37
+</span><span class="lnt">38
+</span><span class="lnt">39
+</span><span class="lnt">40
+</span><span class="lnt">41
+</span><span class="lnt">42
+</span><span class="lnt">43
+</span><span class="lnt">44
+</span><span class="lnt">45
+</span><span class="lnt">46
+</span><span class="lnt">47
+</span><span class="lnt">48
+</span><span class="lnt">49
+</span><span class="lnt">50
+</span><span class="lnt">51
+</span><span class="lnt">52
+</span><span class="lnt">53
+</span><span class="lnt">54
+</span><span class="lnt">55
+</span><span class="lnt">56
+</span><span class="lnt">57
+</span><span class="lnt">58
+</span><span class="lnt">59
+</span><span class="lnt">60
+</span><span class="lnt">61
+</span><span class="lnt">62
+</span><span class="lnt">63
+</span><span class="lnt">64
+</span><span class="lnt">65
+</span><span class="lnt">66
+</span><span class="lnt">67
+</span><span class="lnt">68
+</span><span class="lnt">69
+</span><span class="lnt">70
+</span><span class="lnt">71
+</span><span class="lnt">72
+</span><span class="lnt">73
+</span><span class="lnt">74
+</span><span class="lnt">75
+</span><span class="lnt">76
+</span><span class="lnt">77
+</span><span class="lnt">78
+</span><span class="lnt">79
+</span><span class="lnt">80
+</span><span class="lnt">81
+</span><span class="lnt">82
+</span><span class="lnt">83
+</span><span class="lnt">84
+</span><span class="lnt">85
+</span><span class="lnt">86
+</span><span class="lnt">87
+</span><span class="lnt">88
+</span><span class="lnt">89
+</span><span class="lnt">90
+</span><span class="lnt">91
+</span><span class="lnt">92
+</span><span class="lnt">93
+</span><span class="lnt">94
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">Fetcher</span><span class="o">&lt;</span><span class="n">K</span><span class="o">,</span> <span class="n">V</span><span class="o">&gt;</span> <span class="kd">implements</span> <span class="n">SubscriptionState</span><span class="o">.</span><span class="na">Listener</span><span class="o">,</span> <span class="n">Closeable</span> <span class="o">{</span>
+
+    <span class="kd">private</span> <span class="kd">final</span> <span class="n">AtomicReference</span><span class="o">&lt;</span><span class="n">RuntimeException</span><span class="o">&gt;</span> <span class="n">cachedListOffsetsException</span> <span class="o">=</span> <span class="k">new</span> <span class="n">AtomicReference</span><span class="o">&lt;&gt;();</span>
+    
+    <span class="kd">private</span> <span class="kd">final</span> <span class="n">SubscriptionState</span> <span class="n">subscriptions</span><span class="o">;</span>
+    
+    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">resetOffsetsIfNeeded</span><span class="o">()</span> <span class="o">{</span>
+        <span class="c1">// Raise exception from previous offset fetch if there is one
+</span><span class="c1"></span>        <span class="n">RuntimeException</span> <span class="n">exception</span> <span class="o">=</span> <span class="n">cachedListOffsetsException</span><span class="o">.</span><span class="na">getAndSet</span><span class="o">(</span><span class="kc">null</span><span class="o">);</span>
+        <span class="k">if</span> <span class="o">(</span><span class="n">exception</span> <span class="o">!=</span> <span class="kc">null</span><span class="o">)</span>
+            <span class="k">throw</span> <span class="n">exception</span><span class="o">;</span>
+
+        <span class="c1">// 寻找那些需要初始化位置的分区
+</span><span class="c1"></span>        <span class="n">Set</span><span class="o">&lt;</span><span class="n">TopicPartition</span><span class="o">&gt;</span> <span class="n">partitions</span> <span class="o">=</span> <span class="n">subscriptions</span><span class="o">.</span><span class="na">partitionsNeedingReset</span><span class="o">(</span><span class="n">time</span><span class="o">.</span><span class="na">milliseconds</span><span class="o">());</span>
+        <span class="k">if</span> <span class="o">(</span><span class="n">partitions</span><span class="o">.</span><span class="na">isEmpty</span><span class="o">())</span>
+            <span class="k">return</span><span class="o">;</span>
+
+        <span class="kd">final</span> <span class="n">Map</span><span class="o">&lt;</span><span class="n">TopicPartition</span><span class="o">,</span> <span class="n">Long</span><span class="o">&gt;</span> <span class="n">offsetResetTimestamps</span> <span class="o">=</span> <span class="k">new</span> <span class="n">HashMap</span><span class="o">&lt;&gt;();</span>
+        <span class="k">for</span> <span class="o">(</span><span class="kd">final</span> <span class="n">TopicPartition</span> <span class="n">partition</span> <span class="o">:</span> <span class="n">partitions</span><span class="o">)</span> <span class="o">{</span>
+            <span class="c1">// 根据策略类型，获取timestamp字段的值
+</span><span class="c1"></span>            <span class="n">Long</span> <span class="n">timestamp</span> <span class="o">=</span> <span class="n">offsetResetStrategyTimestamp</span><span class="o">(</span><span class="n">partition</span><span class="o">);</span>
+            <span class="k">if</span> <span class="o">(</span><span class="n">timestamp</span> <span class="o">!=</span> <span class="kc">null</span><span class="o">)</span>
+                <span class="n">offsetResetTimestamps</span><span class="o">.</span><span class="na">put</span><span class="o">(</span><span class="n">partition</span><span class="o">,</span> <span class="n">timestamp</span><span class="o">);</span>
+        <span class="o">}</span>
+        <span class="c1">// 发送请求，并且处理响应
+</span><span class="c1"></span>        <span class="n">resetOffsetsAsync</span><span class="o">(</span><span class="n">offsetResetTimestamps</span><span class="o">);</span>
+    <span class="o">}</span>
+    
+    <span class="kd">private</span> <span class="n">Long</span> <span class="nf">offsetResetStrategyTimestamp</span><span class="o">(</span><span class="kd">final</span> <span class="n">TopicPartition</span> <span class="n">partition</span><span class="o">)</span> <span class="o">{</span>
+        <span class="c1">// 获取分区的初始化策略
+</span><span class="c1"></span>        <span class="n">OffsetResetStrategy</span> <span class="n">strategy</span> <span class="o">=</span> <span class="n">subscriptions</span><span class="o">.</span><span class="na">resetStrategy</span><span class="o">(</span><span class="n">partition</span><span class="o">);</span>
+        <span class="k">if</span> <span class="o">(</span><span class="n">strategy</span> <span class="o">==</span> <span class="n">OffsetResetStrategy</span><span class="o">.</span><span class="na">EARLIEST</span><span class="o">)</span>
+            <span class="c1">// 如果是EARLIEST策略，则返回 -1
+</span><span class="c1"></span>            <span class="k">return</span> <span class="n">ListOffsetRequest</span><span class="o">.</span><span class="na">EARLIEST_TIMESTAMP</span><span class="o">;</span>
+        <span class="k">else</span> <span class="k">if</span> <span class="o">(</span><span class="n">strategy</span> <span class="o">==</span> <span class="n">OffsetResetStrategy</span><span class="o">.</span><span class="na">LATEST</span><span class="o">)</span>
+            <span class="c1">// 如果是LATEST策略，则返回 -2
+</span><span class="c1"></span>            <span class="k">return</span> <span class="n">ListOffsetRequest</span><span class="o">.</span><span class="na">LATEST_TIMESTAMP</span><span class="o">;</span>
+        <span class="k">else</span>
+            <span class="k">return</span> <span class="kc">null</span><span class="o">;</span>
+    <span class="o">}</span>   
+    
+    
+    <span class="kd">private</span> <span class="kt">void</span> <span class="nf">resetOffsetsAsync</span><span class="o">(</span><span class="n">Map</span><span class="o">&lt;</span><span class="n">TopicPartition</span><span class="o">,</span> <span class="n">Long</span><span class="o">&gt;</span> <span class="n">partitionResetTimestamps</span><span class="o">)</span> <span class="o">{</span>
+        <span class="c1">// Add the topics to the metadata to do a single metadata fetch.
+</span><span class="c1"></span>        <span class="k">for</span> <span class="o">(</span><span class="n">TopicPartition</span> <span class="n">tp</span> <span class="o">:</span> <span class="n">partitionResetTimestamps</span><span class="o">.</span><span class="na">keySet</span><span class="o">())</span>
+            <span class="n">metadata</span><span class="o">.</span><span class="na">add</span><span class="o">(</span><span class="n">tp</span><span class="o">.</span><span class="na">topic</span><span class="o">());</span>
+
+        <span class="c1">// 将这些分区的请求，按照节点进行划分
+</span><span class="c1"></span>        <span class="n">Map</span><span class="o">&lt;</span><span class="n">Node</span><span class="o">,</span> <span class="n">Map</span><span class="o">&lt;</span><span class="n">TopicPartition</span><span class="o">,</span> <span class="n">Long</span><span class="o">&gt;&gt;</span> <span class="n">timestampsToSearchByNode</span> <span class="o">=</span> <span class="n">groupListOffsetRequests</span><span class="o">(</span><span class="n">partitionResetTimestamps</span><span class="o">);</span>
+        
+        <span class="k">for</span> <span class="o">(</span><span class="n">Map</span><span class="o">.</span><span class="na">Entry</span><span class="o">&lt;</span><span class="n">Node</span><span class="o">,</span> <span class="n">Map</span><span class="o">&lt;</span><span class="n">TopicPartition</span><span class="o">,</span> <span class="n">Long</span><span class="o">&gt;&gt;</span> <span class="n">entry</span> <span class="o">:</span> <span class="n">timestampsToSearchByNode</span><span class="o">.</span><span class="na">entrySet</span><span class="o">())</span> <span class="o">{</span>
+            <span class="n">Node</span> <span class="n">node</span> <span class="o">=</span> <span class="n">entry</span><span class="o">.</span><span class="na">getKey</span><span class="o">();</span>
+            <span class="kd">final</span> <span class="n">Map</span><span class="o">&lt;</span><span class="n">TopicPartition</span><span class="o">,</span> <span class="n">Long</span><span class="o">&gt;</span> <span class="n">resetTimestamps</span> <span class="o">=</span> <span class="n">entry</span><span class="o">.</span><span class="na">getValue</span><span class="o">();</span>
+            <span class="n">subscriptions</span><span class="o">.</span><span class="na">setResetPending</span><span class="o">(</span><span class="n">resetTimestamps</span><span class="o">.</span><span class="na">keySet</span><span class="o">(),</span> <span class="n">time</span><span class="o">.</span><span class="na">milliseconds</span><span class="o">()</span> <span class="o">+</span> <span class="n">requestTimeoutMs</span><span class="o">);</span>
+            <span class="c1">// 发送请求
+</span><span class="c1"></span>            <span class="n">RequestFuture</span><span class="o">&lt;</span><span class="n">ListOffsetResult</span><span class="o">&gt;</span> <span class="n">future</span> <span class="o">=</span> <span class="n">sendListOffsetRequest</span><span class="o">(</span><span class="n">node</span><span class="o">,</span> <span class="n">resetTimestamps</span><span class="o">,</span> <span class="kc">false</span><span class="o">);</span>
+            <span class="c1">// 添加回调函数
+</span><span class="c1"></span>            <span class="n">future</span><span class="o">.</span><span class="na">addListener</span><span class="o">(</span><span class="k">new</span> <span class="n">RequestFutureListener</span><span class="o">&lt;</span><span class="n">ListOffsetResult</span><span class="o">&gt;()</span> <span class="o">{</span>
+                <span class="nd">@Override</span>
+                <span class="kd">public</span> <span class="kt">void</span> <span class="nf">onSuccess</span><span class="o">(</span><span class="n">ListOffsetResult</span> <span class="n">result</span><span class="o">)</span> <span class="o">{</span>
+                    <span class="k">if</span> <span class="o">(!</span><span class="n">result</span><span class="o">.</span><span class="na">partitionsToRetry</span><span class="o">.</span><span class="na">isEmpty</span><span class="o">())</span> <span class="o">{</span>
+                        <span class="n">subscriptions</span><span class="o">.</span><span class="na">resetFailed</span><span class="o">(</span><span class="n">result</span><span class="o">.</span><span class="na">partitionsToRetry</span><span class="o">,</span> <span class="n">time</span><span class="o">.</span><span class="na">milliseconds</span><span class="o">()</span> <span class="o">+</span> <span class="n">retryBackoffMs</span><span class="o">);</span>
+                        <span class="n">metadata</span><span class="o">.</span><span class="na">requestUpdate</span><span class="o">();</span>
+                    <span class="o">}</span>
+                    <span class="c1">// 遍历分区结果
+</span><span class="c1"></span>                    <span class="k">for</span> <span class="o">(</span><span class="n">Map</span><span class="o">.</span><span class="na">Entry</span><span class="o">&lt;</span><span class="n">TopicPartition</span><span class="o">,</span> <span class="n">OffsetData</span><span class="o">&gt;</span> <span class="n">fetchedOffset</span> <span class="o">:</span> <span class="n">result</span><span class="o">.</span><span class="na">fetchedOffsets</span><span class="o">.</span><span class="na">entrySet</span><span class="o">())</span> <span class="o">{</span>
+                        <span class="n">TopicPartition</span> <span class="n">partition</span> <span class="o">=</span> <span class="n">fetchedOffset</span><span class="o">.</span><span class="na">getKey</span><span class="o">();</span>
+                        <span class="c1">// 获取位置
+</span><span class="c1"></span>                        <span class="n">OffsetData</span> <span class="n">offsetData</span> <span class="o">=</span> <span class="n">fetchedOffset</span><span class="o">.</span><span class="na">getValue</span><span class="o">();</span>
+                        <span class="n">Long</span> <span class="n">requestedResetTimestamp</span> <span class="o">=</span> <span class="n">resetTimestamps</span><span class="o">.</span><span class="na">get</span><span class="o">(</span><span class="n">partition</span><span class="o">);</span>
+                        <span class="c1">// 设置分区的消费位置
+</span><span class="c1"></span>                        <span class="n">resetOffsetIfNeeded</span><span class="o">(</span><span class="n">partition</span><span class="o">,</span> <span class="n">requestedResetTimestamp</span><span class="o">,</span> <span class="n">offsetData</span><span class="o">);</span>
+                    <span class="o">}</span>
+                <span class="o">}</span>
+<span class="o">);</span>
+        <span class="o">}</span>
+    <span class="o">}</span>
+    
+    
+    <span class="kd">private</span> <span class="kt">void</span> <span class="nf">resetOffsetIfNeeded</span><span class="o">(</span><span class="n">TopicPartition</span> <span class="n">partition</span><span class="o">,</span> <span class="n">Long</span> <span class="n">requestedResetTimestamp</span><span class="o">,</span> <span class="n">OffsetData</span> <span class="n">offsetData</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">if</span> <span class="o">(!</span><span class="n">subscriptions</span><span class="o">.</span><span class="na">isAssigned</span><span class="o">(</span><span class="n">partition</span><span class="o">))</span> <span class="o">{</span>
+            <span class="n">log</span><span class="o">.</span><span class="na">debug</span><span class="o">(</span><span class="s">&#34;Skipping reset of partition {} since it is no longer assigned&#34;</span><span class="o">,</span> <span class="n">partition</span><span class="o">);</span>
+        <span class="o">}</span> <span class="k">else</span> <span class="k">if</span> <span class="o">(!</span><span class="n">subscriptions</span><span class="o">.</span><span class="na">isOffsetResetNeeded</span><span class="o">(</span><span class="n">partition</span><span class="o">))</span> <span class="o">{</span>
+            <span class="n">log</span><span class="o">.</span><span class="na">debug</span><span class="o">(</span><span class="s">&#34;Skipping reset of partition {} since reset is no longer needed&#34;</span><span class="o">,</span> <span class="n">partition</span><span class="o">);</span>
+        <span class="o">}</span> <span class="k">else</span> <span class="k">if</span> <span class="o">(!</span><span class="n">requestedResetTimestamp</span><span class="o">.</span><span class="na">equals</span><span class="o">(</span><span class="n">offsetResetStrategyTimestamp</span><span class="o">(</span><span class="n">partition</span><span class="o">)))</span> <span class="o">{</span>
+            <span class="n">log</span><span class="o">.</span><span class="na">debug</span><span class="o">(</span><span class="s">&#34;Skipping reset of partition {} since an alternative reset has been requested&#34;</span><span class="o">,</span> <span class="n">partition</span><span class="o">);</span>
+        <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
+            <span class="n">log</span><span class="o">.</span><span class="na">info</span><span class="o">(</span><span class="s">&#34;Resetting offset for partition {} to offset {}.&#34;</span><span class="o">,</span> <span class="n">partition</span><span class="o">,</span> <span class="n">offsetData</span><span class="o">.</span><span class="na">offset</span><span class="o">);</span>
+            <span class="c1">// 调用seek方法，设置分区的消费位置
+</span><span class="c1"></span>            <span class="n">subscriptions</span><span class="o">.</span><span class="na">seek</span><span class="o">(</span><span class="n">partition</span><span class="o">,</span> <span class="n">offsetData</span><span class="o">.</span><span class="na">offset</span><span class="o">);</span>
+        <span class="o">}</span>
+    <span class="o">}</span>
+                               
+<span class="o">}</span>
+</code></pre></td></tr></table></div>
+</div>
+</div><h2 id="更改分区offset"><a href="#更改分区offset" class="anchor-link"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon anchor-icon"><path d="M326.612 185.391c59.747 59.809 58.927 155.698.36 214.59-.11.12-.24.25-.36.37l-67.2 67.2c-59.27 59.27-155.699 59.262-214.96 0-59.27-59.26-59.27-155.7 0-214.96l37.106-37.106c9.84-9.84 26.786-3.3 27.294 10.606.648 17.722 3.826 35.527 9.69 52.721 1.986 5.822.567 12.262-3.783 16.612l-13.087 13.087c-28.026 28.026-28.905 73.66-1.155 101.96 28.024 28.579 74.086 28.749 102.325.51l67.2-67.19c28.191-28.191 28.073-73.757 0-101.83-3.701-3.694-7.429-6.564-10.341-8.569a16.037 16.037 0 0 1-6.947-12.606c-.396-10.567 3.348-21.456 11.698-29.806l21.054-21.055c5.521-5.521 14.182-6.199 20.584-1.731a152.482 152.482 0 0 1 20.522 17.197zM467.547 44.449c-59.261-59.262-155.69-59.27-214.96 0l-67.2 67.2c-.12.12-.25.25-.36.37-58.566 58.892-59.387 154.781.36 214.59a152.454 152.454 0 0 0 20.521 17.196c6.402 4.468 15.064 3.789 20.584-1.731l21.054-21.055c8.35-8.35 12.094-19.239 11.698-29.806a16.037 16.037 0 0 0-6.947-12.606c-2.912-2.005-6.64-4.875-10.341-8.569-28.073-28.073-28.191-73.639 0-101.83l67.2-67.19c28.239-28.239 74.3-28.069 102.325.51 27.75 28.3 26.872 73.934-1.155 101.96l-13.087 13.087c-4.35 4.35-5.769 10.79-3.783 16.612 5.864 17.194 9.042 34.999 9.69 52.721.509 13.906 17.454 20.446 27.294 10.606l37.106-37.106c59.271-59.259 59.271-155.699.001-214.959z"/></svg></a>更改分区Offset</h2>
+<p>除了上面的Offset初始化，可以修改分区的消费offset。当KafkaConsumer从Fetcher里获取消息时，会更新分区的offset值。</p>
+<p>Fetcher的fetchRecords方法，负责从指定分区中读取消息，并且调用SubscriptionState类的position方法，来更新分区offset。</p>
+<div class="highlight"><div class="chroma">
+<div class="table-container"><table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">Fetcher</span><span class="o">&lt;</span><span class="n">K</span><span class="o">,</span> <span class="n">V</span><span class="o">&gt;</span> <span class="kd">implements</span> <span class="n">SubscriptionState</span><span class="o">.</span><span class="na">Listener</span><span class="o">,</span> <span class="n">Closeable</span> <span class="o">{</span>
+    <span class="kd">private</span> <span class="kd">final</span> <span class="n">SubscriptionState</span> <span class="n">subscriptions</span><span class="o">;</span>    <span class="c1">// 分区信息
+</span><span class="c1"></span>    
+    <span class="kd">private</span> <span class="n">List</span><span class="o">&lt;</span><span class="n">ConsumerRecord</span><span class="o">&lt;</span><span class="n">K</span><span class="o">,</span> <span class="n">V</span><span class="o">&gt;&gt;</span> <span class="nf">fetchRecords</span><span class="o">(</span><span class="n">PartitionRecords</span> <span class="n">partitionRecords</span><span class="o">,</span> <span class="kt">int</span> <span class="n">maxRecords</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">if</span> <span class="o">(!</span><span class="n">subscriptions</span><span class="o">.</span><span class="na">isAssigned</span><span class="o">(</span><span class="n">partitionRecords</span><span class="o">.</span><span class="na">partition</span><span class="o">))</span> <span class="o">{</span>
+           <span class="o">......</span>
+        <span class="o">}</span> <span class="k">else</span> <span class="k">if</span> <span class="o">(!</span><span class="n">subscriptions</span><span class="o">.</span><span class="na">isFetchable</span><span class="o">(</span><span class="n">partitionRecords</span><span class="o">.</span><span class="na">partition</span><span class="o">))</span> <span class="o">{</span>
+           <span class="o">......</span>
+        <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
+            <span class="c1">// 从SubscriptionState类，获取当前的分区offset
+</span><span class="c1"></span>            <span class="kt">long</span> <span class="n">position</span> <span class="o">=</span> <span class="n">subscriptions</span><span class="o">.</span><span class="na">position</span><span class="o">(</span><span class="n">partitionRecords</span><span class="o">.</span><span class="na">partition</span><span class="o">);</span>
+            <span class="k">if</span> <span class="o">(</span><span class="n">partitionRecords</span><span class="o">.</span><span class="na">nextFetchOffset</span> <span class="o">==</span> <span class="n">position</span><span class="o">)</span> <span class="o">{</span>
+                <span class="c1">// 从Fetcher缓存中，获取消息
+</span><span class="c1"></span>                <span class="n">List</span><span class="o">&lt;</span><span class="n">ConsumerRecord</span><span class="o">&lt;</span><span class="n">K</span><span class="o">,</span> <span class="n">V</span><span class="o">&gt;&gt;</span> <span class="n">partRecords</span> <span class="o">=</span> <span class="n">partitionRecords</span><span class="o">.</span><span class="na">fetchRecords</span><span class="o">(</span><span class="n">maxRecords</span><span class="o">);</span>
+                <span class="kt">long</span> <span class="n">nextOffset</span> <span class="o">=</span> <span class="n">partitionRecords</span><span class="o">.</span><span class="na">nextFetchOffset</span><span class="o">;</span>
+                <span class="c1">// 更新SubscriptionState类的分区offset
+</span><span class="c1"></span>                <span class="n">subscriptions</span><span class="o">.</span><span class="na">position</span><span class="o">(</span><span class="n">partitionRecords</span><span class="o">.</span><span class="na">partition</span><span class="o">,</span> <span class="n">nextOffset</span><span class="o">);</span>
+
+                <span class="o">......</span>
+
+                <span class="k">return</span> <span class="n">partRecords</span><span class="o">;</span>
+            <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
+              <span class="o">.....</span>
+            <span class="o">}</span>
+        <span class="o">}</span>
+        <span class="o">......</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+</code></pre></td></tr></table></div>
+</div>
+</div><h2 id="提交分区-offset"><a href="#提交分区-offset" class="anchor-link"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon anchor-icon"><path d="M326.612 185.391c59.747 59.809 58.927 155.698.36 214.59-.11.12-.24.25-.36.37l-67.2 67.2c-59.27 59.27-155.699 59.262-214.96 0-59.27-59.26-59.27-155.7 0-214.96l37.106-37.106c9.84-9.84 26.786-3.3 27.294 10.606.648 17.722 3.826 35.527 9.69 52.721 1.986 5.822.567 12.262-3.783 16.612l-13.087 13.087c-28.026 28.026-28.905 73.66-1.155 101.96 28.024 28.579 74.086 28.749 102.325.51l67.2-67.19c28.191-28.191 28.073-73.757 0-101.83-3.701-3.694-7.429-6.564-10.341-8.569a16.037 16.037 0 0 1-6.947-12.606c-.396-10.567 3.348-21.456 11.698-29.806l21.054-21.055c5.521-5.521 14.182-6.199 20.584-1.731a152.482 152.482 0 0 1 20.522 17.197zM467.547 44.449c-59.261-59.262-155.69-59.27-214.96 0l-67.2 67.2c-.12.12-.25.25-.36.37-58.566 58.892-59.387 154.781.36 214.59a152.454 152.454 0 0 0 20.521 17.196c6.402 4.468 15.064 3.789 20.584-1.731l21.054-21.055c8.35-8.35 12.094-19.239 11.698-29.806a16.037 16.037 0 0 0-6.947-12.606c-2.912-2.005-6.64-4.875-10.341-8.569-28.073-28.073-28.191-73.639 0-101.83l67.2-67.19c28.239-28.239 74.3-28.069 102.325.51 27.75 28.3 26.872 73.934-1.155 101.96l-13.087 13.087c-4.35 4.35-5.769 10.79-3.783 16.612 5.864 17.194 9.042 34.999 9.69 52.721.509 13.906 17.454 20.446 27.294 10.606l37.106-37.106c59.271-59.259 59.271-155.699.001-214.959z"/></svg></a>提交分区 Offset</h2>
+<p>KafkaConsumer提供了一系列的方法提交offset，支持同步和异步。</p>
+<div class="highlight"><div class="chroma">
+<div class="table-container"><table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span><span class="lnt">35
+</span><span class="lnt">36
+</span><span class="lnt">37
+</span><span class="lnt">38
+</span><span class="lnt">39
+</span><span class="lnt">40
+</span><span class="lnt">41
+</span><span class="lnt">42
+</span><span class="lnt">43
+</span><span class="lnt">44
+</span><span class="lnt">45
+</span><span class="lnt">46
+</span><span class="lnt">47
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">KafkaConsumer</span><span class="o">&lt;</span><span class="n">K</span><span class="o">,</span> <span class="n">V</span><span class="o">&gt;</span> <span class="kd">implements</span> <span class="n">Consumer</span><span class="o">&lt;</span><span class="n">K</span><span class="o">,</span> <span class="n">V</span><span class="o">&gt;</span> <span class="o">{</span>
+
+    <span class="kd">private</span> <span class="kd">final</span> <span class="n">SubscriptionState</span> <span class="n">subscriptions</span><span class="o">;</span>
+    <span class="kd">private</span> <span class="kd">final</span> <span class="n">ConsumerCoordinator</span> <span class="n">coordinator</span><span class="o">;</span>
+    
+    <span class="nd">@Override</span>
+    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">commitAsync</span><span class="o">()</span> <span class="o">{</span>
+        <span class="n">commitAsync</span><span class="o">(</span><span class="kc">null</span><span class="o">);</span>
+    <span class="o">}</span>
+
+    <span class="nd">@Override</span>
+    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">commitAsync</span><span class="o">(</span><span class="n">OffsetCommitCallback</span> <span class="n">callback</span><span class="o">)</span> <span class="o">{</span>
+        <span class="n">acquireAndEnsureOpen</span><span class="o">();</span>
+        <span class="k">try</span> <span class="o">{</span>
+            <span class="c1">// 从SubscriptionState获取分区的消费位置，然后提交
+</span><span class="c1"></span>            <span class="n">commitAsync</span><span class="o">(</span><span class="n">subscriptions</span><span class="o">.</span><span class="na">allConsumed</span><span class="o">(),</span> <span class="n">callback</span><span class="o">);</span>
+        <span class="o">}</span> <span class="k">finally</span> <span class="o">{</span>
+            <span class="n">release</span><span class="o">();</span>
+        <span class="o">}</span>
+    <span class="o">}</span>
+
+    <span class="nd">@Override</span>
+    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">commitAsync</span><span class="o">(</span><span class="kd">final</span> <span class="n">Map</span><span class="o">&lt;</span><span class="n">TopicPartition</span><span class="o">,</span> <span class="n">OffsetAndMetadata</span><span class="o">&gt;</span> <span class="n">offsets</span><span class="o">,</span> <span class="n">OffsetCommitCallback</span> <span class="n">callback</span><span class="o">)</span> <span class="o">{</span>
+        <span class="n">acquireAndEnsureOpen</span><span class="o">();</span>
+        <span class="k">try</span> <span class="o">{</span>
+            <span class="c1">// 调用ConsumerCoordinator的commitOffsetsAsync，向服务端发送提交请求
+</span><span class="c1"></span>            <span class="n">coordinator</span><span class="o">.</span><span class="na">commitOffsetsAsync</span><span class="o">(</span><span class="k">new</span> <span class="n">HashMap</span><span class="o">&lt;&gt;(</span><span class="n">offsets</span><span class="o">),</span> <span class="n">callback</span><span class="o">);</span>
+        <span class="o">}</span> <span class="k">finally</span> <span class="o">{</span>
+            <span class="n">release</span><span class="o">();</span>
+        <span class="o">}</span>
+    <span class="o">}</span>
+    
+    <span class="nd">@Override</span>
+    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">commitSync</span><span class="o">(</span><span class="n">Duration</span> <span class="n">timeout</span><span class="o">)</span> <span class="o">{</span>
+        <span class="n">acquireAndEnsureOpen</span><span class="o">();</span>
+        <span class="k">try</span> <span class="o">{</span>
+            <span class="c1">// 调用ConsumerCoordinator的commitOffsetsAsync，向服务端发送提交请求
+</span><span class="c1"></span>            <span class="k">if</span> <span class="o">(!</span><span class="n">coordinator</span><span class="o">.</span><span class="na">commitOffsetsSync</span><span class="o">(</span><span class="n">subscriptions</span><span class="o">.</span><span class="na">allConsumed</span><span class="o">(),</span> <span class="n">timeout</span><span class="o">.</span><span class="na">toMillis</span><span class="o">()))</span> <span class="o">{</span>
+                <span class="k">throw</span> <span class="k">new</span> <span class="n">TimeoutException</span><span class="o">(</span><span class="s">&#34;Timeout of &#34;</span> <span class="o">+</span> <span class="n">timeout</span><span class="o">.</span><span class="na">toMillis</span><span class="o">()</span> <span class="o">+</span> <span class="s">&#34;ms expired before successfully &#34;</span> <span class="o">+</span>
+                        <span class="s">&#34;committing the current consumed offsets&#34;</span><span class="o">);</span>
+            <span class="o">}</span>
+        <span class="o">}</span> <span class="k">finally</span> <span class="o">{</span>
+            <span class="n">release</span><span class="o">();</span>
+        <span class="o">}</span>
+    <span class="o">}</span>
+    
+<span class="o">}</span>
+</code></pre></td></tr></table></div>
+</div>
+</div><p>上述的方法，都是从SubscriptionState里获取分区消费位置，然后由ConsumerCoordinator发送请求。</p>
+<div class="highlight"><div class="chroma">
+<div class="table-container"><table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span><span class="lnt">35
+</span><span class="lnt">36
+</span><span class="lnt">37
+</span><span class="lnt">38
+</span><span class="lnt">39
+</span><span class="lnt">40
+</span><span class="lnt">41
+</span><span class="lnt">42
+</span><span class="lnt">43
+</span><span class="lnt">44
+</span><span class="lnt">45
+</span><span class="lnt">46
+</span><span class="lnt">47
+</span><span class="lnt">48
+</span><span class="lnt">49
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="nf">ConsumerCoordinator</span><span class="o">(...)</span> <span class="o">{</span>
+    
+    <span class="kd">private</span> <span class="kd">final</span> <span class="n">ConsumerInterceptors</span><span class="o">&lt;?,</span> <span class="o">?&gt;</span> <span class="n">interceptors</span><span class="o">;</span> <span class="c1">// 拦截器
+</span><span class="c1"></span>    
+    
+    <span class="kd">public</span> <span class="kt">boolean</span> <span class="nf">commitOffsetsSync</span><span class="o">(</span><span class="n">Map</span><span class="o">&lt;</span><span class="n">TopicPartition</span><span class="o">,</span> <span class="n">OffsetAndMetadata</span><span class="o">&gt;</span> <span class="n">offsets</span><span class="o">,</span> <span class="kt">long</span> <span class="n">timeoutMs</span><span class="o">)</span> <span class="o">{</span>
+        <span class="n">invokeCompletedOffsetCommitCallbacks</span><span class="o">();</span>
+        <span class="k">if</span> <span class="o">(</span><span class="n">offsets</span><span class="o">.</span><span class="na">isEmpty</span><span class="o">())</span>
+            <span class="k">return</span> <span class="kc">true</span><span class="o">;</span>
+
+        <span class="kt">long</span> <span class="n">now</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="na">milliseconds</span><span class="o">();</span>
+        <span class="kt">long</span> <span class="n">startMs</span> <span class="o">=</span> <span class="n">now</span><span class="o">;</span>
+        <span class="kt">long</span> <span class="n">remainingMs</span> <span class="o">=</span> <span class="n">timeoutMs</span><span class="o">;</span>
+        <span class="k">do</span> <span class="o">{</span>
+            <span class="k">if</span> <span class="o">(</span><span class="n">coordinatorUnknown</span><span class="o">())</span> <span class="o">{</span>
+                <span class="k">if</span> <span class="o">(!</span><span class="n">ensureCoordinatorReady</span><span class="o">(</span><span class="n">remainingMs</span><span class="o">))</span>
+                    <span class="k">return</span> <span class="kc">false</span><span class="o">;</span>
+
+                <span class="n">remainingMs</span> <span class="o">=</span> <span class="n">timeoutMs</span> <span class="o">-</span> <span class="o">(</span><span class="n">time</span><span class="o">.</span><span class="na">milliseconds</span><span class="o">()</span> <span class="o">-</span> <span class="n">startMs</span><span class="o">);</span>
+            <span class="o">}</span>
+            <span class="c1">// 构造OffsetCommitRequest请求，发送给服务端GroupCoordinator
+</span><span class="c1"></span>            <span class="n">RequestFuture</span><span class="o">&lt;</span><span class="n">Void</span><span class="o">&gt;</span> <span class="n">future</span> <span class="o">=</span> <span class="n">sendOffsetCommitRequest</span><span class="o">(</span><span class="n">offsets</span><span class="o">);</span>
+            <span class="c1">// 等待请求完成
+</span><span class="c1"></span>            <span class="n">client</span><span class="o">.</span><span class="na">poll</span><span class="o">(</span><span class="n">future</span><span class="o">,</span> <span class="n">remainingMs</span><span class="o">);</span>
+
+            <span class="n">invokeCompletedOffsetCommitCallbacks</span><span class="o">();</span>
+
+            <span class="k">if</span> <span class="o">(</span><span class="n">future</span><span class="o">.</span><span class="na">succeeded</span><span class="o">())</span> <span class="o">{</span>
+                <span class="k">if</span> <span class="o">(</span><span class="n">interceptors</span> <span class="o">!=</span> <span class="kc">null</span><span class="o">)</span>
+                    <span class="c1">// 调用拦截器的onCommit回调
+</span><span class="c1"></span>                    <span class="n">interceptors</span><span class="o">.</span><span class="na">onCommit</span><span class="o">(</span><span class="n">offsets</span><span class="o">);</span>
+                <span class="c1">// 返回tur表示请求已经完成
+</span><span class="c1"></span>                <span class="k">return</span> <span class="kc">true</span><span class="o">;</span>
+            <span class="o">}</span>
+            <span class="c1">// 如果响应出错，那么抛出一样
+</span><span class="c1"></span>            <span class="k">if</span> <span class="o">(</span><span class="n">future</span><span class="o">.</span><span class="na">failed</span><span class="o">()</span> <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="n">future</span><span class="o">.</span><span class="na">isRetriable</span><span class="o">())</span>
+                <span class="k">throw</span> <span class="n">future</span><span class="o">.</span><span class="na">exception</span><span class="o">();</span>
+            <span class="c1">// 暂停一段时间，防止频繁操作
+</span><span class="c1"></span>            <span class="n">time</span><span class="o">.</span><span class="na">sleep</span><span class="o">(</span><span class="n">retryBackoffMs</span><span class="o">);</span>
+
+            <span class="n">now</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="na">milliseconds</span><span class="o">();</span>
+            <span class="c1">// 计算剩余时间
+</span><span class="c1"></span>            <span class="n">remainingMs</span> <span class="o">=</span> <span class="n">timeoutMs</span> <span class="o">-</span> <span class="o">(</span><span class="n">now</span> <span class="o">-</span> <span class="n">startMs</span><span class="o">);</span>
+        <span class="o">}</span> <span class="k">while</span> <span class="o">(</span><span class="n">remainingMs</span> <span class="o">&gt;</span> <span class="n">0</span><span class="o">);</span>
+        <span class="c1">// 返回false，表示请求还未完成
+</span><span class="c1"></span>        <span class="k">return</span> <span class="kc">false</span><span class="o">;</span>
+    <span class="o">}</span>
+    
+<span class="o">}</span>
+</code></pre></td></tr></table></div>
+</div>
+</div><h2 id="自动提交"><a href="#自动提交" class="anchor-link"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon anchor-icon"><path d="M326.612 185.391c59.747 59.809 58.927 155.698.36 214.59-.11.12-.24.25-.36.37l-67.2 67.2c-59.27 59.27-155.699 59.262-214.96 0-59.27-59.26-59.27-155.7 0-214.96l37.106-37.106c9.84-9.84 26.786-3.3 27.294 10.606.648 17.722 3.826 35.527 9.69 52.721 1.986 5.822.567 12.262-3.783 16.612l-13.087 13.087c-28.026 28.026-28.905 73.66-1.155 101.96 28.024 28.579 74.086 28.749 102.325.51l67.2-67.19c28.191-28.191 28.073-73.757 0-101.83-3.701-3.694-7.429-6.564-10.341-8.569a16.037 16.037 0 0 1-6.947-12.606c-.396-10.567 3.348-21.456 11.698-29.806l21.054-21.055c5.521-5.521 14.182-6.199 20.584-1.731a152.482 152.482 0 0 1 20.522 17.197zM467.547 44.449c-59.261-59.262-155.69-59.27-214.96 0l-67.2 67.2c-.12.12-.25.25-.36.37-58.566 58.892-59.387 154.781.36 214.59a152.454 152.454 0 0 0 20.521 17.196c6.402 4.468 15.064 3.789 20.584-1.731l21.054-21.055c8.35-8.35 12.094-19.239 11.698-29.806a16.037 16.037 0 0 0-6.947-12.606c-2.912-2.005-6.64-4.875-10.341-8.569-28.073-28.073-28.191-73.639 0-101.83l67.2-67.19c28.239-28.239 74.3-28.069 102.325.51 27.75 28.3 26.872 73.934-1.155 101.96l-13.087 13.087c-4.35 4.35-5.769 10.79-3.783 16.612 5.864 17.194 9.042 34.999 9.69 52.721.509 13.906 17.454 20.446 27.294 10.606l37.106-37.106c59.271-59.259 59.271-155.699.001-214.959z"/></svg></a>自动提交</h2>
+<p>如果consumer设置了自动提交，那么consumer会每次拉取消息的时候，将当前的offset提交。</p>
+<p>KafkaConsumer在每次poll的时候，都会调用ConsumerCoordinator的poll方法。ConsumerCoordinator会定期检查是否到了该提交offset的时间，然后发送请求。</p>
+<p>ConsumerCoordinator的poll方法，会调用maybeAutoCommitOffsetsAsync方法，负责提交请求</p>
+<div class="highlight"><div class="chroma">
+<div class="table-container"><table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span><span class="lnt">35
+</span><span class="lnt">36
+</span><span class="lnt">37
+</span><span class="lnt">38
+</span><span class="lnt">39
+</span><span class="lnt">40
+</span><span class="lnt">41
+</span><span class="lnt">42
+</span><span class="lnt">43
+</span><span class="lnt">44
+</span><span class="lnt">45
+</span><span class="lnt">46
+</span><span class="lnt">47
+</span><span class="lnt">48
+</span><span class="lnt">49
+</span><span class="lnt">50
+</span><span class="lnt">51
+</span><span class="lnt">52
+</span><span class="lnt">53
+</span><span class="lnt">54
+</span><span class="lnt">55
+</span><span class="lnt">56
+</span><span class="lnt">57
+</span><span class="lnt">58
+</span><span class="lnt">59
+</span><span class="lnt">60
+</span><span class="lnt">61
+</span><span class="lnt">62
+</span><span class="lnt">63
+</span><span class="lnt">64
+</span><span class="lnt">65
+</span><span class="lnt">66
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">final</span> <span class="kd">class</span> <span class="nc">ConsumerCoordinator</span> <span class="kd">extends</span> <span class="n">AbstractCoordinator</span> <span class="o">{</span>
+    <span class="kd">private</span> <span class="kd">final</span> <span class="n">SubscriptionState</span> <span class="n">subscriptions</span><span class="o">;</span>  <span class="c1">// 分区信息
+</span><span class="c1"></span>    <span class="kd">private</span> <span class="kd">final</span> <span class="kt">boolean</span> <span class="n">autoCommitEnabled</span><span class="o">;</span>  <span class="c1">// 是否允许自动提交
+</span><span class="c1"></span>    <span class="kd">private</span> <span class="kd">final</span> <span class="kt">int</span> <span class="n">autoCommitIntervalMs</span><span class="o">;</span>  <span class="c1">// 自动提交的时间间隔 
+</span><span class="c1"></span>    <span class="kd">private</span> <span class="kt">long</span> <span class="n">nextAutoCommitDeadline</span><span class="o">;</span>   <span class="c1">// 下次自动提交时间
+</span><span class="c1"></span>    
+    <span class="kd">private</span> <span class="kd">final</span> <span class="n">ConcurrentLinkedQueue</span><span class="o">&lt;</span><span class="n">OffsetCommitCompletion</span><span class="o">&gt;</span> <span class="n">completedOffsetCommits</span><span class="o">;</span>    
+    
+    
+    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">maybeAutoCommitOffsetsAsync</span><span class="o">(</span><span class="kt">long</span> <span class="n">now</span><span class="o">)</span> <span class="o">{</span>
+        <span class="c1">// 如果允许自动提交，并且时间到了自动提交的时间
+</span><span class="c1"></span>        <span class="k">if</span> <span class="o">(</span><span class="n">autoCommitEnabled</span> <span class="o">&amp;&amp;</span> <span class="n">now</span> <span class="o">&gt;=</span> <span class="n">nextAutoCommitDeadline</span><span class="o">)</span> <span class="o">{</span>
+            <span class="c1">// 更新下次提交时间
+</span><span class="c1"></span>            <span class="k">this</span><span class="o">.</span><span class="na">nextAutoCommitDeadline</span> <span class="o">=</span> <span class="n">now</span> <span class="o">+</span> <span class="n">autoCommitIntervalMs</span><span class="o">;</span>
+            <span class="c1">// 提交offset
+</span><span class="c1"></span>            <span class="n">doAutoCommitOffsetsAsync</span><span class="o">();</span>
+        <span class="o">}</span>
+    <span class="o">}</span>
+    
+    <span class="kd">private</span> <span class="kt">void</span> <span class="nf">doAutoCommitOffsetsAsync</span><span class="o">()</span> <span class="o">{</span>
+        <span class="c1">// 从SubscriptionState获取消费位置信息
+</span><span class="c1"></span>        <span class="n">Map</span><span class="o">&lt;</span><span class="n">TopicPartition</span><span class="o">,</span> <span class="n">OffsetAndMetadata</span><span class="o">&gt;</span> <span class="n">allConsumedOffsets</span> <span class="o">=</span> <span class="n">subscriptions</span><span class="o">.</span><span class="na">allConsumed</span><span class="o">();</span>
+        <span class="c1">// 提交请求
+</span><span class="c1"></span>        <span class="n">commitOffsetsAsync</span><span class="o">(</span><span class="n">allConsumedOffsets</span><span class="o">,</span> <span class="k">new</span> <span class="n">OffsetCommitCallback</span><span class="o">()</span> <span class="o">{</span>
+            <span class="o">......</span>
+        <span class="o">});</span>
+    <span class="o">}</span>
+
+    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">commitOffsetsAsync</span><span class="o">(</span><span class="kd">final</span> <span class="n">Map</span><span class="o">&lt;</span><span class="n">TopicPartition</span><span class="o">,</span> <span class="n">OffsetAndMetadata</span><span class="o">&gt;</span> <span class="n">offsets</span><span class="o">,</span> <span class="kd">final</span> <span class="n">OffsetCommitCallback</span> <span class="n">callback</span><span class="o">)</span> <span class="o">{</span>
+        <span class="n">invokeCompletedOffsetCommitCallbacks</span><span class="o">();</span>
+
+        <span class="k">if</span> <span class="o">(!</span><span class="n">coordinatorUnknown</span><span class="o">())</span> <span class="o">{</span>
+            <span class="c1">// 保证与服务端的GroupCoordinator连接是好的，然后发送请求
+</span><span class="c1"></span>            <span class="n">doCommitOffsetsAsync</span><span class="o">(</span><span class="n">offsets</span><span class="o">,</span> <span class="n">callback</span><span class="o">);</span>
+        <span class="o">}</span> <span class="k">else</span> <span class="o">{</span> 
+            <span class="o">.....</span>
+        <span class="o">}</span>
+
+        <span class="n">client</span><span class="o">.</span><span class="na">pollNoWakeup</span><span class="o">();</span>
+    <span class="o">}</span>
+
+    <span class="kd">private</span> <span class="kt">void</span> <span class="nf">doCommitOffsetsAsync</span><span class="o">(</span><span class="kd">final</span> <span class="n">Map</span><span class="o">&lt;</span><span class="n">TopicPartition</span><span class="o">,</span> <span class="n">OffsetAndMetadata</span><span class="o">&gt;</span> <span class="n">offsets</span><span class="o">,</span> <span class="kd">final</span> <span class="n">OffsetCommitCallback</span> <span class="n">callback</span><span class="o">)</span> <span class="o">{</span>
+        <span class="c1">// 发送请求
+</span><span class="c1"></span>        <span class="n">RequestFuture</span><span class="o">&lt;</span><span class="n">Void</span><span class="o">&gt;</span> <span class="n">future</span> <span class="o">=</span> <span class="n">sendOffsetCommitRequest</span><span class="o">(</span><span class="n">offsets</span><span class="o">);</span>
+        <span class="kd">final</span> <span class="n">OffsetCommitCallback</span> <span class="n">cb</span> <span class="o">=</span> <span class="n">callback</span> <span class="o">==</span> <span class="kc">null</span> <span class="o">?</span> <span class="n">defaultOffsetCommitCallback</span> <span class="o">:</span> <span class="n">callback</span><span class="o">;</span>
+        <span class="n">future</span><span class="o">.</span><span class="na">addListener</span><span class="o">(</span><span class="k">new</span> <span class="n">RequestFutureListener</span><span class="o">&lt;</span><span class="n">Void</span><span class="o">&gt;()</span> <span class="o">{</span>
+            <span class="nd">@Override</span>
+            <span class="kd">public</span> <span class="kt">void</span> <span class="nf">onSuccess</span><span class="o">(</span><span class="n">Void</span> <span class="n">value</span><span class="o">)</span> <span class="o">{</span>
+                <span class="k">if</span> <span class="o">(</span><span class="n">interceptors</span> <span class="o">!=</span> <span class="kc">null</span><span class="o">)</span>
+                    <span class="c1">// 调用拦截器的onCommit回调函数
+</span><span class="c1"></span>                    <span class="n">interceptors</span><span class="o">.</span><span class="na">onCommit</span><span class="o">(</span><span class="n">offsets</span><span class="o">);</span>
+                <span class="c1">// 将回调添加到队列里，等待后续执行
+</span><span class="c1"></span>                <span class="n">completedOffsetCommits</span><span class="o">.</span><span class="na">add</span><span class="o">(</span><span class="k">new</span> <span class="n">OffsetCommitCompletion</span><span class="o">(</span><span class="n">cb</span><span class="o">,</span> <span class="n">offsets</span><span class="o">,</span> <span class="kc">null</span><span class="o">));</span>
+            <span class="o">}</span>
+
+            <span class="nd">@Override</span>
+            <span class="kd">public</span> <span class="kt">void</span> <span class="nf">onFailure</span><span class="o">(</span><span class="n">RuntimeException</span> <span class="n">e</span><span class="o">)</span> <span class="o">{</span>
+                <span class="n">Exception</span> <span class="n">commitException</span> <span class="o">=</span> <span class="n">e</span><span class="o">;</span>
+                <span class="k">if</span> <span class="o">(</span><span class="n">e</span> <span class="k">instanceof</span> <span class="n">RetriableException</span><span class="o">)</span>
+                    <span class="n">commitException</span> <span class="o">=</span> <span class="k">new</span> <span class="n">RetriableCommitFailedException</span><span class="o">(</span><span class="n">e</span><span class="o">);</span>
+                <span class="c1">// 将回调添加到队列里，等待后续执行
+</span><span class="c1"></span>                <span class="n">completedOffsetCommits</span><span class="o">.</span><span class="na">add</span><span class="o">(</span><span class="k">new</span> <span class="n">OffsetCommitCompletion</span><span class="o">(</span><span class="n">cb</span><span class="o">,</span> <span class="n">offsets</span><span class="o">,</span> <span class="n">commitException</span><span class="o">));</span>
+            <span class="o">}</span>
+        <span class="o">});</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+</code></pre></td></tr></table></div>
+</div>
+</div><p>这里额外说下使用自动提交的注意点。KafkaConsumer拉取消息时，会先自动向服务端提交offset请求。之后才真正的从Fetcher里拉取数据，而Fetcher在返回数据时，会更新分区的offset。所以如果开启了自动提交，在每次拉取消息后，一定要保证已经处理完这些消息，才去拉取新的消息。</p>
+<h2 id="执行任务时间过长"><a href="#执行任务时间过长" class="anchor-link"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon anchor-icon"><path d="M326.612 185.391c59.747 59.809 58.927 155.698.36 214.59-.11.12-.24.25-.36.37l-67.2 67.2c-59.27 59.27-155.699 59.262-214.96 0-59.27-59.26-59.27-155.7 0-214.96l37.106-37.106c9.84-9.84 26.786-3.3 27.294 10.606.648 17.722 3.826 35.527 9.69 52.721 1.986 5.822.567 12.262-3.783 16.612l-13.087 13.087c-28.026 28.026-28.905 73.66-1.155 101.96 28.024 28.579 74.086 28.749 102.325.51l67.2-67.19c28.191-28.191 28.073-73.757 0-101.83-3.701-3.694-7.429-6.564-10.341-8.569a16.037 16.037 0 0 1-6.947-12.606c-.396-10.567 3.348-21.456 11.698-29.806l21.054-21.055c5.521-5.521 14.182-6.199 20.584-1.731a152.482 152.482 0 0 1 20.522 17.197zM467.547 44.449c-59.261-59.262-155.69-59.27-214.96 0l-67.2 67.2c-.12.12-.25.25-.36.37-58.566 58.892-59.387 154.781.36 214.59a152.454 152.454 0 0 0 20.521 17.196c6.402 4.468 15.064 3.789 20.584-1.731l21.054-21.055c8.35-8.35 12.094-19.239 11.698-29.806a16.037 16.037 0 0 0-6.947-12.606c-2.912-2.005-6.64-4.875-10.341-8.569-28.073-28.073-28.191-73.639 0-101.83l67.2-67.19c28.239-28.239 74.3-28.069 102.325.51 27.75 28.3 26.872 73.934-1.155 101.96l-13.087 13.087c-4.35 4.35-5.769 10.79-3.783 16.612 5.864 17.194 9.042 34.999 9.69 52.721.509 13.906 17.454 20.446 27.294 10.606l37.106-37.106c59.271-59.259 59.271-155.699.001-214.959z"/></svg></a>执行任务时间过长</h2>
+<p>我们调用 poll 方法获取到消息之后，会立即处理请求。有时候消息的处理会比较久，导致两次 poll 之间的时间间隔太长，就会引起 rebalance 操作。为了避免这种情况，可以设置<code>max.poll.records</code>配置项，设置单次 poll 获取的消息。</p>
+
+            </div>
+
+            
+    
+    
+        <ul class="post-copyright">
+            <li class="copyright-item author"><span class="copyright-item-text">作者</span>：<a href="https://zhmin.github.io/" class="p-author h-card" target="_blank" rel="noopener">zhmin</a></li>
+            
+                
+                
+                
+                
+                <li class="copyright-item link"><span class="copyright-item-text">链接</span>：<a href="/posts/kafka-consumer-offset/" target="_blank" rel="noopener">https://zhmin.github.io/posts/kafka-consumer-offset/</a></li>
+            
+            
+        </ul>
+    
+
+
+
+        </article>
+
+        
+
+        
+    <div class="updated-badge-container">
+        <span title="Updated @ 2021-09-12 11:48:25 CST" style="cursor:help">
+
+<svg xmlns="http://www.w3.org/2000/svg" width="130" height="20" class="updated-badge"><linearGradient id="b" x2="0" y2="100%"><stop offset="0" stop-color="#bbb" stop-opacity=".1"/><stop offset="1" stop-opacity=".1"/></linearGradient><clipPath id="a"><rect width="130" height="20" rx="3" fill="#fff"/></clipPath><g clip-path="url(#a)"><path class="updated-badge-left" d="M0 0h55v20H0z"/><path class="updated-badge-right" d="M55 0h75v20H55z"/><path fill="url(#b)" d="M0 0h130v20H0z"/></g><g fill="#fff" text-anchor="middle" font-size="110"><text x="285" y="150" fill="#010101" fill-opacity=".3" textLength="450" transform="scale(.1)">updated</text><text x="285" y="140" textLength="450" transform="scale(.1)">updated</text><text x="915" y="150" fill="#010101" fill-opacity=".3" textLength="650" transform="scale(.1)">2021-09-12</text><text x="915" y="140" textLength="650" transform="scale(.1)">2021-09-12</text></g></svg>
+        </span></div>
+
+
+
+        
+
+
+        
+
+
+        
+    
+    
+        <div class="related-posts">
+            <h2 class="related-title">相关文章：<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon related-icon"><path d="M256 8C119 8 8 119 8 256s111 248 248 248 248-111 248-248S393 8 256 8zm144 276c0 6.6-5.4 12-12 12h-92v92c0 6.6-5.4 12-12 12h-56c-6.6 0-12-5.4-12-12v-92h-92c-6.6 0-12-5.4-12-12v-56c0-6.6 5.4-12 12-12h92v-92c0-6.6 5.4-12 12-12h56c6.6 0 12 5.4 12 12v92h92c6.6 0 12 5.4 12 12v56z"/></svg></h2>
+            <ul class="related-list">
+                
+                    <li class="related-item">
+                        <a href="/posts/kafka-consumer-transaction/" class="related-link">Kafka Consumer 读取事务消息</a>
+                    </li>
+                
+                    <li class="related-item">
+                        <a href="/posts/kafka-consumer-network-client/" class="related-link">Kafka ConsumerNetworkClient 原理</a>
+                    </li>
+                
+                    <li class="related-item">
+                        <a href="/posts/kafka-client-buffer-manage/" class="related-link">Kafka 客户端的缓存管理</a>
+                    </li>
+                
+                    <li class="related-item">
+                        <a href="/posts/kafka-transaction/" class="related-link">Kafka 事务实现原理</a>
+                    </li>
+                
+                    <li class="related-item">
+                        <a href="/posts/kafka-schema-registry/" class="related-link">Kafka Schema Registry 原理</a>
+                    </li>
+                
+            </ul>
+        </div>
+    
+
+
+
+        
+    
+        <div class="post-tags">
+            
+                
+                
+                
+                
+                    
+                    <a href="/tags/kafka/" rel="tag" class="post-tags-link"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon tag-icon"><path d="M0 252.118V48C0 21.49 21.49 0 48 0h204.118a48 48 0 0 1 33.941 14.059l211.882 211.882c18.745 18.745 18.745 49.137 0 67.882L293.823 497.941c-18.745 18.745-49.137 18.745-67.882 0L14.059 286.059A48 48 0 0 1 0 252.118zM112 64c-26.51 0-48 21.49-48 48s21.49 48 48 48 48-21.49 48-48-21.49-48-48-48z"/></svg>kafka</a>
+                
+            
+                
+                
+                
+                
+                    
+                    <a href="/tags/consumer/" rel="tag" class="post-tags-link"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon tag-icon"><path d="M0 252.118V48C0 21.49 21.49 0 48 0h204.118a48 48 0 0 1 33.941 14.059l211.882 211.882c18.745 18.745 18.745 49.137 0 67.882L293.823 497.941c-18.745 18.745-49.137 18.745-67.882 0L14.059 286.059A48 48 0 0 1 0 252.118zM112 64c-26.51 0-48 21.49-48 48s21.49 48 48 48 48-21.49 48-48-21.49-48-48-48z"/></svg>consumer</a>
+                
+            
+                
+                
+                
+                
+                    
+                    <a href="/tags/offset/" rel="tag" class="post-tags-link"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon tag-icon"><path d="M0 252.118V48C0 21.49 21.49 0 48 0h204.118a48 48 0 0 1 33.941 14.059l211.882 211.882c18.745 18.745 18.745 49.137 0 67.882L293.823 497.941c-18.745 18.745-49.137 18.745-67.882 0L14.059 286.059A48 48 0 0 1 0 252.118zM112 64c-26.51 0-48 21.49-48 48s21.49 48 48 48 48-21.49 48-48-21.49-48-48-48z"/></svg>offset</a>
+                
+            
+        </div>
+    
+
+
+
+        
+
+
+        
+
+
+        
+    
+        
+        
+    
+    
+    
+    
+        <ul class="post-nav">
+            
+                <li class="post-nav-prev">
+                    <a href="/posts/kafka-producer-idempotence/" rel="prev">&lt; Kafka Producer 幂等性原理</a>
+                </li>
+            
+            
+                <li class="post-nav-next">
+                    <a href="/posts/spark-sql-cdh/" rel="next">CDH 集群添加 Spark Sql 命令行 &gt;</a>
+                </li>
+            
+        </ul>
+    
+
+
+
+        
+    
+
+        
+
+        
+
+        
+            <div id="vcomments"></div>
+        
+
+        
+
+        
+    
+
+
+
+    </div>
+</main>
+
+
+            
+    <div id="back-to-top" class="back-to-top">
+        <a href="#"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512" class="icon arrow-up"><path d="M34.9 289.5l-22.2-22.2c-9.4-9.4-9.4-24.6 0-33.9L207 39c9.4-9.4 24.6-9.4 33.9 0l194.3 194.3c9.4 9.4 9.4 24.6 0 33.9L413 289.4c-9.5 9.5-25 9.3-34.3-.4L264 168.6V456c0 13.3-10.7 24-24 24h-32c-13.3 0-24-10.7-24-24V168.6L69.2 289.1c-9.3 9.8-24.8 10-34.3.4z"/></svg></a>
+    </div>
+
+
+            
+    <footer id="footer" class="footer">
+        <div class="footer-inner">
+            <div class="site-info">©&nbsp;2019–2021&nbsp;<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon footer-icon"><path d="M462.3 62.6C407.5 15.9 326 24.3 275.7 76.2L256 96.5l-19.7-20.3C186.1 24.3 104.5 15.9 49.7 62.6c-62.8 53.6-66.1 149.8-9.9 207.9l193.5 199.8c12.5 12.9 32.8 12.9 45.3 0l193.5-199.8c56.3-58.1 53-154.3-9.8-207.9z"/></svg>&nbsp;zhmin</div><div class="site-copyright"></div>
+
+            
+    
+        <ul class="socials"><li class="socials-item">
+                    <a href="/rss.xml" target="_blank" rel="external noopener" title="RSS"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" class="icon social-icon"><path d="M19.199 24C19.199 13.467 10.533 4.8 0 4.8V0c13.165 0 24 10.835 24 24h-4.801zM3.291 17.415c1.814 0 3.293 1.479 3.293 3.295 0 1.813-1.485 3.29-3.301 3.29C1.47 24 0 22.526 0 20.71s1.475-3.294 3.291-3.295zM15.909 24h-4.665c0-6.169-5.075-11.245-11.244-11.245V8.09c8.727 0 15.909 7.184 15.909 15.91z"/></svg></a>
+                </li><li class="socials-item">
+                    <a href="mailto:reuixiy@gmail.com" target="_blank" rel="external noopener" title="Email"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon social-icon"><path d="M464 64H48C21.49 64 0 85.49 0 112v288c0 26.51 21.49 48 48 48h416c26.51 0 48-21.49 48-48V112c0-26.51-21.49-48-48-48zm0 48v40.805c-22.422 18.259-58.168 46.651-134.587 106.49-16.841 13.247-50.201 45.072-73.413 44.701-23.208.375-56.579-31.459-73.413-44.701C106.18 199.465 70.425 171.067 48 152.805V112h416zM48 400V214.398c22.914 18.251 55.409 43.862 104.938 82.646 21.857 17.205 60.134 55.186 103.062 54.955 42.717.231 80.509-37.199 103.053-54.947 49.528-38.783 82.032-64.401 104.947-82.653V400H48z"/></svg></a>
+                </li><li class="socials-item">
+                    <a href="https://github.com/reuixiy" target="_blank" rel="external noopener" title="GitHub"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" class="icon social-icon"><path d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"/></svg></a>
+                </li><li class="socials-item">
+                    <a href="https://twitter.com/reuixiy" target="_blank" rel="external noopener" title="Twitter"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon social-icon"><path d="M459.37 151.716c.325 4.548.325 9.097.325 13.645 0 138.72-105.583 298.558-298.558 298.558-59.452 0-114.68-17.219-161.137-47.106 8.447.974 16.568 1.299 25.34 1.299 49.055 0 94.213-16.568 130.274-44.832-46.132-.975-84.792-31.188-98.112-72.772 6.498.974 12.995 1.624 19.818 1.624 9.421 0 18.843-1.3 27.614-3.573-48.081-9.747-84.143-51.98-84.143-102.985v-1.299c13.969 7.797 30.214 12.67 47.431 13.319-28.264-18.843-46.781-51.005-46.781-87.391 0-19.492 5.197-37.36 14.294-52.954 51.655 63.675 129.3 105.258 216.365 109.807-1.624-7.797-2.599-15.918-2.599-24.04 0-57.828 46.782-104.934 104.934-104.934 30.213 0 57.502 12.67 76.67 33.137 23.715-4.548 46.456-13.32 66.599-25.34-7.798 24.366-24.366 44.833-46.132 57.827 21.117-2.273 41.584-8.122 60.426-16.243-14.292 20.791-32.161 39.308-52.628 54.253z"/></svg></a>
+                </li><li class="socials-item">
+                    <a href="https://t.me/yixiuer" target="_blank" rel="external noopener" title="Telegram"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512" class="icon social-icon"><path d="M248 8C111 8 0 119 0 256s111 248 248 248 248-111 248-248S385 8 248 8zm121.8 169.9l-40.7 191.8c-3 13.6-11.1 16.9-22.4 10.5l-62-45.7-29.9 28.8c-3.3 3.3-6.1 6.1-12.5 6.1l4.4-63.1 114.9-103.8c5-4.4-1.1-6.9-7.7-2.5l-142 89.4-61.2-19.1c-13.3-4.2-13.6-13.3 2.8-19.7l239.1-92.2c11.1-4 20.8 2.7 17.2 19.5z"/></svg></a>
+                </li></ul>
+    
+
+
+
+            
+        </div>
+    </footer>
+
+
+        </div>
+        
+
+        
+
+
+
+
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@8.8.3/dist/mermaid.min.js"></script>
+<script>
+    
+    Array.from(document.getElementsByClassName("language-mermaid")).forEach(
+        (el) => {
+            el.parentElement.outerHTML = `<div class="mermaid">${el.innerText}</div>`;
+        }
+    );
+    let mermaidConfig = {
+        startOnLoad: true,
+        flowchart: {
+            useMaxWidth: false,
+            htmlLabels: true
+        },
+        theme: 'forest'
+    };
+    mermaid.initialize(mermaidConfig);
+</script>
+
+
+
+    
+
+        
+
+        
+            <script>
+    function loadComments() {
+        if (typeof Valine === 'undefined') {
+            var getScript = (options) => {
+                var script = document.createElement('script');
+                script.defer = true;
+                script.crossOrigin = 'anonymous';
+                Object.keys(options).forEach((key) => {
+                    script[key] = options[key];
+                });
+                document.body.appendChild(script);
+            };
+            getScript({
+                src: 'https://cdn.jsdelivr.net/npm/valine@1.4.14/dist/Valine.min.js',
+                onload: () => {
+                    newValine();
+                }
+            });
+        } else {
+            newValine();
+        }
+    }
+    function newValine() {
+        new Valine({
+            el: '#vcomments',
+            appId: 'rArgi8qro88zmWgSe68qAzgL-gzGzoHsz',
+            appKey: 'R6YKDBN8HFTAqWcuSTzrSb6e',
+            placeholder: 'Just go go',
+            path: location.pathname,
+            avatar: 'mm',
+            meta: ["nick","mail","link"],
+            pageSize:  10 ,
+            lang: 'zh-cn',
+            visitor:  true ,
+            highlight:  true ,
+            avatarForce:  false ,
+            recordIP:  false ,
+            serverURLs: '',
+            emojiCDN: '',
+            emojiMaps: {},
+            enableQQ:  false ,
+            requiredFields: []
+        });
+    }
+</script>
+
+        
+
+        
+
+        
+
+    
+
+
+
+    <script src="https://cdn.jsdelivr.net/npm/medium-zoom@latest/dist/medium-zoom.min.js"></script>
+
+<script>
+    let imgNodes = document.querySelectorAll('div.post-body img');
+    imgNodes = Array.from(imgNodes).filter(node => node.parentNode.tagName !== "A");
+
+    mediumZoom(imgNodes, {
+        background: 'hsla(var(--color-bg-h), var(--color-bg-s), var(--color-bg-l), 0.95)'
+    })
+</script>
+
+
+
+
+    <script src="https://cdn.jsdelivr.net/npm/instant.page@5.1.0/instantpage.min.js" type="module" defer></script>
+
+
+
+
+
+
+
+    </body>
+</html>
