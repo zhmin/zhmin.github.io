@@ -3,7 +3,7 @@
     <head prefix="og: http://ogp.me/ns# article: http://ogp.me/ns/article#">
     <meta charset="UTF-8" />
 
-    <meta name="generator" content="Hugo 0.79.0" /><meta name="theme-color" content="#fff" />
+    <meta name="generator" content="Hugo 0.88.1" /><meta name="theme-color" content="#fff" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     
     <meta name="format-detection" content="telephone=no, date=no, address=no, email=no" />
@@ -14,11 +14,11 @@
 
     <title>Postgresql BRIN 索引原理 | 学习笔记</title>
 
-    <link rel="stylesheet" href="/css/meme.min.81031e6b78ad2f1f534002ebb3b658886fea2f25d8a44d296d1466a2fe52f1c1.css"/>
+    <link rel="stylesheet" href="/css/meme.min.2d3e1834af2bc8dda20c7d74aaa1d8134845094441b7a554a5206ccd4b472596.css"/>
 
     
     
-        <script src="/js/meme.min.120d98bb614adc6beb13bf79f943d2cceffd323f4de1544029228c3dca2e9bda.js"></script>
+        <script src="/js/meme.min.800f61672145711eb3e1f29fcfcc3dbe0139dd459259718b611a0390f74703d1.js"></script>
 
     
 
@@ -54,7 +54,7 @@
         "@context": "https://schema.org",
         "@type": "BlogPosting",
         "datePublished": "2020-08-25T20:30:23+00:00",
-        "dateModified": "2021-09-12T11:48:25+08:00",
+        "dateModified": "2021-10-22T14:44:34+08:00",
         "url": "https://zhmin.github.io/posts/postgresql-block-range-index/",
         "headline": "Postgresql BRIN 索引原理",
         "description": "前言 postgresql 提供了块级索引（简称 BRIN），主要适用于类似时序数据之类的，有着天然的顺序，而且都是添加写的场景。相比于 btree 索引，它的体积小得多，非常适用于大数据量的场景。 原理 postgresql 按照一定的数目（默认 128， 可以……",
@@ -97,7 +97,7 @@
 <meta property="og:locale" content="zh" /><meta property="og:image" content="https://zhmin.github.io/pg-range-principle.svg" />
 <meta property="og:type" content="article" />
     <meta property="article:published_time" content="2020-08-25T20:30:23&#43;00:00" />
-    <meta property="article:modified_time" content="2021-09-12T11:48:25&#43;08:00" />
+    <meta property="article:modified_time" content="2021-10-22T14:44:34&#43;08:00" />
     
     <meta property="article:section" content="posts" />
 
@@ -248,7 +248,7 @@
 <p>BRIN 的第一个 Page 是 Meta Page，它存储了整个索引的元信息。数据定义如下：</p>
 <div class="highlight"><div class="chroma">
 <div class="table-container"><table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
@@ -257,7 +257,7 @@
 </span><span class="lnt">7
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-c" data-lang="c"><span class="k">typedef</span> <span class="k">struct</span> <span class="n">BrinMetaPageData</span>
+<pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="k">typedef</span> <span class="k">struct</span> <span class="n">BrinMetaPageData</span>
 <span class="p">{</span>
 	<span class="n">uint32</span>		<span class="n">brinMagic</span><span class="p">;</span>   <span class="c1">// 标识符
 </span><span class="c1"></span>	<span class="n">uint32</span>		<span class="n">brinVersion</span><span class="p">;</span>  <span class="c1">// 版本号
@@ -272,7 +272,7 @@
 <p>计算的公式如下：</p>
 <div class="highlight"><div class="chroma">
 <div class="table-container"><table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
@@ -281,7 +281,7 @@
 </span><span class="lnt">7
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-c" data-lang="c"><span class="n">targetblk</span> <span class="o">=</span> <span class="n">HEAPBLK_TO_REVMAP_BLK</span><span class="p">(</span><span class="n">revmap</span><span class="o">-&gt;</span><span class="n">rm_pagesPerRange</span><span class="p">,</span> <span class="n">heapBlk</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span> <span class="c1">// 这里加1是指 meta page
+<pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="n">targetblk</span> <span class="o">=</span> <span class="n">HEAPBLK_TO_REVMAP_BLK</span><span class="p">(</span><span class="n">revmap</span><span class="o">-&gt;</span><span class="n">rm_pagesPerRange</span><span class="p">,</span> <span class="n">heapBlk</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span> <span class="c1">// 这里加1是指 meta page
 </span><span class="c1"></span>
 <span class="c1">// 计算第几个Range Map Page, REVMAP_PAGE_MAXITEMS表示一个 Page 包含的 ItemPointData 数目
 </span><span class="c1"></span><span class="cp">#define HEAPBLK_TO_REVMAP_BLK(pagesPerRange, heapBlk)    ((heapBlk / pagesPerRange) / REVMAP_PAGE_MAXITEMS)  
@@ -332,9 +332,9 @@
 
         
     <div class="updated-badge-container">
-        <span title="Updated @ 2021-09-12 11:48:25 CST" style="cursor:help">
+        <span title="Updated @ 2021-10-22 14:44:34 CST" style="cursor:help">
 
-<svg xmlns="http://www.w3.org/2000/svg" width="130" height="20" class="updated-badge"><linearGradient id="b" x2="0" y2="100%"><stop offset="0" stop-color="#bbb" stop-opacity=".1"/><stop offset="1" stop-opacity=".1"/></linearGradient><clipPath id="a"><rect width="130" height="20" rx="3" fill="#fff"/></clipPath><g clip-path="url(#a)"><path class="updated-badge-left" d="M0 0h55v20H0z"/><path class="updated-badge-right" d="M55 0h75v20H55z"/><path fill="url(#b)" d="M0 0h130v20H0z"/></g><g fill="#fff" text-anchor="middle" font-size="110"><text x="285" y="150" fill="#010101" fill-opacity=".3" textLength="450" transform="scale(.1)">updated</text><text x="285" y="140" textLength="450" transform="scale(.1)">updated</text><text x="915" y="150" fill="#010101" fill-opacity=".3" textLength="650" transform="scale(.1)">2021-09-12</text><text x="915" y="140" textLength="650" transform="scale(.1)">2021-09-12</text></g></svg>
+<svg xmlns="http://www.w3.org/2000/svg" width="130" height="20" class="updated-badge"><linearGradient id="b" x2="0" y2="100%"><stop offset="0" stop-color="#bbb" stop-opacity=".1"/><stop offset="1" stop-opacity=".1"/></linearGradient><clipPath id="a"><rect width="130" height="20" rx="3" fill="#fff"/></clipPath><g clip-path="url(#a)"><path class="updated-badge-left" d="M0 0h55v20H0z"/><path class="updated-badge-right" d="M55 0h75v20H55z"/><path fill="url(#b)" d="M0 0h130v20H0z"/></g><g fill="#fff" text-anchor="middle" font-size="110"><text x="285" y="150" fill="#010101" fill-opacity=".3" textLength="450" transform="scale(.1)">updated</text><text x="285" y="140" textLength="450" transform="scale(.1)">updated</text><text x="915" y="150" fill="#010101" fill-opacity=".3" textLength="650" transform="scale(.1)">2021-10-22</text><text x="915" y="140" textLength="650" transform="scale(.1)">2021-10-22</text></g></svg>
         </span></div>
 
 

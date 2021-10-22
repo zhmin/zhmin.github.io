@@ -3,7 +3,7 @@
     <head prefix="og: http://ogp.me/ns# article: http://ogp.me/ns/article#">
     <meta charset="UTF-8" />
 
-    <meta name="generator" content="Hugo 0.79.0" /><meta name="theme-color" content="#fff" />
+    <meta name="generator" content="Hugo 0.88.1" /><meta name="theme-color" content="#fff" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     
     <meta name="format-detection" content="telephone=no, date=no, address=no, email=no" />
@@ -14,11 +14,11 @@
 
     <title>Apache Shiro Session 管理 | 学习笔记</title>
 
-    <link rel="stylesheet" href="/css/meme.min.81031e6b78ad2f1f534002ebb3b658886fea2f25d8a44d296d1466a2fe52f1c1.css"/>
+    <link rel="stylesheet" href="/css/meme.min.2d3e1834af2bc8dda20c7d74aaa1d8134845094441b7a554a5206ccd4b472596.css"/>
 
     
     
-        <script src="/js/meme.min.120d98bb614adc6beb13bf79f943d2cceffd323f4de1544029228c3dca2e9bda.js"></script>
+        <script src="/js/meme.min.800f61672145711eb3e1f29fcfcc3dbe0139dd459259718b611a0390f74703d1.js"></script>
 
     
 
@@ -54,7 +54,7 @@
         "@context": "https://schema.org",
         "@type": "BlogPosting",
         "datePublished": "2020-04-14T22:31:01+00:00",
-        "dateModified": "2021-09-12T11:48:25+08:00",
+        "dateModified": "2021-10-22T14:44:34+08:00",
         "url": "https://zhmin.github.io/posts/shiro-session/",
         "headline": "Apache Shiro Session 管理",
         "description": "前言 shiro 提供了 session 用于保存与用户相关的信息，需要注意到这和 HTTP 的 session 概念是不一样的，它可以运行在没有web环境下。本篇文章会先介绍 Web 环境下的原理，读者有兴趣的话，可以看看在非 Web 环境下的原理。 Session 接口 classDiagram class Session \u003c\u003cinterface\u003e\u003e Session class……",
@@ -97,7 +97,7 @@
 <meta property="og:locale" content="zh" /><meta property="og:image" content="https://zhmin.github.io/icons/apple-touch-icon.png" />
     <meta property="og:type" content="article" />
     <meta property="article:published_time" content="2020-04-14T22:31:01&#43;00:00" />
-    <meta property="article:modified_time" content="2021-09-12T11:48:25&#43;08:00" />
+    <meta property="article:modified_time" content="2021-10-22T14:44:34&#43;08:00" />
     
     <meta property="article:section" content="posts" />
 
@@ -238,7 +238,7 @@
                 <h2 id="前言"><a href="#前言" class="anchor-link"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon anchor-icon"><path d="M326.612 185.391c59.747 59.809 58.927 155.698.36 214.59-.11.12-.24.25-.36.37l-67.2 67.2c-59.27 59.27-155.699 59.262-214.96 0-59.27-59.26-59.27-155.7 0-214.96l37.106-37.106c9.84-9.84 26.786-3.3 27.294 10.606.648 17.722 3.826 35.527 9.69 52.721 1.986 5.822.567 12.262-3.783 16.612l-13.087 13.087c-28.026 28.026-28.905 73.66-1.155 101.96 28.024 28.579 74.086 28.749 102.325.51l67.2-67.19c28.191-28.191 28.073-73.757 0-101.83-3.701-3.694-7.429-6.564-10.341-8.569a16.037 16.037 0 0 1-6.947-12.606c-.396-10.567 3.348-21.456 11.698-29.806l21.054-21.055c5.521-5.521 14.182-6.199 20.584-1.731a152.482 152.482 0 0 1 20.522 17.197zM467.547 44.449c-59.261-59.262-155.69-59.27-214.96 0l-67.2 67.2c-.12.12-.25.25-.36.37-58.566 58.892-59.387 154.781.36 214.59a152.454 152.454 0 0 0 20.521 17.196c6.402 4.468 15.064 3.789 20.584-1.731l21.054-21.055c8.35-8.35 12.094-19.239 11.698-29.806a16.037 16.037 0 0 0-6.947-12.606c-2.912-2.005-6.64-4.875-10.341-8.569-28.073-28.073-28.191-73.639 0-101.83l67.2-67.19c28.239-28.239 74.3-28.069 102.325.51 27.75 28.3 26.872 73.934-1.155 101.96l-13.087 13.087c-4.35 4.35-5.769 10.79-3.783 16.612 5.864 17.194 9.042 34.999 9.69 52.721.509 13.906 17.454 20.446 27.294 10.606l37.106-37.106c59.271-59.259 59.271-155.699.001-214.959z"/></svg></a>前言</h2>
 <p>shiro 提供了 session 用于保存与用户相关的信息，需要注意到这和 HTTP 的 session 概念是不一样的，它可以运行在没有web环境下。本篇文章会先介绍 Web 环境下的原理，读者有兴趣的话，可以看看在非 Web 环境下的原理。</p>
 <h2 id="session-接口"><a href="#session-接口" class="anchor-link"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon anchor-icon"><path d="M326.612 185.391c59.747 59.809 58.927 155.698.36 214.59-.11.12-.24.25-.36.37l-67.2 67.2c-59.27 59.27-155.699 59.262-214.96 0-59.27-59.26-59.27-155.7 0-214.96l37.106-37.106c9.84-9.84 26.786-3.3 27.294 10.606.648 17.722 3.826 35.527 9.69 52.721 1.986 5.822.567 12.262-3.783 16.612l-13.087 13.087c-28.026 28.026-28.905 73.66-1.155 101.96 28.024 28.579 74.086 28.749 102.325.51l67.2-67.19c28.191-28.191 28.073-73.757 0-101.83-3.701-3.694-7.429-6.564-10.341-8.569a16.037 16.037 0 0 1-6.947-12.606c-.396-10.567 3.348-21.456 11.698-29.806l21.054-21.055c5.521-5.521 14.182-6.199 20.584-1.731a152.482 152.482 0 0 1 20.522 17.197zM467.547 44.449c-59.261-59.262-155.69-59.27-214.96 0l-67.2 67.2c-.12.12-.25.25-.36.37-58.566 58.892-59.387 154.781.36 214.59a152.454 152.454 0 0 0 20.521 17.196c6.402 4.468 15.064 3.789 20.584-1.731l21.054-21.055c8.35-8.35 12.094-19.239 11.698-29.806a16.037 16.037 0 0 0-6.947-12.606c-2.912-2.005-6.64-4.875-10.341-8.569-28.073-28.073-28.191-73.639 0-101.83l67.2-67.19c28.239-28.239 74.3-28.069 102.325.51 27.75 28.3 26.872 73.934-1.155 101.96l-13.087 13.087c-4.35 4.35-5.769 10.79-3.783 16.612 5.864 17.194 9.042 34.999 9.69 52.721.509 13.906 17.454 20.446 27.294 10.606l37.106-37.106c59.271-59.259 59.271-155.699.001-214.959z"/></svg></a>Session 接口</h2>
-<pre><code class="language-mermaid" data-lang="mermaid">classDiagram
+<pre tabindex="0"><code class="language-mermaid" data-lang="mermaid">classDiagram
 	class Session
 	&lt;&lt;interface&gt;&gt; Session
 	
@@ -261,7 +261,7 @@
 </code></pre><p><code>Session</code> 定义了主要接口，支持设置时间有效期，存储等。</p>
 <div class="highlight"><div class="chroma">
 <div class="table-container"><table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -278,7 +278,7 @@
 </span><span class="lnt">15
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">interface</span> <span class="nc">Session</span> <span class="o">{</span>
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">interface</span> <span class="nc">Session</span> <span class="o">{</span>
     
     <span class="c1">// 返回 sessionId
 </span><span class="c1"></span>	<span class="n">Serializable</span> <span class="nf">getId</span><span class="o">();</span>
@@ -305,7 +305,7 @@
 <p><code>SessionManager</code>只有两个方法，创建和查找 session。通过这两个方法的声明，可以看到多个概念的联系。</p>
 <div class="highlight"><div class="chroma">
 <div class="table-container"><table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
@@ -315,7 +315,7 @@
 </span><span class="lnt">8
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">interface</span> <span class="nc">SessionManager</span> <span class="o">{</span>
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">interface</span> <span class="nc">SessionManager</span> <span class="o">{</span>
     
     <span class="c1">// 创建Session实例
 </span><span class="c1"></span>    <span class="n">Session</span> <span class="nf">start</span><span class="o">(</span><span class="n">SessionContext</span> <span class="n">context</span><span class="o">);</span>
@@ -334,7 +334,7 @@
 </ul>
 <h3 id="sessionmanager-类图"><a href="#sessionmanager-类图" class="anchor-link"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon anchor-icon"><path d="M326.612 185.391c59.747 59.809 58.927 155.698.36 214.59-.11.12-.24.25-.36.37l-67.2 67.2c-59.27 59.27-155.699 59.262-214.96 0-59.27-59.26-59.27-155.7 0-214.96l37.106-37.106c9.84-9.84 26.786-3.3 27.294 10.606.648 17.722 3.826 35.527 9.69 52.721 1.986 5.822.567 12.262-3.783 16.612l-13.087 13.087c-28.026 28.026-28.905 73.66-1.155 101.96 28.024 28.579 74.086 28.749 102.325.51l67.2-67.19c28.191-28.191 28.073-73.757 0-101.83-3.701-3.694-7.429-6.564-10.341-8.569a16.037 16.037 0 0 1-6.947-12.606c-.396-10.567 3.348-21.456 11.698-29.806l21.054-21.055c5.521-5.521 14.182-6.199 20.584-1.731a152.482 152.482 0 0 1 20.522 17.197zM467.547 44.449c-59.261-59.262-155.69-59.27-214.96 0l-67.2 67.2c-.12.12-.25.25-.36.37-58.566 58.892-59.387 154.781.36 214.59a152.454 152.454 0 0 0 20.521 17.196c6.402 4.468 15.064 3.789 20.584-1.731l21.054-21.055c8.35-8.35 12.094-19.239 11.698-29.806a16.037 16.037 0 0 0-6.947-12.606c-2.912-2.005-6.64-4.875-10.341-8.569-28.073-28.073-28.191-73.639 0-101.83l67.2-67.19c28.239-28.239 74.3-28.069 102.325.51 27.75 28.3 26.872 73.934-1.155 101.96l-13.087 13.087c-4.35 4.35-5.769 10.79-3.783 16.612 5.864 17.194 9.042 34.999 9.69 52.721.509 13.906 17.454 20.446 27.294 10.606l37.106-37.106c59.271-59.259 59.271-155.699.001-214.959z"/></svg></a>SessionManager 类图</h3>
 <p>session 管理根据使用环境分为 HTTP 和 非 HTTP 两类。下图中左边的部分是使用本地 session 管理，在 Web 环境和非 Web 环境下都可以试用。右边的是使用<code>Servlet</code>自带的 session 管理，只能在 Web 环境下使用。</p>
-<pre><code class="language-mermaid" data-lang="mermaid">classDiagram
+<pre tabindex="0"><code class="language-mermaid" data-lang="mermaid">classDiagram
 	class SessionManager
 	&lt;&lt;interface&gt;&gt; SessionManager
 	
@@ -389,7 +389,7 @@
 <p>因为 Web 的场景会非常普遍，而且实现也比较简单，所以会先讲解这部分。<code>ServletContainerSessionManager</code>类实现了<code>SessionManager</code>接口，下面是它的代码</p>
 <div class="highlight"><div class="chroma">
 <div class="table-container"><table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -427,7 +427,7 @@
 </span><span class="lnt">36
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">ServletContainerSessionManager</span> <span class="kd">implements</span> <span class="n">WebSessionManager</span> <span class="o">{</span>
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">ServletContainerSessionManager</span> <span class="kd">implements</span> <span class="n">WebSessionManager</span> <span class="o">{</span>
     
     <span class="c1">// 实现start接口，创建Session实例
 </span><span class="c1"></span>    <span class="kd">public</span> <span class="n">Session</span> <span class="nf">start</span><span class="o">(</span><span class="n">SessionContext</span> <span class="n">context</span><span class="o">)</span> <span class="kd">throws</span> <span class="n">AuthorizationException</span> <span class="o">{</span>
@@ -468,7 +468,7 @@
 </div><p>可以看到，它只是简单的调用了<code>HttpServletRequest</code>相关的方法，创建了<code>HttpServletSession</code>实例。<code>HttpServletSession</code>也只是简单的包装了一下<code>HTTPSession</code>。</p>
 <div class="highlight"><div class="chroma">
 <div class="table-container"><table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -489,7 +489,7 @@
 </span><span class="lnt">19
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">HttpServletSession</span> <span class="kd">implements</span> <span class="n">Session</span> <span class="o">{</span>
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">HttpServletSession</span> <span class="kd">implements</span> <span class="n">Session</span> <span class="o">{</span>
     
     <span class="kd">private</span> <span class="n">HttpSession</span> <span class="n">httpSession</span> <span class="o">=</span> <span class="kc">null</span><span class="o">;</span>
     
@@ -514,7 +514,7 @@
 <p><code>DefaultSessionManager</code>是非 Web 环境下默认的 session 管理器。我们来看看它的实现原理，因为它继承了<code>AbstractNativeSessionManager</code>类，所以真正的创建 session 实例由<code>doCreateSession</code>方法负责。从下面的代码可以看到，session的创建是有工厂类<code>SessionFactory</code>负责，并且创建后还会将其持久化。</p>
 <div class="highlight"><div class="chroma">
 <div class="table-container"><table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -540,7 +540,7 @@
 </span><span class="lnt">24
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">DefaultSessionManager</span> <span class="kd">extends</span> <span class="n">AbstractValidatingSessionManager</span> <span class="o">{</span>
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">DefaultSessionManager</span> <span class="kd">extends</span> <span class="n">AbstractValidatingSessionManager</span> <span class="o">{</span>
     
     <span class="c1">// 负责实例化 session
 </span><span class="c1"></span>    <span class="kd">private</span> <span class="n">SessionFactory</span> <span class="n">sessionFactory</span><span class="o">;</span>
@@ -569,7 +569,7 @@
 </div><p>同样根据 sessionId 查找 session 的方法，最终由<code>retrieveSession</code>实现。可以看到session的查找最终是由<code>SessionDAO</code>负责。</p>
 <div class="highlight"><div class="chroma">
 <div class="table-container"><table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -584,7 +584,7 @@
 </span><span class="lnt">13
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">DefaultSessionManager</span> <span class="kd">extends</span> <span class="n">AbstractValidatingSessionManager</span> <span class="o">{</span>
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">DefaultSessionManager</span> <span class="kd">extends</span> <span class="n">AbstractValidatingSessionManager</span> <span class="o">{</span>
     
     <span class="kd">protected</span> <span class="n">Session</span> <span class="nf">retrieveSession</span><span class="o">(</span><span class="n">SessionKey</span> <span class="n">sessionKey</span><span class="o">)</span> <span class="kd">throws</span> <span class="n">UnknownSessionException</span> <span class="o">{</span>
         <span class="n">Serializable</span> <span class="n">sessionId</span> <span class="o">=</span> <span class="n">getSessionId</span><span class="o">(</span><span class="n">sessionKey</span><span class="o">);</span>
@@ -605,12 +605,12 @@
 <p><code>SessionFactory</code>接口定义了创建 Session 的方法<code>createSession</code>，其中参数<code>SessionContext</code>是用作初始化的。</p>
 <div class="highlight"><div class="chroma">
 <div class="table-container"><table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">interface</span> <span class="nc">SessionFactory</span> <span class="o">{</span>
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">interface</span> <span class="nc">SessionFactory</span> <span class="o">{</span>
     <span class="n">Session</span> <span class="nf">createSession</span><span class="o">(</span><span class="n">SessionContext</span> <span class="n">initData</span><span class="o">);</span>
 <span class="o">}</span>
 </code></pre></td></tr></table></div>
@@ -618,7 +618,7 @@
 </div><p>目前只有<code>SimpleSessionFactory</code>类实现了该接口，它的实现非常简单</p>
 <div class="highlight"><div class="chroma">
 <div class="table-container"><table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -633,7 +633,7 @@
 </span><span class="lnt">13
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">SimpleSessionFactory</span> <span class="kd">implements</span> <span class="n">SessionFactory</span> <span class="o">{</span>
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">SimpleSessionFactory</span> <span class="kd">implements</span> <span class="n">SessionFactory</span> <span class="o">{</span>
 
     <span class="c1">// 这里只是存储了客户端的host
 </span><span class="c1"></span>    <span class="kd">public</span> <span class="n">Session</span> <span class="nf">createSession</span><span class="o">(</span><span class="n">SessionContext</span> <span class="n">initData</span><span class="o">)</span> <span class="o">{</span>
@@ -650,7 +650,7 @@
 </div>
 </div><h3 id="初始化参数sessioncontext"><a href="#初始化参数sessioncontext" class="anchor-link"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon anchor-icon"><path d="M326.612 185.391c59.747 59.809 58.927 155.698.36 214.59-.11.12-.24.25-.36.37l-67.2 67.2c-59.27 59.27-155.699 59.262-214.96 0-59.27-59.26-59.27-155.7 0-214.96l37.106-37.106c9.84-9.84 26.786-3.3 27.294 10.606.648 17.722 3.826 35.527 9.69 52.721 1.986 5.822.567 12.262-3.783 16.612l-13.087 13.087c-28.026 28.026-28.905 73.66-1.155 101.96 28.024 28.579 74.086 28.749 102.325.51l67.2-67.19c28.191-28.191 28.073-73.757 0-101.83-3.701-3.694-7.429-6.564-10.341-8.569a16.037 16.037 0 0 1-6.947-12.606c-.396-10.567 3.348-21.456 11.698-29.806l21.054-21.055c5.521-5.521 14.182-6.199 20.584-1.731a152.482 152.482 0 0 1 20.522 17.197zM467.547 44.449c-59.261-59.262-155.69-59.27-214.96 0l-67.2 67.2c-.12.12-.25.25-.36.37-58.566 58.892-59.387 154.781.36 214.59a152.454 152.454 0 0 0 20.521 17.196c6.402 4.468 15.064 3.789 20.584-1.731l21.054-21.055c8.35-8.35 12.094-19.239 11.698-29.806a16.037 16.037 0 0 0-6.947-12.606c-2.912-2.005-6.64-4.875-10.341-8.569-28.073-28.073-28.191-73.639 0-101.83l67.2-67.19c28.239-28.239 74.3-28.069 102.325.51 27.75 28.3 26.872 73.934-1.155 101.96l-13.087 13.087c-4.35 4.35-5.769 10.79-3.783 16.612 5.864 17.194 9.042 34.999 9.69 52.721.509 13.906 17.454 20.446 27.294 10.606l37.106-37.106c59.271-59.259 59.271-155.699.001-214.959z"/></svg></a>初始化参数<code>SessionContext</code></h3>
 <p><code>SessionContext</code>的相关类图如下所示，虽然比较多，但是原理很简单。</p>
-<pre><code class="language-mermaid" data-lang="mermaid">classDiagram
+<pre tabindex="0"><code class="language-mermaid" data-lang="mermaid">classDiagram
 
 	class Map
 	&lt;&lt;interface&gt;&gt; Map
@@ -682,7 +682,7 @@
 </code></pre><p><code>SessionContext</code>继承 <code>Map</code>接口，并且定义了 host 和 sessionId 两个属性的操作方法。</p>
 <div class="highlight"><div class="chroma">
 <div class="table-container"><table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -694,7 +694,7 @@
 </span><span class="lnt">10
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">interface</span> <span class="nc">SessionContext</span> <span class="kd">extends</span> <span class="n">Map</span><span class="o">&lt;</span><span class="n">String</span><span class="o">,</span> <span class="n">Object</span><span class="o">&gt;</span> <span class="o">{</span>
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">interface</span> <span class="nc">SessionContext</span> <span class="kd">extends</span> <span class="n">Map</span><span class="o">&lt;</span><span class="n">String</span><span class="o">,</span> <span class="n">Object</span><span class="o">&gt;</span> <span class="o">{</span>
     
     <span class="kt">void</span> <span class="nf">setHost</span><span class="o">(</span><span class="n">String</span> <span class="n">host</span><span class="o">);</span>
     
@@ -712,7 +712,7 @@
 <p><code>SessionDAO</code>定义了 session 增删改查接口，如下所示：</p>
 <div class="highlight"><div class="chroma">
 <div class="table-container"><table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -726,7 +726,7 @@
 </span><span class="lnt">12
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">interface</span> <span class="nc">SessionDAO</span> <span class="o">{</span>
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">interface</span> <span class="nc">SessionDAO</span> <span class="o">{</span>
     
     <span class="n">Serializable</span> <span class="nf">create</span><span class="o">(</span><span class="n">Session</span> <span class="n">session</span><span class="o">);</span>
 
@@ -741,7 +741,7 @@
 </code></pre></td></tr></table></div>
 </div>
 </div><p>它的子类图如下所示：</p>
-<pre><code class="language-mermaid" data-lang="mermaid">classDiagram
+<pre tabindex="0"><code class="language-mermaid" data-lang="mermaid">classDiagram
 	class SessionDAO
 	&lt;&lt;interface&gt;&gt; SessionDAO
 	
@@ -764,7 +764,7 @@
 <p><code>MemorySessionDAO</code>使用了 <code>ConcurrentMap</code>来保存 session。</p>
 <p><code>CachingSessionDAO</code>实现了session缓存，用户可以集成<code>CacheManager</code>实现自定义的缓存。</p>
 <p>当持久化化 session 的时候，<code>SessionDAO</code>会使用<code>SessionIdGenerator</code>接口生成唯一的 <code>SessionId</code>。</p>
-<pre><code class="language-mermaid" data-lang="mermaid">classDiagram
+<pre tabindex="0"><code class="language-mermaid" data-lang="mermaid">classDiagram
 	class SessionIdGenerator
 	&lt;&lt;interface&gt;&gt; SessionIdGenerator
 	
@@ -778,7 +778,7 @@
 <p>我们再回到<code>DefaultSecurityManager</code>类，看看它是如何集成<code>Session</code>的。<code>SessionsSecurityManager</code>是它的父类，它默认使用<code>DefaultSessionManager</code>实现，实现了 session 管理。</p>
 <div class="highlight"><div class="chroma">
 <div class="table-container"><table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -800,7 +800,7 @@
 </span><span class="lnt">20
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">abstract</span> <span class="kd">class</span> <span class="nc">SessionsSecurityManager</span> <span class="kd">extends</span> <span class="n">AuthorizingSecurityManager</span> <span class="o">{</span>
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">abstract</span> <span class="kd">class</span> <span class="nc">SessionsSecurityManager</span> <span class="kd">extends</span> <span class="n">AuthorizingSecurityManager</span> <span class="o">{</span>
     
     <span class="kd">private</span> <span class="n">SessionManager</span> <span class="n">sessionManager</span><span class="o">;</span>
     
@@ -849,9 +849,9 @@
 
         
     <div class="updated-badge-container">
-        <span title="Updated @ 2021-09-12 11:48:25 CST" style="cursor:help">
+        <span title="Updated @ 2021-10-22 14:44:34 CST" style="cursor:help">
 
-<svg xmlns="http://www.w3.org/2000/svg" width="130" height="20" class="updated-badge"><linearGradient id="b" x2="0" y2="100%"><stop offset="0" stop-color="#bbb" stop-opacity=".1"/><stop offset="1" stop-opacity=".1"/></linearGradient><clipPath id="a"><rect width="130" height="20" rx="3" fill="#fff"/></clipPath><g clip-path="url(#a)"><path class="updated-badge-left" d="M0 0h55v20H0z"/><path class="updated-badge-right" d="M55 0h75v20H55z"/><path fill="url(#b)" d="M0 0h130v20H0z"/></g><g fill="#fff" text-anchor="middle" font-size="110"><text x="285" y="150" fill="#010101" fill-opacity=".3" textLength="450" transform="scale(.1)">updated</text><text x="285" y="140" textLength="450" transform="scale(.1)">updated</text><text x="915" y="150" fill="#010101" fill-opacity=".3" textLength="650" transform="scale(.1)">2021-09-12</text><text x="915" y="140" textLength="650" transform="scale(.1)">2021-09-12</text></g></svg>
+<svg xmlns="http://www.w3.org/2000/svg" width="130" height="20" class="updated-badge"><linearGradient id="b" x2="0" y2="100%"><stop offset="0" stop-color="#bbb" stop-opacity=".1"/><stop offset="1" stop-opacity=".1"/></linearGradient><clipPath id="a"><rect width="130" height="20" rx="3" fill="#fff"/></clipPath><g clip-path="url(#a)"><path class="updated-badge-left" d="M0 0h55v20H0z"/><path class="updated-badge-right" d="M55 0h75v20H55z"/><path fill="url(#b)" d="M0 0h130v20H0z"/></g><g fill="#fff" text-anchor="middle" font-size="110"><text x="285" y="150" fill="#010101" fill-opacity=".3" textLength="450" transform="scale(.1)">updated</text><text x="285" y="140" textLength="450" transform="scale(.1)">updated</text><text x="915" y="150" fill="#010101" fill-opacity=".3" textLength="650" transform="scale(.1)">2021-10-22</text><text x="915" y="140" textLength="650" transform="scale(.1)">2021-10-22</text></g></svg>
         </span></div>
 
 

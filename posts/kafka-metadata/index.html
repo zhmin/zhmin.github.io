@@ -3,7 +3,7 @@
     <head prefix="og: http://ogp.me/ns# article: http://ogp.me/ns/article#">
     <meta charset="UTF-8" />
 
-    <meta name="generator" content="Hugo 0.79.0" /><meta name="theme-color" content="#fff" />
+    <meta name="generator" content="Hugo 0.88.1" /><meta name="theme-color" content="#fff" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     
     <meta name="format-detection" content="telephone=no, date=no, address=no, email=no" />
@@ -14,11 +14,11 @@
 
     <title>Kafka 客户端元数据 | 学习笔记</title>
 
-    <link rel="stylesheet" href="/css/meme.min.81031e6b78ad2f1f534002ebb3b658886fea2f25d8a44d296d1466a2fe52f1c1.css"/>
+    <link rel="stylesheet" href="/css/meme.min.2d3e1834af2bc8dda20c7d74aaa1d8134845094441b7a554a5206ccd4b472596.css"/>
 
     
     
-        <script src="/js/meme.min.120d98bb614adc6beb13bf79f943d2cceffd323f4de1544029228c3dca2e9bda.js"></script>
+        <script src="/js/meme.min.800f61672145711eb3e1f29fcfcc3dbe0139dd459259718b611a0390f74703d1.js"></script>
 
     
 
@@ -54,7 +54,7 @@
         "@context": "https://schema.org",
         "@type": "BlogPosting",
         "datePublished": "2019-03-08T23:14:40+00:00",
-        "dateModified": "2021-09-12T11:48:25+08:00",
+        "dateModified": "2021-10-22T14:44:34+08:00",
         "url": "https://zhmin.github.io/posts/kafka-metadata/",
         "headline": "Kafka 客户端元数据",
         "description": "Kafka 客户端 元数据 元数据结构 元数据主要描述了topic在Kafka的集群分布情况，比如以下图为例， 当我们需要发送信息给 topic_A ，首先我们回去Kafka集群获取这个 topic 的分布情况。我们知道 topic 由多个 partition 组成， 每个par……",
@@ -97,7 +97,7 @@
 <meta property="og:locale" content="zh" /><meta property="og:image" content="https://zhmin.github.io/kafka-cluster-metadata.svg" />
 <meta property="og:type" content="article" />
     <meta property="article:published_time" content="2019-03-08T23:14:40&#43;00:00" />
-    <meta property="article:modified_time" content="2021-09-12T11:48:25&#43;08:00" />
+    <meta property="article:modified_time" content="2021-10-22T14:44:34&#43;08:00" />
     
     <meta property="article:section" content="posts" />
 
@@ -278,7 +278,7 @@
 <p>接下来看看这几个方法的定义</p>
 <div class="highlight"><div class="chroma">
 <div class="table-container"><table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -333,7 +333,7 @@
 </span><span class="lnt">53
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">final</span> <span class="kd">class</span> <span class="nc">Metadata</span> <span class="o">{</span>
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">final</span> <span class="kd">class</span> <span class="nc">Metadata</span> <span class="o">{</span>
     <span class="kd">private</span> <span class="kt">boolean</span> <span class="n">needUpdate</span><span class="o">;</span>  <span class="c1">// 是否需要更新
 </span><span class="c1"></span>    <span class="kd">private</span> <span class="kt">long</span> <span class="n">lastRefreshMs</span><span class="o">;</span>  <span class="c1">// 表示上次更新的时间
 </span><span class="c1"></span>    <span class="kd">private</span> <span class="kt">int</span> <span class="n">version</span><span class="o">;</span>  <span class="c1">// 版本号，每次数据更新，版本号都会递增
@@ -392,7 +392,7 @@
 <p>Metadata提供了update方法，用来更新Cluster数据。</p>
 <div class="highlight"><div class="chroma">
 <div class="table-container"><table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -439,7 +439,7 @@
 </span><span class="lnt">45
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">final</span> <span class="kd">class</span> <span class="nc">Metadata</span> <span class="o">{</span>
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">final</span> <span class="kd">class</span> <span class="nc">Metadata</span> <span class="o">{</span>
     
     <span class="c1">// 数据监听器
 </span><span class="c1"></span>    <span class="kd">private</span> <span class="kd">final</span> <span class="n">List</span><span class="o">&lt;</span><span class="n">Listener</span><span class="o">&gt;</span> <span class="n">listeners</span><span class="o">;</span>
@@ -490,7 +490,7 @@
 <p>NetworkClient每次poll的时候，都会调用MetadataUpdater的maybeUpdate方法， 检查Metadata是否需要更新。Metadata的timeToNextUpdate方法，会返回当前时间离下次更新时间的间隔。如果间隔为0，则表示需要立即更新</p>
 <div class="highlight"><div class="chroma">
 <div class="table-container"><table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -504,7 +504,7 @@
 </span><span class="lnt">12
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">final</span> <span class="kd">class</span> <span class="nc">Metadata</span> <span class="o">{</span>
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">final</span> <span class="kd">class</span> <span class="nc">Metadata</span> <span class="o">{</span>
     <span class="kd">public</span> <span class="kd">synchronized</span> <span class="kt">long</span> <span class="nf">timeToNextUpdate</span><span class="o">(</span><span class="kt">long</span> <span class="n">nowMs</span><span class="o">)</span> <span class="o">{</span>
         <span class="c1">// 如果设置了needUpdate，则认为需要立即更新，返回 0
 </span><span class="c1"></span>        <span class="c1">// metadataExpireMs定义了数据的过期时间，如果当前时间大于过期时间，则表示需要立即更新，返回 0
@@ -521,7 +521,7 @@
 </div><p>因为Kafka的集群的每个节点，都会存储着元数据。Kafka客户端在请求元数据时，会从中挑选出负载最轻的节点。至于如何判断负载程度，是以每个节点的发送队列的长度为准，这个队列就是以前介绍的InflightRequest队列。算法如下：</p>
 <div class="highlight"><div class="chroma">
 <div class="table-container"><table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -548,7 +548,7 @@
 </span><span class="lnt">25
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="n">Node</span> <span class="nf">leastLoadedNode</span><span class="o">(</span><span class="kt">long</span> <span class="n">now</span><span class="o">)</span> <span class="o">{</span>
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="n">Node</span> <span class="nf">leastLoadedNode</span><span class="o">(</span><span class="kt">long</span> <span class="n">now</span><span class="o">)</span> <span class="o">{</span>
     <span class="c1">// 获取目前所涉及到的节点列表
 </span><span class="c1"></span>    <span class="n">List</span><span class="o">&lt;</span><span class="n">Node</span><span class="o">&gt;</span> <span class="n">nodes</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="na">metadataUpdater</span><span class="o">.</span><span class="na">fetchNodes</span><span class="o">();</span>
     <span class="kt">int</span> <span class="n">inflight</span> <span class="o">=</span> <span class="n">Integer</span><span class="o">.</span><span class="na">MAX_VALUE</span><span class="o">;</span>
@@ -580,7 +580,7 @@
 <p>NetworkClient有一个内部类DefaultMetadataUpdater，实现了更新接口。</p>
 <div class="highlight"><div class="chroma">
 <div class="table-container"><table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -614,7 +614,7 @@
 </span><span class="lnt">32
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">NetworkClient</span> <span class="kd">implements</span> <span class="n">KafkaClient</span> <span class="o">{</span>
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">NetworkClient</span> <span class="kd">implements</span> <span class="n">KafkaClient</span> <span class="o">{</span>
     <span class="c1">// 元数据更新接口
 </span><span class="c1"></span>    <span class="kd">private</span> <span class="kd">final</span> <span class="n">MetadataUpdater</span> <span class="n">metadataUpdater</span><span class="o">;</span>
 
@@ -675,9 +675,9 @@
 
         
     <div class="updated-badge-container">
-        <span title="Updated @ 2021-09-12 11:48:25 CST" style="cursor:help">
+        <span title="Updated @ 2021-10-22 14:44:34 CST" style="cursor:help">
 
-<svg xmlns="http://www.w3.org/2000/svg" width="130" height="20" class="updated-badge"><linearGradient id="b" x2="0" y2="100%"><stop offset="0" stop-color="#bbb" stop-opacity=".1"/><stop offset="1" stop-opacity=".1"/></linearGradient><clipPath id="a"><rect width="130" height="20" rx="3" fill="#fff"/></clipPath><g clip-path="url(#a)"><path class="updated-badge-left" d="M0 0h55v20H0z"/><path class="updated-badge-right" d="M55 0h75v20H55z"/><path fill="url(#b)" d="M0 0h130v20H0z"/></g><g fill="#fff" text-anchor="middle" font-size="110"><text x="285" y="150" fill="#010101" fill-opacity=".3" textLength="450" transform="scale(.1)">updated</text><text x="285" y="140" textLength="450" transform="scale(.1)">updated</text><text x="915" y="150" fill="#010101" fill-opacity=".3" textLength="650" transform="scale(.1)">2021-09-12</text><text x="915" y="140" textLength="650" transform="scale(.1)">2021-09-12</text></g></svg>
+<svg xmlns="http://www.w3.org/2000/svg" width="130" height="20" class="updated-badge"><linearGradient id="b" x2="0" y2="100%"><stop offset="0" stop-color="#bbb" stop-opacity=".1"/><stop offset="1" stop-opacity=".1"/></linearGradient><clipPath id="a"><rect width="130" height="20" rx="3" fill="#fff"/></clipPath><g clip-path="url(#a)"><path class="updated-badge-left" d="M0 0h55v20H0z"/><path class="updated-badge-right" d="M55 0h75v20H55z"/><path fill="url(#b)" d="M0 0h130v20H0z"/></g><g fill="#fff" text-anchor="middle" font-size="110"><text x="285" y="150" fill="#010101" fill-opacity=".3" textLength="450" transform="scale(.1)">updated</text><text x="285" y="140" textLength="450" transform="scale(.1)">updated</text><text x="915" y="150" fill="#010101" fill-opacity=".3" textLength="650" transform="scale(.1)">2021-10-22</text><text x="915" y="140" textLength="650" transform="scale(.1)">2021-10-22</text></g></svg>
         </span></div>
 
 

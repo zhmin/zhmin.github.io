@@ -3,7 +3,7 @@
     <head prefix="og: http://ogp.me/ns# article: http://ogp.me/ns/article#">
     <meta charset="UTF-8" />
 
-    <meta name="generator" content="Hugo 0.79.0" /><meta name="theme-color" content="#fff" />
+    <meta name="generator" content="Hugo 0.88.1" /><meta name="theme-color" content="#fff" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     
     <meta name="format-detection" content="telephone=no, date=no, address=no, email=no" />
@@ -14,11 +14,11 @@
 
     <title>Spark UnsafeShuffleWriter 原理 | 学习笔记</title>
 
-    <link rel="stylesheet" href="/css/meme.min.81031e6b78ad2f1f534002ebb3b658886fea2f25d8a44d296d1466a2fe52f1c1.css"/>
+    <link rel="stylesheet" href="/css/meme.min.2d3e1834af2bc8dda20c7d74aaa1d8134845094441b7a554a5206ccd4b472596.css"/>
 
     
     
-        <script src="/js/meme.min.120d98bb614adc6beb13bf79f943d2cceffd323f4de1544029228c3dca2e9bda.js"></script>
+        <script src="/js/meme.min.800f61672145711eb3e1f29fcfcc3dbe0139dd459259718b611a0390f74703d1.js"></script>
 
     
 
@@ -54,7 +54,7 @@
         "@context": "https://schema.org",
         "@type": "BlogPosting",
         "datePublished": "2019-01-27T20:10:52+00:00",
-        "dateModified": "2021-09-12T11:48:25+08:00",
+        "dateModified": "2021-10-22T14:44:34+08:00",
         "url": "https://zhmin.github.io/posts/spark-unsafe-shuffle-writer/",
         "headline": "Spark UnsafeShuffleWriter 原理",
         "description": "前言 当分区的数目超过了一定大小，不满足 BypassMergeSortShuffleWriter 时候，Spark 会采用 UnsafeShuffleWriter 算法。同样 UnsafeShuffleWriter 也只适用于不需要聚合操作，也不需要排序的场景。 首先将数据序列化，保存在MemoryBlock中 计算数据的分区位置 记录数据的分……",
@@ -97,7 +97,7 @@
 <meta property="og:locale" content="zh" /><meta property="og:image" content="https://zhmin.github.io/spark-shuffle-unsafe.svg" />
 <meta property="og:type" content="article" />
     <meta property="article:published_time" content="2019-01-27T20:10:52&#43;00:00" />
-    <meta property="article:modified_time" content="2021-09-12T11:48:25&#43;08:00" />
+    <meta property="article:modified_time" content="2021-10-22T14:44:34&#43;08:00" />
     
     <meta property="article:section" content="posts" />
 
@@ -251,7 +251,7 @@
 <p>数据序列化由<code>UnsafeShuffleWriter</code>类负责，通过查看它的<code>insertRecordIntoSorter</code>方法，就能很清楚的明白。</p>
 <div class="highlight"><div class="chroma">
 <div class="table-container"><table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -276,7 +276,7 @@
 </span><span class="lnt">23
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">UnsafeShuffleWriter</span><span class="o">&lt;</span><span class="n">K</span><span class="o">,</span> <span class="n">V</span><span class="o">&gt;</span> <span class="kd">extends</span> <span class="n">ShuffleWriter</span><span class="o">&lt;</span><span class="n">K</span><span class="o">,</span> <span class="n">V</span><span class="o">&gt;</span> <span class="o">{</span>
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">UnsafeShuffleWriter</span><span class="o">&lt;</span><span class="n">K</span><span class="o">,</span> <span class="n">V</span><span class="o">&gt;</span> <span class="kd">extends</span> <span class="n">ShuffleWriter</span><span class="o">&lt;</span><span class="n">K</span><span class="o">,</span> <span class="n">V</span><span class="o">&gt;</span> <span class="o">{</span>
     
     <span class="c1">// 插入单条数据
 </span><span class="c1"></span>    <span class="kt">void</span> <span class="nf">insertRecordIntoSorter</span><span class="o">(</span><span class="n">Product2</span><span class="o">&lt;</span><span class="n">K</span><span class="o">,</span> <span class="n">V</span><span class="o">&gt;</span> <span class="n">record</span><span class="o">)</span> <span class="kd">throws</span> <span class="n">IOException</span> <span class="o">{</span>
@@ -305,7 +305,7 @@
 <p><code>ShuffleExternalSorter</code>会负责将数据存储到<code>MemoryBlock</code>中，然后提出取它的所在位置和分区位置，将其编码存储到<code>ShuffleInMemorySorter</code>中。</p>
 <div class="highlight"><div class="chroma">
 <div class="table-container"><table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
@@ -315,7 +315,7 @@
 </span><span class="lnt">8
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-scala" data-lang="scala"><span class="k">final</span> <span class="k">class</span> <span class="nc">ShuffleExternalSorter</span> <span class="k">extends</span> <span class="nc">MemoryConsumer</span> <span class="o">{</span>
+<pre tabindex="0" class="chroma"><code class="language-scala" data-lang="scala"><span class="k">final</span> <span class="k">class</span> <span class="nc">ShuffleExternalSorter</span> <span class="k">extends</span> <span class="nc">MemoryConsumer</span> <span class="o">{</span>
     
     <span class="c1">// 已分配的 MemoryBlock链表，用于存储数据
 </span><span class="c1"></span>    <span class="k">private</span> <span class="k">final</span> <span class="nc">LinkedList</span><span class="o">&lt;</span><span class="nc">MemoryBlock</span><span class="o">&gt;</span> <span class="n">allocatedPages</span> <span class="k">=</span> <span class="k">new</span> <span class="nc">LinkedList</span><span class="o">&lt;&gt;();</span>
@@ -328,7 +328,7 @@
 </div><p>我们通过查看<code>insertRecord</code>方法，就能明白两者之前的关系。下面的代码经过简化处理</p>
 <div class="highlight"><div class="chroma">
 <div class="table-container"><table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -351,7 +351,7 @@
 </span><span class="lnt">21
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-java" data-lang="java"><span class="c1">// recordBase表示数据对象的起始地址，
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="c1">// recordBase表示数据对象的起始地址，
 </span><span class="c1">// recordOffset表示数据的偏移量（相对于 recordBase）
 </span><span class="c1">// length表示数据的长度
 </span><span class="c1"></span><span class="kd">public</span> <span class="kt">void</span> <span class="nf">insertRecord</span><span class="o">(</span><span class="n">Object</span> <span class="n">recordBase</span><span class="o">,</span> <span class="kt">long</span> <span class="n">recordOffset</span><span class="o">,</span> <span class="kt">int</span> <span class="n">length</span><span class="o">,</span> <span class="kt">int</span> <span class="n">partitionId</span><span class="o">)</span>
@@ -379,14 +379,14 @@
 <p><code>ShuffleInMemorySorter</code>存储的数据格式如下，将数据地址和分区索引，压缩在一个 64 位的 Long类型。</p>
 <div class="highlight"><div class="chroma">
 <div class="table-container"><table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
 </span><span class="lnt">5
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-shell" data-lang="shell">--------------------------------------------------------------------------
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell">--------------------------------------------------------------------------
      <span class="m">24</span> bit           <span class="p">|</span>    <span class="m">13</span> bit             <span class="p">|</span>      <span class="m">27</span> bit
 --------------------------------------------------------------------------
    partitionId        <span class="p">|</span>   memoryBlock page    <span class="p">|</span>      memoryBlock offset
@@ -411,7 +411,7 @@
 <p>Spill 操作的源码如下：</p>
 <div class="highlight"><div class="chroma">
 <div class="table-container"><table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -428,7 +428,7 @@
 </span><span class="lnt">15
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-java" data-lang="java"><span class="kd">final</span> <span class="kd">class</span> <span class="nc">ShuffleExternalSorter</span> <span class="kd">extends</span> <span class="n">MemoryConsumer</span> <span class="o">{</span>
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="kd">final</span> <span class="kd">class</span> <span class="nc">ShuffleExternalSorter</span> <span class="kd">extends</span> <span class="n">MemoryConsumer</span> <span class="o">{</span>
     
   <span class="kd">public</span> <span class="kt">long</span> <span class="nf">spill</span><span class="o">(</span><span class="kt">long</span> <span class="n">size</span><span class="o">,</span> <span class="n">MemoryConsumer</span> <span class="n">trigger</span><span class="o">)</span> <span class="kd">throws</span> <span class="n">IOException</span> <span class="o">{</span>
     <span class="k">if</span> <span class="o">(</span><span class="n">trigger</span> <span class="o">!=</span> <span class="k">this</span> <span class="o">||</span> <span class="n">inMemSorter</span> <span class="o">==</span> <span class="kc">null</span> <span class="o">||</span> <span class="n">inMemSorter</span><span class="o">.</span><span class="na">numRecords</span><span class="o">()</span> <span class="o">==</span> <span class="n">0</span><span class="o">)</span> <span class="o">{</span>
@@ -453,7 +453,7 @@
 <p>每次 Spill 操作只会生成一个文件，里面的数据都是排序好的。Spark 使用 <code>SpillInfo</code>来表示此次信息</p>
 <div class="highlight"><div class="chroma">
 <div class="table-container"><table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
@@ -462,7 +462,7 @@
 </span><span class="lnt">7
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-scala" data-lang="scala"><span class="k">class</span> <span class="nc">SpillInfo</span> <span class="o">{</span>
+<pre tabindex="0" class="chroma"><code class="language-scala" data-lang="scala"><span class="k">class</span> <span class="nc">SpillInfo</span> <span class="o">{</span>
   <span class="c1">// 每个对应分区的数据长度 
 </span><span class="c1"></span>  <span class="k">final</span> <span class="n">long</span><span class="o">[]</span> <span class="n">partitionLengths</span><span class="o">;</span>
     
@@ -535,9 +535,9 @@
 
         
     <div class="updated-badge-container">
-        <span title="Updated @ 2021-09-12 11:48:25 CST" style="cursor:help">
+        <span title="Updated @ 2021-10-22 14:44:34 CST" style="cursor:help">
 
-<svg xmlns="http://www.w3.org/2000/svg" width="130" height="20" class="updated-badge"><linearGradient id="b" x2="0" y2="100%"><stop offset="0" stop-color="#bbb" stop-opacity=".1"/><stop offset="1" stop-opacity=".1"/></linearGradient><clipPath id="a"><rect width="130" height="20" rx="3" fill="#fff"/></clipPath><g clip-path="url(#a)"><path class="updated-badge-left" d="M0 0h55v20H0z"/><path class="updated-badge-right" d="M55 0h75v20H55z"/><path fill="url(#b)" d="M0 0h130v20H0z"/></g><g fill="#fff" text-anchor="middle" font-size="110"><text x="285" y="150" fill="#010101" fill-opacity=".3" textLength="450" transform="scale(.1)">updated</text><text x="285" y="140" textLength="450" transform="scale(.1)">updated</text><text x="915" y="150" fill="#010101" fill-opacity=".3" textLength="650" transform="scale(.1)">2021-09-12</text><text x="915" y="140" textLength="650" transform="scale(.1)">2021-09-12</text></g></svg>
+<svg xmlns="http://www.w3.org/2000/svg" width="130" height="20" class="updated-badge"><linearGradient id="b" x2="0" y2="100%"><stop offset="0" stop-color="#bbb" stop-opacity=".1"/><stop offset="1" stop-opacity=".1"/></linearGradient><clipPath id="a"><rect width="130" height="20" rx="3" fill="#fff"/></clipPath><g clip-path="url(#a)"><path class="updated-badge-left" d="M0 0h55v20H0z"/><path class="updated-badge-right" d="M55 0h75v20H55z"/><path fill="url(#b)" d="M0 0h130v20H0z"/></g><g fill="#fff" text-anchor="middle" font-size="110"><text x="285" y="150" fill="#010101" fill-opacity=".3" textLength="450" transform="scale(.1)">updated</text><text x="285" y="140" textLength="450" transform="scale(.1)">updated</text><text x="915" y="150" fill="#010101" fill-opacity=".3" textLength="650" transform="scale(.1)">2021-10-22</text><text x="915" y="140" textLength="650" transform="scale(.1)">2021-10-22</text></g></svg>
         </span></div>
 
 

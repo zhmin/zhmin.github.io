@@ -3,7 +3,7 @@
     <head prefix="og: http://ogp.me/ns# article: http://ogp.me/ns/article#">
     <meta charset="UTF-8" />
 
-    <meta name="generator" content="Hugo 0.79.0" /><meta name="theme-color" content="#fff" />
+    <meta name="generator" content="Hugo 0.88.1" /><meta name="theme-color" content="#fff" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     
     <meta name="format-detection" content="telephone=no, date=no, address=no, email=no" />
@@ -14,11 +14,11 @@
 
     <title>Spark  Rpc 消息处理 | 学习笔记</title>
 
-    <link rel="stylesheet" href="/css/meme.min.81031e6b78ad2f1f534002ebb3b658886fea2f25d8a44d296d1466a2fe52f1c1.css"/>
+    <link rel="stylesheet" href="/css/meme.min.2d3e1834af2bc8dda20c7d74aaa1d8134845094441b7a554a5206ccd4b472596.css"/>
 
     
     
-        <script src="/js/meme.min.120d98bb614adc6beb13bf79f943d2cceffd323f4de1544029228c3dca2e9bda.js"></script>
+        <script src="/js/meme.min.800f61672145711eb3e1f29fcfcc3dbe0139dd459259718b611a0390f74703d1.js"></script>
 
     
 
@@ -54,7 +54,7 @@
         "@context": "https://schema.org",
         "@type": "BlogPosting",
         "datePublished": "2019-07-29T22:06:14+00:00",
-        "dateModified": "2021-09-12T11:48:25+08:00",
+        "dateModified": "2021-10-22T14:44:34+08:00",
         "url": "https://zhmin.github.io/posts/spark-rpc-protocol/",
         "headline": "Spark  Rpc 消息处理",
         "description": "前言 Spark Rpc 所有的请求或响应统称为消息，它们都有着共同的格式。本篇文章会先介绍消息格式，然后介绍基于 Netty 框架，如何解析和处理消息，并且还介绍了如何处理数据大的请求。 消息格式 1 2 3 4 5 ---------------------------------------------------------- frame size | type | header | body ---------------------------------------------------------- 8 byte……",
@@ -97,7 +97,7 @@
 <meta property="og:locale" content="zh" /><meta property="og:image" content="https://zhmin.github.io/spark-netty-handler.svg" />
 <meta property="og:type" content="article" />
     <meta property="article:published_time" content="2019-07-29T22:06:14&#43;00:00" />
-    <meta property="article:modified_time" content="2021-09-12T11:48:25&#43;08:00" />
+    <meta property="article:modified_time" content="2021-10-22T14:44:34&#43;08:00" />
     
     <meta property="article:section" content="posts" />
 
@@ -240,14 +240,14 @@
 <h2 id="消息格式"><a href="#消息格式" class="anchor-link"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon anchor-icon"><path d="M326.612 185.391c59.747 59.809 58.927 155.698.36 214.59-.11.12-.24.25-.36.37l-67.2 67.2c-59.27 59.27-155.699 59.262-214.96 0-59.27-59.26-59.27-155.7 0-214.96l37.106-37.106c9.84-9.84 26.786-3.3 27.294 10.606.648 17.722 3.826 35.527 9.69 52.721 1.986 5.822.567 12.262-3.783 16.612l-13.087 13.087c-28.026 28.026-28.905 73.66-1.155 101.96 28.024 28.579 74.086 28.749 102.325.51l67.2-67.19c28.191-28.191 28.073-73.757 0-101.83-3.701-3.694-7.429-6.564-10.341-8.569a16.037 16.037 0 0 1-6.947-12.606c-.396-10.567 3.348-21.456 11.698-29.806l21.054-21.055c5.521-5.521 14.182-6.199 20.584-1.731a152.482 152.482 0 0 1 20.522 17.197zM467.547 44.449c-59.261-59.262-155.69-59.27-214.96 0l-67.2 67.2c-.12.12-.25.25-.36.37-58.566 58.892-59.387 154.781.36 214.59a152.454 152.454 0 0 0 20.521 17.196c6.402 4.468 15.064 3.789 20.584-1.731l21.054-21.055c8.35-8.35 12.094-19.239 11.698-29.806a16.037 16.037 0 0 0-6.947-12.606c-2.912-2.005-6.64-4.875-10.341-8.569-28.073-28.073-28.191-73.639 0-101.83l67.2-67.19c28.239-28.239 74.3-28.069 102.325.51 27.75 28.3 26.872 73.934-1.155 101.96l-13.087 13.087c-4.35 4.35-5.769 10.79-3.783 16.612 5.864 17.194 9.042 34.999 9.69 52.721.509 13.906 17.454 20.446 27.294 10.606l37.106-37.106c59.271-59.259 59.271-155.699.001-214.959z"/></svg></a>消息格式</h2>
 <div class="highlight"><div class="chroma">
 <div class="table-container"><table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
 </span><span class="lnt">5
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-shell" data-lang="shell">----------------------------------------------------------
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell">----------------------------------------------------------
 frame size <span class="p">|</span>   <span class="nb">type</span>   <span class="p">|</span>  header  <span class="p">|</span>     body
 ----------------------------------------------------------
 <span class="m">8</span> byte     <span class="p">|</span>  <span class="m">1</span> byte  <span class="p">|</span>   变长   <span class="p">|</span>      变长
@@ -275,7 +275,7 @@ frame size <span class="p">|</span>   <span class="nb">type</span>   <span class
 <p>MessageDecoder 接收上一步传来的数据，负责根据 type 字段，实例化对应的消息。之后传递 TransportChannelHandler处理。消息类型如下：</p>
 <div class="highlight"><div class="chroma">
 <div class="table-container"><table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
@@ -283,7 +283,7 @@ frame size <span class="p">|</span>   <span class="nb">type</span>   <span class
 </span><span class="lnt">6
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-java" data-lang="java"><span class="kd">enum</span> <span class="n">Type</span> <span class="kd">implements</span> <span class="n">Encodable</span> <span class="o">{</span>
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="kd">enum</span> <span class="n">Type</span> <span class="kd">implements</span> <span class="n">Encodable</span> <span class="o">{</span>
   <span class="n">ChunkFetchRequest</span><span class="o">(</span><span class="n">0</span><span class="o">),</span> <span class="n">ChunkFetchSuccess</span><span class="o">(</span><span class="n">1</span><span class="o">),</span> <span class="n">ChunkFetchFailure</span><span class="o">(</span><span class="n">2</span><span class="o">),</span>
   <span class="n">RpcRequest</span><span class="o">(</span><span class="n">3</span><span class="o">),</span> <span class="n">RpcResponse</span><span class="o">(</span><span class="n">4</span><span class="o">),</span> <span class="n">RpcFailure</span><span class="o">(</span><span class="n">5</span><span class="o">),</span>
   <span class="n">StreamRequest</span><span class="o">(</span><span class="n">6</span><span class="o">),</span> <span class="n">StreamResponse</span><span class="o">(</span><span class="n">7</span><span class="o">),</span> <span class="n">StreamFailure</span><span class="o">(</span><span class="n">8</span><span class="o">),</span>
@@ -313,7 +313,7 @@ frame size <span class="p">|</span>   <span class="nb">type</span>   <span class
 <p>消息一般都被序列化成二进制数据，然后发送出去。因为数据可能是Netty 的内置 ByteBuf 实例，也可能是 java 内置的 ByteBuffer，还有可能是存储在文件中。Spark 为了统一多种实例之间的转换，抽象了 ManagedBuffer 接口。</p>
 <div class="highlight"><div class="chroma">
 <div class="table-container"><table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -335,7 +335,7 @@ frame size <span class="p">|</span>   <span class="nb">type</span>   <span class
 </span><span class="lnt">20
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">abstract</span> <span class="kd">class</span> <span class="nc">ManagedBuffer</span> <span class="o">{</span>
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">abstract</span> <span class="kd">class</span> <span class="nc">ManagedBuffer</span> <span class="o">{</span>
   <span class="c1">// 返回数据的长度
 </span><span class="c1"></span>  <span class="kd">public</span> <span class="kd">abstract</span> <span class="kt">long</span> <span class="nf">size</span><span class="o">();</span>
   
@@ -368,14 +368,14 @@ frame size <span class="p">|</span>   <span class="nb">type</span>   <span class
 <p>它通过下面三个属性描述了数据的存储位置</p>
 <div class="highlight"><div class="chroma">
 <div class="table-container"><table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
 </span><span class="lnt">5
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">final</span> <span class="kd">class</span> <span class="nc">FileSegmentManagedBuffer</span> <span class="kd">extends</span> <span class="n">ManagedBuffer</span> <span class="o">{</span>
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">final</span> <span class="kd">class</span> <span class="nc">FileSegmentManagedBuffer</span> <span class="kd">extends</span> <span class="n">ManagedBuffer</span> <span class="o">{</span>
   <span class="kd">private</span> <span class="kd">final</span> <span class="n">File</span> <span class="n">file</span><span class="o">;</span>  <span class="c1">// 文件路径
 </span><span class="c1"></span>  <span class="kd">private</span> <span class="kd">final</span> <span class="kt">long</span> <span class="n">offset</span><span class="o">;</span>  <span class="c1">// 数据起始位置
 </span><span class="c1"></span>  <span class="kd">private</span> <span class="kd">final</span> <span class="kt">long</span> <span class="n">length</span><span class="o">;</span>  <span class="c1">// 数据的长度
@@ -385,7 +385,7 @@ frame size <span class="p">|</span>   <span class="nb">type</span>   <span class
 </div><p>继续看看它是如何转换成 ByteBuffer 实例的。如果数据小于指定的值（由 spark.storage.memoryMapThreshold 配置指定，默认为2MB），那么直接在堆中分配 ByteBuffer 实例，将数据存储其中。否则，采用内存映射的方式。</p>
 <div class="highlight"><div class="chroma">
 <div class="table-container"><table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -403,7 +403,7 @@ frame size <span class="p">|</span>   <span class="nb">type</span>   <span class
 </span><span class="lnt">16
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="n">ByteBuffer</span> <span class="nf">nioByteBuffer</span><span class="o">()</span> <span class="kd">throws</span> <span class="n">IOException</span> <span class="o">{</span>
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="n">ByteBuffer</span> <span class="nf">nioByteBuffer</span><span class="o">()</span> <span class="kd">throws</span> <span class="n">IOException</span> <span class="o">{</span>
     <span class="n">FileChannel</span> <span class="n">channel</span> <span class="o">=</span> <span class="kc">null</span><span class="o">;</span>
     <span class="n">channel</span> <span class="o">=</span> <span class="k">new</span> <span class="n">RandomAccessFile</span><span class="o">(</span><span class="n">file</span><span class="o">,</span> <span class="s">&#34;r&#34;</span><span class="o">).</span><span class="na">getChannel</span><span class="o">();</span>
     <span class="k">if</span> <span class="o">(</span><span class="n">length</span> <span class="o">&lt;</span> <span class="n">conf</span><span class="o">.</span><span class="na">memoryMapBytes</span><span class="o">())</span> <span class="o">{</span>
@@ -424,7 +424,7 @@ frame size <span class="p">|</span>   <span class="nb">type</span>   <span class
 </div><p>再继续看看它是如何转为 Netty 支持的数据。它返回FileRegion实例，利用了 Netty 的零拷贝技术。</p>
 <div class="highlight"><div class="chroma">
 <div class="table-container"><table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -436,7 +436,7 @@ frame size <span class="p">|</span>   <span class="nb">type</span>   <span class
 </span><span class="lnt">10
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="n">Object</span> <span class="nf">convertToNetty</span><span class="o">()</span> <span class="kd">throws</span> <span class="n">IOException</span> <span class="o">{</span>
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="n">Object</span> <span class="nf">convertToNetty</span><span class="o">()</span> <span class="kd">throws</span> <span class="n">IOException</span> <span class="o">{</span>
     <span class="k">if</span> <span class="o">(</span><span class="n">conf</span><span class="o">.</span><span class="na">lazyFileDescriptor</span><span class="o">())</span> <span class="o">{</span>
         <span class="c1">// 等待要发送出去的时候，才去打开文件
 </span><span class="c1"></span>        <span class="k">return</span> <span class="k">new</span> <span class="n">DefaultFileRegion</span><span class="o">(</span><span class="n">file</span><span class="o">,</span> <span class="n">offset</span><span class="o">,</span> <span class="n">length</span><span class="o">);</span>
@@ -452,7 +452,7 @@ frame size <span class="p">|</span>   <span class="nb">type</span>   <span class
 <p>NettyManagedBuffer 接收 Netty 内置 ByteBuf</p>
 <div class="highlight"><div class="chroma">
 <div class="table-container"><table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
@@ -463,7 +463,7 @@ frame size <span class="p">|</span>   <span class="nb">type</span>   <span class
 </span><span class="lnt">9
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-java" data-lang="java"><span class="kn">import</span> <span class="nn">io.netty.buffer.ByteBuf</span><span class="o">;</span>
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="kn">import</span> <span class="nn">io.netty.buffer.ByteBuf</span><span class="o">;</span>
 
 <span class="kd">public</span> <span class="kd">class</span> <span class="nc">NettyManagedBuffer</span> <span class="kd">extends</span> <span class="n">ManagedBuffer</span> <span class="o">{</span>
   <span class="kd">private</span> <span class="kd">final</span> <span class="n">ByteBuf</span> <span class="n">buf</span><span class="o">;</span>
@@ -478,7 +478,7 @@ frame size <span class="p">|</span>   <span class="nb">type</span>   <span class
 <p>NioManagedBuffer 接收 Java 内置的 ByteBuffer。</p>
 <div class="highlight"><div class="chroma">
 <div class="table-container"><table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
@@ -488,7 +488,7 @@ frame size <span class="p">|</span>   <span class="nb">type</span>   <span class
 </span><span class="lnt">8
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">NioManagedBuffer</span> <span class="kd">extends</span> <span class="n">ManagedBuffer</span> <span class="o">{</span>
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">NioManagedBuffer</span> <span class="kd">extends</span> <span class="n">ManagedBuffer</span> <span class="o">{</span>
   <span class="kd">private</span> <span class="kd">final</span> <span class="n">ByteBuffer</span> <span class="n">buf</span><span class="o">;</span>
   
   <span class="kd">public</span> <span class="n">Object</span> <span class="nf">convertToNetty</span><span class="o">()</span> <span class="kd">throws</span> <span class="n">IOException</span> <span class="o">{</span>
@@ -525,9 +525,9 @@ frame size <span class="p">|</span>   <span class="nb">type</span>   <span class
 
         
     <div class="updated-badge-container">
-        <span title="Updated @ 2021-09-12 11:48:25 CST" style="cursor:help">
+        <span title="Updated @ 2021-10-22 14:44:34 CST" style="cursor:help">
 
-<svg xmlns="http://www.w3.org/2000/svg" width="130" height="20" class="updated-badge"><linearGradient id="b" x2="0" y2="100%"><stop offset="0" stop-color="#bbb" stop-opacity=".1"/><stop offset="1" stop-opacity=".1"/></linearGradient><clipPath id="a"><rect width="130" height="20" rx="3" fill="#fff"/></clipPath><g clip-path="url(#a)"><path class="updated-badge-left" d="M0 0h55v20H0z"/><path class="updated-badge-right" d="M55 0h75v20H55z"/><path fill="url(#b)" d="M0 0h130v20H0z"/></g><g fill="#fff" text-anchor="middle" font-size="110"><text x="285" y="150" fill="#010101" fill-opacity=".3" textLength="450" transform="scale(.1)">updated</text><text x="285" y="140" textLength="450" transform="scale(.1)">updated</text><text x="915" y="150" fill="#010101" fill-opacity=".3" textLength="650" transform="scale(.1)">2021-09-12</text><text x="915" y="140" textLength="650" transform="scale(.1)">2021-09-12</text></g></svg>
+<svg xmlns="http://www.w3.org/2000/svg" width="130" height="20" class="updated-badge"><linearGradient id="b" x2="0" y2="100%"><stop offset="0" stop-color="#bbb" stop-opacity=".1"/><stop offset="1" stop-opacity=".1"/></linearGradient><clipPath id="a"><rect width="130" height="20" rx="3" fill="#fff"/></clipPath><g clip-path="url(#a)"><path class="updated-badge-left" d="M0 0h55v20H0z"/><path class="updated-badge-right" d="M55 0h75v20H55z"/><path fill="url(#b)" d="M0 0h130v20H0z"/></g><g fill="#fff" text-anchor="middle" font-size="110"><text x="285" y="150" fill="#010101" fill-opacity=".3" textLength="450" transform="scale(.1)">updated</text><text x="285" y="140" textLength="450" transform="scale(.1)">updated</text><text x="915" y="150" fill="#010101" fill-opacity=".3" textLength="650" transform="scale(.1)">2021-10-22</text><text x="915" y="140" textLength="650" transform="scale(.1)">2021-10-22</text></g></svg>
         </span></div>
 
 

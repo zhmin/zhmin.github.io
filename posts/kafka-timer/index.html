@@ -3,7 +3,7 @@
     <head prefix="og: http://ogp.me/ns# article: http://ogp.me/ns/article#">
     <meta charset="UTF-8" />
 
-    <meta name="generator" content="Hugo 0.79.0" /><meta name="theme-color" content="#fff" />
+    <meta name="generator" content="Hugo 0.88.1" /><meta name="theme-color" content="#fff" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     
     <meta name="format-detection" content="telephone=no, date=no, address=no, email=no" />
@@ -14,11 +14,11 @@
 
     <title>Kafka 延迟任务 | 学习笔记</title>
 
-    <link rel="stylesheet" href="/css/meme.min.81031e6b78ad2f1f534002ebb3b658886fea2f25d8a44d296d1466a2fe52f1c1.css"/>
+    <link rel="stylesheet" href="/css/meme.min.2d3e1834af2bc8dda20c7d74aaa1d8134845094441b7a554a5206ccd4b472596.css"/>
 
     
     
-        <script src="/js/meme.min.120d98bb614adc6beb13bf79f943d2cceffd323f4de1544029228c3dca2e9bda.js"></script>
+        <script src="/js/meme.min.800f61672145711eb3e1f29fcfcc3dbe0139dd459259718b611a0390f74703d1.js"></script>
 
     
 
@@ -54,7 +54,7 @@
         "@context": "https://schema.org",
         "@type": "BlogPosting",
         "datePublished": "2019-03-28T21:43:38+00:00",
-        "dateModified": "2021-09-12T11:48:25+08:00",
+        "dateModified": "2021-10-22T14:44:34+08:00",
         "url": "https://zhmin.github.io/posts/kafka-timer/",
         "headline": "Kafka 延迟任务",
         "description": "Kafka 延迟任务 时间轮概念 Kafka在处理请求时，使用了多种延迟任务来处理，比如心跳请求。Kafka自己实现了时间轮，提供任务的延迟定时。关于时间轮的概念，我们把常见的钟表想象成一个时间轮。 时间轮都有着自己……",
@@ -97,7 +97,7 @@
 <meta property="og:locale" content="zh" /><meta property="og:image" content="https://zhmin.github.io/icons/apple-touch-icon.png" />
     <meta property="og:type" content="article" />
     <meta property="article:published_time" content="2019-03-28T21:43:38&#43;00:00" />
-    <meta property="article:modified_time" content="2021-09-12T11:48:25&#43;08:00" />
+    <meta property="article:modified_time" content="2021-10-22T14:44:34&#43;08:00" />
     
     <meta property="article:section" content="posts" />
 
@@ -255,7 +255,7 @@
 <p>TimerTaskList表示延迟任务链表，它支持链表的添加和删除操作。它还提供了flush方法，支持执行延迟任务。</p>
 <div class="highlight"><div class="chroma">
 <div class="table-container"><table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -275,7 +275,7 @@
 </span><span class="lnt">18
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-scala" data-lang="scala"><span class="k">private</span><span class="o">[</span><span class="kt">timer</span><span class="o">]</span> <span class="k">class</span> <span class="nc">TimerTaskList</span><span class="o">(</span><span class="n">taskCounter</span><span class="k">:</span> <span class="kt">AtomicInteger</span><span class="o">)</span> <span class="k">extends</span> <span class="nc">Delayed</span> <span class="o">{</span>
+<pre tabindex="0" class="chroma"><code class="language-scala" data-lang="scala"><span class="k">private</span><span class="o">[</span><span class="kt">timer</span><span class="o">]</span> <span class="k">class</span> <span class="nc">TimerTaskList</span><span class="o">(</span><span class="n">taskCounter</span><span class="k">:</span> <span class="kt">AtomicInteger</span><span class="o">)</span> <span class="k">extends</span> <span class="nc">Delayed</span> <span class="o">{</span>
     
   <span class="k">private</span><span class="o">[</span><span class="kt">this</span><span class="o">]</span> <span class="k">val</span> <span class="n">root</span> <span class="k">=</span> <span class="k">new</span> <span class="nc">TimerTaskEntry</span><span class="o">(</span><span class="kc">null</span><span class="o">,</span> <span class="o">-</span><span class="mi">1</span><span class="o">)</span>
 
@@ -301,7 +301,7 @@
 <p>TimingWheel提供add方法添加任务，还提供了advanceClock方法更新时间。</p>
 <div class="highlight"><div class="chroma">
 <div class="table-container"><table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -370,7 +370,7 @@
 </span><span class="lnt">67
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-scala" data-lang="scala"><span class="c1">// tickMs表示时间轮的时间单位，比如分钟时间轮的时间单位为1分钟
+<pre tabindex="0" class="chroma"><code class="language-scala" data-lang="scala"><span class="c1">// tickMs表示时间轮的时间单位，比如分钟时间轮的时间单位为1分钟
 </span><span class="c1">// wheelSize表示有多少格时间，比如分钟时间轮有60格
 </span><span class="c1">// startMs表示时间轮的开始时间
 </span><span class="c1">// queue是Java自带类DelayQueue类型，它只保存了任务队列
@@ -443,7 +443,7 @@
 <p>时间轮只是保存了任务，而定时器负责管理时间轮和执行过期的任务。 定时器的接口由Timer表示</p>
 <div class="highlight"><div class="chroma">
 <div class="table-container"><table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
@@ -452,7 +452,7 @@
 </span><span class="lnt">7
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-scala" data-lang="scala"><span class="k">trait</span> <span class="nc">Timer</span> <span class="o">{</span>
+<pre tabindex="0" class="chroma"><code class="language-scala" data-lang="scala"><span class="k">trait</span> <span class="nc">Timer</span> <span class="o">{</span>
   <span class="c1">// 添加任务
 </span><span class="c1"></span>  <span class="k">def</span> <span class="n">add</span><span class="o">(</span><span class="n">timerTask</span><span class="k">:</span> <span class="kt">TimerTask</span><span class="o">)</span><span class="k">:</span> <span class="kt">Unit</span>
 
@@ -464,7 +464,7 @@
 </div><p>SystemTimer实现了Timer接口，它使用DelayQueue查找过期的任务列表，然后提交线程池执行。</p>
 <div class="highlight"><div class="chroma">
 <div class="table-container"><table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -532,7 +532,7 @@
 </span><span class="lnt">66
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-scala" data-lang="scala"><span class="k">class</span> <span class="nc">SystemTimer</span><span class="o">(</span><span class="n">executorName</span><span class="k">:</span> <span class="kt">String</span><span class="o">,</span>
+<pre tabindex="0" class="chroma"><code class="language-scala" data-lang="scala"><span class="k">class</span> <span class="nc">SystemTimer</span><span class="o">(</span><span class="n">executorName</span><span class="k">:</span> <span class="kt">String</span><span class="o">,</span>
                   <span class="n">tickMs</span><span class="k">:</span> <span class="kt">Long</span> <span class="o">=</span> <span class="mi">1</span><span class="o">,</span>
                   <span class="n">wheelSize</span><span class="k">:</span> <span class="kt">Int</span> <span class="o">=</span> <span class="mi">20</span><span class="o">,</span>
                   <span class="n">startMs</span><span class="k">:</span> <span class="kt">Long</span> <span class="o">=</span> <span class="nc">Time</span><span class="o">.</span><span class="nc">SYSTEM</span><span class="o">.</span><span class="n">hiResClockMs</span><span class="o">)</span> <span class="k">extends</span> <span class="nc">Timer</span> <span class="o">{</span>
@@ -610,7 +610,7 @@
 <p>DelayedOperation提供了tryComplete方法，供使用者调用，来尝试提前完成任务。子类需要实现这个方法，判断是否满足提前完成条件，如果满足则执行forceComplete方法执行任务。</p>
 <div class="highlight"><div class="chroma">
 <div class="table-container"><table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -631,7 +631,7 @@
 </span><span class="lnt">19
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-scala" data-lang="scala"><span class="k">abstract</span> <span class="k">class</span> <span class="nc">DelayedOperation</span> <span class="o">{</span>
+<pre tabindex="0" class="chroma"><code class="language-scala" data-lang="scala"><span class="k">abstract</span> <span class="k">class</span> <span class="nc">DelayedOperation</span> <span class="o">{</span>
   
   <span class="c1">// 这里使用了AtomicBoolean，用来控制并发
 </span><span class="c1"></span>  <span class="k">private</span> <span class="k">val</span> <span class="n">completed</span> <span class="k">=</span> <span class="k">new</span> <span class="nc">AtomicBoolean</span><span class="o">(</span><span class="kc">false</span><span class="o">)</span>
@@ -655,7 +655,7 @@
 </div><p>DelayedOperation还提供了maybeTryComplete方法，在tryComplete方法的基础之上，提供了多线程的优化。maybeTryComplete方法实现得很精巧，它能保证尽量及时的检测任务是否可以完成。</p>
 <div class="highlight"><div class="chroma">
 <div class="table-container"><table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -686,7 +686,7 @@
 </span><span class="lnt">29
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-scala" data-lang="scala"><span class="c1">// 是否需要再次尝试
+<pre tabindex="0" class="chroma"><code class="language-scala" data-lang="scala"><span class="c1">// 是否需要再次尝试
 </span><span class="c1"></span><span class="k">private</span> <span class="k">val</span> <span class="n">tryCompletePending</span> <span class="k">=</span> <span class="k">new</span> <span class="nc">AtomicBoolean</span><span class="o">(</span><span class="kc">false</span><span class="o">)</span>
 
 <span class="k">private</span><span class="o">[</span><span class="kt">server</span><span class="o">]</span> <span class="k">def</span> <span class="n">maybeTryComplete</span><span class="o">()</span><span class="k">:</span> <span class="kt">Boolean</span> <span class="o">=</span> <span class="o">{</span>
@@ -722,7 +722,7 @@
 <p>DelayedOperationPurgatory负责管理延迟任务，支持任务分组。分组信息由Watchers类表示，它包含了延迟任务列表和任务类型。Watchers提供了tryCompleteWatched方法，会尝试完成列表中的任务。</p>
 <div class="highlight"><div class="chroma">
 <div class="table-container"><table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -752,7 +752,7 @@
 </span><span class="lnt">28
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-scala" data-lang="scala"><span class="c1">// key为任务类型
+<pre tabindex="0" class="chroma"><code class="language-scala" data-lang="scala"><span class="c1">// key为任务类型
 </span><span class="c1"></span><span class="k">private</span> <span class="k">class</span> <span class="nc">Watchers</span><span class="o">(</span><span class="k">val</span> <span class="n">key</span><span class="k">:</span> <span class="kt">Any</span><span class="o">)</span> <span class="o">{</span>
     <span class="c1">// 延迟任务列表
 </span><span class="c1"></span>    <span class="k">private</span><span class="o">[</span><span class="kt">this</span><span class="o">]</span> <span class="k">val</span> <span class="n">operations</span> <span class="k">=</span> <span class="k">new</span> <span class="nc">ConcurrentLinkedQueue</span><span class="o">[</span><span class="kt">T</span><span class="o">]()</span>
@@ -785,7 +785,7 @@
 </div><p>DelayedOperationPurgatory里包含了一个线程，用来更新时间轮的时间，并且执行过期任务。</p>
 <div class="highlight"><div class="chroma">
 <div class="table-container"><table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -815,7 +815,7 @@
 </span><span class="lnt">28
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-scala" data-lang="scala"><span class="k">final</span> <span class="k">class</span> <span class="nc">DelayedOperationPurgatory</span><span class="o">[</span><span class="kt">T</span> <span class="k">&lt;:</span> <span class="kt">DelayedOperation</span><span class="o">](...)</span> <span class="o">{</span>
+<pre tabindex="0" class="chroma"><code class="language-scala" data-lang="scala"><span class="k">final</span> <span class="k">class</span> <span class="nc">DelayedOperationPurgatory</span><span class="o">[</span><span class="kt">T</span> <span class="k">&lt;:</span> <span class="kt">DelayedOperation</span><span class="o">](...)</span> <span class="o">{</span>
   <span class="c1">// 更新时间的线程
 </span><span class="c1"></span>  <span class="k">private</span> <span class="k">val</span> <span class="n">expirationReaper</span> <span class="k">=</span> <span class="k">new</span> <span class="nc">ExpiredOperationReaper</span><span class="o">()</span>
   
@@ -852,7 +852,7 @@
 </ul>
 <div class="highlight"><div class="chroma">
 <div class="table-container"><table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -906,7 +906,7 @@
 </span><span class="lnt">52
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-scala" data-lang="scala"><span class="k">final</span> <span class="k">class</span> <span class="nc">DelayedOperationPurgatory</span><span class="o">[</span><span class="kt">T</span> <span class="k">&lt;:</span> <span class="kt">DelayedOperation</span><span class="o">]</span> <span class="o">(...)</span> <span class="o">{</span>
+<pre tabindex="0" class="chroma"><code class="language-scala" data-lang="scala"><span class="k">final</span> <span class="k">class</span> <span class="nc">DelayedOperationPurgatory</span><span class="o">[</span><span class="kt">T</span> <span class="k">&lt;:</span> <span class="kt">DelayedOperation</span><span class="o">]</span> <span class="o">(...)</span> <span class="o">{</span>
 
   <span class="k">private</span> <span class="k">val</span> <span class="n">watchersForKey</span> <span class="k">=</span> <span class="k">new</span> <span class="nc">Pool</span><span class="o">[</span><span class="kt">Any</span>, <span class="kt">Watchers</span><span class="o">](</span><span class="nc">Some</span><span class="o">((</span><span class="n">key</span><span class="k">:</span> <span class="kt">Any</span><span class="o">)</span> <span class="k">=&gt;</span> <span class="k">new</span> <span class="nc">Watchers</span><span class="o">(</span><span class="n">key</span><span class="o">)))</span>
 
@@ -987,9 +987,9 @@
 
         
     <div class="updated-badge-container">
-        <span title="Updated @ 2021-09-12 11:48:25 CST" style="cursor:help">
+        <span title="Updated @ 2021-10-22 14:44:34 CST" style="cursor:help">
 
-<svg xmlns="http://www.w3.org/2000/svg" width="130" height="20" class="updated-badge"><linearGradient id="b" x2="0" y2="100%"><stop offset="0" stop-color="#bbb" stop-opacity=".1"/><stop offset="1" stop-opacity=".1"/></linearGradient><clipPath id="a"><rect width="130" height="20" rx="3" fill="#fff"/></clipPath><g clip-path="url(#a)"><path class="updated-badge-left" d="M0 0h55v20H0z"/><path class="updated-badge-right" d="M55 0h75v20H55z"/><path fill="url(#b)" d="M0 0h130v20H0z"/></g><g fill="#fff" text-anchor="middle" font-size="110"><text x="285" y="150" fill="#010101" fill-opacity=".3" textLength="450" transform="scale(.1)">updated</text><text x="285" y="140" textLength="450" transform="scale(.1)">updated</text><text x="915" y="150" fill="#010101" fill-opacity=".3" textLength="650" transform="scale(.1)">2021-09-12</text><text x="915" y="140" textLength="650" transform="scale(.1)">2021-09-12</text></g></svg>
+<svg xmlns="http://www.w3.org/2000/svg" width="130" height="20" class="updated-badge"><linearGradient id="b" x2="0" y2="100%"><stop offset="0" stop-color="#bbb" stop-opacity=".1"/><stop offset="1" stop-opacity=".1"/></linearGradient><clipPath id="a"><rect width="130" height="20" rx="3" fill="#fff"/></clipPath><g clip-path="url(#a)"><path class="updated-badge-left" d="M0 0h55v20H0z"/><path class="updated-badge-right" d="M55 0h75v20H55z"/><path fill="url(#b)" d="M0 0h130v20H0z"/></g><g fill="#fff" text-anchor="middle" font-size="110"><text x="285" y="150" fill="#010101" fill-opacity=".3" textLength="450" transform="scale(.1)">updated</text><text x="285" y="140" textLength="450" transform="scale(.1)">updated</text><text x="915" y="150" fill="#010101" fill-opacity=".3" textLength="650" transform="scale(.1)">2021-10-22</text><text x="915" y="140" textLength="650" transform="scale(.1)">2021-10-22</text></g></svg>
         </span></div>
 
 

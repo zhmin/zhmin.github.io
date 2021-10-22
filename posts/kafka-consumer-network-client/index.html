@@ -3,7 +3,7 @@
     <head prefix="og: http://ogp.me/ns# article: http://ogp.me/ns/article#">
     <meta charset="UTF-8" />
 
-    <meta name="generator" content="Hugo 0.79.0" /><meta name="theme-color" content="#fff" />
+    <meta name="generator" content="Hugo 0.88.1" /><meta name="theme-color" content="#fff" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     
     <meta name="format-detection" content="telephone=no, date=no, address=no, email=no" />
@@ -14,11 +14,11 @@
 
     <title>Kafka ConsumerNetworkClient 原理 | 学习笔记</title>
 
-    <link rel="stylesheet" href="/css/meme.min.81031e6b78ad2f1f534002ebb3b658886fea2f25d8a44d296d1466a2fe52f1c1.css"/>
+    <link rel="stylesheet" href="/css/meme.min.2d3e1834af2bc8dda20c7d74aaa1d8134845094441b7a554a5206ccd4b472596.css"/>
 
     
     
-        <script src="/js/meme.min.120d98bb614adc6beb13bf79f943d2cceffd323f4de1544029228c3dca2e9bda.js"></script>
+        <script src="/js/meme.min.800f61672145711eb3e1f29fcfcc3dbe0139dd459259718b611a0390f74703d1.js"></script>
 
     
 
@@ -54,7 +54,7 @@
         "@context": "https://schema.org",
         "@type": "BlogPosting",
         "datePublished": "2019-03-12T21:29:12+00:00",
-        "dateModified": "2021-09-12T11:48:25+08:00",
+        "dateModified": "2021-10-22T14:44:34+08:00",
         "url": "https://zhmin.github.io/posts/kafka-consumer-network-client/",
         "headline": "Kafka ConsumerNetworkClient 原理",
         "description": "Kafka ConsumerNetworkClient 原理 Kafka消费者会使用ConsumerNetworkClient发送和处理请求。ConsumerNetworkClient是在NetworkClient之外封装了一层，提供了异步的请求方法。它……",
@@ -97,7 +97,7 @@
 <meta property="og:locale" content="zh" /><meta property="og:image" content="https://zhmin.github.io/icons/apple-touch-icon.png" />
     <meta property="og:type" content="article" />
     <meta property="article:published_time" content="2019-03-12T21:29:12&#43;00:00" />
-    <meta property="article:modified_time" content="2021-09-12T11:48:25&#43;08:00" />
+    <meta property="article:modified_time" content="2021-10-22T14:44:34&#43;08:00" />
     
     <meta property="article:section" content="posts" />
 
@@ -241,7 +241,7 @@
 <p>RequestFuture实现了类似Future的功能，它使用了CountDownLatch来实现等待和通知的功能。</p>
 <div class="highlight"><div class="chroma">
 <div class="table-container"><table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -269,7 +269,7 @@
 </span><span class="lnt">26
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">RequestFuture</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span> <span class="kd">implements</span> <span class="n">ConsumerNetworkClient</span><span class="o">.</span><span class="na">PollCondition</span> <span class="o">{</span>
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">RequestFuture</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span> <span class="kd">implements</span> <span class="n">ConsumerNetworkClient</span><span class="o">.</span><span class="na">PollCondition</span> <span class="o">{</span>
     <span class="kd">private</span> <span class="kd">static</span> <span class="kd">final</span> <span class="n">Object</span> <span class="n">INCOMPLETE_SENTINEL</span> <span class="o">=</span> <span class="k">new</span> <span class="n">Object</span><span class="o">();</span>
     <span class="c1">// result保存了结果
 </span><span class="c1"></span>    <span class="kd">private</span> <span class="kd">final</span> <span class="n">AtomicReference</span><span class="o">&lt;</span><span class="n">Object</span><span class="o">&gt;</span> <span class="n">result</span> <span class="o">=</span> <span class="k">new</span> <span class="n">AtomicReference</span><span class="o">&lt;&gt;(</span><span class="n">INCOMPLETE_SENTINEL</span><span class="o">);</span>
@@ -301,7 +301,7 @@
 <p>RequestFuture在Future基础之上，还添加了监听器的功能，这使得编程回调更加方便。</p>
 <div class="highlight"><div class="chroma">
 <div class="table-container"><table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -343,7 +343,7 @@
 </span><span class="lnt">40
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">RequestFuture</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span> <span class="kd">implements</span> <span class="n">ConsumerNetworkClient</span><span class="o">.</span><span class="na">PollCondition</span> <span class="o">{</span>
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">RequestFuture</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span> <span class="kd">implements</span> <span class="n">ConsumerNetworkClient</span><span class="o">.</span><span class="na">PollCondition</span> <span class="o">{</span>
     <span class="c1">// 保存了监听器的队列
 </span><span class="c1"></span>    <span class="kd">private</span> <span class="kd">final</span> <span class="n">ConcurrentLinkedQueue</span><span class="o">&lt;</span><span class="n">RequestFutureListener</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;&gt;</span> <span class="n">listeners</span> <span class="o">=</span> <span class="k">new</span> <span class="n">ConcurrentLinkedQueue</span><span class="o">&lt;&gt;();</span>
     
@@ -389,7 +389,7 @@
 <p>RequestFuture提供了两个方法设置结果，一个是成功完成，调用complete方法设置结果。另一个是执行失败，调用raise方法设置异常。</p>
 <div class="highlight"><div class="chroma">
 <div class="table-container"><table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -423,7 +423,7 @@
 </span><span class="lnt">32
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kt">void</span> <span class="nf">complete</span><span class="o">(</span><span class="n">T</span> <span class="n">value</span><span class="o">)</span> <span class="o">{</span>
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kt">void</span> <span class="nf">complete</span><span class="o">(</span><span class="n">T</span> <span class="n">value</span><span class="o">)</span> <span class="o">{</span>
     <span class="k">try</span> <span class="o">{</span>
         <span class="c1">// value必须为值，不能为异常
 </span><span class="c1"></span>        <span class="k">if</span> <span class="o">(</span><span class="n">value</span> <span class="k">instanceof</span> <span class="n">RuntimeException</span><span class="o">)</span>
@@ -462,7 +462,7 @@
 <p>chain方法，负责连接一个RequestFuture。当父RequestFuture完成时，子RequestFuture也同时完成。这里需要注意到两个RequestFuture的泛型必须相同。</p>
 <div class="highlight"><div class="chroma">
 <div class="table-container"><table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -482,7 +482,7 @@
 </span><span class="lnt">18
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kt">void</span> <span class="nf">chain</span><span class="o">(</span><span class="kd">final</span> <span class="n">RequestFuture</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span> <span class="n">future</span><span class="o">)</span> <span class="o">{</span>
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kt">void</span> <span class="nf">chain</span><span class="o">(</span><span class="kd">final</span> <span class="n">RequestFuture</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span> <span class="n">future</span><span class="o">)</span> <span class="o">{</span>
     <span class="c1">// 添加监听器来实现
 </span><span class="c1"></span>    <span class="n">addListener</span><span class="o">(</span><span class="k">new</span> <span class="n">RequestFutureListener</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;()</span> <span class="o">{</span>
         <span class="nd">@Override</span>
@@ -505,7 +505,7 @@
 </div><p>compose方法，负责转换RequestFuture的泛型。比如一个RequestFuture<String> 类型，表示它的结果是String类型的。现在需要将结果转换为Integer类型，返回RequestFuture<Integer> ，那么就需要compose方法。</p>
 <div class="highlight"><div class="chroma">
 <div class="table-container"><table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -528,7 +528,7 @@
 </span><span class="lnt">21
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-java" data-lang="java"><span class="c1">// T 表示源类型，S表示目标类型
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="c1">// T 表示源类型，S表示目标类型
 </span><span class="c1"></span><span class="kd">public</span> <span class="o">&lt;</span><span class="n">S</span><span class="o">&gt;</span> <span class="n">RequestFuture</span><span class="o">&lt;</span><span class="n">S</span><span class="o">&gt;</span> <span class="nf">compose</span><span class="o">(</span><span class="kd">final</span> <span class="n">RequestFutureAdapter</span><span class="o">&lt;</span><span class="n">T</span><span class="o">,</span> <span class="n">S</span><span class="o">&gt;</span> <span class="n">adapter</span><span class="o">)</span> <span class="o">{</span>
     <span class="c1">// 这里生成S类型的RequestFuture
 </span><span class="c1"></span>    <span class="kd">final</span> <span class="n">RequestFuture</span><span class="o">&lt;</span><span class="n">S</span><span class="o">&gt;</span> <span class="n">adapted</span> <span class="o">=</span> <span class="k">new</span> <span class="n">RequestFuture</span><span class="o">&lt;&gt;();</span>
@@ -560,7 +560,7 @@
 <p>这里着重看下RequestFutureCompletionHandler的onComplete函数，当请求响应完成后，会调用onComplete方法。这里只是将自身保存在一个队列里，等待之后的统一调用。</p>
 <div class="highlight"><div class="chroma">
 <div class="table-container"><table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -573,7 +573,7 @@
 </span><span class="lnt">11
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-java" data-lang="java"><span class="kd">private</span> <span class="kd">class</span> <span class="nc">RequestFutureCompletionHandler</span> <span class="kd">implements</span> <span class="n">RequestCompletionHandler</span> <span class="o">{</span>
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="kd">private</span> <span class="kd">class</span> <span class="nc">RequestFutureCompletionHandler</span> <span class="kd">implements</span> <span class="n">RequestCompletionHandler</span> <span class="o">{</span>
     <span class="kd">private</span> <span class="n">ClientResponse</span> <span class="n">response</span><span class="o">;</span>
     
     <span class="nd">@Override</span>
@@ -589,7 +589,7 @@
 </div><p>ConsumerNetworkClient的send方法，负责构建请求，然后将请求保存到UnsentRequests集合里。UnsentRequests为每个节点都保存了一个请求队列。</p>
 <div class="highlight"><div class="chroma">
 <div class="table-container"><table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -615,7 +615,7 @@
 </span><span class="lnt">24
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">ConsumerNetworkClient</span> <span class="kd">implements</span> <span class="n">Closeable</span> <span class="o">{</span>
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">ConsumerNetworkClient</span> <span class="kd">implements</span> <span class="n">Closeable</span> <span class="o">{</span>
     <span class="c1">// NetworkClient 实例
 </span><span class="c1"></span>    <span class="kd">private</span> <span class="kd">final</span> <span class="n">KafkaClient</span> <span class="n">client</span><span class="o">;</span>
     <span class="c1">// ClientRequest集合，它为每个节点保存了一个请求队列
@@ -645,7 +645,7 @@
 <p>send方法只是将请求保存到了队列里，并没有发送。ConsumerNetworkClient还提供了poll方法，可以接收RequestFuture参数，等待请求完成。ConsumerNetworkClient放入poll方法，不仅仅负责发送请求，还包括处理响应。</p>
 <div class="highlight"><div class="chroma">
 <div class="table-container"><table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -696,7 +696,7 @@
 </span><span class="lnt">49
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">ConsumerNetworkClient</span> <span class="kd">implements</span> <span class="n">Closeable</span> <span class="o">{</span>
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">ConsumerNetworkClient</span> <span class="kd">implements</span> <span class="n">Closeable</span> <span class="o">{</span>
     
      <span class="kd">public</span> <span class="kt">void</span> <span class="nf">poll</span><span class="o">(</span><span class="n">RequestFuture</span><span class="o">&lt;?&gt;</span> <span class="n">future</span><span class="o">)</span> <span class="o">{</span>
          <span class="c1">// 循环执行poll方法，直到future完成
@@ -750,7 +750,7 @@
 </div><p>trySend方法负责发送请求。它会遍历请求集合unsent，依次发送。</p>
 <div class="highlight"><div class="chroma">
 <div class="table-container"><table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -775,7 +775,7 @@
 </span><span class="lnt">23
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-java" data-lang="java"><span class="kd">private</span> <span class="kt">long</span> <span class="nf">trySend</span><span class="o">(</span><span class="kt">long</span> <span class="n">now</span><span class="o">)</span> <span class="o">{</span>
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="kd">private</span> <span class="kt">long</span> <span class="nf">trySend</span><span class="o">(</span><span class="kt">long</span> <span class="n">now</span><span class="o">)</span> <span class="o">{</span>
     <span class="kt">long</span> <span class="n">pollDelayMs</span> <span class="o">=</span> <span class="n">Long</span><span class="o">.</span><span class="na">MAX_VALUE</span><span class="o">;</span>
     <span class="c1">// 遍历unsent请求
 </span><span class="c1"></span>    <span class="k">for</span> <span class="o">(</span><span class="n">Node</span> <span class="n">node</span> <span class="o">:</span> <span class="n">unsent</span><span class="o">.</span><span class="na">nodes</span><span class="o">())</span> <span class="o">{</span>
@@ -803,7 +803,7 @@
 </div><p>firePendingCompletedRequests方法负责处理响应。我们回想下，在构建请求时，指定了回调类。回调函数执行时，会将自身添加到pendingCompletion队列里。</p>
 <div class="highlight"><div class="chroma">
 <div class="table-container"><table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -820,7 +820,7 @@
 </span><span class="lnt">15
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">ConsumerNetworkClient</span> <span class="kd">implements</span> <span class="n">Closeable</span> <span class="o">{</span>
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">ConsumerNetworkClient</span> <span class="kd">implements</span> <span class="n">Closeable</span> <span class="o">{</span>
     <span class="c1">// 请求完成的回调队列
 </span><span class="c1"></span>    <span class="kd">private</span> <span class="kd">final</span> <span class="n">ConcurrentLinkedQueue</span><span class="o">&lt;</span><span class="n">RequestFutureCompletionHandler</span><span class="o">&gt;</span> <span class="n">pendingCompletion</span> <span class="o">=</span> <span class="k">new</span> <span class="n">ConcurrentLinkedQueue</span><span class="o">&lt;&gt;();</span>
     
@@ -840,7 +840,7 @@
 </div><p>最后看看RequestFutureCompletionHandler的fireCompletion方法，它会根据响应结果，来设置RequestFuture的结果。</p>
 <div class="highlight"><div class="chroma">
 <div class="table-container"><table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -866,7 +866,7 @@
 </span><span class="lnt">24
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-java" data-lang="java"><span class="kd">private</span> <span class="kd">class</span> <span class="nc">RequestFutureCompletionHandler</span> <span class="kd">implements</span> <span class="n">RequestCompletionHandler</span> <span class="o">{</span>
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="kd">private</span> <span class="kd">class</span> <span class="nc">RequestFutureCompletionHandler</span> <span class="kd">implements</span> <span class="n">RequestCompletionHandler</span> <span class="o">{</span>
     
     <span class="kd">private</span> <span class="kd">final</span> <span class="n">RequestFuture</span><span class="o">&lt;</span><span class="n">ClientResponse</span><span class="o">&gt;</span> <span class="n">future</span><span class="o">;</span>
     <span class="c1">// 响应数据
@@ -919,9 +919,9 @@
 
         
     <div class="updated-badge-container">
-        <span title="Updated @ 2021-09-12 11:48:25 CST" style="cursor:help">
+        <span title="Updated @ 2021-10-22 14:44:34 CST" style="cursor:help">
 
-<svg xmlns="http://www.w3.org/2000/svg" width="130" height="20" class="updated-badge"><linearGradient id="b" x2="0" y2="100%"><stop offset="0" stop-color="#bbb" stop-opacity=".1"/><stop offset="1" stop-opacity=".1"/></linearGradient><clipPath id="a"><rect width="130" height="20" rx="3" fill="#fff"/></clipPath><g clip-path="url(#a)"><path class="updated-badge-left" d="M0 0h55v20H0z"/><path class="updated-badge-right" d="M55 0h75v20H55z"/><path fill="url(#b)" d="M0 0h130v20H0z"/></g><g fill="#fff" text-anchor="middle" font-size="110"><text x="285" y="150" fill="#010101" fill-opacity=".3" textLength="450" transform="scale(.1)">updated</text><text x="285" y="140" textLength="450" transform="scale(.1)">updated</text><text x="915" y="150" fill="#010101" fill-opacity=".3" textLength="650" transform="scale(.1)">2021-09-12</text><text x="915" y="140" textLength="650" transform="scale(.1)">2021-09-12</text></g></svg>
+<svg xmlns="http://www.w3.org/2000/svg" width="130" height="20" class="updated-badge"><linearGradient id="b" x2="0" y2="100%"><stop offset="0" stop-color="#bbb" stop-opacity=".1"/><stop offset="1" stop-opacity=".1"/></linearGradient><clipPath id="a"><rect width="130" height="20" rx="3" fill="#fff"/></clipPath><g clip-path="url(#a)"><path class="updated-badge-left" d="M0 0h55v20H0z"/><path class="updated-badge-right" d="M55 0h75v20H55z"/><path fill="url(#b)" d="M0 0h130v20H0z"/></g><g fill="#fff" text-anchor="middle" font-size="110"><text x="285" y="150" fill="#010101" fill-opacity=".3" textLength="450" transform="scale(.1)">updated</text><text x="285" y="140" textLength="450" transform="scale(.1)">updated</text><text x="915" y="150" fill="#010101" fill-opacity=".3" textLength="650" transform="scale(.1)">2021-10-22</text><text x="915" y="140" textLength="650" transform="scale(.1)">2021-10-22</text></g></svg>
         </span></div>
 
 

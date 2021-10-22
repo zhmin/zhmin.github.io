@@ -3,7 +3,7 @@
     <head prefix="og: http://ogp.me/ns# article: http://ogp.me/ns/article#">
     <meta charset="UTF-8" />
 
-    <meta name="generator" content="Hugo 0.79.0" /><meta name="theme-color" content="#fff" />
+    <meta name="generator" content="Hugo 0.88.1" /><meta name="theme-color" content="#fff" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     
     <meta name="format-detection" content="telephone=no, date=no, address=no, email=no" />
@@ -14,11 +14,11 @@
 
     <title>python内存泄漏调试 | 学习笔记</title>
 
-    <link rel="stylesheet" href="/css/meme.min.81031e6b78ad2f1f534002ebb3b658886fea2f25d8a44d296d1466a2fe52f1c1.css"/>
+    <link rel="stylesheet" href="/css/meme.min.2d3e1834af2bc8dda20c7d74aaa1d8134845094441b7a554a5206ccd4b472596.css"/>
 
     
     
-        <script src="/js/meme.min.120d98bb614adc6beb13bf79f943d2cceffd323f4de1544029228c3dca2e9bda.js"></script>
+        <script src="/js/meme.min.800f61672145711eb3e1f29fcfcc3dbe0139dd459259718b611a0390f74703d1.js"></script>
 
     
 
@@ -54,7 +54,7 @@
         "@context": "https://schema.org",
         "@type": "BlogPosting",
         "datePublished": "2018-12-22T21:51:30+00:00",
-        "dateModified": "2021-09-12T11:48:25+08:00",
+        "dateModified": "2021-10-22T14:44:34+08:00",
         "url": "https://zhmin.github.io/posts/python-meomory-leak/",
         "headline": "python内存泄漏调试",
         "description": "记录一次内存泄漏的调试经历 最近写了一个项目，是关于爬虫的，里面涉及到了django作为orm。当时在服务器上运行程序，发现内存占用持续增长，最后直到被系统kill。遇到这个问题，首先要弄清楚内存里面，……",
@@ -97,7 +97,7 @@
 <meta property="og:locale" content="zh" /><meta property="og:image" content="https://zhmin.github.io/icons/apple-touch-icon.png" />
     <meta property="og:type" content="article" />
     <meta property="article:published_time" content="2018-12-22T21:51:30&#43;00:00" />
-    <meta property="article:modified_time" content="2021-09-12T11:48:25&#43;08:00" />
+    <meta property="article:modified_time" content="2021-10-22T14:44:34&#43;08:00" />
     
     <meta property="article:section" content="posts" />
 
@@ -241,7 +241,7 @@
 <p>这里简化下代码, 使用函数dosomething表示一次爬取任务执行。每1分钟执行一次</p>
 <div class="highlight"><div class="chroma">
 <div class="table-container"><table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -256,7 +256,7 @@
 </span><span class="lnt">13
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-python" data-lang="python"><span class="kn">import</span> <span class="nn">objgraph</span>
+<pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="kn">import</span> <span class="nn">objgraph</span>
 <span class="kn">import</span> <span class="nn">schedule</span>
 
 
@@ -274,7 +274,7 @@
 </div><p>观察如下：</p>
 <div class="highlight"><div class="chroma">
 <div class="table-container"><table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -305,7 +305,7 @@
 </span><span class="lnt">29
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-shell" data-lang="shell">objects growth
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell">objects growth
 list                          <span class="m">25705</span>    +25705
 <span class="k">function</span>                      <span class="m">16416</span>    +16416
 tuple                          <span class="m">7941</span>     +7941
@@ -341,7 +341,7 @@ IdentityPartitionCluster      <span class="m">349</span>        +4
 <p>pympler工具可以很容易看到内存的使用情况，用法如下</p>
 <div class="highlight"><div class="chroma">
 <div class="table-container"><table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -363,7 +363,7 @@ IdentityPartitionCluster      <span class="m">349</span>        +4
 </span><span class="lnt">20
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-python" data-lang="python"><span class="kn">import</span> <span class="nn">objgraph</span>
+<pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="kn">import</span> <span class="nn">objgraph</span>
 <span class="kn">import</span> <span class="nn">schedule</span>
 <span class="kn">from</span> <span class="nn">pympler</span> <span class="kn">import</span> <span class="n">tracker</span><span class="p">,</span> <span class="n">muppy</span><span class="p">,</span> <span class="n">summary</span>
 
@@ -371,12 +371,12 @@ IdentityPartitionCluster      <span class="m">349</span>        +4
 <span class="n">tr</span> <span class="o">=</span> <span class="n">tracker</span><span class="o">.</span><span class="n">SummaryTracker</span><span class="p">()</span>
 
 <span class="k">def</span> <span class="nf">dosomething</span><span class="p">():</span>
-    <span class="k">print</span> <span class="s2">&#34;memory total&#34;</span>
+    <span class="nb">print</span> <span class="s2">&#34;memory total&#34;</span>
     <span class="n">all_objects</span> <span class="o">=</span> <span class="n">muppy</span><span class="o">.</span><span class="n">get_objects</span><span class="p">()</span>
     <span class="n">sum1</span> <span class="o">=</span> <span class="n">summary</span><span class="o">.</span><span class="n">summarize</span><span class="p">(</span><span class="n">all_objects</span><span class="p">)</span>
     <span class="n">summary</span><span class="o">.</span><span class="n">print_</span><span class="p">(</span><span class="n">sum1</span><span class="p">)</span>
     
-    <span class="k">print</span> <span class="s2">&#34;memory difference&#34;</span>
+    <span class="nb">print</span> <span class="s2">&#34;memory difference&#34;</span>
     <span class="n">tr</span><span class="o">.</span><span class="n">print_diff</span><span class="p">()</span>
     <span class="c1"># ........ 爬取任务</span>
     <span class="k">pass</span>
@@ -388,7 +388,7 @@ IdentityPartitionCluster      <span class="m">349</span>        +4
 </div><p>观察输出结果如下：</p>
 <div class="highlight"><div class="chroma">
 <div class="table-container"><table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">  1
+<pre tabindex="0" class="chroma"><code><span class="lnt">  1
 </span><span class="lnt">  2
 </span><span class="lnt">  3
 </span><span class="lnt">  4
@@ -501,7 +501,7 @@ IdentityPartitionCluster      <span class="m">349</span>        +4
 </span><span class="lnt">111
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-shell" data-lang="shell">memory total
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell">memory total
                                      types <span class="p">|</span>   <span class="c1"># objects |   total size</span>
 <span class="o">==========================================</span> <span class="p">|</span> <span class="o">===========</span> <span class="p">|</span> <span class="o">============</span>
                                        str <span class="p">|</span>       <span class="m">94461</span> <span class="p">|</span>      7.19 MB
@@ -619,7 +619,7 @@ memory total
 <p>guppy可以查看到heap内存的具体使用情况，哪些对象占用多少内存。</p>
 <div class="highlight"><div class="chroma">
 <div class="table-container"><table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -641,7 +641,7 @@ memory total
 </span><span class="lnt">20
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-python" data-lang="python"><span class="kn">import</span> <span class="nn">objgraph</span>
+<pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="kn">import</span> <span class="nn">objgraph</span>
 <span class="kn">import</span> <span class="nn">schedule</span>
 <span class="kn">import</span> <span class="nn">guppy</span>
 <span class="kn">from</span> <span class="nn">pympler</span> <span class="kn">import</span> <span class="n">tracker</span><span class="p">,</span> <span class="n">muppy</span><span class="p">,</span> <span class="n">summary</span>
@@ -651,10 +651,10 @@ memory total
 <span class="n">hp</span> <span class="o">=</span> <span class="n">guppy</span><span class="o">.</span><span class="n">hpy</span><span class="p">()</span> <span class="c1"># 初始化了SessionContext，使用它可以访问heap信息</span>
 
 <span class="k">def</span> <span class="nf">dosomething</span><span class="p">():</span>
-    <span class="k">print</span> <span class="s2">&#34;heap total&#34;</span>
+    <span class="nb">print</span> <span class="s2">&#34;heap total&#34;</span>
     <span class="n">heap</span> <span class="o">=</span> <span class="n">hp</span><span class="o">.</span><span class="n">heap</span><span class="p">()</span> <span class="c1"># 返回heap内存详情</span>
     <span class="n">references</span> <span class="o">=</span> <span class="n">heap</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">byvia</span> <span class="c1"># byvia返回该对象的被哪些引用， heap[0]是内存消耗最大的对象</span>
-    <span class="k">print</span> <span class="n">references</span>
+    <span class="nb">print</span> <span class="n">references</span>
     
     <span class="c1"># ........ 爬取任务</span>
     <span class="k">pass</span>
@@ -667,7 +667,7 @@ memory total
 <p>观察结果</p>
 <div class="highlight"><div class="chroma">
 <div class="table-container"><table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -682,7 +682,7 @@ memory total
 </span><span class="lnt">13
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-shell" data-lang="shell">Partition of a <span class="nb">set</span> of <span class="m">10151</span> objects. Total <span class="nv">size</span> <span class="o">=</span> <span class="m">116935280</span> bytes.
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell">Partition of a <span class="nb">set</span> of <span class="m">10151</span> objects. Total <span class="nv">size</span> <span class="o">=</span> <span class="m">116935280</span> bytes.
  Index  Count   %     Size   % Cumulative  % Referred Via:
      <span class="m">0</span>    <span class="m">155</span>   <span class="m">2</span> <span class="m">114401312</span>  <span class="m">98</span> <span class="m">114401312</span>  <span class="m">98</span> <span class="s2">&#34;[u&#39;sql&#39;]&#34;</span>
      <span class="m">1</span>   <span class="m">1245</span>  <span class="m">12</span>  <span class="m">1036064</span>   <span class="m">1</span> <span class="m">115437376</span>  <span class="m">99</span> <span class="s1">&#39;.func_doc&#39;</span>, <span class="s1">&#39;[0]&#39;</span>
@@ -700,7 +700,7 @@ memory total
 </div><p>可以看到sql这个属性，占用了所有unicode的98%的存储空间。继续观察sql这个属性的引用链</p>
 <div class="highlight"><div class="chroma">
 <div class="table-container"><table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -724,7 +724,7 @@ memory total
 </span><span class="lnt">22
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-python" data-lang="python"><span class="kn">import</span> <span class="nn">objgraph</span>
+<pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="kn">import</span> <span class="nn">objgraph</span>
 <span class="kn">import</span> <span class="nn">schedule</span>
 <span class="kn">import</span> <span class="nn">guppy</span>
 <span class="kn">from</span> <span class="nn">pympler</span> <span class="kn">import</span> <span class="n">tracker</span><span class="p">,</span> <span class="n">muppy</span><span class="p">,</span> <span class="n">summary</span>
@@ -734,12 +734,12 @@ memory total
 <span class="n">hp</span> <span class="o">=</span> <span class="n">guppy</span><span class="o">.</span><span class="n">hpy</span><span class="p">()</span>
 
 <span class="k">def</span> <span class="nf">dosomething</span><span class="p">():</span>
-    <span class="k">print</span> <span class="s2">&#34;heap total&#34;</span>
+    <span class="nb">print</span> <span class="s2">&#34;heap total&#34;</span>
     <span class="n">heap</span> <span class="o">=</span> <span class="n">hp</span><span class="o">.</span><span class="n">heap</span><span class="p">()</span>
     <span class="n">references</span> <span class="o">=</span> <span class="n">heap</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">byvia</span>
-    <span class="k">print</span> <span class="n">references</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">kind</span>
-    <span class="k">print</span> <span class="n">references</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">shpaths</span>
-    <span class="k">print</span> <span class="n">references</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">rp</span>
+    <span class="nb">print</span> <span class="n">references</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">kind</span>
+    <span class="nb">print</span> <span class="n">references</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">shpaths</span>
+    <span class="nb">print</span> <span class="n">references</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">rp</span>
     
     <span class="c1"># ........ 爬取任务</span>
     <span class="k">pass</span>
@@ -752,7 +752,7 @@ memory total
 <p>观察结果</p>
 <div class="highlight"><div class="chroma">
 <div class="table-container"><table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -780,7 +780,7 @@ memory total
 </span><span class="lnt">26
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-shell" data-lang="shell">&lt;via <span class="s2">&#34;[u&#39;sql&#39;]&#34;</span>&gt;
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell">&lt;via <span class="s2">&#34;[u&#39;sql&#39;]&#34;</span>&gt;
  0: hp.Root.i0_modules<span class="o">[</span><span class="s1">&#39;django.contr....models.query&#39;</span><span class="o">]</span>.__dict__<span class="o">[</span><span class="s1">&#39;connections&#39;</span><span class="o">]</span>.__dict__<span class="o">[</span><span class="s1">&#39;_connections&#39;</span><span class="o">]</span>.??<span class="o">[</span>&lt;weakref...bc7d6830&gt;<span class="o">][</span><span class="s1">&#39;default&#39;</span><span class="o">]</span>.__dict__<span class="o">[</span><span class="s1">&#39;queries_log&#39;</span><span class="o">]</span>.??<span class="o">[</span>u<span class="s1">&#39;sql&#39;</span><span class="o">]</span>
  1: hp.Root.i0_modules<span class="o">[</span><span class="s1">&#39;django.contr....models.query&#39;</span><span class="o">]</span>.__dict__<span class="o">[</span><span class="s1">&#39;connections&#39;</span><span class="o">]</span>.__dict__<span class="o">[</span><span class="s1">&#39;_connections&#39;</span><span class="o">]</span>.??<span class="o">[</span>&lt;weakref...bc7d6830&gt;<span class="o">][</span><span class="s1">&#39;default&#39;</span><span class="o">]</span>.__dict__<span class="o">[</span><span class="s1">&#39;queries_log&#39;</span><span class="o">]</span>.??<span class="o">[</span>u<span class="s1">&#39;sql&#39;</span><span class="o">]</span>
  2: hp.Root.i0_modules<span class="o">[</span><span class="s1">&#39;django.contr....models.query&#39;</span><span class="o">]</span>.__dict__<span class="o">[</span><span class="s1">&#39;connections&#39;</span><span class="o">]</span>.__dict__<span class="o">[</span><span class="s1">&#39;_connections&#39;</span><span class="o">]</span>.??<span class="o">[</span>&lt;weakref...bc7d6830&gt;<span class="o">][</span><span class="s1">&#39;default&#39;</span><span class="o">]</span>.__dict__<span class="o">[</span><span class="s1">&#39;queries_log&#39;</span><span class="o">]</span>.??<span class="o">[</span>u<span class="s1">&#39;sql&#39;</span><span class="o">]</span>
@@ -836,9 +836,9 @@ Reference Pattern by &lt;<span class="o">[</span>dict of<span class="o">]</span>
 
         
     <div class="updated-badge-container">
-        <span title="Updated @ 2021-09-12 11:48:25 CST" style="cursor:help">
+        <span title="Updated @ 2021-10-22 14:44:34 CST" style="cursor:help">
 
-<svg xmlns="http://www.w3.org/2000/svg" width="130" height="20" class="updated-badge"><linearGradient id="b" x2="0" y2="100%"><stop offset="0" stop-color="#bbb" stop-opacity=".1"/><stop offset="1" stop-opacity=".1"/></linearGradient><clipPath id="a"><rect width="130" height="20" rx="3" fill="#fff"/></clipPath><g clip-path="url(#a)"><path class="updated-badge-left" d="M0 0h55v20H0z"/><path class="updated-badge-right" d="M55 0h75v20H55z"/><path fill="url(#b)" d="M0 0h130v20H0z"/></g><g fill="#fff" text-anchor="middle" font-size="110"><text x="285" y="150" fill="#010101" fill-opacity=".3" textLength="450" transform="scale(.1)">updated</text><text x="285" y="140" textLength="450" transform="scale(.1)">updated</text><text x="915" y="150" fill="#010101" fill-opacity=".3" textLength="650" transform="scale(.1)">2021-09-12</text><text x="915" y="140" textLength="650" transform="scale(.1)">2021-09-12</text></g></svg>
+<svg xmlns="http://www.w3.org/2000/svg" width="130" height="20" class="updated-badge"><linearGradient id="b" x2="0" y2="100%"><stop offset="0" stop-color="#bbb" stop-opacity=".1"/><stop offset="1" stop-opacity=".1"/></linearGradient><clipPath id="a"><rect width="130" height="20" rx="3" fill="#fff"/></clipPath><g clip-path="url(#a)"><path class="updated-badge-left" d="M0 0h55v20H0z"/><path class="updated-badge-right" d="M55 0h75v20H55z"/><path fill="url(#b)" d="M0 0h130v20H0z"/></g><g fill="#fff" text-anchor="middle" font-size="110"><text x="285" y="150" fill="#010101" fill-opacity=".3" textLength="450" transform="scale(.1)">updated</text><text x="285" y="140" textLength="450" transform="scale(.1)">updated</text><text x="915" y="150" fill="#010101" fill-opacity=".3" textLength="650" transform="scale(.1)">2021-10-22</text><text x="915" y="140" textLength="650" transform="scale(.1)">2021-10-22</text></g></svg>
         </span></div>
 
 

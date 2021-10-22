@@ -3,7 +3,7 @@
     <head prefix="og: http://ogp.me/ns# article: http://ogp.me/ns/article#">
     <meta charset="UTF-8" />
 
-    <meta name="generator" content="Hugo 0.79.0" /><meta name="theme-color" content="#fff" />
+    <meta name="generator" content="Hugo 0.88.1" /><meta name="theme-color" content="#fff" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     
     <meta name="format-detection" content="telephone=no, date=no, address=no, email=no" />
@@ -14,11 +14,11 @@
 
     <title>CDH 集群添加 Spark Sql 命令行 | 学习笔记</title>
 
-    <link rel="stylesheet" href="/css/meme.min.81031e6b78ad2f1f534002ebb3b658886fea2f25d8a44d296d1466a2fe52f1c1.css"/>
+    <link rel="stylesheet" href="/css/meme.min.2d3e1834af2bc8dda20c7d74aaa1d8134845094441b7a554a5206ccd4b472596.css"/>
 
     
     
-        <script src="/js/meme.min.120d98bb614adc6beb13bf79f943d2cceffd323f4de1544029228c3dca2e9bda.js"></script>
+        <script src="/js/meme.min.800f61672145711eb3e1f29fcfcc3dbe0139dd459259718b611a0390f74703d1.js"></script>
 
     
 
@@ -54,7 +54,7 @@
         "@context": "https://schema.org",
         "@type": "BlogPosting",
         "datePublished": "2019-04-03T21:37:32+00:00",
-        "dateModified": "2021-09-12T11:48:25+08:00",
+        "dateModified": "2021-10-22T14:44:34+08:00",
         "url": "https://zhmin.github.io/posts/spark-sql-cdh/",
         "headline": "CDH 集群添加 Spark Sql 命令行",
         "description": "Cloudera 集群 添加 Spark Sql 命令行 目前需要从Hive Sql 迁移到 Spark Sql，但是CDH版本的集群，不支持Spark Sql命令行。这篇文章详细介绍了Cloudera的Spark命令是如何启动的，然后在此基础上添加Spark……",
@@ -97,7 +97,7 @@
 <meta property="og:locale" content="zh" /><meta property="og:image" content="https://zhmin.github.io/icons/apple-touch-icon.png" />
     <meta property="og:type" content="article" />
     <meta property="article:published_time" content="2019-04-03T21:37:32&#43;00:00" />
-    <meta property="article:modified_time" content="2021-09-12T11:48:25&#43;08:00" />
+    <meta property="article:modified_time" content="2021-10-22T14:44:34&#43;08:00" />
     
     <meta property="article:section" content="posts" />
 
@@ -243,7 +243,7 @@
 <p>首先查看该命令的位置，可以看到最后链接指向了/opt/cloudera/parcels/SPARK2-2.2.0.cloudera3-1.cdh5.13.3.p0.556753/bin/spark2-submit。</p>
 <div class="highlight"><div class="chroma">
 <div class="table-container"><table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
@@ -253,7 +253,7 @@
 </span><span class="lnt">8
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-shell" data-lang="shell"><span class="o">[</span>root@master01 ~<span class="o">]</span><span class="c1"># which spark2-submit</span>
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="o">[</span>root@master01 ~<span class="o">]</span><span class="c1"># which spark2-submit</span>
 /bin/spark2-submit
 
 <span class="o">[</span>root@master01 ~<span class="o">]</span><span class="c1"># ll /bin/spark2-submit</span>
@@ -266,7 +266,7 @@ lrwxrwxrwx <span class="m">1</span> root root <span class="m">84</span> Feb <spa
 </div><p>接下来看看spark2-submit文件的内容</p>
 <div class="highlight"><div class="chroma">
 <div class="table-container"><table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -288,7 +288,7 @@ lrwxrwxrwx <span class="m">1</span> root root <span class="m">84</span> Feb <spa
 </span><span class="lnt">20
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-shell" data-lang="shell"><span class="cp">#!/bin/bash
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="cp">#!/bin/bash
 </span><span class="cp"></span>  <span class="c1"># Reference: http://stackoverflow.com/questions/59895/can-a-bash-script-tell-what-directory-its-stored-in</span>
   <span class="nv">SOURCE</span><span class="o">=</span><span class="s2">&#34;</span><span class="si">${</span><span class="nv">BASH_SOURCE</span><span class="p">[0]</span><span class="si">}</span><span class="s2">&#34;</span> <span class="c1"># 获取shell文件路径</span>
   <span class="nv">BIN_DIR</span><span class="o">=</span><span class="s2">&#34;</span><span class="k">$(</span> dirname <span class="s2">&#34;</span><span class="nv">$SOURCE</span><span class="s2">&#34;</span> <span class="k">)</span><span class="s2">&#34;</span> <span class="c1"># 获取该shell文件的所在文件夹</span>
@@ -313,7 +313,7 @@ lrwxrwxrwx <span class="m">1</span> root root <span class="m">84</span> Feb <spa
 </div><p>spark2-submit命令会设置好环境变量，并且进入到对应的执行目录里。最后执行了/opt/cloudera/parcels/SPARK2-2.2.0.cloudera3-1.cdh5.13.3.p0.556753/lib/spark2/bin/spark-submit文件，下面看看这个文件的内容</p>
 <div class="highlight"><div class="chroma">
 <div class="table-container"><table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -325,7 +325,7 @@ lrwxrwxrwx <span class="m">1</span> root root <span class="m">84</span> Feb <spa
 </span><span class="lnt">10
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-shell" data-lang="shell"><span class="cp">#!/usr/bin/env bash
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="cp">#!/usr/bin/env bash
 </span><span class="cp"></span><span class="c1"># 寻找环境变量SPARK_HOME的值</span>
 <span class="k">if</span> <span class="o">[</span> -z <span class="s2">&#34;</span><span class="si">${</span><span class="nv">SPARK_HOME</span><span class="si">}</span><span class="s2">&#34;</span> <span class="o">]</span><span class="p">;</span> <span class="k">then</span>
   <span class="nb">source</span> <span class="s2">&#34;</span><span class="k">$(</span>dirname <span class="s2">&#34;</span><span class="nv">$0</span><span class="s2">&#34;</span><span class="k">)</span><span class="s2">&#34;</span>/find-spark-home
@@ -343,18 +343,18 @@ lrwxrwxrwx <span class="m">1</span> root root <span class="m">84</span> Feb <spa
 <p>首先我们添加 /bin 目录下添加 spark2-sql 链接文件，这样 spark2-sql 命令就可以被找到</p>
 <div class="highlight"><div class="chroma">
 <div class="table-container"><table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-shell" data-lang="shell">ln -s  /etc/alternatives/spark2-sql /bin/spark2-sql
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell">ln -s  /etc/alternatives/spark2-sql /bin/spark2-sql
 ln -s  /opt/cloudera/parcels/SPARK2/bin/spark2-sql  /etc/alternatives/spark2-sql
 </code></pre></td></tr></table></div>
 </div>
 </div><p>创建文件 /opt/cloudera/parcels/SPARK2/bin/spark2-sql，文件内容如下</p>
 <div class="highlight"><div class="chroma">
 <div class="table-container"><table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -375,7 +375,7 @@ ln -s  /opt/cloudera/parcels/SPARK2/bin/spark2-sql  /etc/alternatives/spark2-sql
 </span><span class="lnt">19
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-shell" data-lang="shell"><span class="cp">#!/bin/bash
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="cp">#!/bin/bash
 </span><span class="cp"></span>  <span class="c1"># Reference: http://stackoverflow.com/questions/59895/can-a-bash-script-tell-what-directory-its-stored-in</span>
   <span class="nv">SOURCE</span><span class="o">=</span><span class="s2">&#34;</span><span class="si">${</span><span class="nv">BASH_SOURCE</span><span class="p">[0]</span><span class="si">}</span><span class="s2">&#34;</span>
   <span class="nv">BIN_DIR</span><span class="o">=</span><span class="s2">&#34;</span><span class="k">$(</span> dirname <span class="s2">&#34;</span><span class="nv">$SOURCE</span><span class="s2">&#34;</span> <span class="k">)</span><span class="s2">&#34;</span>
@@ -400,7 +400,7 @@ ln -s  /opt/cloudera/parcels/SPARK2/bin/spark2-sql  /etc/alternatives/spark2-sql
 <p>然后创建 /opt/cloudera/parcels/SPARK2-2.2.0.cloudera3-1.cdh5.13.3.p0.556753/lib/spark2/bin/spark-sql 文件，内容如下</p>
 <div class="highlight"><div class="chroma">
 <div class="table-container"><table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -427,7 +427,7 @@ ln -s  /opt/cloudera/parcels/SPARK2/bin/spark2-sql  /etc/alternatives/spark2-sql
 </span><span class="lnt">25
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-shell" data-lang="shell"><span class="cp">#!/usr/bin/env bash
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="cp">#!/usr/bin/env bash
 </span><span class="cp"></span>
 <span class="c1">#</span>
 <span class="c1"># Licensed to the Apache Software Foundation (ASF) under one or more</span>
@@ -459,24 +459,24 @@ ln -s  /opt/cloudera/parcels/SPARK2/bin/spark2-sql  /etc/alternatives/spark2-sql
 <p>下载完并且解压后，里面会有一个 jars 的目录，将Cloudera缺少的库，拷贝到cloudera对应的库文件夹里面即可。</p>
 <div class="highlight"><div class="chroma">
 <div class="table-container"><table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-shell" data-lang="shell">cp jars/spark-hive-thriftserver_2.11-2.2.0.jar /opt/cloudera/parcels/SPARK2/lib/spark2/jars/
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell">cp jars/spark-hive-thriftserver_2.11-2.2.0.jar /opt/cloudera/parcels/SPARK2/lib/spark2/jars/
 cp jars/hive-* /opt/cloudera/parcels/SPARK2/lib/spark2/jars/ <span class="c1"># 注意到这里不要覆盖原有文件</span>
 </code></pre></td></tr></table></div>
 </div>
 </div><p>整个添加的过程就完成了，接下来就可以直接使用spark-sql命令，就可以进入客户端shell</p>
 <div class="highlight"><div class="chroma">
 <div class="table-container"><table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-shell" data-lang="shell">sudo -u hive spark2-sql
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell">sudo -u hive spark2-sql
 spark-sql&gt; use test<span class="p">;</span>
 spark-sql&gt; show tables<span class="p">;</span>
 .....
@@ -485,14 +485,14 @@ spark-sql&gt; show tables<span class="p">;</span>
 </div><p>下面简单介绍下spark-sql常用的命令选项</p>
 <div class="highlight"><div class="chroma">
 <div class="table-container"><table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
 </span><span class="lnt">5
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-shell" data-lang="shell"><span class="c1"># 执行 sql 命令</span>
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="c1"># 执行 sql 命令</span>
 sudo -u hive spark2-sql -e <span class="s2">&#34;select count(*) from test.my_table;&#34;</span>
 
 <span class="c1"># 执行 sql 文件</span>
@@ -526,9 +526,9 @@ sudo -u hive spark2-sql -f my_sql.sql
 
         
     <div class="updated-badge-container">
-        <span title="Updated @ 2021-09-12 11:48:25 CST" style="cursor:help">
+        <span title="Updated @ 2021-10-22 14:44:34 CST" style="cursor:help">
 
-<svg xmlns="http://www.w3.org/2000/svg" width="130" height="20" class="updated-badge"><linearGradient id="b" x2="0" y2="100%"><stop offset="0" stop-color="#bbb" stop-opacity=".1"/><stop offset="1" stop-opacity=".1"/></linearGradient><clipPath id="a"><rect width="130" height="20" rx="3" fill="#fff"/></clipPath><g clip-path="url(#a)"><path class="updated-badge-left" d="M0 0h55v20H0z"/><path class="updated-badge-right" d="M55 0h75v20H55z"/><path fill="url(#b)" d="M0 0h130v20H0z"/></g><g fill="#fff" text-anchor="middle" font-size="110"><text x="285" y="150" fill="#010101" fill-opacity=".3" textLength="450" transform="scale(.1)">updated</text><text x="285" y="140" textLength="450" transform="scale(.1)">updated</text><text x="915" y="150" fill="#010101" fill-opacity=".3" textLength="650" transform="scale(.1)">2021-09-12</text><text x="915" y="140" textLength="650" transform="scale(.1)">2021-09-12</text></g></svg>
+<svg xmlns="http://www.w3.org/2000/svg" width="130" height="20" class="updated-badge"><linearGradient id="b" x2="0" y2="100%"><stop offset="0" stop-color="#bbb" stop-opacity=".1"/><stop offset="1" stop-opacity=".1"/></linearGradient><clipPath id="a"><rect width="130" height="20" rx="3" fill="#fff"/></clipPath><g clip-path="url(#a)"><path class="updated-badge-left" d="M0 0h55v20H0z"/><path class="updated-badge-right" d="M55 0h75v20H55z"/><path fill="url(#b)" d="M0 0h130v20H0z"/></g><g fill="#fff" text-anchor="middle" font-size="110"><text x="285" y="150" fill="#010101" fill-opacity=".3" textLength="450" transform="scale(.1)">updated</text><text x="285" y="140" textLength="450" transform="scale(.1)">updated</text><text x="915" y="150" fill="#010101" fill-opacity=".3" textLength="650" transform="scale(.1)">2021-10-22</text><text x="915" y="140" textLength="650" transform="scale(.1)">2021-10-22</text></g></svg>
         </span></div>
 
 

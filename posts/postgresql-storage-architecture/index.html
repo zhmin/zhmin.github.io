@@ -3,7 +3,7 @@
     <head prefix="og: http://ogp.me/ns# article: http://ogp.me/ns/article#">
     <meta charset="UTF-8" />
 
-    <meta name="generator" content="Hugo 0.79.0" /><meta name="theme-color" content="#fff" />
+    <meta name="generator" content="Hugo 0.88.1" /><meta name="theme-color" content="#fff" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     
     <meta name="format-detection" content="telephone=no, date=no, address=no, email=no" />
@@ -14,11 +14,11 @@
 
     <title>Postgresql 存储设计 | 学习笔记</title>
 
-    <link rel="stylesheet" href="/css/meme.min.81031e6b78ad2f1f534002ebb3b658886fea2f25d8a44d296d1466a2fe52f1c1.css"/>
+    <link rel="stylesheet" href="/css/meme.min.2d3e1834af2bc8dda20c7d74aaa1d8134845094441b7a554a5206ccd4b472596.css"/>
 
     
     
-        <script src="/js/meme.min.120d98bb614adc6beb13bf79f943d2cceffd323f4de1544029228c3dca2e9bda.js"></script>
+        <script src="/js/meme.min.800f61672145711eb3e1f29fcfcc3dbe0139dd459259718b611a0390f74703d1.js"></script>
 
     
 
@@ -54,7 +54,7 @@
         "@context": "https://schema.org",
         "@type": "BlogPosting",
         "datePublished": "2020-09-05T18:11:05+00:00",
-        "dateModified": "2021-09-12T11:48:25+08:00",
+        "dateModified": "2021-10-22T14:44:34+08:00",
         "url": "https://zhmin.github.io/posts/postgresql-storage-architecture/",
         "headline": "Postgresql 存储设计",
         "description": "架构图 用户查询指定 page 的数据 首先查询该 page 是否在缓存中，通过 hash table 快速查找它在缓存池的位置 如果存在，那么从缓存池读取返回 如果不存在需要从磁盘读取数据，并且放入到缓存池中，然后返回 postgresql 存储单位 postgresql 底层存储的数据交……",
@@ -97,7 +97,7 @@
 <meta property="og:locale" content="zh" /><meta property="og:image" content="https://zhmin.github.io/pg-storage-architecture.svg" />
 <meta property="og:type" content="article" />
     <meta property="article:published_time" content="2020-09-05T18:11:05&#43;00:00" />
-    <meta property="article:modified_time" content="2021-09-12T11:48:25&#43;08:00" />
+    <meta property="article:modified_time" content="2021-10-22T14:44:34&#43;08:00" />
     
     <meta property="article:section" content="posts" />
 
@@ -254,7 +254,7 @@
 <p>Buffer Pool 在 postgresql 的定义如下，它只是一个简单的数组</p>
 <div class="highlight"><div class="chroma">
 <div class="table-container"><table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -268,7 +268,7 @@
 </span><span class="lnt">12
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-c" data-lang="c"><span class="kt">char</span>	   <span class="o">*</span><span class="n">BufferBlocks</span><span class="p">;</span>            <span class="c1">// 缓存数组
+<pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="kt">char</span>	   <span class="o">*</span><span class="n">BufferBlocks</span><span class="p">;</span>            <span class="c1">// 缓存数组
 </span><span class="c1"></span><span class="n">BufferDescPadded</span> <span class="o">*</span><span class="n">BufferDescriptors</span><span class="p">;</span>  <span class="c1">// 缓存元数据
 </span><span class="c1"></span>
 <span class="c1">// 初始化缓存数组
@@ -285,7 +285,7 @@
 </div><p>Buffer 存储的数据是和 Page 完全一样的。我们还需要一些描述 Buffer 的信息，比如该 Buffer 对应哪个 Page，这里当持久化该 Buffer 的时候，知道存储到磁盘的哪个位置。还有为了支持并发，需要保存一些并发的信息。这些信息都由 BufferDesc 保存，需要强调下 BufferDesc 信息是不会被持久化的。</p>
 <div class="highlight"><div class="chroma">
 <div class="table-container"><table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -300,7 +300,7 @@
 </span><span class="lnt">13
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-c" data-lang="c"><span class="k">typedef</span> <span class="k">struct</span> <span class="n">BufferDesc</span>
+<pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="k">typedef</span> <span class="k">struct</span> <span class="n">BufferDesc</span>
 <span class="p">{</span>
 	<span class="n">BufferTag</span>	<span class="n">tag</span><span class="p">;</span>			<span class="cm">/* 指定对应的 page 地址 */</span>
 	<span class="kt">int</span>			<span class="n">buf_id</span><span class="p">;</span>			<span class="cm">/* 指定的 buffer 在数组中的索引 */</span>
@@ -318,7 +318,7 @@
 </div><p>我们查看下 <code>BufferTag</code>的定义，看看 postgresql 是如何表示 page 地址的。postgresql 对于表是单独存储的，每个表除了包含了本身的数据文件，还有其它一些类型的文件。</p>
 <div class="highlight"><div class="chroma">
 <div class="table-container"><table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
@@ -326,7 +326,7 @@
 </span><span class="lnt">6
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-c" data-lang="c"><span class="k">typedef</span> <span class="k">struct</span> <span class="n">buftag</span>
+<pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="k">typedef</span> <span class="k">struct</span> <span class="n">buftag</span>
 <span class="p">{</span>
 	<span class="n">RelFileNode</span> <span class="n">rnode</span><span class="p">;</span>			<span class="cm">/* 表标识 */</span>
 	<span class="n">ForkNumber</span>	<span class="n">forkNum</span><span class="p">;</span>         <span class="cm">/* 文件类型 */</span>
@@ -337,7 +337,7 @@
 </div><p>我们仔细看看<code>BufferDesc</code>虽然是数组，但是在创建的时候，却是以<code>BufferDescPadded</code>格式存储的。</p>
 <div class="highlight"><div class="chroma">
 <div class="table-container"><table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
@@ -346,7 +346,7 @@
 </span><span class="lnt">7
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-c" data-lang="c"><span class="cp">#define BUFFERDESC_PAD_TO_SIZE	(SIZEOF_VOID_P == 8 ? 64 : 1)
+<pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="cp">#define BUFFERDESC_PAD_TO_SIZE	(SIZEOF_VOID_P == 8 ? 64 : 1)
 </span><span class="cp"></span>
 <span class="k">typedef</span> <span class="k">union</span> <span class="n">BufferDescPadded</span>
 <span class="p">{</span>
@@ -384,9 +384,9 @@
 
         
     <div class="updated-badge-container">
-        <span title="Updated @ 2021-09-12 11:48:25 CST" style="cursor:help">
+        <span title="Updated @ 2021-10-22 14:44:34 CST" style="cursor:help">
 
-<svg xmlns="http://www.w3.org/2000/svg" width="130" height="20" class="updated-badge"><linearGradient id="b" x2="0" y2="100%"><stop offset="0" stop-color="#bbb" stop-opacity=".1"/><stop offset="1" stop-opacity=".1"/></linearGradient><clipPath id="a"><rect width="130" height="20" rx="3" fill="#fff"/></clipPath><g clip-path="url(#a)"><path class="updated-badge-left" d="M0 0h55v20H0z"/><path class="updated-badge-right" d="M55 0h75v20H55z"/><path fill="url(#b)" d="M0 0h130v20H0z"/></g><g fill="#fff" text-anchor="middle" font-size="110"><text x="285" y="150" fill="#010101" fill-opacity=".3" textLength="450" transform="scale(.1)">updated</text><text x="285" y="140" textLength="450" transform="scale(.1)">updated</text><text x="915" y="150" fill="#010101" fill-opacity=".3" textLength="650" transform="scale(.1)">2021-09-12</text><text x="915" y="140" textLength="650" transform="scale(.1)">2021-09-12</text></g></svg>
+<svg xmlns="http://www.w3.org/2000/svg" width="130" height="20" class="updated-badge"><linearGradient id="b" x2="0" y2="100%"><stop offset="0" stop-color="#bbb" stop-opacity=".1"/><stop offset="1" stop-opacity=".1"/></linearGradient><clipPath id="a"><rect width="130" height="20" rx="3" fill="#fff"/></clipPath><g clip-path="url(#a)"><path class="updated-badge-left" d="M0 0h55v20H0z"/><path class="updated-badge-right" d="M55 0h75v20H55z"/><path fill="url(#b)" d="M0 0h130v20H0z"/></g><g fill="#fff" text-anchor="middle" font-size="110"><text x="285" y="150" fill="#010101" fill-opacity=".3" textLength="450" transform="scale(.1)">updated</text><text x="285" y="140" textLength="450" transform="scale(.1)">updated</text><text x="915" y="150" fill="#010101" fill-opacity=".3" textLength="650" transform="scale(.1)">2021-10-22</text><text x="915" y="140" textLength="650" transform="scale(.1)">2021-10-22</text></g></svg>
         </span></div>
 
 

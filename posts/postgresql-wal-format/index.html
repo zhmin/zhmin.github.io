@@ -3,7 +3,7 @@
     <head prefix="og: http://ogp.me/ns# article: http://ogp.me/ns/article#">
     <meta charset="UTF-8" />
 
-    <meta name="generator" content="Hugo 0.79.0" /><meta name="theme-color" content="#fff" />
+    <meta name="generator" content="Hugo 0.88.1" /><meta name="theme-color" content="#fff" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     
     <meta name="format-detection" content="telephone=no, date=no, address=no, email=no" />
@@ -14,11 +14,11 @@
 
     <title>Postgresql Wal 日志构建原理 | 学习笔记</title>
 
-    <link rel="stylesheet" href="/css/meme.min.81031e6b78ad2f1f534002ebb3b658886fea2f25d8a44d296d1466a2fe52f1c1.css"/>
+    <link rel="stylesheet" href="/css/meme.min.2d3e1834af2bc8dda20c7d74aaa1d8134845094441b7a554a5206ccd4b472596.css"/>
 
     
     
-        <script src="/js/meme.min.120d98bb614adc6beb13bf79f943d2cceffd323f4de1544029228c3dca2e9bda.js"></script>
+        <script src="/js/meme.min.800f61672145711eb3e1f29fcfcc3dbe0139dd459259718b611a0390f74703d1.js"></script>
 
     
 
@@ -54,7 +54,7 @@
         "@context": "https://schema.org",
         "@type": "BlogPosting",
         "datePublished": "2019-11-05T16:02:51+00:00",
-        "dateModified": "2021-09-12T11:48:25+08:00",
+        "dateModified": "2021-10-22T14:44:34+08:00",
         "url": "https://zhmin.github.io/posts/postgresql-wal-format/",
         "headline": "Postgresql Wal 日志构建原理",
         "description": "前言 Postgresql 使用 wal 日志保存每一次的数据修改，这样保证了数据库即使意外宕机，也能利用它准确的恢复数据。wal 日志也叫做 xlog，在 9.4 版本之后作了重大更新，本篇只讲解最新版的格式。wal 日志被用于多个方面，比如……",
@@ -97,7 +97,7 @@
 <meta property="og:locale" content="zh" /><meta property="og:image" content="https://zhmin.github.io/pg-xlog-format.svg" />
 <meta property="og:type" content="article" />
     <meta property="article:published_time" content="2019-11-05T16:02:51&#43;00:00" />
-    <meta property="article:modified_time" content="2021-09-12T11:48:25&#43;08:00" />
+    <meta property="article:modified_time" content="2021-10-22T14:44:34&#43;08:00" />
     
     <meta property="article:section" content="posts" />
 
@@ -250,7 +250,7 @@
 <p>postgresql 在9.4版之前的wal 日志格式，由于每种用途的格式都完全不一样，并且也没有一个通用的标准，使得对于它的处理比较混乱，所以 postgresql 在9.4版本之后，统一了 wal 日志的头部。注意这里只是作了头部统一，数据区域的格式仍然不一致。通用头部的格式定义如下：</p>
 <div class="highlight"><div class="chroma">
 <div class="table-container"><table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
@@ -261,7 +261,7 @@
 </span><span class="lnt">9
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-c" data-lang="c"><span class="k">typedef</span> <span class="k">struct</span> <span class="n">XLogRecord</span>
+<pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="k">typedef</span> <span class="k">struct</span> <span class="n">XLogRecord</span>
 <span class="p">{</span>
 	<span class="n">uint32</span>		<span class="n">xl_tot_len</span><span class="p">;</span>		<span class="cm">/* 整个xlog的长度，包含头部 */</span>
 	<span class="n">TransactionId</span> <span class="n">xl_xid</span><span class="p">;</span>		<span class="cm">/* xact id */</span>
@@ -275,11 +275,11 @@
 </div><p><code>xl_info</code>标记位分为两部分。高四位使用者自己定义，低四位如下：</p>
 <div class="highlight"><div class="chroma">
 <div class="table-container"><table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-c" data-lang="c"><span class="cp">#define XLR_SPECIAL_REL_UPDATE	0x01
+<pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="cp">#define XLR_SPECIAL_REL_UPDATE	0x01
 </span><span class="cp">#define XLR_CHECK_CONSISTENCY	0x02
 </span></code></pre></td></tr></table></div>
 </div>
@@ -314,7 +314,7 @@
 <p><code>XLogRecordBlockHeader</code>的结构很简单</p>
 <div class="highlight"><div class="chroma">
 <div class="table-container"><table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
@@ -322,7 +322,7 @@
 </span><span class="lnt">6
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-c" data-lang="c"><span class="k">typedef</span> <span class="k">struct</span> <span class="n">XLogRecordBlockHeader</span>
+<pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="k">typedef</span> <span class="k">struct</span> <span class="n">XLogRecordBlockHeader</span>
 <span class="p">{</span>
 	<span class="n">uint8</span>		<span class="n">id</span><span class="p">;</span>				<span class="cm">/* 数组种的索引 */</span>
 	<span class="n">uint8</span>		<span class="n">fork_flags</span><span class="p">;</span>		<span class="cm">/* 低4位是fork类型，高四位是标记位 */</span>
@@ -366,7 +366,7 @@
 <p>我们直到数据 block 的存储格式，它的空间是从顶部和底部开始，向中间分配的方式，所以它的空闲空间是处于中间的连续空间，具体原理参见这篇博客。postgresql 在备份这个数据block，会忽略掉空闲空间。<code>XLogRecordBlockImageHeader </code>的定义如下：</p>
 <div class="highlight"><div class="chroma">
 <div class="table-container"><table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
@@ -374,7 +374,7 @@
 </span><span class="lnt">6
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-c" data-lang="c"><span class="k">typedef</span> <span class="k">struct</span> <span class="n">XLogRecordBlockImageHeader</span>
+<pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="k">typedef</span> <span class="k">struct</span> <span class="n">XLogRecordBlockImageHeader</span>
 <span class="p">{</span>
 	<span class="n">uint16</span>		<span class="n">length</span><span class="p">;</span>			<span class="cm">/* 如果开启压缩，表示压缩后的数据长度。没有开启压缩，表示忽略空闲数据后的长度 */</span>
 	<span class="n">uint16</span>		<span class="n">hole_offset</span><span class="p">;</span>	<span class="cm">/* 空闲数据的起始位置 */</span>
@@ -409,13 +409,13 @@
 <p>只有在开启了数据压缩，并且数据block有空闲空间，头部才会包含<code>XLogRecordBlockCompressHeader </code>。它的结构很简单：</p>
 <div class="highlight"><div class="chroma">
 <div class="table-container"><table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-c" data-lang="c"><span class="k">typedef</span> <span class="k">struct</span> <span class="n">XLogRecordBlockCompressHeader</span>
+<pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="k">typedef</span> <span class="k">struct</span> <span class="n">XLogRecordBlockCompressHeader</span>
 <span class="p">{</span>
 	<span class="n">uint16</span>		<span class="n">hole_length</span><span class="p">;</span>	<span class="cm">/* 空闲数据的长度 */</span>
 <span class="p">}</span> <span class="n">XLogRecordBlockCompressHeader</span><span class="p">;</span>
@@ -471,7 +471,7 @@
 <p>下面以插入单条数据为例，</p>
 <div class="highlight"><div class="chroma">
 <div class="table-container"><table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
@@ -481,7 +481,7 @@
 </span><span class="lnt">8
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-c" data-lang="c"><span class="n">XLogBeginInsert</span><span class="p">();</span>
+<pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="n">XLogBeginInsert</span><span class="p">();</span>
 <span class="n">XLogRegisterData</span><span class="p">((</span><span class="kt">char</span> <span class="o">*</span><span class="p">)</span> <span class="o">&amp;</span><span class="n">xlrec</span><span class="p">,</span> <span class="n">SizeOfHeapInsert</span><span class="p">);</span>    <span class="c1">// xlog 数据的格式是xlrec
 </span><span class="c1"></span><span class="n">XLogRegisterBuffer</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">buffer</span><span class="p">,</span> <span class="n">REGBUF_STANDARD</span> <span class="o">|</span> <span class="n">bufflags</span><span class="p">);</span>  <span class="c1">// 记录修改的数据block
 </span><span class="c1"></span><span class="n">XLogRegisterBufData</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="p">(</span><span class="kt">char</span> <span class="o">*</span><span class="p">)</span> <span class="o">&amp;</span><span class="n">xlhdr</span><span class="p">,</span> <span class="n">SizeOfHeapHeader</span><span class="p">);</span>  <span class="c1">// 添加块私有数据xlhdr
@@ -497,7 +497,7 @@
 <p><code>XLogRecData</code>结构表示链表节点，每次添加块私有数据或者 xlog 数据，都会生成一个节点，添加到对应的链表中。如果时块私有数据，那么会添加到块的私有链表里。如果是共享数据，那么会添加到全局的共享链表里。</p>
 <div class="highlight"><div class="chroma">
 <div class="table-container"><table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
@@ -505,7 +505,7 @@
 </span><span class="lnt">6
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-c" data-lang="c"><span class="k">typedef</span> <span class="k">struct</span> <span class="n">XLogRecData</span>
+<pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="k">typedef</span> <span class="k">struct</span> <span class="n">XLogRecData</span>
 <span class="p">{</span>
 	<span class="k">struct</span> <span class="n">XLogRecData</span> <span class="o">*</span><span class="n">next</span><span class="p">;</span>	<span class="cm">/* 指向下个节点，如果为NULL表示到达链表结尾 */</span>
 	<span class="kt">char</span>	   <span class="o">*</span><span class="n">data</span><span class="p">;</span>			<span class="cm">/* 数据的起始地址 */</span>
@@ -517,7 +517,7 @@
 <p>当添加一个数据页到 wal 日志里时，会生成一个<code>registered_buffer</code>实例，里面包含了自身的私有数据链表。</p>
 <div class="highlight"><div class="chroma">
 <div class="table-container"><table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -536,7 +536,7 @@
 </span><span class="lnt">17
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-c" data-lang="c"><span class="k">typedef</span> <span class="k">struct</span>
+<pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="k">typedef</span> <span class="k">struct</span>
 <span class="p">{</span>
 	<span class="kt">bool</span>		<span class="n">in_use</span><span class="p">;</span>			<span class="cm">/* is this slot in use? */</span>
 	<span class="n">uint8</span>		<span class="n">flags</span><span class="p">;</span>			<span class="cm">/* REGBUF_* flags */</span>
@@ -558,7 +558,7 @@
 </div><p><code>flags</code>存储标记位格式：</p>
 <div class="highlight"><div class="chroma">
 <div class="table-container"><table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
@@ -569,7 +569,7 @@
 </span><span class="lnt">9
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-c" data-lang="c"><span class="cp">#define REGBUF_FORCE_IMAGE	0x01	</span><span class="cm">/* force a full-page image */</span><span class="cp">
+<pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="cp">#define REGBUF_FORCE_IMAGE	0x01	</span><span class="cm">/* force a full-page image */</span><span class="cp">
 </span><span class="cp">#define REGBUF_NO_IMAGE		0x02	</span><span class="cm">/* don&#39;t take a full-page image */</span><span class="cp">
 </span><span class="cp">#define REGBUF_WILL_INIT	(0x04 | 0x02)	</span><span class="cm">/* page will be re-initialized at
 </span><span class="cm">											 * replay (implies NO_IMAGE) */</span><span class="cp">
@@ -584,12 +584,12 @@
 <p>Xlog 数据同样是链表的形式组织起来，由全局变量管理</p>
 <div class="highlight"><div class="chroma">
 <div class="table-container"><table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-c" data-lang="c"><span class="k">static</span> <span class="n">XLogRecData</span> <span class="o">*</span><span class="n">mainrdata_head</span><span class="p">;</span> <span class="cm">/* 链表头 */</span>
+<pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="k">static</span> <span class="n">XLogRecData</span> <span class="o">*</span><span class="n">mainrdata_head</span><span class="p">;</span> <span class="cm">/* 链表头 */</span>
 <span class="k">static</span> <span class="n">XLogRecData</span> <span class="o">*</span><span class="n">mainrdata_last</span> <span class="o">=</span> <span class="p">(</span><span class="n">XLogRecData</span> <span class="o">*</span><span class="p">)</span> <span class="o">&amp;</span><span class="n">mainrdata_head</span><span class="p">;</span> <span class="cm">/* 链表尾 */</span>
 <span class="k">static</span> <span class="n">uint32</span> <span class="n">mainrdata_len</span><span class="p">;</span>	<span class="cm">/* 链表所有节点的数据总和 */</span>
 </code></pre></td></tr></table></div>
@@ -606,7 +606,7 @@
 <p>当构建一条 wal 日志时，就需要创建出一个头部。postgresql 提前创建了一个最大空间的头部，这样无论多大的 wal 日志，它的头部都能包含。下面来看看 postgresql 如何计算最大头部长度：</p>
 <div class="highlight"><div class="chroma">
 <div class="table-container"><table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
@@ -616,7 +616,7 @@
 </span><span class="lnt">8
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-c" data-lang="c"><span class="cp">#define SizeOfXlogOrigin	(sizeof(RepOriginId) + sizeof(char))
+<pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="cp">#define SizeOfXlogOrigin	(sizeof(RepOriginId) + sizeof(char))
 </span><span class="cp">#define XLR_MAX_BLOCK_ID			32
 </span><span class="cp"></span>
 <span class="cp">#define HEADER_SCRATCH_SIZE \  
@@ -629,7 +629,7 @@
 </div><p>块头部的最大长度计算：</p>
 <div class="highlight"><div class="chroma">
 <div class="table-container"><table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
@@ -637,7 +637,7 @@
 </span><span class="lnt">6
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-c" data-lang="c"><span class="cp">#define MaxSizeOfXLogRecordBlockHeader \
+<pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="cp">#define MaxSizeOfXLogRecordBlockHeader \
 </span><span class="cp">	(SizeOfXLogRecordBlockHeader + \             </span><span class="cm">/* 块基本头部 */</span><span class="cp">
 </span><span class="cp"></span>	 <span class="n">SizeOfXLogRecordBlockImageHeader</span> <span class="o">+</span> <span class="err">\</span>        <span class="cm">/* 块备份模式 */</span>
 	 <span class="n">SizeOfXLogRecordBlockCompressHeader</span> <span class="o">+</span> <span class="err">\</span>     <span class="cm">/* 块压缩信息 */</span>
@@ -672,9 +672,9 @@
 
         
     <div class="updated-badge-container">
-        <span title="Updated @ 2021-09-12 11:48:25 CST" style="cursor:help">
+        <span title="Updated @ 2021-10-22 14:44:34 CST" style="cursor:help">
 
-<svg xmlns="http://www.w3.org/2000/svg" width="130" height="20" class="updated-badge"><linearGradient id="b" x2="0" y2="100%"><stop offset="0" stop-color="#bbb" stop-opacity=".1"/><stop offset="1" stop-opacity=".1"/></linearGradient><clipPath id="a"><rect width="130" height="20" rx="3" fill="#fff"/></clipPath><g clip-path="url(#a)"><path class="updated-badge-left" d="M0 0h55v20H0z"/><path class="updated-badge-right" d="M55 0h75v20H55z"/><path fill="url(#b)" d="M0 0h130v20H0z"/></g><g fill="#fff" text-anchor="middle" font-size="110"><text x="285" y="150" fill="#010101" fill-opacity=".3" textLength="450" transform="scale(.1)">updated</text><text x="285" y="140" textLength="450" transform="scale(.1)">updated</text><text x="915" y="150" fill="#010101" fill-opacity=".3" textLength="650" transform="scale(.1)">2021-09-12</text><text x="915" y="140" textLength="650" transform="scale(.1)">2021-09-12</text></g></svg>
+<svg xmlns="http://www.w3.org/2000/svg" width="130" height="20" class="updated-badge"><linearGradient id="b" x2="0" y2="100%"><stop offset="0" stop-color="#bbb" stop-opacity=".1"/><stop offset="1" stop-opacity=".1"/></linearGradient><clipPath id="a"><rect width="130" height="20" rx="3" fill="#fff"/></clipPath><g clip-path="url(#a)"><path class="updated-badge-left" d="M0 0h55v20H0z"/><path class="updated-badge-right" d="M55 0h75v20H55z"/><path fill="url(#b)" d="M0 0h130v20H0z"/></g><g fill="#fff" text-anchor="middle" font-size="110"><text x="285" y="150" fill="#010101" fill-opacity=".3" textLength="450" transform="scale(.1)">updated</text><text x="285" y="140" textLength="450" transform="scale(.1)">updated</text><text x="915" y="150" fill="#010101" fill-opacity=".3" textLength="650" transform="scale(.1)">2021-10-22</text><text x="915" y="140" textLength="650" transform="scale(.1)">2021-10-22</text></g></svg>
         </span></div>
 
 

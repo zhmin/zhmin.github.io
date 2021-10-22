@@ -3,7 +3,7 @@
     <head prefix="og: http://ogp.me/ns# article: http://ogp.me/ns/article#">
     <meta charset="UTF-8" />
 
-    <meta name="generator" content="Hugo 0.79.0" /><meta name="theme-color" content="#fff" />
+    <meta name="generator" content="Hugo 0.88.1" /><meta name="theme-color" content="#fff" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     
     <meta name="format-detection" content="telephone=no, date=no, address=no, email=no" />
@@ -14,11 +14,11 @@
 
     <title>Spark SortShuffleWriter 原理 | 学习笔记</title>
 
-    <link rel="stylesheet" href="/css/meme.min.81031e6b78ad2f1f534002ebb3b658886fea2f25d8a44d296d1466a2fe52f1c1.css"/>
+    <link rel="stylesheet" href="/css/meme.min.2d3e1834af2bc8dda20c7d74aaa1d8134845094441b7a554a5206ccd4b472596.css"/>
 
     
     
-        <script src="/js/meme.min.120d98bb614adc6beb13bf79f943d2cceffd323f4de1544029228c3dca2e9bda.js"></script>
+        <script src="/js/meme.min.800f61672145711eb3e1f29fcfcc3dbe0139dd459259718b611a0390f74703d1.js"></script>
 
     
 
@@ -54,7 +54,7 @@
         "@context": "https://schema.org",
         "@type": "BlogPosting",
         "datePublished": "2019-01-29T22:06:39+00:00",
-        "dateModified": "2021-09-12T11:48:25+08:00",
+        "dateModified": "2021-10-22T14:44:34+08:00",
         "url": "https://zhmin.github.io/posts/spark-shuffle-sort-writer-2/",
         "headline": "Spark SortShuffleWriter 原理",
         "description": "Spark SortShuffleWriter 原理 前言 在数据量大的情况，需要聚合或者排序的情形下，Spark 采用SortShuffleWriter完成 map 端的 shuffle 操作。SortShuffleWriter 根据是否需要聚合操作，分为两种不同的实现。 对……",
@@ -97,7 +97,7 @@
 <meta property="og:locale" content="zh" /><meta property="og:image" content="https://zhmin.github.io/spark-sort-shuffle-writer.svg" />
 <meta property="og:type" content="article" />
     <meta property="article:published_time" content="2019-01-29T22:06:39&#43;00:00" />
-    <meta property="article:modified_time" content="2021-09-12T11:48:25&#43;08:00" />
+    <meta property="article:modified_time" content="2021-10-22T14:44:34&#43;08:00" />
     
     <meta property="article:section" content="posts" />
 
@@ -246,7 +246,7 @@
 <p>当只使用 rdd 的 groupby 方法，那么这里只需要分组，而不需要聚合。Spark 会采用<code>PartitionedPairBuffer</code>来完成分组。<code>PartitionedPairBuffer</code>使用数组保存数据，</p>
 <div class="highlight"><div class="chroma">
 <div class="table-container"><table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
@@ -255,7 +255,7 @@
 </span><span class="lnt">7
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-scala" data-lang="scala"><span class="k">class</span> <span class="nc">PartitionedPairBuffer</span> <span class="o">{</span>
+<pre tabindex="0" class="chroma"><code class="language-scala" data-lang="scala"><span class="k">class</span> <span class="nc">PartitionedPairBuffer</span> <span class="o">{</span>
     <span class="c1">// 使用AnyRef数组，保存数据
 </span><span class="c1"></span>    <span class="k">private</span> <span class="k">var</span> <span class="n">data</span> <span class="k">=</span> <span class="k">new</span> <span class="nc">Array</span><span class="o">[</span><span class="kt">AnyRef</span><span class="o">](</span><span class="mi">2</span> <span class="o">*</span> <span class="n">initialCapacity</span><span class="o">)</span>
 
@@ -267,12 +267,12 @@
 </div><p>每条数据对应数组的两个位置，格式如下所示：</p>
 <div class="highlight"><div class="chroma">
 <div class="table-container"><table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-shell" data-lang="shell">-------------------------------------
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell">-------------------------------------
    partitionId, key    <span class="p">|</span>   value    <span class="p">|</span>
 -------------------------------------
 </code></pre></td></tr></table></div>
@@ -288,7 +288,7 @@
 <p>我们简单的看下<code>AppendOnlyMap</code>的实现，它使用了数组来存储值。</p>
 <div class="highlight"><div class="chroma">
 <div class="table-container"><table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -301,7 +301,7 @@
 </span><span class="lnt">11
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-scala" data-lang="scala"><span class="k">class</span> <span class="nc">AppendOnlyMap</span><span class="o">[</span><span class="kt">K</span>, <span class="kt">V</span><span class="o">](</span><span class="n">initialCapacity</span><span class="k">:</span> <span class="kt">Int</span> <span class="o">=</span> <span class="mi">64</span><span class="o">)</span> <span class="o">{</span>
+<pre tabindex="0" class="chroma"><code class="language-scala" data-lang="scala"><span class="k">class</span> <span class="nc">AppendOnlyMap</span><span class="o">[</span><span class="kt">K</span>, <span class="kt">V</span><span class="o">](</span><span class="n">initialCapacity</span><span class="k">:</span> <span class="kt">Int</span> <span class="o">=</span> <span class="mi">64</span><span class="o">)</span> <span class="o">{</span>
   
   <span class="c1">// 因为一条数据的 key 和 value，对应 array 的两个位置。所以数组的大小为 数据的容量的两倍
 </span><span class="c1"></span>  <span class="k">private</span> <span class="k">var</span> <span class="n">data</span> <span class="k">=</span> <span class="k">new</span> <span class="nc">Array</span><span class="o">[</span><span class="kt">AnyRef</span><span class="o">](</span><span class="mi">2</span> <span class="o">*</span> <span class="n">capacity</span><span class="o">)</span>
@@ -324,7 +324,7 @@
 <p>当指定了聚合操作时，Spark 会使用<code>PartitionedAppendOnlyMap</code>来完成。代码如下图所示</p>
 <div class="highlight"><div class="chroma">
 <div class="table-container"><table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -339,7 +339,7 @@
 </span><span class="lnt">13
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-scala" data-lang="scala"><span class="k">val</span> <span class="n">mergeValue</span> <span class="k">=</span> <span class="n">aggregator</span><span class="o">.</span><span class="n">get</span><span class="o">.</span><span class="n">mergeValue</span>
+<pre tabindex="0" class="chroma"><code class="language-scala" data-lang="scala"><span class="k">val</span> <span class="n">mergeValue</span> <span class="k">=</span> <span class="n">aggregator</span><span class="o">.</span><span class="n">get</span><span class="o">.</span><span class="n">mergeValue</span>
 <span class="k">val</span> <span class="n">createCombiner</span> <span class="k">=</span> <span class="n">aggregator</span><span class="o">.</span><span class="n">get</span><span class="o">.</span><span class="n">createCombiner</span>
 <span class="k">var</span> <span class="n">kv</span><span class="k">:</span> <span class="kt">Product2</span><span class="o">[</span><span class="kt">K</span>, <span class="kt">V</span><span class="o">]</span> <span class="k">=</span> <span class="kc">null</span>
 <span class="c1">// 构造聚合函数，如果有旧有值，则调用聚合的mergeValue合并值。否则调用createCombiner实例combiner
@@ -358,7 +358,7 @@
 <p>当数据越来越多时，单个<code>PartitionedAppendOnlyMap </code>或<code>PartitionedPairBuffer</code>的内存也是有限的，所以 Spark 会定期的检查是否需要触发 Spill 操作。当每插入 32 条数据时，就会检查当前的内存使用量。首先 Spark 会有限申请内存，如果申请内存不够，那么就会触发 spill 操作。</p>
 <div class="highlight"><div class="chroma">
 <div class="table-container"><table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -385,7 +385,7 @@
 </span><span class="lnt">25
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-scala" data-lang="scala"><span class="k">protected</span> <span class="k">def</span> <span class="n">maybeSpill</span><span class="o">(</span><span class="n">collection</span><span class="k">:</span> <span class="kt">C</span><span class="o">,</span> <span class="n">currentMemory</span><span class="k">:</span> <span class="kt">Long</span><span class="o">)</span><span class="k">:</span> <span class="kt">Boolean</span> <span class="o">=</span> <span class="o">{</span>
+<pre tabindex="0" class="chroma"><code class="language-scala" data-lang="scala"><span class="k">protected</span> <span class="k">def</span> <span class="n">maybeSpill</span><span class="o">(</span><span class="n">collection</span><span class="k">:</span> <span class="kt">C</span><span class="o">,</span> <span class="n">currentMemory</span><span class="k">:</span> <span class="kt">Long</span><span class="o">)</span><span class="k">:</span> <span class="kt">Boolean</span> <span class="o">=</span> <span class="o">{</span>
     <span class="k">var</span> <span class="n">shouldSpill</span> <span class="k">=</span> <span class="kc">false</span>
     <span class="c1">// 每隔32条数据，检查是否当前使用内存超过限制
 </span><span class="c1"></span>    <span class="k">if</span> <span class="o">(</span><span class="n">elementsRead</span> <span class="o">%</span> <span class="mi">32</span> <span class="o">==</span> <span class="mi">0</span> <span class="o">&amp;&amp;</span> <span class="n">currentMemory</span> <span class="o">&gt;=</span> <span class="n">myMemoryThreshold</span><span class="o">)</span> <span class="o">{</span>
@@ -427,7 +427,7 @@
 <p><img src="spark-sort-shuffle-writer.svg" alt="spark-sort-shuffle-writer"></p>
 <div class="highlight"><div class="chroma">
 <div class="table-container"><table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -460,7 +460,7 @@
 </span><span class="lnt">31
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-scala" data-lang="scala"><span class="k">private</span> <span class="k">def</span> <span class="n">mergeSort</span><span class="o">(</span><span class="n">iterators</span><span class="k">:</span> <span class="kt">Seq</span><span class="o">[</span><span class="kt">Iterator</span><span class="o">[</span><span class="kt">Product2</span><span class="o">[</span><span class="kt">K</span>, <span class="kt">C</span><span class="o">]]],</span> <span class="n">comparator</span><span class="k">:</span> <span class="kt">Comparator</span><span class="o">[</span><span class="kt">K</span><span class="o">])</span>
+<pre tabindex="0" class="chroma"><code class="language-scala" data-lang="scala"><span class="k">private</span> <span class="k">def</span> <span class="n">mergeSort</span><span class="o">(</span><span class="n">iterators</span><span class="k">:</span> <span class="kt">Seq</span><span class="o">[</span><span class="kt">Iterator</span><span class="o">[</span><span class="kt">Product2</span><span class="o">[</span><span class="kt">K</span>, <span class="kt">C</span><span class="o">]]],</span> <span class="n">comparator</span><span class="k">:</span> <span class="kt">Comparator</span><span class="o">[</span><span class="kt">K</span><span class="o">])</span>
     <span class="k">:</span> <span class="kt">Iterator</span><span class="o">[</span><span class="kt">Product2</span><span class="o">[</span><span class="kt">K</span>, <span class="kt">C</span><span class="o">]]</span> <span class="k">=</span>
 <span class="o">{</span>
   <span class="k">val</span> <span class="n">bufferedIters</span> <span class="k">=</span> <span class="n">iterators</span><span class="o">.</span><span class="n">filter</span><span class="o">(</span><span class="k">_</span><span class="o">.</span><span class="n">hasNext</span><span class="o">).</span><span class="n">map</span><span class="o">(</span><span class="k">_</span><span class="o">.</span><span class="n">buffered</span><span class="o">)</span>
@@ -520,9 +520,9 @@
 
         
     <div class="updated-badge-container">
-        <span title="Updated @ 2021-09-12 11:48:25 CST" style="cursor:help">
+        <span title="Updated @ 2021-10-22 14:44:34 CST" style="cursor:help">
 
-<svg xmlns="http://www.w3.org/2000/svg" width="130" height="20" class="updated-badge"><linearGradient id="b" x2="0" y2="100%"><stop offset="0" stop-color="#bbb" stop-opacity=".1"/><stop offset="1" stop-opacity=".1"/></linearGradient><clipPath id="a"><rect width="130" height="20" rx="3" fill="#fff"/></clipPath><g clip-path="url(#a)"><path class="updated-badge-left" d="M0 0h55v20H0z"/><path class="updated-badge-right" d="M55 0h75v20H55z"/><path fill="url(#b)" d="M0 0h130v20H0z"/></g><g fill="#fff" text-anchor="middle" font-size="110"><text x="285" y="150" fill="#010101" fill-opacity=".3" textLength="450" transform="scale(.1)">updated</text><text x="285" y="140" textLength="450" transform="scale(.1)">updated</text><text x="915" y="150" fill="#010101" fill-opacity=".3" textLength="650" transform="scale(.1)">2021-09-12</text><text x="915" y="140" textLength="650" transform="scale(.1)">2021-09-12</text></g></svg>
+<svg xmlns="http://www.w3.org/2000/svg" width="130" height="20" class="updated-badge"><linearGradient id="b" x2="0" y2="100%"><stop offset="0" stop-color="#bbb" stop-opacity=".1"/><stop offset="1" stop-opacity=".1"/></linearGradient><clipPath id="a"><rect width="130" height="20" rx="3" fill="#fff"/></clipPath><g clip-path="url(#a)"><path class="updated-badge-left" d="M0 0h55v20H0z"/><path class="updated-badge-right" d="M55 0h75v20H55z"/><path fill="url(#b)" d="M0 0h130v20H0z"/></g><g fill="#fff" text-anchor="middle" font-size="110"><text x="285" y="150" fill="#010101" fill-opacity=".3" textLength="450" transform="scale(.1)">updated</text><text x="285" y="140" textLength="450" transform="scale(.1)">updated</text><text x="915" y="150" fill="#010101" fill-opacity=".3" textLength="650" transform="scale(.1)">2021-10-22</text><text x="915" y="140" textLength="650" transform="scale(.1)">2021-10-22</text></g></svg>
         </span></div>
 
 

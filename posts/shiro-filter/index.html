@@ -3,7 +3,7 @@
     <head prefix="og: http://ogp.me/ns# article: http://ogp.me/ns/article#">
     <meta charset="UTF-8" />
 
-    <meta name="generator" content="Hugo 0.79.0" /><meta name="theme-color" content="#fff" />
+    <meta name="generator" content="Hugo 0.88.1" /><meta name="theme-color" content="#fff" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     
     <meta name="format-detection" content="telephone=no, date=no, address=no, email=no" />
@@ -14,11 +14,11 @@
 
     <title>Apache Shiro Filter 原理 | 学习笔记</title>
 
-    <link rel="stylesheet" href="/css/meme.min.81031e6b78ad2f1f534002ebb3b658886fea2f25d8a44d296d1466a2fe52f1c1.css"/>
+    <link rel="stylesheet" href="/css/meme.min.2d3e1834af2bc8dda20c7d74aaa1d8134845094441b7a554a5206ccd4b472596.css"/>
 
     
     
-        <script src="/js/meme.min.120d98bb614adc6beb13bf79f943d2cceffd323f4de1544029228c3dca2e9bda.js"></script>
+        <script src="/js/meme.min.800f61672145711eb3e1f29fcfcc3dbe0139dd459259718b611a0390f74703d1.js"></script>
 
     
 
@@ -54,7 +54,7 @@
         "@context": "https://schema.org",
         "@type": "BlogPosting",
         "datePublished": "2020-04-15T21:13:08+00:00",
-        "dateModified": "2021-09-13T12:53:25+08:00",
+        "dateModified": "2021-10-22T14:44:34+08:00",
         "url": "https://zhmin.github.io/posts/shiro-filter/",
         "headline": "Apache Shiro Filter 原理",
         "description": "前言 shiro 最常见的使用场景就是在 spring web 里面，本篇文章会讲解 shiro 如何集成 spring web 的原理。shiro 会自定义 Filter 嵌入到 servlet 中，当每次请求到来时，会先经过 shiro filter。shiro filter 会解析请求提取出 cookie，然后根据 cookie……",
@@ -97,7 +97,7 @@
 <meta property="og:locale" content="zh" /><meta property="og:image" content="https://zhmin.github.io/icons/apple-touch-icon.png" />
     <meta property="og:type" content="article" />
     <meta property="article:published_time" content="2020-04-15T21:13:08&#43;00:00" />
-    <meta property="article:modified_time" content="2021-09-13T12:53:25&#43;08:00" />
+    <meta property="article:modified_time" content="2021-10-22T14:44:34&#43;08:00" />
     
     <meta property="article:section" content="posts" />
 
@@ -239,7 +239,7 @@
 <p>shiro 最常见的使用场景就是在 spring web 里面，本篇文章会讲解 shiro 如何集成 spring web 的原理。shiro 会自定义 Filter 嵌入到 servlet 中，当每次请求到来时，会先经过 shiro filter。shiro filter 会解析请求提取出 cookie，然后根据 cookie 完成对此请求的用户身份确认和权限检查，下面会详细介绍整个原理。</p>
 <h2 id="servlet-filter-原理"><a href="#servlet-filter-原理" class="anchor-link"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon anchor-icon"><path d="M326.612 185.391c59.747 59.809 58.927 155.698.36 214.59-.11.12-.24.25-.36.37l-67.2 67.2c-59.27 59.27-155.699 59.262-214.96 0-59.27-59.26-59.27-155.7 0-214.96l37.106-37.106c9.84-9.84 26.786-3.3 27.294 10.606.648 17.722 3.826 35.527 9.69 52.721 1.986 5.822.567 12.262-3.783 16.612l-13.087 13.087c-28.026 28.026-28.905 73.66-1.155 101.96 28.024 28.579 74.086 28.749 102.325.51l67.2-67.19c28.191-28.191 28.073-73.757 0-101.83-3.701-3.694-7.429-6.564-10.341-8.569a16.037 16.037 0 0 1-6.947-12.606c-.396-10.567 3.348-21.456 11.698-29.806l21.054-21.055c5.521-5.521 14.182-6.199 20.584-1.731a152.482 152.482 0 0 1 20.522 17.197zM467.547 44.449c-59.261-59.262-155.69-59.27-214.96 0l-67.2 67.2c-.12.12-.25.25-.36.37-58.566 58.892-59.387 154.781.36 214.59a152.454 152.454 0 0 0 20.521 17.196c6.402 4.468 15.064 3.789 20.584-1.731l21.054-21.055c8.35-8.35 12.094-19.239 11.698-29.806a16.037 16.037 0 0 0-6.947-12.606c-2.912-2.005-6.64-4.875-10.341-8.569-28.073-28.073-28.191-73.639 0-101.83l67.2-67.19c28.239-28.239 74.3-28.069 102.325.51 27.75 28.3 26.872 73.934-1.155 101.96l-13.087 13.087c-4.35 4.35-5.769 10.79-3.783 16.612 5.864 17.194 9.042 34.999 9.69 52.721.509 13.906 17.454 20.446 27.294 10.606l37.106-37.106c59.271-59.259 59.271-155.699.001-214.959z"/></svg></a>Servlet Filter 原理</h2>
 <p>我们知道 spring mvc 是基于 servlet 开发的，在 servlet 中有一个比较重要的概念 <code>Filter</code>。shiro 集成 spring web 就是依靠<code>Filter</code>实现的，下面是集成 shiro 的运行流程图</p>
-<pre><code class="language-mermaid" data-lang="mermaid">sequenceDiagram
+<pre tabindex="0"><code class="language-mermaid" data-lang="mermaid">sequenceDiagram
 	participant Tomcat
 	participant ShiroFilter
 	participant ServletFilter
@@ -254,7 +254,7 @@
 </code></pre><p>首先 tomcat 接收到请求，然后经过 ShiroFilter 验证用户身份和权限。再转发给其他<code>ServletFilter</code>处理，最后才会交给 Spring 处理。</p>
 <h2 id="shiro-filter-类图"><a href="#shiro-filter-类图" class="anchor-link"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon anchor-icon"><path d="M326.612 185.391c59.747 59.809 58.927 155.698.36 214.59-.11.12-.24.25-.36.37l-67.2 67.2c-59.27 59.27-155.699 59.262-214.96 0-59.27-59.26-59.27-155.7 0-214.96l37.106-37.106c9.84-9.84 26.786-3.3 27.294 10.606.648 17.722 3.826 35.527 9.69 52.721 1.986 5.822.567 12.262-3.783 16.612l-13.087 13.087c-28.026 28.026-28.905 73.66-1.155 101.96 28.024 28.579 74.086 28.749 102.325.51l67.2-67.19c28.191-28.191 28.073-73.757 0-101.83-3.701-3.694-7.429-6.564-10.341-8.569a16.037 16.037 0 0 1-6.947-12.606c-.396-10.567 3.348-21.456 11.698-29.806l21.054-21.055c5.521-5.521 14.182-6.199 20.584-1.731a152.482 152.482 0 0 1 20.522 17.197zM467.547 44.449c-59.261-59.262-155.69-59.27-214.96 0l-67.2 67.2c-.12.12-.25.25-.36.37-58.566 58.892-59.387 154.781.36 214.59a152.454 152.454 0 0 0 20.521 17.196c6.402 4.468 15.064 3.789 20.584-1.731l21.054-21.055c8.35-8.35 12.094-19.239 11.698-29.806a16.037 16.037 0 0 0-6.947-12.606c-2.912-2.005-6.64-4.875-10.341-8.569-28.073-28.073-28.191-73.639 0-101.83l67.2-67.19c28.239-28.239 74.3-28.069 102.325.51 27.75 28.3 26.872 73.934-1.155 101.96l-13.087 13.087c-4.35 4.35-5.769 10.79-3.783 16.612 5.864 17.194 9.042 34.999 9.69 52.721.509 13.906 17.454 20.446 27.294 10.606l37.106-37.106c59.271-59.259 59.271-155.699.001-214.959z"/></svg></a>Shiro Filter 类图</h2>
 <p>Shiro 的 Filter类比较复杂，可以将其分为两类，一种是下图左边的主 Filter，它会被嵌入到<code>Servlet</code>里。而右边的 Filter 会只负责一个单独的功能，称作为独立 Filter，被主 Filter 负责管理。</p>
-<pre><code class="language-mermaid" data-lang="mermaid">classDiagram
+<pre tabindex="0"><code class="language-mermaid" data-lang="mermaid">classDiagram
 	class Filter
 	%% &lt;&lt;interface&gt;&gt; Filter
 	
@@ -306,7 +306,7 @@
 <p><code>AbstractShiroFilter</code>作为实现主 Filter 的核心类，需要详细讲解。它在处理请求时，会先创建<code>Subject</code>实例，然后开辟新线程来处理。</p>
 <div class="highlight"><div class="chroma">
 <div class="table-container"><table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -325,7 +325,7 @@
 </span><span class="lnt">17
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">abstract</span> <span class="kd">class</span> <span class="nc">AbstractShiroFilter</span> <span class="kd">extends</span> <span class="n">OncePerRequestFilter</span> <span class="o">{</span>
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">abstract</span> <span class="kd">class</span> <span class="nc">AbstractShiroFilter</span> <span class="kd">extends</span> <span class="n">OncePerRequestFilter</span> <span class="o">{</span>
     
     <span class="kd">protected</span> <span class="kt">void</span> <span class="nf">doFilterInternal</span><span class="o">(</span><span class="n">ServletRequest</span> <span class="n">servletRequest</span><span class="o">,</span> <span class="n">ServletResponse</span> <span class="n">servletResponse</span><span class="o">,</span> <span class="kd">final</span> <span class="n">FilterChain</span> <span class="n">chain</span><span class="o">)</span> <span class="o">{</span>         
         <span class="kd">final</span> <span class="n">ServletRequest</span> <span class="n">request</span> <span class="o">=</span> <span class="n">prepareServletRequest</span><span class="o">(</span><span class="n">servletRequest</span><span class="o">,</span> <span class="n">servletResponse</span><span class="o">,</span> <span class="n">chain</span><span class="o">);</span>
@@ -348,7 +348,7 @@
 <p>继续看看<code>executeChain</code>的代码，可以看到 shiro 会有一个根据请求选择<code>FilterChain</code>的过程。</p>
 <div class="highlight"><div class="chroma">
 <div class="table-container"><table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
@@ -358,7 +358,7 @@
 </span><span class="lnt">8
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">abstract</span> <span class="kd">class</span> <span class="nc">AbstractShiroFilter</span> <span class="kd">extends</span> <span class="n">OncePerRequestFilter</span> <span class="o">{</span>
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">abstract</span> <span class="kd">class</span> <span class="nc">AbstractShiroFilter</span> <span class="kd">extends</span> <span class="n">OncePerRequestFilter</span> <span class="o">{</span>
     
 	<span class="kd">protected</span> <span class="kt">void</span> <span class="nf">executeChain</span><span class="o">(</span><span class="n">ServletRequest</span> <span class="n">request</span><span class="o">,</span> <span class="n">ServletResponse</span> <span class="n">response</span><span class="o">,</span> <span class="n">FilterChain</span> <span class="n">origChain</span><span class="o">)</span> <span class="o">{</span>
         <span class="c1">// 选择对应的FilterChain执行
@@ -372,13 +372,13 @@
 <p>shiro 支持根据请求来选择对应的<code>FilterChain</code>，这个功能由<code>FilterChainResolver</code>接口定义。</p>
 <div class="highlight"><div class="chroma">
 <div class="table-container"><table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">interface</span> <span class="nc">FilterChainResolver</span> <span class="o">{</span>
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">interface</span> <span class="nc">FilterChainResolver</span> <span class="o">{</span>
     <span class="c1">// 根据请求来获取对应的FilterChain
 </span><span class="c1"></span>    <span class="n">FilterChain</span> <span class="nf">getChain</span><span class="o">(</span><span class="n">ServletRequest</span> <span class="n">request</span><span class="o">,</span> <span class="n">ServletResponse</span> <span class="n">response</span><span class="o">,</span> <span class="n">FilterChain</span> <span class="n">originalChain</span><span class="o">);</span>
 <span class="o">}</span>
@@ -389,7 +389,7 @@
 <p>首先来讲讲<code>SimpleFilterChainResolver</code>的原理，它非常简单</p>
 <div class="highlight"><div class="chroma">
 <div class="table-container"><table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -405,7 +405,7 @@
 </span><span class="lnt">14
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-java" data-lang="java"><span class="kd">class</span> <span class="nc">SimpleFilterChainResolver</span> <span class="kd">implements</span> <span class="n">FilterChainResolver</span> <span class="o">{</span>
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="kd">class</span> <span class="nc">SimpleFilterChainResolver</span> <span class="kd">implements</span> <span class="n">FilterChainResolver</span> <span class="o">{</span>
     <span class="c1">// key 为 匹配路径，value 为 Filter列表。
 </span><span class="c1"></span>    <span class="kd">private</span> <span class="kd">final</span> <span class="n">Map</span><span class="o">&lt;</span><span class="n">String</span><span class="o">,</span> <span class="n">Key</span><span class="o">&lt;?</span> <span class="kd">extends</span> <span class="n">Filter</span><span class="o">&gt;[]&gt;</span> <span class="n">chains</span><span class="o">;</span>
     
@@ -424,7 +424,7 @@
 </div><p><code>SimpleFilterChain</code>包含了两部分的<code>Filter</code>，原始的 <code>Serlvet FilterChain</code>，和上述<code>Filter</code>列表。它被调用时，会先执行<code>Filter</code>列表，然后再执行<code>Serlvet FilterChain</code>。</p>
 <div class="highlight"><div class="chroma">
 <div class="table-container"><table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
@@ -433,7 +433,7 @@
 </span><span class="lnt">7
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-java" data-lang="java"><span class="kd">class</span> <span class="nc">SimpleFilterChain</span> <span class="kd">implements</span> <span class="n">FilterChain</span> <span class="o">{</span>
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="kd">class</span> <span class="nc">SimpleFilterChain</span> <span class="kd">implements</span> <span class="n">FilterChain</span> <span class="o">{</span>
     <span class="c1">// Serlvet 的 FilterChain 
 </span><span class="c1"></span>    <span class="kd">private</span> <span class="kd">final</span> <span class="n">FilterChain</span> <span class="n">originalChain</span><span class="o">;</span>
     
@@ -447,7 +447,7 @@
 <p>管理<code>FilterChain</code>的功能由<code>FilterChainManager</code>负责，目前只有<code>DefaultFilterChainManager</code>一种实现。它的实现也非常简单，我们通过设置<code>filters</code>和<code>filterChains</code>的值，就可以完成配置。</p>
 <div class="highlight"><div class="chroma">
 <div class="table-container"><table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
@@ -458,7 +458,7 @@
 </span><span class="lnt">9
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">DefaultFilterChainManager</span> <span class="kd">implements</span> <span class="n">FilterChainManager</span> <span class="o">{</span>
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">DefaultFilterChainManager</span> <span class="kd">implements</span> <span class="n">FilterChainManager</span> <span class="o">{</span>
  
     <span class="c1">// 保存所有的Filter，key为filter的名称，value为filter实例
 </span><span class="c1"></span>    <span class="kd">private</span> <span class="n">Map</span><span class="o">&lt;</span><span class="n">String</span><span class="o">,</span> <span class="n">Filter</span><span class="o">&gt;</span> <span class="n">filters</span><span class="o">;</span>
@@ -474,7 +474,7 @@
 <p><code>AdviceFilter</code>增加了<code>preHandle</code>方法，子类可以通过实现它，来控制是否继续执行 <code>FilterChain</code>。</p>
 <p><code>PathMatchingFilter</code>增加了请求路径匹配的功能。</p>
 <p><code>AccessControlFilter</code>作为身份和权限认证的父类，提供了执行失败后的回调函数。</p>
-<pre><code class="language-mermaid" data-lang="mermaid">classDiagram
+<pre tabindex="0"><code class="language-mermaid" data-lang="mermaid">classDiagram
 	class OncePerRequestFilter
 	&lt;&lt;abstract&gt;&gt; OncePerRequestFilter
 	
@@ -510,7 +510,7 @@
 <p><code>AnonymousFilter</code>允许匿名访问，它复写了<code>onPreHandle</code>方法，总是放回 true，表示运行通过。</p>
 <div class="highlight"><div class="chroma">
 <div class="table-container"><table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
@@ -520,7 +520,7 @@
 </span><span class="lnt">8
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">AnonymousFilter</span> <span class="kd">extends</span> <span class="n">PathMatchingFilter</span> <span class="o">{</span>
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">AnonymousFilter</span> <span class="kd">extends</span> <span class="n">PathMatchingFilter</span> <span class="o">{</span>
 
     <span class="nd">@Override</span>
     <span class="kd">protected</span> <span class="kt">boolean</span> <span class="nf">onPreHandle</span><span class="o">(</span><span class="n">ServletRequest</span> <span class="n">request</span><span class="o">,</span> <span class="n">ServletResponse</span> <span class="n">response</span><span class="o">,</span> <span class="n">Object</span> <span class="n">mappedValue</span><span class="o">)</span> <span class="o">{</span>
@@ -539,7 +539,7 @@
 <p><code>AuthenticatingFilter</code>提供了登录的方法。</p>
 <p><code>FormAuthenticationFilter</code>提供了表单登录的方法。当用户请求登录地址时（默认为<code>login.jsp</code>），它会自动完成登录操作，并且实现跳转页面操作。我们不用再去定义处理登录的 controller。</p>
 <p><code>BasicHttpAuthenticationFilter</code>提供了 http basic 验证方法。</p>
-<pre><code class="language-mermaid" data-lang="mermaid">classDiagram
+<pre tabindex="0"><code class="language-mermaid" data-lang="mermaid">classDiagram
 	class AuthenticatingFilter
 	&lt;&lt;abstract&gt;&gt; AuthenticatingFilter
 	AuthenticationFilter &lt;|-- AuthenticatingFilter
@@ -556,7 +556,7 @@
 </code></pre><p>我们也可以自定义 Filter，只需要继承<code>AuthenticationFilter</code>类，然后实现<code>onAccessDenied</code>方法即可。比如我们在实现 restful 风格的 api 时，当发现用户没登录时，只需要返回 json。</p>
 <div class="highlight"><div class="chroma">
 <div class="table-container"><table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -574,7 +574,7 @@
 </span><span class="lnt">16
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">RestfulFilter</span> <span class="kd">extends</span> <span class="n">AuthenticationFilter</span> <span class="o">{</span>
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">RestfulFilter</span> <span class="kd">extends</span> <span class="n">AuthenticationFilter</span> <span class="o">{</span>
     
     <span class="kd">private</span> <span class="kd">final</span> <span class="n">String</span> <span class="n">LOGIN_REQUIRED_RESPONSE</span> <span class="o">=</span> <span class="s">&#34;{\&#34;status\&#34;: 1, \&#34;msg\&#34;: \&#34;login required\&#34;}&#34;</span><span class="o">;</span>
     
@@ -633,7 +633,7 @@
 <p><code>ShiroFilterFactoryBean</code>负责创建并且始化主 Filter，我们在使用 spring 配置时，都是修改它的参数来完成。下面是它的<code>createInstance</code>方法，</p>
 <div class="highlight"><div class="chroma">
 <div class="table-container"><table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -648,7 +648,7 @@
 </span><span class="lnt">13
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">ShiroFilterFactoryBean</span> <span class="kd">implements</span> <span class="n">FactoryBean</span><span class="o">,</span> <span class="n">BeanPostProcessor</span> <span class="o">{</span>
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">ShiroFilterFactoryBean</span> <span class="kd">implements</span> <span class="n">FactoryBean</span><span class="o">,</span> <span class="n">BeanPostProcessor</span> <span class="o">{</span>
 
     <span class="kd">protected</span> <span class="n">AbstractShiroFilter</span> <span class="nf">createInstance</span><span class="o">()</span> <span class="kd">throws</span> <span class="n">Exception</span> <span class="o">{</span>
         <span class="n">SecurityManager</span> <span class="n">securityManager</span> <span class="o">=</span> <span class="n">getSecurityManager</span><span class="o">();</span>
@@ -666,7 +666,7 @@
 </div><p>上述返回了一个SpringShiroFilter，它非常简单，只是简单的继承了<code>AbstractShiroFilter</code>。创建过程中最为核心的部分是<code>FilterChainManager</code>的创建，通过设置<code>filters</code>和<code>filterChainDefinitionMap</code>哈希表，完成配置化。</p>
 <div class="highlight"><div class="chroma">
 <div class="table-container"><table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -701,7 +701,7 @@
 </span><span class="lnt">33
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">ShiroFilterFactoryBean</span> <span class="kd">implements</span> <span class="n">FactoryBean</span><span class="o">,</span> <span class="n">BeanPostProcessor</span> <span class="o">{</span>
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">ShiroFilterFactoryBean</span> <span class="kd">implements</span> <span class="n">FactoryBean</span><span class="o">,</span> <span class="n">BeanPostProcessor</span> <span class="o">{</span>
     
     <span class="c1">// 用户可以添加自定义的Filter，key为filter的名称，value为filter实例
 </span><span class="c1"></span>    <span class="kd">private</span> <span class="n">Map</span><span class="o">&lt;</span><span class="n">String</span><span class="o">,</span> <span class="n">Filter</span><span class="o">&gt;</span> <span class="n">filters</span><span class="o">;</span>
@@ -763,9 +763,9 @@
 
         
     <div class="updated-badge-container">
-        <span title="Updated @ 2021-09-13 12:53:25 CST" style="cursor:help">
+        <span title="Updated @ 2021-10-22 14:44:34 CST" style="cursor:help">
 
-<svg xmlns="http://www.w3.org/2000/svg" width="130" height="20" class="updated-badge"><linearGradient id="b" x2="0" y2="100%"><stop offset="0" stop-color="#bbb" stop-opacity=".1"/><stop offset="1" stop-opacity=".1"/></linearGradient><clipPath id="a"><rect width="130" height="20" rx="3" fill="#fff"/></clipPath><g clip-path="url(#a)"><path class="updated-badge-left" d="M0 0h55v20H0z"/><path class="updated-badge-right" d="M55 0h75v20H55z"/><path fill="url(#b)" d="M0 0h130v20H0z"/></g><g fill="#fff" text-anchor="middle" font-size="110"><text x="285" y="150" fill="#010101" fill-opacity=".3" textLength="450" transform="scale(.1)">updated</text><text x="285" y="140" textLength="450" transform="scale(.1)">updated</text><text x="915" y="150" fill="#010101" fill-opacity=".3" textLength="650" transform="scale(.1)">2021-09-13</text><text x="915" y="140" textLength="650" transform="scale(.1)">2021-09-13</text></g></svg>
+<svg xmlns="http://www.w3.org/2000/svg" width="130" height="20" class="updated-badge"><linearGradient id="b" x2="0" y2="100%"><stop offset="0" stop-color="#bbb" stop-opacity=".1"/><stop offset="1" stop-opacity=".1"/></linearGradient><clipPath id="a"><rect width="130" height="20" rx="3" fill="#fff"/></clipPath><g clip-path="url(#a)"><path class="updated-badge-left" d="M0 0h55v20H0z"/><path class="updated-badge-right" d="M55 0h75v20H55z"/><path fill="url(#b)" d="M0 0h130v20H0z"/></g><g fill="#fff" text-anchor="middle" font-size="110"><text x="285" y="150" fill="#010101" fill-opacity=".3" textLength="450" transform="scale(.1)">updated</text><text x="285" y="140" textLength="450" transform="scale(.1)">updated</text><text x="915" y="150" fill="#010101" fill-opacity=".3" textLength="650" transform="scale(.1)">2021-10-22</text><text x="915" y="140" textLength="650" transform="scale(.1)">2021-10-22</text></g></svg>
         </span></div>
 
 

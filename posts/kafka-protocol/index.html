@@ -3,7 +3,7 @@
     <head prefix="og: http://ogp.me/ns# article: http://ogp.me/ns/article#">
     <meta charset="UTF-8" />
 
-    <meta name="generator" content="Hugo 0.79.0" /><meta name="theme-color" content="#fff" />
+    <meta name="generator" content="Hugo 0.88.1" /><meta name="theme-color" content="#fff" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     
     <meta name="format-detection" content="telephone=no, date=no, address=no, email=no" />
@@ -14,11 +14,11 @@
 
     <title>Kafka 协议格式 | 学习笔记</title>
 
-    <link rel="stylesheet" href="/css/meme.min.81031e6b78ad2f1f534002ebb3b658886fea2f25d8a44d296d1466a2fe52f1c1.css"/>
+    <link rel="stylesheet" href="/css/meme.min.2d3e1834af2bc8dda20c7d74aaa1d8134845094441b7a554a5206ccd4b472596.css"/>
 
     
     
-        <script src="/js/meme.min.120d98bb614adc6beb13bf79f943d2cceffd323f4de1544029228c3dca2e9bda.js"></script>
+        <script src="/js/meme.min.800f61672145711eb3e1f29fcfcc3dbe0139dd459259718b611a0390f74703d1.js"></script>
 
     
 
@@ -54,7 +54,7 @@
         "@context": "https://schema.org",
         "@type": "BlogPosting",
         "datePublished": "2019-03-04T23:49:00+00:00",
-        "dateModified": "2021-09-12T11:48:25+08:00",
+        "dateModified": "2021-10-22T14:44:34+08:00",
         "url": "https://zhmin.github.io/posts/kafka-protocol/",
         "headline": "Kafka 协议格式",
         "description": "Kafka 协议格式 Kafka通常作为一个集群存在，集群内部会有着很多的通信，包括客户端与服务端的通信，服务端内部的通信。这些通信都有着固定的协议格式，通过了解这些协议格式，可以使我们对Kafka的原理有着更好……",
@@ -97,7 +97,7 @@
 <meta property="og:locale" content="zh" /><meta property="og:image" content="https://zhmin.github.io/kafka-protocol-produce-request.svg" />
 <meta property="og:type" content="article" />
     <meta property="article:published_time" content="2019-03-04T23:49:00&#43;00:00" />
-    <meta property="article:modified_time" content="2021-09-12T11:48:25&#43;08:00" />
+    <meta property="article:modified_time" content="2021-10-22T14:44:34&#43;08:00" />
     
     <meta property="article:section" content="posts" />
 
@@ -244,7 +244,7 @@
 <p>以String类型为例，它继承Type基类，注意到write和read方法，对应于数据的写入和读取。</p>
 <div class="highlight"><div class="chroma">
 <div class="table-container"><table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -283,7 +283,7 @@
 </span><span class="lnt">37
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-java" data-lang="java">    <span class="kd">public</span> <span class="kd">static</span> <span class="kd">final</span> <span class="n">Type</span> <span class="n">STRING</span> <span class="o">=</span> <span class="k">new</span> <span class="n">Type</span><span class="o">()</span> <span class="o">{</span>
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java">    <span class="kd">public</span> <span class="kd">static</span> <span class="kd">final</span> <span class="n">Type</span> <span class="n">STRING</span> <span class="o">=</span> <span class="k">new</span> <span class="n">Type</span><span class="o">()</span> <span class="o">{</span>
          
         <span class="nd">@Override</span>
         <span class="kd">public</span> <span class="kt">void</span> <span class="nf">write</span><span class="o">(</span><span class="n">ByteBuffer</span> <span class="n">buffer</span><span class="o">,</span> <span class="n">Object</span> <span class="n">o</span><span class="o">)</span> <span class="o">{</span>
@@ -325,7 +325,7 @@
 </div><p>字段都是由Field的基类表示，每个字段都对应着一个Type。Field的原理也很简单，它没有方法，只是包含了一些属性</p>
 <div class="highlight"><div class="chroma">
 <div class="table-container"><table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -339,7 +339,7 @@
 </span><span class="lnt">12
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">Field</span> <span class="o">{</span>
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">Field</span> <span class="o">{</span>
     <span class="c1">// 字段名称
 </span><span class="c1"></span>    <span class="kd">public</span> <span class="kd">final</span> <span class="n">String</span> <span class="n">name</span><span class="o">;</span>
     <span class="c1">// 字段注释
@@ -356,7 +356,7 @@
 </div><p>以Int32字段为例，它指定了字段类型为Type.INT32</p>
 <div class="highlight"><div class="chroma">
 <div class="table-container"><table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
@@ -367,7 +367,7 @@
 </span><span class="lnt">9
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">static</span> <span class="kd">class</span> <span class="nc">Int32</span> <span class="kd">extends</span> <span class="n">Field</span> <span class="o">{</span>
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">static</span> <span class="kd">class</span> <span class="nc">Int32</span> <span class="kd">extends</span> <span class="n">Field</span> <span class="o">{</span>
     <span class="kd">public</span> <span class="nf">Int32</span><span class="o">(</span><span class="n">String</span> <span class="n">name</span><span class="o">,</span> <span class="n">String</span> <span class="n">docString</span><span class="o">)</span> <span class="o">{</span>
         <span class="kd">super</span><span class="o">(</span><span class="n">name</span><span class="o">,</span> <span class="n">Type</span><span class="o">.</span><span class="na">INT32</span><span class="o">,</span> <span class="n">docString</span><span class="o">,</span> <span class="kc">false</span><span class="o">,</span> <span class="kc">null</span><span class="o">);</span>
     <span class="o">}</span>
@@ -381,7 +381,7 @@
 </div><p>这里还需介绍一个特殊的字段类型，它表示数组。</p>
 <div class="highlight"><div class="chroma">
 <div class="table-container"><table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -424,7 +424,7 @@
 </span><span class="lnt">41
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">ArrayOf</span> <span class="kd">extends</span> <span class="n">Type</span> <span class="o">{</span>
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">ArrayOf</span> <span class="kd">extends</span> <span class="n">Type</span> <span class="o">{</span>
     <span class="c1">// 数组元素的类型
 </span><span class="c1"></span>    <span class="kd">private</span> <span class="kd">final</span> <span class="n">Type</span> <span class="n">type</span><span class="o">;</span>
     <span class="c1">// 是否允许数组为空
@@ -471,7 +471,7 @@
 <p>上面讲完了字段，协议的格式也是由这些字段组成。Schema中的字段，使用了BoundField类表示。其实BoundField只是简单包含了Field，表示这个字段属于某个Schema。</p>
 <div class="highlight"><div class="chroma">
 <div class="table-container"><table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -492,7 +492,7 @@
 </span><span class="lnt">19
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">Schema</span> <span class="kd">extends</span> <span class="n">Type</span> <span class="o">{</span>
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">Schema</span> <span class="kd">extends</span> <span class="n">Type</span> <span class="o">{</span>
     <span class="c1">// 字段列表
 </span><span class="c1"></span>    <span class="kd">private</span> <span class="kd">final</span> <span class="n">BoundField</span><span class="o">[]</span> <span class="n">fields</span><span class="o">;</span>
     <span class="c1">// 可以根据名称找到字段
@@ -520,13 +520,13 @@
 <p>注意到两个特殊的字段类型，如果字段是Schema类型，那么对应的Object值是Struct实例。如果是数组类型，那么对于的Object值是Struct数组。</p>
 <div class="highlight"><div class="chroma">
 <div class="table-container"><table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">Struct</span> <span class="o">{</span>
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">Struct</span> <span class="o">{</span>
     <span class="kd">private</span> <span class="kd">final</span> <span class="n">Schema</span> <span class="n">schema</span><span class="o">;</span>
     <span class="kd">private</span> <span class="kd">final</span> <span class="n">Object</span><span class="o">[]</span> <span class="n">values</span><span class="o">;</span>
 <span class="o">}</span>
@@ -538,7 +538,7 @@
 <p>在kafka的请求中，有一个请求比较特殊，是关闭服务的请求。Kafka单独为它设置了一个请求头。其余的请求都共用一个请求头，由RequestHeader的SCHEMA实例表示。</p>
 <div class="highlight"><div class="chroma">
 <div class="table-container"><table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -553,7 +553,7 @@
 </span><span class="lnt">13
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">RequestHeader</span> <span class="kd">extends</span> <span class="n">AbstractRequestResponse</span> <span class="o">{</span>
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">RequestHeader</span> <span class="kd">extends</span> <span class="n">AbstractRequestResponse</span> <span class="o">{</span>
     
     <span class="kd">private</span> <span class="kd">static</span> <span class="kd">final</span> <span class="n">String</span> <span class="n">API_KEY_FIELD_NAME</span> <span class="o">=</span> <span class="s">&#34;api_key&#34;</span><span class="o">;</span>
     <span class="kd">private</span> <span class="kd">static</span> <span class="kd">final</span> <span class="n">String</span> <span class="n">API_VERSION_FIELD_NAME</span> <span class="o">=</span> <span class="s">&#34;api_version&#34;</span><span class="o">;</span>
@@ -580,7 +580,7 @@
 <p>Kafka的所有请求都会继承AbstractRequest类，并且在内部还会有继承AbstractRequest的Builder类的子类。</p>
 <div class="highlight"><div class="chroma">
 <div class="table-container"><table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -599,7 +599,7 @@
 </span><span class="lnt">17
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">abstract</span> <span class="kd">class</span> <span class="nc">AbstractRequest</span> <span class="kd">extends</span> <span class="n">AbstractRequestResponse</span> <span class="o">{</span>
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">abstract</span> <span class="kd">class</span> <span class="nc">AbstractRequest</span> <span class="kd">extends</span> <span class="n">AbstractRequestResponse</span> <span class="o">{</span>
     
     <span class="c1">// 构建该请求的Builder
 </span><span class="c1"></span>    <span class="kd">public</span> <span class="kd">static</span> <span class="kd">abstract</span> <span class="kd">class</span> <span class="nc">Builder</span><span class="o">&lt;</span><span class="n">T</span> <span class="kd">extends</span> <span class="n">AbstractRequest</span><span class="o">&gt;</span> <span class="o">{</span>
@@ -622,7 +622,7 @@
 <p><img src="kafka-protocol-produce-request.svg" alt="produce-request"></p>
 <div class="highlight"><div class="chroma">
 <div class="table-container"><table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -649,7 +649,7 @@
 </span><span class="lnt">25
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">ProduceRequest</span> <span class="kd">extends</span> <span class="n">AbstractRequest</span> <span class="o">{</span>
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">ProduceRequest</span> <span class="kd">extends</span> <span class="n">AbstractRequest</span> <span class="o">{</span>
     <span class="kd">private</span> <span class="kd">static</span> <span class="kd">final</span> <span class="n">String</span> <span class="n">ACKS_KEY_NAME</span> <span class="o">=</span> <span class="s">&#34;acks&#34;</span><span class="o">;</span>
     <span class="kd">private</span> <span class="kd">static</span> <span class="kd">final</span> <span class="n">String</span> <span class="n">TIMEOUT_KEY_NAME</span> <span class="o">=</span> <span class="s">&#34;timeout&#34;</span><span class="o">;</span>
     <span class="kd">private</span> <span class="kd">static</span> <span class="kd">final</span> <span class="n">String</span> <span class="n">TOPIC_DATA_KEY_NAME</span> <span class="o">=</span> <span class="s">&#34;topic_data&#34;</span><span class="o">;</span>
@@ -679,7 +679,7 @@
 </div><p>继续看它的toStruct方法，ProduceRequest会从上往下一层层的生成Struct实例。遇到Schema类型的字段，则生成Struct实例。遇到数组类型的字段，则生成Object数组。</p>
 <div class="highlight"><div class="chroma">
 <div class="table-container"><table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -719,7 +719,7 @@
 </span><span class="lnt">38
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-java" data-lang="java"><span class="nd">@Override</span>
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="nd">@Override</span>
 <span class="kd">public</span> <span class="n">Struct</span> <span class="nf">toStruct</span><span class="o">()</span> <span class="o">{</span>
     <span class="c1">// Store it in a local variable to protect against concurrent updates
 </span><span class="c1"></span>    <span class="n">Map</span><span class="o">&lt;</span><span class="n">TopicPartition</span><span class="o">,</span> <span class="n">MemoryRecords</span><span class="o">&gt;</span> <span class="n">partitionRecords</span> <span class="o">=</span> <span class="n">partitionRecordsOrFail</span><span class="o">();</span>
@@ -762,7 +762,7 @@
 </div><p>同样ProduceRequest内部也实现了Buidler类，它的build方法实例化并返回了ProduceRequest对象</p>
 <div class="highlight"><div class="chroma">
 <div class="table-container"><table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -777,7 +777,7 @@
 </span><span class="lnt">13
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">ProduceRequest</span> <span class="kd">extends</span> <span class="n">AbstractRequest</span> <span class="o">{</span>
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">ProduceRequest</span> <span class="kd">extends</span> <span class="n">AbstractRequest</span> <span class="o">{</span>
     <span class="kd">public</span> <span class="kd">static</span> <span class="kd">class</span> <span class="nc">Builder</span> <span class="kd">extends</span> <span class="n">AbstractRequest</span><span class="o">.</span><span class="na">Builder</span><span class="o">&lt;</span><span class="n">ProduceRequest</span><span class="o">&gt;</span> <span class="o">{</span>
         <span class="kd">private</span> <span class="kd">final</span> <span class="kt">short</span> <span class="n">acks</span><span class="o">;</span>
         <span class="kd">private</span> <span class="kd">final</span> <span class="kt">int</span> <span class="n">timeout</span><span class="o">;</span>
@@ -796,7 +796,7 @@
 <p>Kafka通过Builder构建完请求体后，会将请求体一起序列化。AbstractRequest基类的serialize方法，会序列化请求。</p>
 <div class="highlight"><div class="chroma">
 <div class="table-container"><table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -816,7 +816,7 @@
 </span><span class="lnt">18
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">abstract</span> <span class="kd">class</span> <span class="nc">AbstractRequest</span> <span class="kd">extends</span> <span class="n">AbstractRequestResponse</span> <span class="o">{</span>
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">abstract</span> <span class="kd">class</span> <span class="nc">AbstractRequest</span> <span class="kd">extends</span> <span class="n">AbstractRequestResponse</span> <span class="o">{</span>
     
     <span class="kd">public</span> <span class="n">ByteBuffer</span> <span class="nf">serialize</span><span class="o">(</span><span class="n">RequestHeader</span> <span class="n">header</span><span class="o">)</span> <span class="o">{</span>
         <span class="c1">// 接收请求头，然后调用父类的serialize序列化请求
@@ -842,13 +842,13 @@
 <p>响应头部很简单，只是包含了从客户端发来的correlation_id</p>
 <div class="highlight"><div class="chroma">
 <div class="table-container"><table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">ResponseHeader</span> <span class="kd">extends</span> <span class="n">AbstractRequestResponse</span> <span class="o">{</span>
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">ResponseHeader</span> <span class="kd">extends</span> <span class="n">AbstractRequestResponse</span> <span class="o">{</span>
     <span class="kd">public</span> <span class="kd">static</span> <span class="kd">final</span> <span class="n">Schema</span> <span class="n">SCHEMA</span> <span class="o">=</span> <span class="k">new</span> <span class="n">Schema</span><span class="o">(</span>
             <span class="k">new</span> <span class="n">Field</span><span class="o">(</span><span class="s">&#34;correlation_id&#34;</span><span class="o">,</span> <span class="n">INT32</span><span class="o">,</span> <span class="s">&#34;The user-supplied value passed in with the request&#34;</span><span class="o">));</span>
 <span class="o">}</span>
@@ -858,7 +858,7 @@
 <p>Kafka的响应体都是由AbstractResponse的子类，有下列重要方法</p>
 <div class="highlight"><div class="chroma">
 <div class="table-container"><table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -875,7 +875,7 @@
 </span><span class="lnt">15
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">abstract</span> <span class="kd">class</span> <span class="nc">AbstractResponse</span> <span class="kd">extends</span> <span class="n">AbstractRequestResponse</span> <span class="o">{</span>
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">abstract</span> <span class="kd">class</span> <span class="nc">AbstractResponse</span> <span class="kd">extends</span> <span class="n">AbstractRequestResponse</span> <span class="o">{</span>
     <span class="c1">// 序列化并且保存到NetworkSend，后面会由网络发送出去
 </span><span class="c1"></span>    <span class="kd">protected</span> <span class="n">Send</span> <span class="nf">toSend</span><span class="o">(</span><span class="n">String</span> <span class="n">destination</span><span class="o">,</span> <span class="n">ResponseHeader</span> <span class="n">header</span><span class="o">,</span> <span class="kt">short</span> <span class="n">apiVersion</span><span class="o">)</span> <span class="o">{</span>
         <span class="k">return</span> <span class="k">new</span> <span class="n">NetworkSend</span><span class="o">(</span><span class="n">destination</span><span class="o">,</span> <span class="n">serialize</span><span class="o">(</span><span class="n">apiVersion</span><span class="o">,</span> <span class="n">header</span><span class="o">));</span>
@@ -896,7 +896,7 @@
 <p><img src="kafka-protocol-produce-response.svg" alt="produce-response"></p>
 <div class="highlight"><div class="chroma">
 <div class="table-container"><table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -917,7 +917,7 @@
 </span><span class="lnt">19
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">ProduceResponse</span> <span class="kd">extends</span> <span class="n">AbstractResponse</span> <span class="o">{</span>
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">ProduceResponse</span> <span class="kd">extends</span> <span class="n">AbstractResponse</span> <span class="o">{</span>
 
     <span class="kd">private</span> <span class="kd">static</span> <span class="kd">final</span> <span class="n">String</span> <span class="n">RESPONSES_KEY_NAME</span> <span class="o">=</span> <span class="s">&#34;responses&#34;</span><span class="o">;</span>
     <span class="kd">private</span> <span class="kd">static</span> <span class="kd">final</span> <span class="n">String</span> <span class="n">PARTITION_RESPONSES_KEY_NAME</span> <span class="o">=</span> <span class="s">&#34;partition_responses&#34;</span><span class="o">;</span>
@@ -969,9 +969,9 @@
 
         
     <div class="updated-badge-container">
-        <span title="Updated @ 2021-09-12 11:48:25 CST" style="cursor:help">
+        <span title="Updated @ 2021-10-22 14:44:34 CST" style="cursor:help">
 
-<svg xmlns="http://www.w3.org/2000/svg" width="130" height="20" class="updated-badge"><linearGradient id="b" x2="0" y2="100%"><stop offset="0" stop-color="#bbb" stop-opacity=".1"/><stop offset="1" stop-opacity=".1"/></linearGradient><clipPath id="a"><rect width="130" height="20" rx="3" fill="#fff"/></clipPath><g clip-path="url(#a)"><path class="updated-badge-left" d="M0 0h55v20H0z"/><path class="updated-badge-right" d="M55 0h75v20H55z"/><path fill="url(#b)" d="M0 0h130v20H0z"/></g><g fill="#fff" text-anchor="middle" font-size="110"><text x="285" y="150" fill="#010101" fill-opacity=".3" textLength="450" transform="scale(.1)">updated</text><text x="285" y="140" textLength="450" transform="scale(.1)">updated</text><text x="915" y="150" fill="#010101" fill-opacity=".3" textLength="650" transform="scale(.1)">2021-09-12</text><text x="915" y="140" textLength="650" transform="scale(.1)">2021-09-12</text></g></svg>
+<svg xmlns="http://www.w3.org/2000/svg" width="130" height="20" class="updated-badge"><linearGradient id="b" x2="0" y2="100%"><stop offset="0" stop-color="#bbb" stop-opacity=".1"/><stop offset="1" stop-opacity=".1"/></linearGradient><clipPath id="a"><rect width="130" height="20" rx="3" fill="#fff"/></clipPath><g clip-path="url(#a)"><path class="updated-badge-left" d="M0 0h55v20H0z"/><path class="updated-badge-right" d="M55 0h75v20H55z"/><path fill="url(#b)" d="M0 0h130v20H0z"/></g><g fill="#fff" text-anchor="middle" font-size="110"><text x="285" y="150" fill="#010101" fill-opacity=".3" textLength="450" transform="scale(.1)">updated</text><text x="285" y="140" textLength="450" transform="scale(.1)">updated</text><text x="915" y="150" fill="#010101" fill-opacity=".3" textLength="650" transform="scale(.1)">2021-10-22</text><text x="915" y="140" textLength="650" transform="scale(.1)">2021-10-22</text></g></svg>
         </span></div>
 
 

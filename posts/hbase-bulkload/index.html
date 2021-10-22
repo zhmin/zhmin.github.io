@@ -3,7 +3,7 @@
     <head prefix="og: http://ogp.me/ns# article: http://ogp.me/ns/article#">
     <meta charset="UTF-8" />
 
-    <meta name="generator" content="Hugo 0.79.0" /><meta name="theme-color" content="#fff" />
+    <meta name="generator" content="Hugo 0.88.1" /><meta name="theme-color" content="#fff" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     
     <meta name="format-detection" content="telephone=no, date=no, address=no, email=no" />
@@ -14,11 +14,11 @@
 
     <title>Hbase Bulkload 原理 | 学习笔记</title>
 
-    <link rel="stylesheet" href="/css/meme.min.81031e6b78ad2f1f534002ebb3b658886fea2f25d8a44d296d1466a2fe52f1c1.css"/>
+    <link rel="stylesheet" href="/css/meme.min.2d3e1834af2bc8dda20c7d74aaa1d8134845094441b7a554a5206ccd4b472596.css"/>
 
     
     
-        <script src="/js/meme.min.120d98bb614adc6beb13bf79f943d2cceffd323f4de1544029228c3dca2e9bda.js"></script>
+        <script src="/js/meme.min.800f61672145711eb3e1f29fcfcc3dbe0139dd459259718b611a0390f74703d1.js"></script>
 
     
 
@@ -54,7 +54,7 @@
         "@context": "https://schema.org",
         "@type": "BlogPosting",
         "datePublished": "2019-06-01T22:09:05+00:00",
-        "dateModified": "2021-09-12T11:48:25+08:00",
+        "dateModified": "2021-10-22T14:44:34+08:00",
         "url": "https://zhmin.github.io/posts/hbase-bulkload/",
         "headline": "Hbase Bulkload 原理",
         "description": "Hbase Bulkload 原理 当需要大批量的向Hbase导入数据时，我们可以使用Hbase Bulkload的方式，这种方式是先生成Hbase的底层存储文件 HFile，然后直接将这些 HFile 移动到Hbase的存储目录下。它相比调用……",
@@ -97,7 +97,7 @@
 <meta property="og:locale" content="zh" /><meta property="og:image" content="https://zhmin.github.io/icons/apple-touch-icon.png" />
     <meta property="og:type" content="article" />
     <meta property="article:published_time" content="2019-06-01T22:09:05&#43;00:00" />
-    <meta property="article:modified_time" content="2021-09-12T11:48:25&#43;08:00" />
+    <meta property="article:modified_time" content="2021-10-22T14:44:34&#43;08:00" />
     
     <meta property="article:section" content="posts" />
 
@@ -240,14 +240,14 @@
 <p>下面假设我们有一个 CSV 文件，是存储用户购买记录的。它一共有三列， order_id，consumer，product。我们需要将这个文件导入到Hbase里，其中 order_id 作为Hbase 的 row key。</p>
 <div class="highlight"><div class="chroma">
 <div class="table-container"><table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
 </span><span class="lnt">5
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-shell" data-lang="shell">bin/hbase org.apache.hadoop.hbase.mapreduce.ImportTsv -Dimporttsv.separator<span class="o">=</span><span class="s1">$&#39;\x01&#39;</span>
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell">bin/hbase org.apache.hadoop.hbase.mapreduce.ImportTsv -Dimporttsv.separator<span class="o">=</span><span class="s1">$&#39;\x01&#39;</span>
 -Dimporttsv.columns<span class="o">=</span>HBASE_ROW_KEY,cf:consumer,cf:product
  -Dimporttsv.bulk.output<span class="o">=</span>&lt;hdfs://storefileoutput&gt; &lt;hbase_table&gt; &lt;hdfs://datainput&gt;
  
@@ -298,7 +298,7 @@ bin/hbase org.apache.hadoop.hbase.mapreduce.LoadIncrementalHFiles &lt;hdfs://sto
 <p>这里讲下PutSortReducer的具体实现，下面的代码经过简化，去掉了KeyValue中关于Tag的处理：</p>
 <div class="highlight"><div class="chroma">
 <div class="table-container"><table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -356,7 +356,7 @@ bin/hbase org.apache.hadoop.hbase.mapreduce.LoadIncrementalHFiles &lt;hdfs://sto
 </span><span class="lnt">56
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">PutSortReducer</span> <span class="kd">extends</span>
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">PutSortReducer</span> <span class="kd">extends</span>
     <span class="n">Reducer</span><span class="o">&lt;</span><span class="n">ImmutableBytesWritable</span><span class="o">,</span> <span class="n">Put</span><span class="o">,</span> <span class="n">ImmutableBytesWritable</span><span class="o">,</span> <span class="n">KeyValue</span><span class="o">&gt;</span> <span class="o">{</span>
   <span class="c1">// the cell creator
 </span><span class="c1"></span>  <span class="kd">private</span> <span class="n">CellCreator</span> <span class="n">kvCreator</span><span class="o">;</span>
@@ -429,7 +429,7 @@ bin/hbase org.apache.hadoop.hbase.mapreduce.LoadIncrementalHFiles &lt;hdfs://sto
 <p>Reducer 的数目决定，是在 HFileOutputFormat2 的 configureIncrementalLoad 方法里。它会读取表的 region 分布情况，然后调用 setNumReduceTasks 方法设置 reduce 数目。下面的代码经过简化：</p>
 <div class="highlight"><div class="chroma">
 <div class="table-container"><table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -456,7 +456,7 @@ bin/hbase org.apache.hadoop.hbase.mapreduce.LoadIncrementalHFiles &lt;hdfs://sto
 </span><span class="lnt">25
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">HFileOutputFormat2</span>
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">HFileOutputFormat2</span>
     <span class="kd">extends</span> <span class="n">FileOutputFormat</span><span class="o">&lt;</span><span class="n">ImmutableBytesWritable</span><span class="o">,</span> <span class="n">Cell</span><span class="o">&gt;</span> <span class="o">{</span>
     
     <span class="kd">public</span> <span class="kd">static</span> <span class="kt">void</span> <span class="nf">configureIncrementalLoad</span><span class="o">(</span><span class="n">Job</span> <span class="n">job</span><span class="o">,</span> <span class="n">TableDescriptor</span> <span class="n">tableDescriptor</span><span class="o">,</span>
@@ -487,12 +487,12 @@ bin/hbase org.apache.hadoop.hbase.mapreduce.LoadIncrementalHFiles &lt;hdfs://sto
 <p>Hbase的每列数据都是单独存储的，都是以 KeyValue 的形式。KeyValue 的数据格式如下图所示：</p>
 <div class="highlight"><div class="chroma">
 <div class="table-container"><table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-shell" data-lang="shell">-----------------------------------------------
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell">-----------------------------------------------
  keylength <span class="p">|</span> valuelength <span class="p">|</span> key <span class="p">|</span> value <span class="p">|</span> Tags
 -----------------------------------------------
 </code></pre></td></tr></table></div>
@@ -500,12 +500,12 @@ bin/hbase org.apache.hadoop.hbase.mapreduce.LoadIncrementalHFiles &lt;hdfs://sto
 </div><p>其中 key 的格式如下：</p>
 <div class="highlight"><div class="chroma">
 <div class="table-container"><table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-shell" data-lang="shell">----------------------------------------------------------------------------------------------
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell">----------------------------------------------------------------------------------------------
  rowlength <span class="p">|</span> row <span class="p">|</span> columnfamilylength <span class="p">|</span> columnfamily <span class="p">|</span> columnqualifier <span class="p">|</span> timestamp <span class="p">|</span> keytype 
 ----------------------------------------------------------------------------------------------
 </code></pre></td></tr></table></div>
@@ -513,12 +513,12 @@ bin/hbase org.apache.hadoop.hbase.mapreduce.LoadIncrementalHFiles &lt;hdfs://sto
 </div><p>Tags的格式如下：</p>
 <div class="highlight"><div class="chroma">
 <div class="table-container"><table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-shell" data-lang="shell">-------------------------
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell">-------------------------
  tagslength <span class="p">|</span> tagsbytes 
 -------------------------
 </code></pre></td></tr></table></div>
@@ -526,12 +526,12 @@ bin/hbase org.apache.hadoop.hbase.mapreduce.LoadIncrementalHFiles &lt;hdfs://sto
 </div><p>tagsbytes 可以包含多个 tag，每个 tag 的格式如下：</p>
 <div class="highlight"><div class="chroma">
 <div class="table-container"><table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-shell" data-lang="shell">----------------------------------
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell">----------------------------------
  taglength <span class="p">|</span> tagtype <span class="p">|</span> tagbytes
 ----------------------------------
 </code></pre></td></tr></table></div>
@@ -541,7 +541,7 @@ bin/hbase org.apache.hadoop.hbase.mapreduce.LoadIncrementalHFiles &lt;hdfs://sto
 <p>HFileOutputFormat2 负责将Reduce的结果，持久化成 HFile 文件。持久化目录的格式如下：</p>
 <div class="highlight"><div class="chroma">
 <div class="table-container"><table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
@@ -550,7 +550,7 @@ bin/hbase org.apache.hadoop.hbase.mapreduce.LoadIncrementalHFiles &lt;hdfs://sto
 </span><span class="lnt">7
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-shell" data-lang="shell">.
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell">.
 <span class="p">|</span>---- column_family_1
 <span class="p">|</span>    <span class="p">|</span>---- uuid_1
 <span class="p">|</span>    <span class="sb">`</span>---- uuid_2
@@ -563,7 +563,7 @@ bin/hbase org.apache.hadoop.hbase.mapreduce.LoadIncrementalHFiles &lt;hdfs://sto
 <p>HFileOutputFormat2 会创建 RecordWriter 实例，所有数据的写入都是通过 RecordWriter。</p>
 <div class="highlight"><div class="chroma">
 <div class="table-container"><table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -584,7 +584,7 @@ bin/hbase org.apache.hadoop.hbase.mapreduce.LoadIncrementalHFiles &lt;hdfs://sto
 </span><span class="lnt">19
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">HFileOutputFormat2</span>
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">HFileOutputFormat2</span>
     <span class="kd">extends</span> <span class="n">FileOutputFormat</span><span class="o">&lt;</span><span class="n">ImmutableBytesWritable</span><span class="o">,</span> <span class="n">Cell</span><span class="o">&gt;</span> <span class="o">{</span>
     
   <span class="nd">@Override</span>
@@ -608,7 +608,7 @@ bin/hbase org.apache.hadoop.hbase.mapreduce.LoadIncrementalHFiles &lt;hdfs://sto
 </div><p>可以看到 createRecordWriter 方法，返回了一个匿名类。继续看看这个匿名类的定义：</p>
 <div class="highlight"><div class="chroma">
 <div class="table-container"><table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -622,7 +622,7 @@ bin/hbase org.apache.hadoop.hbase.mapreduce.LoadIncrementalHFiles &lt;hdfs://sto
 </span><span class="lnt">12
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-java" data-lang="java"><span class="c1">// 封装了StoreFileWriter，记录了写入的数据长度
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="c1">// 封装了StoreFileWriter，记录了写入的数据长度
 </span><span class="c1"></span><span class="kd">static</span> <span class="kd">class</span> <span class="nc">WriterLength</span> <span class="o">{</span>
     <span class="kt">long</span> <span class="n">written</span> <span class="o">=</span> <span class="n">0</span><span class="o">;</span>
     <span class="n">StoreFileWriter</span> <span class="n">writer</span> <span class="o">=</span> <span class="kc">null</span><span class="o">;</span>
@@ -640,7 +640,7 @@ bin/hbase org.apache.hadoop.hbase.mapreduce.LoadIncrementalHFiles &lt;hdfs://sto
 <p>因为 HFile 支持不同的压缩算法，不同的块大小，RecordWriter 会根据配置，获取HFile的格式，然后创建对应的 StoreFileWriter。下面创建 StoreFileWriter 时只指定了文件目录，StoreFileWriter会在这个目录下，使用 uuid 生成一个唯一的文件名。</p>
 <div class="highlight"><div class="chroma">
 <div class="table-container"><table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -680,7 +680,7 @@ bin/hbase org.apache.hadoop.hbase.mapreduce.LoadIncrementalHFiles &lt;hdfs://sto
 </span><span class="lnt">38
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-java" data-lang="java"><span class="kd">class</span> <span class="nc">RecordWriter</span><span class="o">&lt;</span><span class="n">ImmutableBytesWritable</span><span class="o">,</span> <span class="n">V</span><span class="o">&gt;()</span> <span class="o">{</span>
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="kd">class</span> <span class="nc">RecordWriter</span><span class="o">&lt;</span><span class="n">ImmutableBytesWritable</span><span class="o">,</span> <span class="n">V</span><span class="o">&gt;()</span> <span class="o">{</span>
     <span class="c1">// favoredNodes 表示创建HFile文件，希望尽可能在这些服务器节点上
 </span><span class="c1"></span>    <span class="kd">private</span> <span class="n">WriterLength</span> <span class="nf">getNewWriter</span><span class="o">(</span><span class="kt">byte</span><span class="o">[]</span> <span class="n">tableName</span><span class="o">,</span> <span class="kt">byte</span><span class="o">[]</span> <span class="n">family</span><span class="o">,</span> <span class="n">Configuration</span> <span class="n">conf</span><span class="o">,</span> <span class="n">InetSocketAddress</span><span class="o">[]</span> <span class="n">favoredNodes</span><span class="o">)</span> <span class="kd">throws</span> <span class="n">IOException</span> <span class="o">{</span>
         <span class="c1">// 根据表名和column family生成唯一字节
@@ -723,7 +723,7 @@ bin/hbase org.apache.hadoop.hbase.mapreduce.LoadIncrementalHFiles &lt;hdfs://sto
 </div><p>继续看看 RecordWriter 的写操作：</p>
 <div class="highlight"><div class="chroma">
 <div class="table-container"><table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -793,7 +793,7 @@ bin/hbase org.apache.hadoop.hbase.mapreduce.LoadIncrementalHFiles &lt;hdfs://sto
 </span><span class="lnt">68
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-java" data-lang="java"><span class="kd">class</span> <span class="nc">RecordWriter</span><span class="o">&lt;</span><span class="n">ImmutableBytesWritable</span><span class="o">,</span> <span class="n">V</span><span class="o">&gt;()</span> <span class="o">{</span>
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="kd">class</span> <span class="nc">RecordWriter</span><span class="o">&lt;</span><span class="n">ImmutableBytesWritable</span><span class="o">,</span> <span class="n">V</span><span class="o">&gt;()</span> <span class="o">{</span>
     <span class="nd">@Override</span>
     <span class="kd">public</span> <span class="kt">void</span> <span class="nf">write</span><span class="o">(</span><span class="n">ImmutableBytesWritable</span> <span class="n">row</span><span class="o">,</span> <span class="n">V</span> <span class="n">cell</span><span class="o">)</span>
         <span class="n">Cell</span> <span class="n">kv</span> <span class="o">=</span> <span class="n">cell</span><span class="o">;</span>
@@ -907,9 +907,9 @@ bin/hbase org.apache.hadoop.hbase.mapreduce.LoadIncrementalHFiles &lt;hdfs://sto
 
         
     <div class="updated-badge-container">
-        <span title="Updated @ 2021-09-12 11:48:25 CST" style="cursor:help">
+        <span title="Updated @ 2021-10-22 14:44:34 CST" style="cursor:help">
 
-<svg xmlns="http://www.w3.org/2000/svg" width="130" height="20" class="updated-badge"><linearGradient id="b" x2="0" y2="100%"><stop offset="0" stop-color="#bbb" stop-opacity=".1"/><stop offset="1" stop-opacity=".1"/></linearGradient><clipPath id="a"><rect width="130" height="20" rx="3" fill="#fff"/></clipPath><g clip-path="url(#a)"><path class="updated-badge-left" d="M0 0h55v20H0z"/><path class="updated-badge-right" d="M55 0h75v20H55z"/><path fill="url(#b)" d="M0 0h130v20H0z"/></g><g fill="#fff" text-anchor="middle" font-size="110"><text x="285" y="150" fill="#010101" fill-opacity=".3" textLength="450" transform="scale(.1)">updated</text><text x="285" y="140" textLength="450" transform="scale(.1)">updated</text><text x="915" y="150" fill="#010101" fill-opacity=".3" textLength="650" transform="scale(.1)">2021-09-12</text><text x="915" y="140" textLength="650" transform="scale(.1)">2021-09-12</text></g></svg>
+<svg xmlns="http://www.w3.org/2000/svg" width="130" height="20" class="updated-badge"><linearGradient id="b" x2="0" y2="100%"><stop offset="0" stop-color="#bbb" stop-opacity=".1"/><stop offset="1" stop-opacity=".1"/></linearGradient><clipPath id="a"><rect width="130" height="20" rx="3" fill="#fff"/></clipPath><g clip-path="url(#a)"><path class="updated-badge-left" d="M0 0h55v20H0z"/><path class="updated-badge-right" d="M55 0h75v20H55z"/><path fill="url(#b)" d="M0 0h130v20H0z"/></g><g fill="#fff" text-anchor="middle" font-size="110"><text x="285" y="150" fill="#010101" fill-opacity=".3" textLength="450" transform="scale(.1)">updated</text><text x="285" y="140" textLength="450" transform="scale(.1)">updated</text><text x="915" y="150" fill="#010101" fill-opacity=".3" textLength="650" transform="scale(.1)">2021-10-22</text><text x="915" y="140" textLength="650" transform="scale(.1)">2021-10-22</text></g></svg>
         </span></div>
 
 

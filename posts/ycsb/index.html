@@ -3,7 +3,7 @@
     <head prefix="og: http://ogp.me/ns# article: http://ogp.me/ns/article#">
     <meta charset="UTF-8" />
 
-    <meta name="generator" content="Hugo 0.79.0" /><meta name="theme-color" content="#fff" />
+    <meta name="generator" content="Hugo 0.88.1" /><meta name="theme-color" content="#fff" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     
     <meta name="format-detection" content="telephone=no, date=no, address=no, email=no" />
@@ -14,11 +14,11 @@
 
     <title>基准测试框架 ycsb | 学习笔记</title>
 
-    <link rel="stylesheet" href="/css/meme.min.81031e6b78ad2f1f534002ebb3b658886fea2f25d8a44d296d1466a2fe52f1c1.css"/>
+    <link rel="stylesheet" href="/css/meme.min.2d3e1834af2bc8dda20c7d74aaa1d8134845094441b7a554a5206ccd4b472596.css"/>
 
     
     
-        <script src="/js/meme.min.120d98bb614adc6beb13bf79f943d2cceffd323f4de1544029228c3dca2e9bda.js"></script>
+        <script src="/js/meme.min.800f61672145711eb3e1f29fcfcc3dbe0139dd459259718b611a0390f74703d1.js"></script>
 
     
 
@@ -54,7 +54,7 @@
         "@context": "https://schema.org",
         "@type": "BlogPosting",
         "datePublished": "2019-07-22T21:00:50+00:00",
-        "dateModified": "2021-09-12T11:48:25+08:00",
+        "dateModified": "2021-10-22T14:44:34+08:00",
         "url": "https://zhmin.github.io/posts/ycsb/",
         "headline": "基准测试框架 ycsb",
         "description": "前言 ycsb 作为雅虎开源的基准测试框架，支持多种数据库的性能测试，也能通过生成满足指定概率分布的数据，来模拟实际的并发场景。ycsb 的用法也很简单，本篇文章主要介绍 ycsb 框架的原理。 测试流程 框架的测试流程很简单……",
@@ -97,7 +97,7 @@
 <meta property="og:locale" content="zh" /><meta property="og:image" content="https://zhmin.github.io/ycsb-flow.svg" />
 <meta property="og:type" content="article" />
     <meta property="article:published_time" content="2019-07-22T21:00:50&#43;00:00" />
-    <meta property="article:modified_time" content="2021-09-12T11:48:25&#43;08:00" />
+    <meta property="article:modified_time" content="2021-10-22T14:44:34&#43;08:00" />
     
     <meta property="article:section" content="posts" />
 
@@ -257,7 +257,7 @@
 <p>DBWrapper 类包装了 DB，提供了记录请求时间的功能</p>
 <p>Workload 类实现了按照概率分布，来构建请求</p>
 <p>下图以执行 read 操作为例</p>
-<pre><code class="language-mermaid" data-lang="mermaid">sequenceDiagram
+<pre tabindex="0"><code class="language-mermaid" data-lang="mermaid">sequenceDiagram
 	participant ClientThread
 	participant Workload
 	participant DBWrapper
@@ -273,7 +273,7 @@
 <p>因为 ycsb 框架支持多种数据库，所以它将底层的数据库操作封装了一层，由 DB 类表示。这样如果用户需要增加特定数据库的支持，只需要继承 DB 类，实现对应的增删改查接口就行。下面列举了操作接口，</p>
 <div class="highlight"><div class="chroma">
 <div class="table-container"><table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -288,7 +288,7 @@
 </span><span class="lnt">13
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">abstract</span> <span class="kd">class</span> <span class="nc">DB</span> <span class="o">{</span>
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">abstract</span> <span class="kd">class</span> <span class="nc">DB</span> <span class="o">{</span>
 
   <span class="kd">public</span> <span class="kd">abstract</span> <span class="n">Status</span> <span class="nf">read</span><span class="o">(</span><span class="n">String</span> <span class="n">table</span><span class="o">,</span> <span class="n">String</span> <span class="n">key</span><span class="o">,</span> <span class="n">Set</span><span class="o">&lt;</span><span class="n">String</span><span class="o">&gt;</span> <span class="n">fields</span><span class="o">,</span> <span class="n">Map</span><span class="o">&lt;</span><span class="n">String</span><span class="o">,</span> <span class="n">ByteIterator</span><span class="o">&gt;</span> <span class="n">result</span><span class="o">);</span>
 
@@ -308,7 +308,7 @@
 <p>上面介绍了 DB 的原理了，它负责直接的数据库操作。DBWrapper 封装了 DB 操作，采用了代理模式，它增加了数据统计的作用。下面以 read 方法为例，</p>
 <div class="highlight"><div class="chroma">
 <div class="table-container"><table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -333,7 +333,7 @@
 </span><span class="lnt">23
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">DBWrapper</span> <span class="kd">extends</span> <span class="n">DB</span> <span class="o">{</span>
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">DBWrapper</span> <span class="kd">extends</span> <span class="n">DB</span> <span class="o">{</span>
   <span class="kd">private</span> <span class="kd">final</span> <span class="n">DB</span> <span class="n">db</span><span class="o">;</span>
   <span class="kd">private</span> <span class="kd">final</span> <span class="n">Measurements</span> <span class="n">measurements</span><span class="o">;</span>
   <span class="kd">private</span> <span class="kd">final</span> <span class="n">Tracer</span> <span class="n">tracer</span><span class="o">;</span>
@@ -367,7 +367,7 @@
 <p>上面这两种测试模式对应两个方法</p>
 <div class="highlight"><div class="chroma">
 <div class="table-container"><table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
@@ -375,7 +375,7 @@
 </span><span class="lnt">6
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">abstract</span> <span class="kd">class</span> <span class="nc">Workload</span> <span class="o">{</span>
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">abstract</span> <span class="kd">class</span> <span class="nc">Workload</span> <span class="o">{</span>
   <span class="c1">// 对应load模式
 </span><span class="c1"></span>  <span class="kd">public</span> <span class="kd">abstract</span> <span class="kt">boolean</span> <span class="nf">doInsert</span><span class="o">(</span><span class="n">DB</span> <span class="n">db</span><span class="o">,</span> <span class="n">Object</span> <span class="n">threadstate</span><span class="o">);</span>
   <span class="c1">// 对应测试模式
@@ -412,7 +412,7 @@ Workload &lt;|-- TimeSeriesWorkload
 <p>数据生成的基类是 Generator，子类需要实现它的两个接口。</p>
 <div class="highlight"><div class="chroma">
 <div class="table-container"><table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
@@ -421,7 +421,7 @@ Workload &lt;|-- TimeSeriesWorkload
 </span><span class="lnt">7
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">abstract</span> <span class="kd">class</span> <span class="nc">Generator</span><span class="o">&lt;</span><span class="n">V</span><span class="o">&gt;</span> <span class="o">{</span>
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">abstract</span> <span class="kd">class</span> <span class="nc">Generator</span><span class="o">&lt;</span><span class="n">V</span><span class="o">&gt;</span> <span class="o">{</span>
   <span class="c1">// 生成新的数据
 </span><span class="c1"></span>  <span class="kd">public</span> <span class="kd">abstract</span> <span class="n">V</span> <span class="nf">nextValue</span><span class="o">();</span>
  
@@ -457,7 +457,7 @@ Workload &lt;|-- TimeSeriesWorkload
 <h3 id="load-模式"><a href="#load-模式" class="anchor-link"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon anchor-icon"><path d="M326.612 185.391c59.747 59.809 58.927 155.698.36 214.59-.11.12-.24.25-.36.37l-67.2 67.2c-59.27 59.27-155.699 59.262-214.96 0-59.27-59.26-59.27-155.7 0-214.96l37.106-37.106c9.84-9.84 26.786-3.3 27.294 10.606.648 17.722 3.826 35.527 9.69 52.721 1.986 5.822.567 12.262-3.783 16.612l-13.087 13.087c-28.026 28.026-28.905 73.66-1.155 101.96 28.024 28.579 74.086 28.749 102.325.51l67.2-67.19c28.191-28.191 28.073-73.757 0-101.83-3.701-3.694-7.429-6.564-10.341-8.569a16.037 16.037 0 0 1-6.947-12.606c-.396-10.567 3.348-21.456 11.698-29.806l21.054-21.055c5.521-5.521 14.182-6.199 20.584-1.731a152.482 152.482 0 0 1 20.522 17.197zM467.547 44.449c-59.261-59.262-155.69-59.27-214.96 0l-67.2 67.2c-.12.12-.25.25-.36.37-58.566 58.892-59.387 154.781.36 214.59a152.454 152.454 0 0 0 20.521 17.196c6.402 4.468 15.064 3.789 20.584-1.731l21.054-21.055c8.35-8.35 12.094-19.239 11.698-29.806a16.037 16.037 0 0 0-6.947-12.606c-2.912-2.005-6.64-4.875-10.341-8.569-28.073-28.073-28.191-73.639 0-101.83l67.2-67.19c28.239-28.239 74.3-28.069 102.325.51 27.75 28.3 26.872 73.934-1.155 101.96l-13.087 13.087c-4.35 4.35-5.769 10.79-3.783 16.612 5.864 17.194 9.042 34.999 9.69 52.721.509 13.906 17.454 20.446 27.294 10.606l37.106-37.106c59.271-59.259 59.271-155.699.001-214.959z"/></svg></a>load 模式</h3>
 <div class="highlight"><div class="chroma">
 <div class="table-container"><table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -475,7 +475,7 @@ Workload &lt;|-- TimeSeriesWorkload
 </span><span class="lnt">16
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">CoreWorkload</span> <span class="kd">extends</span> <span class="n">Workload</span> <span class="o">{</span>
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">CoreWorkload</span> <span class="kd">extends</span> <span class="n">Workload</span> <span class="o">{</span>
   <span class="kd">protected</span> <span class="n">NumberGenerator</span> <span class="n">keysequence</span><span class="o">;</span> <span class="c1">// 生成主键，类型为CounterGenerator
 </span><span class="c1"></span>  
   <span class="kd">private</span> <span class="n">List</span><span class="o">&lt;</span><span class="n">String</span><span class="o">&gt;</span> <span class="n">fieldnames</span><span class="o">;</span> <span class="c1">// 字段名集合
@@ -497,7 +497,7 @@ Workload &lt;|-- TimeSeriesWorkload
 <p>测试模式负责实际的读写性能测试。它支持5种类型的请求 READ，INSERT，UPDATE，DELETE， SCAN，READMODIFYWRITE。上面新增了一个操作类型 READMODIFYWRITE， 表示对数据先读取，然后再更改。</p>
 <div class="highlight"><div class="chroma">
 <div class="table-container"><table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -529,7 +529,7 @@ Workload &lt;|-- TimeSeriesWorkload
 </span><span class="lnt">30
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">CoreWorkload</span> <span class="kd">extends</span> <span class="n">Workload</span> <span class="o">{</span>
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">CoreWorkload</span> <span class="kd">extends</span> <span class="n">Workload</span> <span class="o">{</span>
   <span class="c1">// 按照概率返回操作类型（READ，INSERT，UPDATE，DELETE， SCAN，READMODIFYWRITE）
 </span><span class="c1"></span>  <span class="kd">protected</span> <span class="n">DiscreteGenerator</span> <span class="n">operationchooser</span><span class="o">;</span>  
     
@@ -565,14 +565,14 @@ Workload &lt;|-- TimeSeriesWorkload
 <p>上面测试模式的 operationchooser，负责生成操作类型。它的生成概率，是由配置文件指定的。Workload 在构建请求时，会根据配置，合理的限制各个请求类型数量。比如以 workloada 配置文件为例，</p>
 <div class="highlight"><div class="chroma">
 <div class="table-container"><table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
 </span><span class="lnt">5
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-shell" data-lang="shell"><span class="nv">readproportion</span><span class="o">=</span>0.5  <span class="c1"># 读概率</span>
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="nv">readproportion</span><span class="o">=</span>0.5  <span class="c1"># 读概率</span>
 <span class="nv">updateproportion</span><span class="o">=</span>0.5 <span class="c1"># 更新概率</span>
 <span class="nv">scanproportion</span><span class="o">=</span><span class="m">0</span>
 <span class="nv">insertproportion</span><span class="o">=</span><span class="m">0</span>
@@ -588,7 +588,7 @@ Workload &lt;|-- TimeSeriesWorkload
 <p>我们先定义一个直方图，它的变量间隔单位是 ms，值为对应区间的个数。这样对于每个请求的响应时间，找到对应的区间，然后更新它的计数。最后计算 tp99 类似的指标，通过统计出次数即可算出。</p>
 <div class="highlight"><div class="chroma">
 <div class="table-container"><table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -625,7 +625,7 @@ Workload &lt;|-- TimeSeriesWorkload
 </span><span class="lnt">35
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">OneMeasurementHistogram</span> <span class="kd">extends</span> <span class="n">OneMeasurement</span> <span class="o">{</span>
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">OneMeasurementHistogram</span> <span class="kd">extends</span> <span class="n">OneMeasurement</span> <span class="o">{</span>
   <span class="c1">// 分区数量，默认为1000
 </span><span class="c1"></span>  <span class="kd">private</span> <span class="kd">final</span> <span class="kt">int</span> <span class="n">buckets</span><span class="o">;</span>
   <span class="c1">// 保存直方图的值
@@ -675,7 +675,7 @@ Workload &lt;|-- TimeSeriesWorkload
 <p>单个指标对应的 json 格式</p>
 <div class="highlight"><div class="chroma">
 <div class="table-container"><table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
@@ -683,7 +683,7 @@ Workload &lt;|-- TimeSeriesWorkload
 </span><span class="lnt">6
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-json" data-lang="json"><span class="p">{</span>
+<pre tabindex="0" class="chroma"><code class="language-json" data-lang="json"><span class="p">{</span>
     <span class="nt">&#34;metric&#34;</span><span class="err">;</span> <span class="s2">&#34;&#34;</span><span class="p">,</span>
     <span class="nt">&#34;measurement&#34;</span><span class="p">:</span> <span class="s2">&#34;&#34;</span><span class="p">,</span>
     <span class="nt">&#34;value&#34;</span><span class="p">:</span> <span class="err">xxx</span>
@@ -718,9 +718,9 @@ Workload &lt;|-- TimeSeriesWorkload
 
         
     <div class="updated-badge-container">
-        <span title="Updated @ 2021-09-12 11:48:25 CST" style="cursor:help">
+        <span title="Updated @ 2021-10-22 14:44:34 CST" style="cursor:help">
 
-<svg xmlns="http://www.w3.org/2000/svg" width="130" height="20" class="updated-badge"><linearGradient id="b" x2="0" y2="100%"><stop offset="0" stop-color="#bbb" stop-opacity=".1"/><stop offset="1" stop-opacity=".1"/></linearGradient><clipPath id="a"><rect width="130" height="20" rx="3" fill="#fff"/></clipPath><g clip-path="url(#a)"><path class="updated-badge-left" d="M0 0h55v20H0z"/><path class="updated-badge-right" d="M55 0h75v20H55z"/><path fill="url(#b)" d="M0 0h130v20H0z"/></g><g fill="#fff" text-anchor="middle" font-size="110"><text x="285" y="150" fill="#010101" fill-opacity=".3" textLength="450" transform="scale(.1)">updated</text><text x="285" y="140" textLength="450" transform="scale(.1)">updated</text><text x="915" y="150" fill="#010101" fill-opacity=".3" textLength="650" transform="scale(.1)">2021-09-12</text><text x="915" y="140" textLength="650" transform="scale(.1)">2021-09-12</text></g></svg>
+<svg xmlns="http://www.w3.org/2000/svg" width="130" height="20" class="updated-badge"><linearGradient id="b" x2="0" y2="100%"><stop offset="0" stop-color="#bbb" stop-opacity=".1"/><stop offset="1" stop-opacity=".1"/></linearGradient><clipPath id="a"><rect width="130" height="20" rx="3" fill="#fff"/></clipPath><g clip-path="url(#a)"><path class="updated-badge-left" d="M0 0h55v20H0z"/><path class="updated-badge-right" d="M55 0h75v20H55z"/><path fill="url(#b)" d="M0 0h130v20H0z"/></g><g fill="#fff" text-anchor="middle" font-size="110"><text x="285" y="150" fill="#010101" fill-opacity=".3" textLength="450" transform="scale(.1)">updated</text><text x="285" y="140" textLength="450" transform="scale(.1)">updated</text><text x="915" y="150" fill="#010101" fill-opacity=".3" textLength="650" transform="scale(.1)">2021-10-22</text><text x="915" y="140" textLength="650" transform="scale(.1)">2021-10-22</text></g></svg>
         </span></div>
 
 

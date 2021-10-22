@@ -3,7 +3,7 @@
     <head prefix="og: http://ogp.me/ns# article: http://ogp.me/ns/article#">
     <meta charset="UTF-8" />
 
-    <meta name="generator" content="Hugo 0.79.0" /><meta name="theme-color" content="#fff" />
+    <meta name="generator" content="Hugo 0.88.1" /><meta name="theme-color" content="#fff" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     
     <meta name="format-detection" content="telephone=no, date=no, address=no, email=no" />
@@ -14,11 +14,11 @@
 
     <title>Spark Rpc 客户端原理 | 学习笔记</title>
 
-    <link rel="stylesheet" href="/css/meme.min.81031e6b78ad2f1f534002ebb3b658886fea2f25d8a44d296d1466a2fe52f1c1.css"/>
+    <link rel="stylesheet" href="/css/meme.min.2d3e1834af2bc8dda20c7d74aaa1d8134845094441b7a554a5206ccd4b472596.css"/>
 
     
     
-        <script src="/js/meme.min.120d98bb614adc6beb13bf79f943d2cceffd323f4de1544029228c3dca2e9bda.js"></script>
+        <script src="/js/meme.min.800f61672145711eb3e1f29fcfcc3dbe0139dd459259718b611a0390f74703d1.js"></script>
 
     
 
@@ -54,7 +54,7 @@
         "@context": "https://schema.org",
         "@type": "BlogPosting",
         "datePublished": "2019-01-13T21:34:54+00:00",
-        "dateModified": "2021-09-12T11:48:25+08:00",
+        "dateModified": "2021-10-22T14:44:34+08:00",
         "url": "https://zhmin.github.io/posts/spark-rpc-client/",
         "headline": "Spark Rpc 客户端原理",
         "description": "Spark Rpc 客户端原理 Spark Rpc 客户端涉及到多个组件，根据发送消息和接收消息的流程，逐一介绍这些组件。可以参见流程图 {% post_link spark-rpc-flow %} RpcEndpointRef RpcEndpointRef表示客户端，它提供了两个接口发送请求。send方法表示发送请……",
@@ -97,7 +97,7 @@
 <meta property="og:locale" content="zh" /><meta property="og:image" content="https://zhmin.github.io/icons/apple-touch-icon.png" />
     <meta property="og:type" content="article" />
     <meta property="article:published_time" content="2019-01-13T21:34:54&#43;00:00" />
-    <meta property="article:modified_time" content="2021-09-12T11:48:25&#43;08:00" />
+    <meta property="article:modified_time" content="2021-10-22T14:44:34&#43;08:00" />
     
     <meta property="article:section" content="posts" />
 
@@ -247,7 +247,7 @@
 </ul>
 <div class="highlight"><div class="chroma">
 <div class="table-container"><table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -265,7 +265,7 @@
 </span><span class="lnt">16
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-scala" data-lang="scala"><span class="k">class</span> <span class="nc">NettyRpcEndpointRef</span><span class="o">(</span>
+<pre tabindex="0" class="chroma"><code class="language-scala" data-lang="scala"><span class="k">class</span> <span class="nc">NettyRpcEndpointRef</span><span class="o">(</span>
     <span class="nd">@transient</span> <span class="k">private</span> <span class="k">val</span> <span class="n">conf</span><span class="k">:</span> <span class="kt">SparkConf</span><span class="o">,</span>
     <span class="k">private</span> <span class="k">val</span> <span class="n">endpointAddress</span><span class="k">:</span> <span class="kt">RpcEndpointAddress</span><span class="o">,</span>
     <span class="nd">@transient</span> <span class="nd">@volatile</span> <span class="k">private</span> <span class="k">var</span> <span class="n">nettyEnv</span><span class="k">:</span> <span class="kt">NettyRpcEnv</span><span class="o">)</span> <span class="k">extends</span> <span class="nc">RpcEndpointRef</span><span class="o">(</span><span class="n">conf</span><span class="o">)</span> <span class="o">{</span>
@@ -294,7 +294,7 @@
 <p>首先看看NettyRpcEnv的send方法，</p>
 <div class="highlight"><div class="chroma">
 <div class="table-container"><table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -356,7 +356,7 @@
 </span><span class="lnt">60
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-scala" data-lang="scala"><span class="k">class</span> <span class="nc">NettyRpcEnv</span> <span class="o">{</span>
+<pre tabindex="0" class="chroma"><code class="language-scala" data-lang="scala"><span class="k">class</span> <span class="nc">NettyRpcEnv</span> <span class="o">{</span>
     
   <span class="c1">// OutBox集合，Key为server的地址
 </span><span class="c1"></span>  <span class="k">private</span> <span class="k">val</span> <span class="n">outboxes</span> <span class="k">=</span> <span class="k">new</span> <span class="nc">ConcurrentHashMap</span><span class="o">[</span><span class="kt">RpcAddress</span>, <span class="kt">Outbox</span><span class="o">]()</span>
@@ -421,7 +421,7 @@
 </div><p>继续看ask方法， ask方法需要返回server的返回值，它使用了异步请求。这里使用了promise，当请求完成时，会将结果保存在promise里。通过访问promise的Future就可以获取结果。</p>
 <div class="highlight"><div class="chroma">
 <div class="table-container"><table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -488,7 +488,7 @@
 </span><span class="lnt">65
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-scala" data-lang="scala"><span class="k">def</span> <span class="n">ask</span><span class="o">[</span><span class="kt">T:</span> <span class="kt">ClassTag</span><span class="o">](</span><span class="n">message</span><span class="k">:</span> <span class="kt">RequestMessage</span><span class="o">,</span> <span class="n">timeout</span><span class="k">:</span> <span class="kt">RpcTimeout</span><span class="o">)</span><span class="k">:</span> <span class="kt">Future</span><span class="o">[</span><span class="kt">T</span><span class="o">]</span> <span class="k">=</span> <span class="o">{</span>
+<pre tabindex="0" class="chroma"><code class="language-scala" data-lang="scala"><span class="k">def</span> <span class="n">ask</span><span class="o">[</span><span class="kt">T:</span> <span class="kt">ClassTag</span><span class="o">](</span><span class="n">message</span><span class="k">:</span> <span class="kt">RequestMessage</span><span class="o">,</span> <span class="n">timeout</span><span class="k">:</span> <span class="kt">RpcTimeout</span><span class="o">)</span><span class="k">:</span> <span class="kt">Future</span><span class="o">[</span><span class="kt">T</span><span class="o">]</span> <span class="k">=</span> <span class="o">{</span>
   <span class="k">val</span> <span class="n">promise</span> <span class="k">=</span> <span class="nc">Promise</span><span class="o">[</span><span class="kt">Any</span><span class="o">]()</span>
   <span class="k">val</span> <span class="n">remoteAddr</span> <span class="k">=</span> <span class="n">message</span><span class="o">.</span><span class="n">receiver</span><span class="o">.</span><span class="n">address</span>
 
@@ -563,7 +563,7 @@
 <p>OneWayOutboxMessage定义了请求失败的回调函数onFailure</p>
 <div class="highlight"><div class="chroma">
 <div class="table-container"><table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -580,7 +580,7 @@
 </span><span class="lnt">15
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-scala" data-lang="scala"><span class="k">private</span><span class="o">[</span><span class="kt">netty</span><span class="o">]</span> <span class="k">case</span> <span class="k">class</span> <span class="nc">OneWayOutboxMessage</span><span class="o">(</span><span class="n">content</span><span class="k">:</span> <span class="kt">ByteBuffer</span><span class="o">)</span> <span class="k">extends</span> <span class="nc">OutboxMessage</span>
+<pre tabindex="0" class="chroma"><code class="language-scala" data-lang="scala"><span class="k">private</span><span class="o">[</span><span class="kt">netty</span><span class="o">]</span> <span class="k">case</span> <span class="k">class</span> <span class="nc">OneWayOutboxMessage</span><span class="o">(</span><span class="n">content</span><span class="k">:</span> <span class="kt">ByteBuffer</span><span class="o">)</span> <span class="k">extends</span> <span class="nc">OutboxMessage</span>
   <span class="k">with</span> <span class="nc">Logging</span> <span class="o">{</span>
 
   <span class="k">override</span> <span class="k">def</span> <span class="n">sendWith</span><span class="o">(</span><span class="n">client</span><span class="k">:</span> <span class="kt">TransportClient</span><span class="o">)</span><span class="k">:</span> <span class="kt">Unit</span> <span class="o">=</span> <span class="o">{</span>
@@ -607,7 +607,7 @@
 </ul>
 <div class="highlight"><div class="chroma">
 <div class="table-container"><table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -637,7 +637,7 @@
 </span><span class="lnt">28
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-scala" data-lang="scala"><span class="k">class</span> <span class="nc">RpcOutboxMessage</span><span class="o">(</span>
+<pre tabindex="0" class="chroma"><code class="language-scala" data-lang="scala"><span class="k">class</span> <span class="nc">RpcOutboxMessage</span><span class="o">(</span>
     <span class="n">content</span><span class="k">:</span> <span class="kt">ByteBuffer</span><span class="o">,</span>
     <span class="nc">_onFailure</span><span class="k">:</span> <span class="o">(</span><span class="kt">Throwable</span><span class="o">)</span> <span class="o">=&gt;</span> <span class="nc">Unit</span><span class="o">,</span>
     <span class="nc">_onSuccess</span><span class="k">:</span> <span class="o">(</span><span class="kt">TransportClient</span><span class="o">,</span> <span class="kt">ByteBuffer</span><span class="o">)</span> <span class="k">=&gt;</span> <span class="nc">Unit</span><span class="o">)</span>
@@ -679,7 +679,7 @@
 <p>首先来看send方法，它的源码比较简单。首先它会将消息添加到队列里，然后调用drainOutbox发送消息</p>
 <div class="highlight"><div class="chroma">
 <div class="table-container"><table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -699,7 +699,7 @@
 </span><span class="lnt">18
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-scala" data-lang="scala"><span class="k">def</span> <span class="n">send</span><span class="o">(</span><span class="n">message</span><span class="k">:</span> <span class="kt">OutboxMessage</span><span class="o">)</span><span class="k">:</span> <span class="kt">Unit</span> <span class="o">=</span> <span class="o">{</span>
+<pre tabindex="0" class="chroma"><code class="language-scala" data-lang="scala"><span class="k">def</span> <span class="n">send</span><span class="o">(</span><span class="n">message</span><span class="k">:</span> <span class="kt">OutboxMessage</span><span class="o">)</span><span class="k">:</span> <span class="kt">Unit</span> <span class="o">=</span> <span class="o">{</span>
   <span class="c1">// 如果rpc服务停止，则表示此条消息不能发送，需要丢弃
 </span><span class="c1"></span>  <span class="k">val</span> <span class="n">dropped</span> <span class="k">=</span> <span class="n">synchronized</span> <span class="o">{</span>
     <span class="k">if</span> <span class="o">(</span><span class="n">stopped</span><span class="o">)</span> <span class="o">{</span>
@@ -723,7 +723,7 @@
 <p>它首先会判断是否建立server的连接，如果没有连接，则请求后台线程创建连接。如果有，则直接发送。注意到，这里发送消息，有线程冲突。因为后台线程创建完连接后，它也会调用drainOutbox发送消息。</p>
 <div class="highlight"><div class="chroma">
 <div class="table-container"><table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -783,7 +783,7 @@
 </span><span class="lnt">58
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-scala" data-lang="scala">  <span class="k">private</span> <span class="k">def</span> <span class="n">drainOutbox</span><span class="o">()</span><span class="k">:</span> <span class="kt">Unit</span> <span class="o">=</span> <span class="o">{</span>
+<pre tabindex="0" class="chroma"><code class="language-scala" data-lang="scala">  <span class="k">private</span> <span class="k">def</span> <span class="n">drainOutbox</span><span class="o">()</span><span class="k">:</span> <span class="kt">Unit</span> <span class="o">=</span> <span class="o">{</span>
     
     <span class="k">var</span> <span class="n">message</span><span class="k">:</span> <span class="kt">OutboxMessage</span> <span class="o">=</span> <span class="kc">null</span>
      <span class="c1">// 锁，防止发送消息的主线程，和创建连接的线程有冲突
@@ -848,7 +848,7 @@
 <p>注意后台线程创建完连接后，它会主动处理队列的消息，防止消息堆积。如果它不主动发送消息，则只能等待客户的下一次消息的发送，而这个假定是不确定的。</p>
 <div class="highlight"><div class="chroma">
 <div class="table-container"><table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -880,7 +880,7 @@
 </span><span class="lnt">30
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-scala" data-lang="scala">  <span class="k">private</span> <span class="k">def</span> <span class="n">launchConnectTask</span><span class="o">()</span><span class="k">:</span> <span class="kt">Unit</span> <span class="o">=</span> <span class="o">{</span>
+<pre tabindex="0" class="chroma"><code class="language-scala" data-lang="scala">  <span class="k">private</span> <span class="k">def</span> <span class="n">launchConnectTask</span><span class="o">()</span><span class="k">:</span> <span class="kt">Unit</span> <span class="o">=</span> <span class="o">{</span>
     <span class="c1">// 提交连接任务给，nettyEnv的的线程池
 </span><span class="c1"></span>    <span class="n">connectFuture</span> <span class="k">=</span> <span class="n">nettyEnv</span><span class="o">.</span><span class="n">clientConnectionExecutor</span><span class="o">.</span><span class="n">submit</span><span class="o">(</span><span class="k">new</span> <span class="nc">Callable</span><span class="o">[</span><span class="kt">Unit</span><span class="o">]</span> <span class="o">{</span>
 
@@ -917,12 +917,12 @@
 <p>send方法是发送消息，但不需要server的返回值。这里仅仅是调用了channel的writeAndFlush方法</p>
 <div class="highlight"><div class="chroma">
 <div class="table-container"><table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-scala" data-lang="scala"><span class="n">public</span> <span class="n">void</span> <span class="n">send</span><span class="o">(</span><span class="nc">ByteBuffer</span> <span class="n">message</span><span class="o">)</span> <span class="o">{</span>
+<pre tabindex="0" class="chroma"><code class="language-scala" data-lang="scala"><span class="n">public</span> <span class="n">void</span> <span class="n">send</span><span class="o">(</span><span class="nc">ByteBuffer</span> <span class="n">message</span><span class="o">)</span> <span class="o">{</span>
   <span class="n">channel</span><span class="o">.</span><span class="n">writeAndFlush</span><span class="o">(</span><span class="k">new</span> <span class="nc">OneWayMessage</span><span class="o">(</span><span class="k">new</span> <span class="nc">NioManagedBuffer</span><span class="o">(</span><span class="n">message</span><span class="o">)));</span>
 <span class="o">}</span>
 </code></pre></td></tr></table></div>
@@ -930,7 +930,7 @@
 </div><p>sendRpc方法是是需要处理server的返回值的。</p>
 <div class="highlight"><div class="chroma">
 <div class="table-container"><table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -963,7 +963,7 @@
 </span><span class="lnt">31
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">TransportClient</span> <span class="kd">implements</span> <span class="n">Closeable</span> <span class="o">{</span>
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">TransportClient</span> <span class="kd">implements</span> <span class="n">Closeable</span> <span class="o">{</span>
     
     <span class="kd">private</span> <span class="kd">final</span> <span class="n">Channel</span> <span class="n">channel</span><span class="o">;</span>
     <span class="kd">private</span> <span class="kd">final</span> <span class="n">TransportResponseHandler</span> <span class="n">handler</span><span class="o">;</span>
@@ -1000,7 +1000,7 @@
 <p>TransportClientFactory提供了实例化TransportClient的方法</p>
 <div class="highlight"><div class="chroma">
 <div class="table-container"><table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -1041,7 +1041,7 @@
 </span><span class="lnt">39
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">TransportClientFactory</span> <span class="kd">implements</span> <span class="n">Closeable</span> <span class="o">{</span>
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">TransportClientFactory</span> <span class="kd">implements</span> <span class="n">Closeable</span> <span class="o">{</span>
     
      <span class="n">TransportClient</span> <span class="nf">createClient</span><span class="o">(</span><span class="n">InetSocketAddress</span> <span class="n">address</span><span class="o">)</span>
           <span class="kd">throws</span> <span class="n">IOException</span><span class="o">,</span> <span class="n">InterruptedException</span> <span class="o">{</span>
@@ -1085,7 +1085,7 @@
 </div><p>createClient方法通过Bootstrap，初始化了Netty的客户端。注意到最主要的，调用了TransportContext的initializePipeline来配置Channel Pipeline。</p>
 <div class="highlight"><div class="chroma">
 <div class="table-container"><table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -1116,7 +1116,7 @@
 </span><span class="lnt">29
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">TransportContext</span> <span class="o">{</span>
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">TransportContext</span> <span class="o">{</span>
     
   <span class="kd">private</span> <span class="kd">final</span> <span class="n">RpcHandler</span> <span class="n">rpcHandler</span><span class="o">;</span>
     
@@ -1150,7 +1150,7 @@
 </div><p>注意上面的TransportChannelHandler类，它继承ChannelInboundHandlerAdapter</p>
 <div class="highlight"><div class="chroma">
 <div class="table-container"><table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -1165,7 +1165,7 @@
 </span><span class="lnt">13
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">TransportChannelHandler</span> <span class="kd">extends</span> <span class="n">ChannelInboundHandlerAdapter</span> <span class="o">{</span>
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">TransportChannelHandler</span> <span class="kd">extends</span> <span class="n">ChannelInboundHandlerAdapter</span> <span class="o">{</span>
   
   <span class="nd">@Override</span>
   <span class="kd">public</span> <span class="kt">void</span> <span class="nf">channelRead</span><span class="o">(</span><span class="n">ChannelHandlerContext</span> <span class="n">ctx</span><span class="o">,</span> <span class="n">Object</span> <span class="n">request</span><span class="o">)</span> <span class="kd">throws</span> <span class="n">Exception</span> <span class="o">{</span>
@@ -1183,7 +1183,7 @@
 </div><p>TransportChannelHandler在接收响应时，会触发channelRead函数。这里调用TransportResponseHandler的handle函数。</p>
 <div class="highlight"><div class="chroma">
 <div class="table-container"><table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -1209,7 +1209,7 @@
 </span><span class="lnt">24
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">TransportResponseHandler</span> <span class="kd">extends</span> <span class="n">MessageHandler</span><span class="o">&lt;</span><span class="n">ResponseMessage</span><span class="o">&gt;</span> <span class="o">{</span>
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">TransportResponseHandler</span> <span class="kd">extends</span> <span class="n">MessageHandler</span><span class="o">&lt;</span><span class="n">ResponseMessage</span><span class="o">&gt;</span> <span class="o">{</span>
   <span class="nd">@Override</span>
   <span class="kd">public</span> <span class="kt">void</span> <span class="nf">handle</span><span class="o">(</span><span class="n">ResponseMessage</span> <span class="n">message</span><span class="o">)</span> <span class="kd">throws</span> <span class="n">Exception</span> <span class="o">{</span>
     <span class="k">if</span> <span class="o">(</span><span class="n">message</span> <span class="k">instanceof</span> <span class="n">RpcResponse</span><span class="o">)</span> <span class="o">{</span>
@@ -1262,9 +1262,9 @@
 
         
     <div class="updated-badge-container">
-        <span title="Updated @ 2021-09-12 11:48:25 CST" style="cursor:help">
+        <span title="Updated @ 2021-10-22 14:44:34 CST" style="cursor:help">
 
-<svg xmlns="http://www.w3.org/2000/svg" width="130" height="20" class="updated-badge"><linearGradient id="b" x2="0" y2="100%"><stop offset="0" stop-color="#bbb" stop-opacity=".1"/><stop offset="1" stop-opacity=".1"/></linearGradient><clipPath id="a"><rect width="130" height="20" rx="3" fill="#fff"/></clipPath><g clip-path="url(#a)"><path class="updated-badge-left" d="M0 0h55v20H0z"/><path class="updated-badge-right" d="M55 0h75v20H55z"/><path fill="url(#b)" d="M0 0h130v20H0z"/></g><g fill="#fff" text-anchor="middle" font-size="110"><text x="285" y="150" fill="#010101" fill-opacity=".3" textLength="450" transform="scale(.1)">updated</text><text x="285" y="140" textLength="450" transform="scale(.1)">updated</text><text x="915" y="150" fill="#010101" fill-opacity=".3" textLength="650" transform="scale(.1)">2021-09-12</text><text x="915" y="140" textLength="650" transform="scale(.1)">2021-09-12</text></g></svg>
+<svg xmlns="http://www.w3.org/2000/svg" width="130" height="20" class="updated-badge"><linearGradient id="b" x2="0" y2="100%"><stop offset="0" stop-color="#bbb" stop-opacity=".1"/><stop offset="1" stop-opacity=".1"/></linearGradient><clipPath id="a"><rect width="130" height="20" rx="3" fill="#fff"/></clipPath><g clip-path="url(#a)"><path class="updated-badge-left" d="M0 0h55v20H0z"/><path class="updated-badge-right" d="M55 0h75v20H55z"/><path fill="url(#b)" d="M0 0h130v20H0z"/></g><g fill="#fff" text-anchor="middle" font-size="110"><text x="285" y="150" fill="#010101" fill-opacity=".3" textLength="450" transform="scale(.1)">updated</text><text x="285" y="140" textLength="450" transform="scale(.1)">updated</text><text x="915" y="150" fill="#010101" fill-opacity=".3" textLength="650" transform="scale(.1)">2021-10-22</text><text x="915" y="140" textLength="650" transform="scale(.1)">2021-10-22</text></g></svg>
         </span></div>
 
 

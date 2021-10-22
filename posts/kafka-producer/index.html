@@ -3,7 +3,7 @@
     <head prefix="og: http://ogp.me/ns# article: http://ogp.me/ns/article#">
     <meta charset="UTF-8" />
 
-    <meta name="generator" content="Hugo 0.79.0" /><meta name="theme-color" content="#fff" />
+    <meta name="generator" content="Hugo 0.88.1" /><meta name="theme-color" content="#fff" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     
     <meta name="format-detection" content="telephone=no, date=no, address=no, email=no" />
@@ -14,11 +14,11 @@
 
     <title>Kafka Producer 原理 | 学习笔记</title>
 
-    <link rel="stylesheet" href="/css/meme.min.81031e6b78ad2f1f534002ebb3b658886fea2f25d8a44d296d1466a2fe52f1c1.css"/>
+    <link rel="stylesheet" href="/css/meme.min.2d3e1834af2bc8dda20c7d74aaa1d8134845094441b7a554a5206ccd4b472596.css"/>
 
     
     
-        <script src="/js/meme.min.120d98bb614adc6beb13bf79f943d2cceffd323f4de1544029228c3dca2e9bda.js"></script>
+        <script src="/js/meme.min.800f61672145711eb3e1f29fcfcc3dbe0139dd459259718b611a0390f74703d1.js"></script>
 
     
 
@@ -54,7 +54,7 @@
         "@context": "https://schema.org",
         "@type": "BlogPosting",
         "datePublished": "2019-03-11T21:44:15+00:00",
-        "dateModified": "2021-09-12T11:48:25+08:00",
+        "dateModified": "2021-10-22T14:44:34+08:00",
         "url": "https://zhmin.github.io/posts/kafka-producer/",
         "headline": "Kafka Producer 原理",
         "description": "前言 Kafka为使用者提供了客户端，负责向Kafka中写入消息，由KafkaProducer实现。KafkaProducer为了提高系统的吞吐量，它会先将消息缓存起来，然后以批次为单位的发送。具体原理……",
@@ -97,7 +97,7 @@
 <meta property="og:locale" content="zh" /><meta property="og:image" content="https://zhmin.github.io/kafka-produce-flow.svg" />
 <meta property="og:type" content="article" />
     <meta property="article:published_time" content="2019-03-11T21:44:15&#43;00:00" />
-    <meta property="article:modified_time" content="2021-09-12T11:48:25&#43;08:00" />
+    <meta property="article:modified_time" content="2021-10-22T14:44:34&#43;08:00" />
     
     <meta property="article:section" content="posts" />
 
@@ -246,12 +246,12 @@
 <p><code>KafkaProducer</code>提供了下面两种发送接口，</p>
 <div class="highlight"><div class="chroma">
 <div class="table-container"><table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="n">Future</span><span class="o">&lt;</span><span class="n">RecordMetadata</span><span class="o">&gt;</span> <span class="nf">send</span><span class="o">(</span><span class="n">ProducerRecord</span><span class="o">&lt;</span><span class="n">K</span><span class="o">,</span> <span class="n">V</span><span class="o">&gt;</span> <span class="n">record</span><span class="o">);</span>
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="n">Future</span><span class="o">&lt;</span><span class="n">RecordMetadata</span><span class="o">&gt;</span> <span class="nf">send</span><span class="o">(</span><span class="n">ProducerRecord</span><span class="o">&lt;</span><span class="n">K</span><span class="o">,</span> <span class="n">V</span><span class="o">&gt;</span> <span class="n">record</span><span class="o">);</span>
 
 <span class="kd">public</span> <span class="n">Future</span><span class="o">&lt;</span><span class="n">RecordMetadata</span><span class="o">&gt;</span> <span class="nf">send</span><span class="o">(</span><span class="n">ProducerRecord</span><span class="o">&lt;</span><span class="n">K</span><span class="o">,</span> <span class="n">V</span><span class="o">&gt;</span> <span class="n">record</span><span class="o">,</span> <span class="n">Callback</span> <span class="n">callback</span><span class="o">);</span>
 </code></pre></td></tr></table></div>
@@ -311,7 +311,7 @@
 <p><code>Sender</code>实现了<code>Runnable</code>接口，它运行在一个单独的线程里。它会一直从<code>RecordAccumulator</code>获取消息，并且通过<code>NetworkClient</code>发送消息。<code>Sender</code>首先在选择完消息 batch 后，会将这些 batch 按照  broker 进行合并成一个请求。</p>
 <div class="highlight"><div class="chroma">
 <div class="table-container"><table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -343,7 +343,7 @@
 </span><span class="lnt">30
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-java" data-lang="java"><span class="kd">private</span> <span class="kt">void</span> <span class="nf">sendProduceRequest</span><span class="o">(</span><span class="kt">long</span> <span class="n">now</span><span class="o">,</span> <span class="kt">int</span> <span class="n">destination</span><span class="o">,</span> <span class="kt">short</span> <span class="n">acks</span><span class="o">,</span> <span class="kt">int</span> <span class="n">timeout</span><span class="o">,</span> <span class="n">List</span><span class="o">&lt;</span><span class="n">ProducerBatch</span><span class="o">&gt;</span> <span class="n">batches</span><span class="o">)</span> <span class="o">{</span>
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="kd">private</span> <span class="kt">void</span> <span class="nf">sendProduceRequest</span><span class="o">(</span><span class="kt">long</span> <span class="n">now</span><span class="o">,</span> <span class="kt">int</span> <span class="n">destination</span><span class="o">,</span> <span class="kt">short</span> <span class="n">acks</span><span class="o">,</span> <span class="kt">int</span> <span class="n">timeout</span><span class="o">,</span> <span class="n">List</span><span class="o">&lt;</span><span class="n">ProducerBatch</span><span class="o">&gt;</span> <span class="n">batches</span><span class="o">)</span> <span class="o">{</span>
     <span class="c1">// 存储着要发送的消息，会被用在构建ProduceRequest请求
 </span><span class="c1"></span>    <span class="n">Map</span><span class="o">&lt;</span><span class="n">TopicPartition</span><span class="o">,</span> <span class="n">MemoryRecords</span><span class="o">&gt;</span> <span class="n">produceRecordsByPartition</span> <span class="o">=</span> <span class="k">new</span> <span class="n">HashMap</span><span class="o">&lt;&gt;(</span><span class="n">batches</span><span class="o">.</span><span class="na">size</span><span class="o">());</span>
     <span class="c1">// 保存着发送的batch，会被用在回调函数里，处理响应
@@ -378,7 +378,7 @@
 </div><p>注意到上面的回调函数，它会处理响应。它会解析请求，然后执行每个batch的回调函数。而每个batch会为每个它的每条消息，生成响应，并且执行每条消息的回调。</p>
 <div class="highlight"><div class="chroma">
 <div class="table-container"><table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -397,7 +397,7 @@
 </span><span class="lnt">17
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-java" data-lang="java"><span class="kd">private</span> <span class="kt">void</span> <span class="nf">handleProduceResponse</span><span class="o">(</span><span class="n">ClientResponse</span> <span class="n">response</span><span class="o">,</span> <span class="n">Map</span><span class="o">&lt;</span><span class="n">TopicPartition</span><span class="o">,</span> <span class="n">ProducerBatch</span><span class="o">&gt;</span> <span class="n">batches</span><span class="o">,</span> <span class="kt">long</span> <span class="n">now</span><span class="o">)</span> <span class="o">{</span>
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="kd">private</span> <span class="kt">void</span> <span class="nf">handleProduceResponse</span><span class="o">(</span><span class="n">ClientResponse</span> <span class="n">response</span><span class="o">,</span> <span class="n">Map</span><span class="o">&lt;</span><span class="n">TopicPartition</span><span class="o">,</span> <span class="n">ProducerBatch</span><span class="o">&gt;</span> <span class="n">batches</span><span class="o">,</span> <span class="kt">long</span> <span class="n">now</span><span class="o">)</span> <span class="o">{</span>
     <span class="c1">// 解析响应，获取ProduceResponse
 </span><span class="c1"></span>    <span class="n">ProduceResponse</span> <span class="n">produceResponse</span> <span class="o">=</span> <span class="o">(</span><span class="n">ProduceResponse</span><span class="o">)</span> <span class="n">response</span><span class="o">.</span><span class="na">responseBody</span><span class="o">();</span>
     <span class="k">for</span> <span class="o">(</span><span class="n">Map</span><span class="o">.</span><span class="na">Entry</span><span class="o">&lt;</span><span class="n">TopicPartition</span><span class="o">,</span> <span class="n">ProduceResponse</span><span class="o">.</span><span class="na">PartitionResponse</span><span class="o">&gt;</span> <span class="n">entry</span> <span class="o">:</span> <span class="n">produceResponse</span><span class="o">.</span><span class="na">responses</span><span class="o">().</span><span class="na">entrySet</span><span class="o">())</span> <span class="o">{</span>
@@ -421,7 +421,7 @@
 <p>当出现一些错误时，比如网络断开，leader重新选举等可重试解决的错误时，kafka 会进行自动重试。下面代码展示了可以重试的场景</p>
 <div class="highlight"><div class="chroma">
 <div class="table-container"><table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
@@ -430,7 +430,7 @@
 </span><span class="lnt">7
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-java" data-lang="java"><span class="kd">private</span> <span class="kt">boolean</span> <span class="nf">canRetry</span><span class="o">(</span><span class="n">ProducerBatch</span> <span class="n">batch</span><span class="o">,</span> <span class="n">ProduceResponse</span><span class="o">.</span><span class="na">PartitionResponse</span> <span class="n">response</span><span class="o">,</span> <span class="kt">long</span> <span class="n">now</span><span class="o">)</span> <span class="o">{</span>
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="kd">private</span> <span class="kt">boolean</span> <span class="nf">canRetry</span><span class="o">(</span><span class="n">ProducerBatch</span> <span class="n">batch</span><span class="o">,</span> <span class="n">ProduceResponse</span><span class="o">.</span><span class="na">PartitionResponse</span> <span class="n">response</span><span class="o">,</span> <span class="kt">long</span> <span class="n">now</span><span class="o">)</span> <span class="o">{</span>
     <span class="k">return</span> <span class="o">!</span><span class="n">batch</span><span class="o">.</span><span class="na">hasReachedDeliveryTimeout</span><span class="o">(</span><span class="n">accumulator</span><span class="o">.</span><span class="na">getDeliveryTimeoutMs</span><span class="o">(),</span> <span class="n">now</span><span class="o">)</span> <span class="o">&amp;&amp;</span>   <span class="c1">// 该消息batch没有超时
 </span><span class="c1"></span>        <span class="n">batch</span><span class="o">.</span><span class="na">attempts</span><span class="o">()</span> <span class="o">&lt;</span> <span class="k">this</span><span class="o">.</span><span class="na">retries</span> <span class="o">&amp;&amp;</span>  <span class="c1">// 重试次数没有超过指定值
 </span><span class="c1"></span>        <span class="o">!</span><span class="n">batch</span><span class="o">.</span><span class="na">isDone</span><span class="o">()</span> <span class="o">&amp;&amp;</span> <span class="c1">// 该batch还没有执行回调函数
@@ -477,9 +477,9 @@
 
         
     <div class="updated-badge-container">
-        <span title="Updated @ 2021-09-12 11:48:25 CST" style="cursor:help">
+        <span title="Updated @ 2021-10-22 14:44:34 CST" style="cursor:help">
 
-<svg xmlns="http://www.w3.org/2000/svg" width="130" height="20" class="updated-badge"><linearGradient id="b" x2="0" y2="100%"><stop offset="0" stop-color="#bbb" stop-opacity=".1"/><stop offset="1" stop-opacity=".1"/></linearGradient><clipPath id="a"><rect width="130" height="20" rx="3" fill="#fff"/></clipPath><g clip-path="url(#a)"><path class="updated-badge-left" d="M0 0h55v20H0z"/><path class="updated-badge-right" d="M55 0h75v20H55z"/><path fill="url(#b)" d="M0 0h130v20H0z"/></g><g fill="#fff" text-anchor="middle" font-size="110"><text x="285" y="150" fill="#010101" fill-opacity=".3" textLength="450" transform="scale(.1)">updated</text><text x="285" y="140" textLength="450" transform="scale(.1)">updated</text><text x="915" y="150" fill="#010101" fill-opacity=".3" textLength="650" transform="scale(.1)">2021-09-12</text><text x="915" y="140" textLength="650" transform="scale(.1)">2021-09-12</text></g></svg>
+<svg xmlns="http://www.w3.org/2000/svg" width="130" height="20" class="updated-badge"><linearGradient id="b" x2="0" y2="100%"><stop offset="0" stop-color="#bbb" stop-opacity=".1"/><stop offset="1" stop-opacity=".1"/></linearGradient><clipPath id="a"><rect width="130" height="20" rx="3" fill="#fff"/></clipPath><g clip-path="url(#a)"><path class="updated-badge-left" d="M0 0h55v20H0z"/><path class="updated-badge-right" d="M55 0h75v20H55z"/><path fill="url(#b)" d="M0 0h130v20H0z"/></g><g fill="#fff" text-anchor="middle" font-size="110"><text x="285" y="150" fill="#010101" fill-opacity=".3" textLength="450" transform="scale(.1)">updated</text><text x="285" y="140" textLength="450" transform="scale(.1)">updated</text><text x="915" y="150" fill="#010101" fill-opacity=".3" textLength="650" transform="scale(.1)">2021-10-22</text><text x="915" y="140" textLength="650" transform="scale(.1)">2021-10-22</text></g></svg>
         </span></div>
 
 

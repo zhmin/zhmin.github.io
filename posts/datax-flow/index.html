@@ -3,7 +3,7 @@
     <head prefix="og: http://ogp.me/ns# article: http://ogp.me/ns/article#">
     <meta charset="UTF-8" />
 
-    <meta name="generator" content="Hugo 0.79.0" /><meta name="theme-color" content="#fff" />
+    <meta name="generator" content="Hugo 0.88.1" /><meta name="theme-color" content="#fff" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     
     <meta name="format-detection" content="telephone=no, date=no, address=no, email=no" />
@@ -14,11 +14,11 @@
 
     <title>Datax 任务执行流程 | 学习笔记</title>
 
-    <link rel="stylesheet" href="/css/meme.min.81031e6b78ad2f1f534002ebb3b658886fea2f25d8a44d296d1466a2fe52f1c1.css"/>
+    <link rel="stylesheet" href="/css/meme.min.2d3e1834af2bc8dda20c7d74aaa1d8134845094441b7a554a5206ccd4b472596.css"/>
 
     
     
-        <script src="/js/meme.min.120d98bb614adc6beb13bf79f943d2cceffd323f4de1544029228c3dca2e9bda.js"></script>
+        <script src="/js/meme.min.800f61672145711eb3e1f29fcfcc3dbe0139dd459259718b611a0390f74703d1.js"></script>
 
     
 
@@ -54,7 +54,7 @@
         "@context": "https://schema.org",
         "@type": "BlogPosting",
         "datePublished": "2018-12-27T16:33:43+00:00",
-        "dateModified": "2021-09-12T11:48:25+08:00",
+        "dateModified": "2021-10-22T14:44:34+08:00",
         "url": "https://zhmin.github.io/posts/datax-flow/",
         "headline": "Datax 任务执行流程",
         "description": "Datax 任务执行流程 加载配置 Datax启动是从Engine类开始的。Engine会读取配置文件，并且初始化和运行JobContainer。 1 2 3 4 5 6 7 8 9 10 11 12 13 14 public class Engine { public static void entry(final String[] args) throws Throwable { // ..... Configuration configuration = ConfigParser.parse(jobPath); Engine……",
@@ -97,7 +97,7 @@
 <meta property="og:locale" content="zh" /><meta property="og:image" content="https://zhmin.github.io/icons/apple-touch-icon.png" />
     <meta property="og:type" content="article" />
     <meta property="article:published_time" content="2018-12-27T16:33:43&#43;00:00" />
-    <meta property="article:modified_time" content="2021-09-12T11:48:25&#43;08:00" />
+    <meta property="article:modified_time" content="2021-10-22T14:44:34&#43;08:00" />
     
     <meta property="article:section" content="posts" />
 
@@ -240,7 +240,7 @@
 <p>Datax启动是从Engine类开始的。Engine会读取配置文件，并且初始化和运行JobContainer。</p>
 <div class="highlight"><div class="chroma">
 <div class="table-container"><table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -256,7 +256,7 @@
 </span><span class="lnt">14
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">Engine</span> <span class="o">{</span>
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">Engine</span> <span class="o">{</span>
 	<span class="kd">public</span> <span class="kd">static</span> <span class="kt">void</span> <span class="nf">entry</span><span class="o">(</span><span class="kd">final</span> <span class="n">String</span><span class="o">[]</span> <span class="n">args</span><span class="o">)</span> <span class="kd">throws</span> <span class="n">Throwable</span> <span class="o">{</span>
     	<span class="c1">// .....
 </span><span class="c1"></span>        <span class="n">Configuration</span> <span class="n">configuration</span> <span class="o">=</span> <span class="n">ConfigParser</span><span class="o">.</span><span class="na">parse</span><span class="o">(</span><span class="n">jobPath</span><span class="o">);</span>
@@ -277,7 +277,7 @@
 <p>首先看看JobContainer的start方法，它将任务的执行分为多个阶段。</p>
 <div class="highlight"><div class="chroma">
 <div class="table-container"><table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -299,7 +299,7 @@
 </span><span class="lnt">20
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">JobContainer</span> <span class="kd">extends</span> <span class="n">AbstractContainer</span> <span class="o">{</span>
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">JobContainer</span> <span class="kd">extends</span> <span class="n">AbstractContainer</span> <span class="o">{</span>
     <span class="kd">public</span> <span class="kt">void</span> <span class="nf">start</span><span class="o">()</span> <span class="o">{</span>
         <span class="n">LOG</span><span class="o">.</span><span class="na">debug</span><span class="o">(</span><span class="s">&#34;jobContainer starts to do preHandle ...&#34;</span><span class="o">);</span>
         <span class="k">this</span><span class="o">.</span><span class="na">preHandle</span><span class="o">();</span>
@@ -329,7 +329,7 @@
 </ul>
 <div class="highlight"><div class="chroma">
 <div class="table-container"><table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -356,7 +356,7 @@
 </span><span class="lnt">25
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-java" data-lang="java"><span class="kd">private</span> <span class="kt">void</span> <span class="nf">preHandle</span><span class="o">()</span> <span class="o">{</span>
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="kd">private</span> <span class="kt">void</span> <span class="nf">preHandle</span><span class="o">()</span> <span class="o">{</span>
     <span class="c1">// 获取preHandler的类型，由job.preHandler.pluginType指定
 </span><span class="c1"></span>    <span class="n">String</span> <span class="n">handlerPluginTypeStr</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="na">configuration</span><span class="o">.</span><span class="na">getString</span><span class="o">(</span>
             <span class="n">CoreConstant</span><span class="o">.</span><span class="na">DATAX_JOB_PREHANDLER_PLUGINTYPE</span><span class="o">);</span>
@@ -387,7 +387,7 @@
 <p>init方法会将加载配置中指定的Reader和Writer，来完成数据的读取和写入。Reader的初始化和Writer相同，这里以Reader为例：</p>
 <div class="highlight"><div class="chroma">
 <div class="table-container"><table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -421,7 +421,7 @@
 </span><span class="lnt">32
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-java" data-lang="java"><span class="kd">private</span> <span class="kt">void</span> <span class="nf">init</span><span class="o">()</span> <span class="o">{</span>
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="kd">private</span> <span class="kt">void</span> <span class="nf">init</span><span class="o">()</span> <span class="o">{</span>
     <span class="n">JobPluginCollector</span> <span class="n">jobPluginCollector</span> <span class="o">=</span> <span class="k">new</span> <span class="n">DefaultJobPluginCollector</span><span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="na">getContainerCommunicator</span><span class="o">());</span>
     <span class="c1">//必须先Reader ，后Writer
 </span><span class="c1"></span>    <span class="k">this</span><span class="o">.</span><span class="na">jobReader</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="na">initJobReader</span><span class="o">(</span><span class="n">jobPluginCollector</span><span class="o">);</span>
@@ -459,7 +459,7 @@
 <p>prepare方法会执行Reader和Writer的prepare回调函数。Reader和Writer相同，下面以Reader为例：</p>
 <div class="highlight"><div class="chroma">
 <div class="table-container"><table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -477,7 +477,7 @@
 </span><span class="lnt">16
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-java" data-lang="java"><span class="kd">private</span> <span class="kt">void</span> <span class="nf">prepare</span><span class="o">()</span> <span class="o">{</span>
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="kd">private</span> <span class="kt">void</span> <span class="nf">prepare</span><span class="o">()</span> <span class="o">{</span>
 	<span class="k">this</span><span class="o">.</span><span class="na">prepareJobReader</span><span class="o">();</span>
     <span class="k">this</span><span class="o">.</span><span class="na">prepareJobWriter</span><span class="o">();</span>
 <span class="o">}</span>
@@ -503,7 +503,7 @@
 <p>post会执行Reader和Writer的post回调函数。Reader和Writer相同，下面以Reader为例：</p>
 <div class="highlight"><div class="chroma">
 <div class="table-container"><table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -520,7 +520,7 @@
 </span><span class="lnt">15
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-java" data-lang="java"><span class="kd">private</span> <span class="kt">void</span> <span class="nf">post</span><span class="o">()</span> <span class="o">{</span>
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="kd">private</span> <span class="kt">void</span> <span class="nf">post</span><span class="o">()</span> <span class="o">{</span>
     <span class="k">this</span><span class="o">.</span><span class="na">postJobWriter</span><span class="o">();</span>
     <span class="k">this</span><span class="o">.</span><span class="na">postJobReader</span><span class="o">();</span>
 <span class="o">}</span>
@@ -545,7 +545,7 @@
 </ul>
 <div class="highlight"><div class="chroma">
 <div class="table-container"><table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -572,7 +572,7 @@
 </span><span class="lnt">25
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-java" data-lang="java"><span class="kd">private</span> <span class="kt">void</span> <span class="nf">postHandle</span><span class="o">()</span> <span class="o">{</span>
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="kd">private</span> <span class="kt">void</span> <span class="nf">postHandle</span><span class="o">()</span> <span class="o">{</span>
     <span class="c1">// 获取插件类型
 </span><span class="c1"></span>	<span class="n">String</span> <span class="n">handlerPluginTypeStr</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="na">configuration</span><span class="o">.</span><span class="na">getString</span><span class="o">(</span>
 		<span class="n">CoreConstant</span><span class="o">.</span><span class="na">DATAX_JOB_POSTHANDLER_PLUGINTYPE</span><span class="o">);</span>
@@ -605,7 +605,7 @@
 <p>首先需要修改读取插件配置的源码，因为从ConfigParser的源码可以看到，datax已经从配置文件中，提取了posthandler的插件名称，但是在寻找插件的时候，只是从reader和writer目录下去寻找，所以需要增加从handler目录的寻找。</p>
 <div class="highlight"><div class="chroma">
 <div class="table-container"><table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -627,7 +627,7 @@
 </span><span class="lnt">20
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">CoreConstant</span> <span class="o">{</span>
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">CoreConstant</span> <span class="o">{</span>
 	<span class="kd">public</span> <span class="kd">static</span> <span class="n">String</span> <span class="n">DATAX_PLUGIN_HANDLER_HOME</span> <span class="o">=</span> <span class="n">StringUtils</span><span class="o">.</span><span class="na">join</span><span class="o">(</span>
 			<span class="k">new</span> <span class="n">String</span><span class="o">[]</span> <span class="o">{</span> <span class="n">DATAX_HOME</span><span class="o">,</span> <span class="s">&#34;plugin&#34;</span><span class="o">,</span> <span class="s">&#34;handler&#34;</span> <span class="o">},</span> <span class="n">File</span><span class="o">.</span><span class="na">separator</span><span class="o">);</span>
 <span class="o">}</span>
@@ -653,7 +653,7 @@
 <p>因为postHandler是属于Job运行类型的插件，所有必须在里面新建一个名称为Job的类，这个Job类必须继承AbstractJobPlugin。下面就是自定义插件的JobResultCollector的基本雏形</p>
 <div class="highlight"><div class="chroma">
 <div class="table-container"><table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -677,7 +677,7 @@
 </span><span class="lnt">22
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">JobResultCollector</span> <span class="o">{</span>
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">JobResultCollector</span> <span class="o">{</span>
 
     <span class="kd">private</span> <span class="kd">static</span> <span class="kd">final</span> <span class="n">Logger</span> <span class="n">LOG</span> <span class="o">=</span> <span class="n">LoggerFactory</span><span class="o">.</span><span class="na">getLogger</span><span class="o">(</span><span class="n">Collector</span><span class="o">.</span><span class="na">class</span><span class="o">);</span>
 
@@ -706,7 +706,7 @@
 <p>因为自定义Handler属于Job运行类型的插件，所以需要继承AbstractJobPlugin。AbstractJobPlugin有一个重要属性jobPluginCollector，通过它可以获得需要的数据。</p>
 <div class="highlight"><div class="chroma">
 <div class="table-container"><table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -721,7 +721,7 @@
 </span><span class="lnt">13
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">abstract</span> <span class="kd">class</span> <span class="nc">AbstractJobPlugin</span> <span class="kd">extends</span> <span class="n">AbstractPlugin</span> <span class="o">{</span>
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">abstract</span> <span class="kd">class</span> <span class="nc">AbstractJobPlugin</span> <span class="kd">extends</span> <span class="n">AbstractPlugin</span> <span class="o">{</span>
     
     <span class="kd">private</span> <span class="n">JobPluginCollector</span> <span class="n">jobPluginCollector</span><span class="o">;</span>
 
@@ -739,7 +739,7 @@
 </div><p>通过加载posthandler的源码中，可以看到jobPluginCollector变量的初始化，实质上是DefaultJobPluginCollector的实例。并且每个插件都有着独立的JobPluginCollector， 但这些JobPluginCollector都共享者同一个AbstractContainerCommunicator</p>
 <div class="highlight"><div class="chroma">
 <div class="table-container"><table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -756,7 +756,7 @@
 </span><span class="lnt">15
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">JobContainer</span> <span class="kd">extends</span> <span class="n">AbstractContainer</span> <span class="o">{</span>
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">JobContainer</span> <span class="kd">extends</span> <span class="n">AbstractContainer</span> <span class="o">{</span>
 
 	<span class="kd">private</span> <span class="kt">void</span> <span class="nf">postHandle</span><span class="o">()</span> <span class="o">{</span>
         <span class="o">........</span>
@@ -776,7 +776,7 @@
 </div><p>接下来看看DefaultJobPluginCollector的源码，可以看到它只提供了关于返回消息的方法，却没有提供别的数据的访问。感觉像是阿里这边的源码并没有开放完全。所以如果想访问到其他的数据，就需要修改源码了。</p>
 <div class="highlight"><div class="chroma">
 <div class="table-container"><table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -797,7 +797,7 @@
 </span><span class="lnt">19
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">final</span> <span class="kd">class</span> <span class="nc">DefaultJobPluginCollector</span> <span class="kd">implements</span> <span class="n">JobPluginCollector</span> <span class="o">{</span>
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">final</span> <span class="kd">class</span> <span class="nc">DefaultJobPluginCollector</span> <span class="kd">implements</span> <span class="n">JobPluginCollector</span> <span class="o">{</span>
     <span class="kd">private</span> <span class="n">AbstractContainerCommunicator</span> <span class="n">jobCollector</span><span class="o">;</span>
 
     <span class="kd">public</span> <span class="nf">DefaultJobPluginCollector</span><span class="o">(</span><span class="n">AbstractContainerCommunicator</span> <span class="n">containerCollector</span><span class="o">)</span> <span class="o">{</span>
@@ -821,7 +821,7 @@
 </div><p>原本我是想增加一个方法返回Communication。这样根据返回的Communication，可以查看里面任何的数据。因为DefaultJobPluginCollector实现JobPluginCollector接口，所以也需要加上。 代码如下：</p>
 <div class="highlight"><div class="chroma">
 <div class="table-container"><table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -833,7 +833,7 @@
 </span><span class="lnt">10
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">final</span> <span class="kd">class</span> <span class="nc">DefaultJobPluginCollector</span> <span class="kd">implements</span> <span class="n">JobPluginCollector</span> <span class="o">{</span>
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">final</span> <span class="kd">class</span> <span class="nc">DefaultJobPluginCollector</span> <span class="kd">implements</span> <span class="n">JobPluginCollector</span> <span class="o">{</span>
     
     <span class="kd">public</span> <span class="n">Communication</span> <span class="nf">getCommunication</span><span class="o">()</span> <span class="o">{</span>
         <span class="k">return</span> <span class="k">this</span><span class="o">.</span><span class="na">jobCollector</span><span class="o">.</span><span class="na">collect</span><span class="o">();</span>
@@ -849,7 +849,7 @@
 <p>所以增加方法必须考虑依赖关系，因为Communication的数据类型比较简单，这样接口只需要返回简单的数据类型即可</p>
 <div class="highlight"><div class="chroma">
 <div class="table-container"><table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -862,7 +862,7 @@
 </span><span class="lnt">11
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">final</span> <span class="kd">class</span> <span class="nc">DefaultJobPluginCollector</span> <span class="kd">implements</span> <span class="n">JobPluginCollector</span> <span class="o">{</span>
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">final</span> <span class="kd">class</span> <span class="nc">DefaultJobPluginCollector</span> <span class="kd">implements</span> <span class="n">JobPluginCollector</span> <span class="o">{</span>
     
     <span class="nd">@Override</span>
     <span class="kd">public</span> <span class="n">Map</span><span class="o">&lt;</span><span class="n">String</span><span class="o">,</span> <span class="n">Number</span><span class="o">&gt;</span> <span class="nf">getCounter</span><span class="o">()</span> <span class="o">{</span>
@@ -878,7 +878,7 @@
 </div><p>现在解决了读取数据的需求了，接下来实现JobResultCollector的postHandler方法。可以结合CommunicationTool里面的变量，获取对应的数据。</p>
 <div class="highlight"><div class="chroma">
 <div class="table-container"><table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -894,7 +894,7 @@
 </span><span class="lnt">14
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-java" data-lang="java"><span class="nd">@Override</span>
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="nd">@Override</span>
 <span class="kd">public</span> <span class="kt">void</span> <span class="nf">postHandler</span><span class="o">(</span><span class="n">Configuration</span> <span class="n">jobConfiguration</span><span class="o">)</span> <span class="o">{</span>
     <span class="n">LOG</span><span class="o">.</span><span class="na">info</span><span class="o">(</span><span class="s">&#34;plugin Collector post handler&#34;</span><span class="o">);</span>
     <span class="n">Map</span><span class="o">&lt;</span><span class="n">String</span><span class="o">,</span> <span class="n">Number</span><span class="o">&gt;</span> <span class="n">counter</span> <span class="o">=</span> <span class="n">getJobPluginCollector</span><span class="o">().</span><span class="na">getCounter</span><span class="o">();</span>
@@ -937,9 +937,9 @@
 
         
     <div class="updated-badge-container">
-        <span title="Updated @ 2021-09-12 11:48:25 CST" style="cursor:help">
+        <span title="Updated @ 2021-10-22 14:44:34 CST" style="cursor:help">
 
-<svg xmlns="http://www.w3.org/2000/svg" width="130" height="20" class="updated-badge"><linearGradient id="b" x2="0" y2="100%"><stop offset="0" stop-color="#bbb" stop-opacity=".1"/><stop offset="1" stop-opacity=".1"/></linearGradient><clipPath id="a"><rect width="130" height="20" rx="3" fill="#fff"/></clipPath><g clip-path="url(#a)"><path class="updated-badge-left" d="M0 0h55v20H0z"/><path class="updated-badge-right" d="M55 0h75v20H55z"/><path fill="url(#b)" d="M0 0h130v20H0z"/></g><g fill="#fff" text-anchor="middle" font-size="110"><text x="285" y="150" fill="#010101" fill-opacity=".3" textLength="450" transform="scale(.1)">updated</text><text x="285" y="140" textLength="450" transform="scale(.1)">updated</text><text x="915" y="150" fill="#010101" fill-opacity=".3" textLength="650" transform="scale(.1)">2021-09-12</text><text x="915" y="140" textLength="650" transform="scale(.1)">2021-09-12</text></g></svg>
+<svg xmlns="http://www.w3.org/2000/svg" width="130" height="20" class="updated-badge"><linearGradient id="b" x2="0" y2="100%"><stop offset="0" stop-color="#bbb" stop-opacity=".1"/><stop offset="1" stop-opacity=".1"/></linearGradient><clipPath id="a"><rect width="130" height="20" rx="3" fill="#fff"/></clipPath><g clip-path="url(#a)"><path class="updated-badge-left" d="M0 0h55v20H0z"/><path class="updated-badge-right" d="M55 0h75v20H55z"/><path fill="url(#b)" d="M0 0h130v20H0z"/></g><g fill="#fff" text-anchor="middle" font-size="110"><text x="285" y="150" fill="#010101" fill-opacity=".3" textLength="450" transform="scale(.1)">updated</text><text x="285" y="140" textLength="450" transform="scale(.1)">updated</text><text x="915" y="150" fill="#010101" fill-opacity=".3" textLength="650" transform="scale(.1)">2021-10-22</text><text x="915" y="140" textLength="650" transform="scale(.1)">2021-10-22</text></g></svg>
         </span></div>
 
 

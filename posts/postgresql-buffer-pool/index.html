@@ -3,7 +3,7 @@
     <head prefix="og: http://ogp.me/ns# article: http://ogp.me/ns/article#">
     <meta charset="UTF-8" />
 
-    <meta name="generator" content="Hugo 0.79.0" /><meta name="theme-color" content="#fff" />
+    <meta name="generator" content="Hugo 0.88.1" /><meta name="theme-color" content="#fff" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     
     <meta name="format-detection" content="telephone=no, date=no, address=no, email=no" />
@@ -14,11 +14,11 @@
 
     <title>Postgresql 缓存池原理 | 学习笔记</title>
 
-    <link rel="stylesheet" href="/css/meme.min.81031e6b78ad2f1f534002ebb3b658886fea2f25d8a44d296d1466a2fe52f1c1.css"/>
+    <link rel="stylesheet" href="/css/meme.min.2d3e1834af2bc8dda20c7d74aaa1d8134845094441b7a554a5206ccd4b472596.css"/>
 
     
     
-        <script src="/js/meme.min.120d98bb614adc6beb13bf79f943d2cceffd323f4de1544029228c3dca2e9bda.js"></script>
+        <script src="/js/meme.min.800f61672145711eb3e1f29fcfcc3dbe0139dd459259718b611a0390f74703d1.js"></script>
 
     
 
@@ -54,7 +54,7 @@
         "@context": "https://schema.org",
         "@type": "BlogPosting",
         "datePublished": "2019-10-17T21:02:16+00:00",
-        "dateModified": "2021-09-12T11:48:25+08:00",
+        "dateModified": "2021-10-22T14:44:34+08:00",
         "url": "https://zhmin.github.io/posts/postgresql-buffer-pool/",
         "headline": "Postgresql 缓存池原理",
         "description": "前言 postgresql 为了提高响应速度，在存储层上面添加了一层缓存，这样对于数据的查询和修改，都会先在缓存中操作，后面才会同步到磁盘。这样对于一些热点数据，性能提高非常明显。缓存的基本单位对应文件的一个 block，本……",
@@ -97,7 +97,7 @@
 <meta property="og:locale" content="zh" /><meta property="og:image" content="https://zhmin.github.io/icons/apple-touch-icon.png" />
     <meta property="og:type" content="article" />
     <meta property="article:published_time" content="2019-10-17T21:02:16&#43;00:00" />
-    <meta property="article:modified_time" content="2021-09-12T11:48:25&#43;08:00" />
+    <meta property="article:modified_time" content="2021-10-22T14:44:34&#43;08:00" />
     
     <meta property="article:section" content="posts" />
 
@@ -244,7 +244,7 @@
 <p>BufferTag 用来表示缓存的内容是哪个文件的block</p>
 <div class="highlight"><div class="chroma">
 <div class="table-container"><table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
@@ -252,7 +252,7 @@
 </span><span class="lnt">6
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-c" data-lang="c"><span class="k">typedef</span> <span class="k">struct</span> <span class="n">buftag</span>
+<pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="k">typedef</span> <span class="k">struct</span> <span class="n">buftag</span>
 <span class="p">{</span>
 	<span class="n">RelFileNode</span> <span class="n">rnode</span><span class="p">;</span>			<span class="c1">// 用来标识哪个表
 </span><span class="c1"></span>	<span class="n">ForkNumber</span>	<span class="n">forkNum</span><span class="p">;</span>        <span class="c1">// 表下面的文件类型
@@ -263,7 +263,7 @@
 </div><p><code>BufferDesc</code> 包含了<code>buffer</code>的头部信息</p>
 <div class="highlight"><div class="chroma">
 <div class="table-container"><table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -276,7 +276,7 @@
 </span><span class="lnt">11
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-c" data-lang="c"><span class="k">typedef</span> <span class="k">struct</span> <span class="n">BufferDesc</span>
+<pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="k">typedef</span> <span class="k">struct</span> <span class="n">BufferDesc</span>
 <span class="p">{</span>
 	<span class="n">BufferTag</span>	<span class="n">tag</span><span class="p">;</span>			<span class="c1">// 缓存哪个文件的block
 </span><span class="c1"></span>	<span class="kt">int</span>			<span class="n">buf_id</span><span class="p">;</span>			<span class="c1">// buffer id
@@ -293,14 +293,14 @@
 <p><code>state</code> 字段是一个32位的数值，它的格式如下：</p>
 <div class="highlight"><div class="chroma">
 <div class="table-container"><table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
 </span><span class="lnt">5
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-shell" data-lang="shell">--------------------+------------------+-------------------
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell">--------------------+------------------+-------------------
      <span class="m">10</span> bit         <span class="p">|</span>     <span class="m">4</span> bit        <span class="p">|</span>      <span class="m">18</span> bit      <span class="p">|</span>
 --------------------+------------------+-------------------
       标记位         <span class="p">|</span>    累积访问次数   <span class="p">|</span>     引用次数      <span class="p">|</span>
@@ -310,7 +310,7 @@
 </div><p>它的高位是一个 10 位的标记位，其中每个标记位都有着不同的含义</p>
 <div class="highlight"><div class="chroma">
 <div class="table-container"><table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -322,7 +322,7 @@
 </span><span class="lnt">10
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-c" data-lang="c"><span class="cp">#define BM_LOCKED				(1U &lt;&lt; 22)	</span><span class="c1">// 锁标记位，用来保护state字段
+<pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="cp">#define BM_LOCKED				(1U &lt;&lt; 22)	</span><span class="c1">// 锁标记位，用来保护state字段
 </span><span class="c1"></span><span class="cp">#define BM_DIRTY				(1U &lt;&lt; 23)	</span><span class="c1">// 是否为脏页，也就是缓存被修改了，但对应的磁盘数据没被修改
 </span><span class="c1"></span><span class="cp">#define BM_VALID				(1U &lt;&lt; 24)	</span><span class="c1">// 数据是否有效
 </span><span class="c1"></span><span class="cp">#define BM_TAG_VALID			(1U &lt;&lt; 25)	</span><span class="c1">// tag 是否有效
@@ -339,11 +339,11 @@
 <p>全局缓存由一些 buffer 数组表示，这些数组相同索引的元素，对应同一个buffer。</p>
 <div class="highlight"><div class="chroma">
 <div class="table-container"><table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-c" data-lang="c"><span class="n">BufferDescPadded</span> <span class="o">*</span><span class="n">BufferDescriptors</span><span class="p">;</span>  <span class="c1">// buffer头部数组
+<pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="n">BufferDescPadded</span> <span class="o">*</span><span class="n">BufferDescriptors</span><span class="p">;</span>  <span class="c1">// buffer头部数组
 </span><span class="c1"></span><span class="kt">char</span>	   <span class="o">*</span><span class="n">BufferBlocks</span><span class="p">;</span>    <span class="c1">// buffer数据数组
 </span></code></pre></td></tr></table></div>
 </div>
@@ -352,7 +352,7 @@
 <p>全局缓存存储在共享内存里，共享内存是 linux 进程间通信的一种方式，在 postgresql 中通过可以调用<code>ShmemInitStruct</code>函数获取。下面展示了各种数组的初始化，数组大小由<code>NBuffers</code>指定，默认为1000，</p>
 <div class="highlight"><div class="chroma">
 <div class="table-container"><table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -369,7 +369,7 @@
 </span><span class="lnt">15
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-c" data-lang="c"><span class="kt">void</span> <span class="nf">InitBufferPool</span><span class="p">(</span><span class="kt">void</span><span class="p">)</span>
+<pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="kt">void</span> <span class="nf">InitBufferPool</span><span class="p">(</span><span class="kt">void</span><span class="p">)</span>
 <span class="p">{</span>
 	<span class="cm">/* Align descriptors to a cacheline boundary. */</span>
 	<span class="n">BufferDescriptors</span> <span class="o">=</span> <span class="p">(</span><span class="n">BufferDescPadded</span> <span class="o">*</span><span class="p">)</span> <span class="n">ShmemInitStruct</span><span class="p">(</span><span class="s">&#34;Buffer Descriptors&#34;</span><span class="p">,</span>
@@ -390,7 +390,7 @@
 <p>postgresql 会经常根据文件的 block 来查找对应的缓存，为了提高查找查找速度，这里使用了动态哈希表存储，如下所示：</p>
 <div class="highlight"><div class="chroma">
 <div class="table-container"><table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
@@ -400,7 +400,7 @@
 </span><span class="lnt">8
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-c" data-lang="c"><span class="c1">// 哈希表，key为BufferTag，value为buffer_id
+<pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="c1">// 哈希表，key为BufferTag，value为buffer_id
 </span><span class="c1"></span><span class="k">static</span> <span class="n">HTAB</span> <span class="o">*</span><span class="n">SharedBufHash</span><span class="p">;</span>
 
 <span class="k">typedef</span> <span class="k">struct</span>
@@ -415,12 +415,12 @@
 <h3 id="缓存数组-1"><a href="#缓存数组-1" class="anchor-link"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon anchor-icon"><path d="M326.612 185.391c59.747 59.809 58.927 155.698.36 214.59-.11.12-.24.25-.36.37l-67.2 67.2c-59.27 59.27-155.699 59.262-214.96 0-59.27-59.26-59.27-155.7 0-214.96l37.106-37.106c9.84-9.84 26.786-3.3 27.294 10.606.648 17.722 3.826 35.527 9.69 52.721 1.986 5.822.567 12.262-3.783 16.612l-13.087 13.087c-28.026 28.026-28.905 73.66-1.155 101.96 28.024 28.579 74.086 28.749 102.325.51l67.2-67.19c28.191-28.191 28.073-73.757 0-101.83-3.701-3.694-7.429-6.564-10.341-8.569a16.037 16.037 0 0 1-6.947-12.606c-.396-10.567 3.348-21.456 11.698-29.806l21.054-21.055c5.521-5.521 14.182-6.199 20.584-1.731a152.482 152.482 0 0 1 20.522 17.197zM467.547 44.449c-59.261-59.262-155.69-59.27-214.96 0l-67.2 67.2c-.12.12-.25.25-.36.37-58.566 58.892-59.387 154.781.36 214.59a152.454 152.454 0 0 0 20.521 17.196c6.402 4.468 15.064 3.789 20.584-1.731l21.054-21.055c8.35-8.35 12.094-19.239 11.698-29.806a16.037 16.037 0 0 0-6.947-12.606c-2.912-2.005-6.64-4.875-10.341-8.569-28.073-28.073-28.191-73.639 0-101.83l67.2-67.19c28.239-28.239 74.3-28.069 102.325.51 27.75 28.3 26.872 73.934-1.155 101.96l-13.087 13.087c-4.35 4.35-5.769 10.79-3.783 16.612 5.864 17.194 9.042 34.999 9.69 52.721.509 13.906 17.454 20.446 27.294 10.606l37.106-37.106c59.271-59.259 59.271-155.699.001-214.959z"/></svg></a>缓存数组</h3>
 <div class="highlight"><div class="chroma">
 <div class="table-container"><table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-c" data-lang="c"><span class="n">BufferDesc</span> <span class="o">*</span><span class="n">LocalBufferDescriptors</span> <span class="o">=</span> <span class="nb">NULL</span><span class="p">;</span>
+<pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="n">BufferDesc</span> <span class="o">*</span><span class="n">LocalBufferDescriptors</span> <span class="o">=</span> <span class="nb">NULL</span><span class="p">;</span>
 <span class="n">Block</span>	   <span class="o">*</span><span class="n">LocalBufferBlockPointers</span> <span class="o">=</span> <span class="nb">NULL</span><span class="p">;</span>
 <span class="n">int32</span>	   <span class="o">*</span><span class="n">LocalRefCount</span> <span class="o">=</span> <span class="nb">NULL</span><span class="p">;</span>
 </code></pre></td></tr></table></div>
@@ -430,12 +430,12 @@
 <p>本地缓存数组因为是进程私有，所以这里直接使用<code>calloc</code>分配内存。</p>
 <div class="highlight"><div class="chroma">
 <div class="table-container"><table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-c" data-lang="c"><span class="n">LocalBufferDescriptors</span> <span class="o">=</span> <span class="p">(</span><span class="n">BufferDesc</span> <span class="o">*</span><span class="p">)</span> <span class="n">calloc</span><span class="p">(</span><span class="n">nbufs</span><span class="p">,</span> <span class="k">sizeof</span><span class="p">(</span><span class="n">BufferDesc</span><span class="p">));</span>
+<pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="n">LocalBufferDescriptors</span> <span class="o">=</span> <span class="p">(</span><span class="n">BufferDesc</span> <span class="o">*</span><span class="p">)</span> <span class="n">calloc</span><span class="p">(</span><span class="n">nbufs</span><span class="p">,</span> <span class="k">sizeof</span><span class="p">(</span><span class="n">BufferDesc</span><span class="p">));</span>
 <span class="n">LocalBufferBlockPointers</span> <span class="o">=</span> <span class="p">(</span><span class="n">Block</span> <span class="o">*</span><span class="p">)</span> <span class="n">calloc</span><span class="p">(</span><span class="n">nbufs</span><span class="p">,</span> <span class="k">sizeof</span><span class="p">(</span><span class="n">Block</span><span class="p">));</span>
 <span class="n">LocalRefCount</span> <span class="o">=</span> <span class="p">(</span><span class="n">int32</span> <span class="o">*</span><span class="p">)</span> <span class="n">calloc</span><span class="p">(</span><span class="n">nbufs</span><span class="p">,</span> <span class="k">sizeof</span><span class="p">(</span><span class="n">int32</span><span class="p">));</span>
 </code></pre></td></tr></table></div>
@@ -449,7 +449,7 @@
 <p>读取方式</p>
 <div class="highlight"><div class="chroma">
 <div class="table-container"><table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
@@ -459,7 +459,7 @@
 </span><span class="lnt">8
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-c" data-lang="c"><span class="k">typedef</span> <span class="k">enum</span>
+<pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="k">typedef</span> <span class="k">enum</span>
 <span class="p">{</span>
 	<span class="n">RBM_NORMAL</span><span class="p">,</span>					<span class="cm">/* 一般情况的读 */</span>
 	<span class="n">RBM_ZERO_AND_LOCK</span><span class="p">,</span>			<span class="cm">/* 分配一个buffer并且获取写锁返回，不需要从磁盘读取数据初始化 */</span>
@@ -472,13 +472,13 @@
 </div><p><code>ReadBuffer</code>函数负责读取表的数据，定义如下：</p>
 <div class="highlight"><div class="chroma">
 <div class="table-container"><table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-c" data-lang="c"><span class="n">Buffer</span> <span class="nf">ReadBuffer</span><span class="p">(</span><span class="n">Relation</span> <span class="n">reln</span><span class="p">,</span> <span class="n">BlockNumber</span> <span class="n">blockNum</span><span class="p">)</span>
+<pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="n">Buffer</span> <span class="nf">ReadBuffer</span><span class="p">(</span><span class="n">Relation</span> <span class="n">reln</span><span class="p">,</span> <span class="n">BlockNumber</span> <span class="n">blockNum</span><span class="p">)</span>
 <span class="p">{</span>
 	<span class="k">return</span> <span class="n">ReadBufferExtended</span><span class="p">(</span><span class="n">reln</span><span class="p">,</span> <span class="n">MAIN_FORKNUM</span><span class="p">,</span> <span class="n">blockNum</span><span class="p">,</span> <span class="n">RBM_NORMAL</span><span class="p">,</span> <span class="nb">NULL</span><span class="p">);</span>
 <span class="p">}</span>
@@ -498,7 +498,7 @@
 <p><code>LockBufHdr</code>函数实现了头部锁，它使用了自旋锁和原子操作来实现</p>
 <div class="highlight"><div class="chroma">
 <div class="table-container"><table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -520,7 +520,7 @@
 </span><span class="lnt">20
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-c" data-lang="c"><span class="n">uint32</span> <span class="nf">LockBufHdr</span><span class="p">(</span><span class="n">BufferDesc</span> <span class="o">*</span><span class="n">desc</span><span class="p">)</span>
+<pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="n">uint32</span> <span class="nf">LockBufHdr</span><span class="p">(</span><span class="n">BufferDesc</span> <span class="o">*</span><span class="n">desc</span><span class="p">)</span>
 <span class="p">{</span>
 	<span class="n">SpinDelayStatus</span> <span class="n">delayStatus</span><span class="p">;</span>
 	<span class="n">uint32</span>		<span class="n">old_buf_state</span><span class="p">;</span>
@@ -545,13 +545,13 @@
 </div><p>使用方法如下：</p>
 <div class="highlight"><div class="chroma">
 <div class="table-container"><table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-c" data-lang="c"><span class="n">BufferDesc</span> <span class="o">*</span> <span class="n">buf</span><span class="p">;</span> <span class="c1">// 缓存头部
+<pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="n">BufferDesc</span> <span class="o">*</span> <span class="n">buf</span><span class="p">;</span> <span class="c1">// 缓存头部
 </span><span class="c1"></span><span class="n">uint32</span> <span class="n">buf_state</span> <span class="o">=</span> <span class="n">LockBufHdr</span><span class="p">(</span><span class="n">buf</span><span class="p">);</span> <span class="c1">// 加锁
 </span><span class="c1"></span><span class="n">buf_state</span> <span class="o">&amp;=</span> <span class="n">BM_TAG_VALID</span> <span class="c1">// 修改头部
 </span><span class="c1"></span><span class="n">UnlockBufHdr</span><span class="p">(</span><span class="n">buf</span><span class="p">,</span> <span class="n">buf_state</span><span class="p">);</span> <span class="c1">// 设置状态，并且释放锁
@@ -560,7 +560,7 @@
 </div><p>还有一种是调用<code>WaitBufHdrUnlocked</code>函数自旋等待，然后使用 CAS 操作获取锁。下面的以设置<code>DIRTY</code>为例</p>
 <div class="highlight"><div class="chroma">
 <div class="table-container"><table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -582,7 +582,7 @@
 </span><span class="lnt">20
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-c" data-lang="c"><span class="kt">void</span> <span class="nf">MarkBufferDirty</span><span class="p">(</span><span class="n">Buffer</span> <span class="n">buffer</span><span class="p">)</span>
+<pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="kt">void</span> <span class="nf">MarkBufferDirty</span><span class="p">(</span><span class="n">Buffer</span> <span class="n">buffer</span><span class="p">)</span>
 <span class="p">{</span>
     <span class="c1">// 获取对应的buffer头部
 </span><span class="c1"></span>    <span class="n">bufHdr</span> <span class="o">=</span> <span class="n">GetBufferDescriptor</span><span class="p">(</span><span class="n">buffer</span> <span class="o">-</span> <span class="mi">1</span><span class="p">);</span>
@@ -608,14 +608,14 @@
 <p>每个缓存都有一个读写锁在保护，通过 buffer id 就可以获取。使用方法如下：</p>
 <div class="highlight"><div class="chroma">
 <div class="table-container"><table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
 </span><span class="lnt">5
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-c" data-lang="c"><span class="cp">#define BufferDescriptorGetContentLock(bdesc)   ((LWLock*) (&amp;(bdesc)-&gt;content_lock))
+<pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="cp">#define BufferDescriptorGetContentLock(bdesc)   ((LWLock*) (&amp;(bdesc)-&gt;content_lock))
 </span><span class="cp"></span><span class="n">BufferDesc</span> <span class="n">buffer</span> <span class="o">=</span> <span class="n">aaa</span><span class="p">;</span>
 <span class="n">LWLockAcquire</span><span class="p">(</span><span class="n">LWLock</span> <span class="o">*</span><span class="n">lock</span><span class="p">,</span> <span class="n">LWLockMode</span> <span class="n">mode</span><span class="p">);</span>
 
@@ -626,12 +626,12 @@
 <p>下面展示了与缓存io操作相关的全局变量</p>
 <div class="highlight"><div class="chroma">
 <div class="table-container"><table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-c" data-lang="c"><span class="n">LWLockMinimallyPadded</span> <span class="o">*</span><span class="n">BufferIOLWLockArray</span><span class="p">;</span> <span class="c1">// LWLock 数组，索引同buffer数组一致
+<pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="n">LWLockMinimallyPadded</span> <span class="o">*</span><span class="n">BufferIOLWLockArray</span><span class="p">;</span> <span class="c1">// LWLock 数组，索引同buffer数组一致
 </span><span class="c1"></span><span class="k">static</span> <span class="n">BufferDesc</span> <span class="o">*</span><span class="n">InProgressBuf</span> <span class="o">=</span> <span class="nb">NULL</span><span class="p">;</span>  <span class="c1">// 正在进行io的buffer，postgresql同时只能操作一个buffer进行io操作
 </span><span class="c1"></span><span class="k">static</span> <span class="kt">bool</span> <span class="n">IsForInput</span><span class="p">;</span> <span class="c1">// 正在进行io操作的类型，表示是从磁盘读取数据到缓存，还是从缓存写入数据到磁盘
 </span></code></pre></td></tr></table></div>
@@ -639,7 +639,7 @@
 </div><p>下面展示了缓存io锁的相关操作</p>
 <div class="highlight"><div class="chroma">
 <div class="table-container"><table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -656,7 +656,7 @@
 </span><span class="lnt">15
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-c" data-lang="c"><span class="c1">// 阻塞等待 IO_IN_PROGRESS 标记位清除
+<pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="c1">// 阻塞等待 IO_IN_PROGRESS 标记位清除
 </span><span class="c1"></span><span class="k">static</span> <span class="kt">void</span> <span class="nf">WaitIO</span><span class="p">(</span><span class="n">BufferDesc</span> <span class="o">*</span><span class="n">buf</span><span class="p">);</span>
 
 <span class="c1">// 执行io操作，参数forInput为true，表示从磁盘读取到缓存。参数为false，表示将缓存写入到磁盘
@@ -676,7 +676,7 @@
 </div><p>下面以将缓存写到磁盘为例，展示了io锁的用法</p>
 <div class="highlight"><div class="chroma">
 <div class="table-container"><table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -699,7 +699,7 @@
 </span><span class="lnt">21
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-c" data-lang="c"><span class="k">static</span> <span class="kt">void</span> <span class="nf">FlushBuffer</span><span class="p">(</span><span class="n">BufferDesc</span> <span class="o">*</span><span class="n">buf</span><span class="p">,</span> <span class="n">SMgrRelation</span> <span class="n">reln</span><span class="p">)</span>
+<pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="k">static</span> <span class="kt">void</span> <span class="nf">FlushBuffer</span><span class="p">(</span><span class="n">BufferDesc</span> <span class="o">*</span><span class="n">buf</span><span class="p">,</span> <span class="n">SMgrRelation</span> <span class="n">reln</span><span class="p">)</span>
 <span class="p">{</span>
     <span class="c1">// 获取io对应的lw锁
 </span><span class="c1"></span>    <span class="n">StartBufferIO</span><span class="p">(</span><span class="n">buf</span><span class="p">,</span> <span class="nb">false</span><span class="p">);</span>
@@ -726,13 +726,13 @@
 <p><code>ReadBuffer_common</code>函数负责处理全局缓存和本地缓存，</p>
 <div class="highlight"><div class="chroma">
 <div class="table-container"><table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-c" data-lang="c"><span class="k">static</span> <span class="n">Buffer</span> <span class="nf">ReadBuffer_common</span><span class="p">(</span><span class="n">SMgrRelation</span> <span class="n">smgr</span><span class="p">,</span> <span class="kt">char</span> <span class="n">relpersistence</span><span class="p">,</span> <span class="n">ForkNumber</span> <span class="n">forkNum</span><span class="p">,</span>
+<pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="k">static</span> <span class="n">Buffer</span> <span class="nf">ReadBuffer_common</span><span class="p">(</span><span class="n">SMgrRelation</span> <span class="n">smgr</span><span class="p">,</span> <span class="kt">char</span> <span class="n">relpersistence</span><span class="p">,</span> <span class="n">ForkNumber</span> <span class="n">forkNum</span><span class="p">,</span>
 				  <span class="n">BlockNumber</span> <span class="n">blockNum</span><span class="p">,</span> <span class="n">ReadBufferMode</span> <span class="n">mode</span><span class="p">,</span>
 				  <span class="n">BufferAccessStrategy</span> <span class="n">strategy</span><span class="p">,</span> <span class="kt">bool</span> <span class="o">*</span><span class="n">hit</span><span class="p">);</span>
 
@@ -741,7 +741,7 @@
 </div><p>下面将它的代码做简化，只负责出路全局缓存，并且省略了异常处理。</p>
 <div class="highlight"><div class="chroma">
 <div class="table-container"><table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -802,7 +802,7 @@
 </span><span class="lnt">59
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-c" data-lang="c"><span class="c1">// 如果参数blockNum等于特殊值P_NEW，表示需要新增数据块
+<pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="c1">// 如果参数blockNum等于特殊值P_NEW，表示需要新增数据块
 </span><span class="c1"></span><span class="n">isExtend</span> <span class="o">=</span> <span class="p">(</span><span class="n">blockNum</span> <span class="o">==</span> <span class="n">P_NEW</span><span class="p">);</span>
 <span class="k">if</span> <span class="p">(</span><span class="n">isExtend</span><span class="p">)</span>
     <span class="c1">// 获取新的blockNum
@@ -867,7 +867,7 @@
 <p>本地缓存的读取非常简单，因为不涉及到任何的锁。下面同样将<code>ReadBuffer_common</code>函数代码进行简化</p>
 <div class="highlight"><div class="chroma">
 <div class="table-container"><table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -905,7 +905,7 @@
 </span><span class="lnt">36
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-c" data-lang="c"><span class="n">isExtend</span> <span class="o">=</span> <span class="p">(</span><span class="n">blockNum</span> <span class="o">==</span> <span class="n">P_NEW</span><span class="p">);</span>
+<pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="n">isExtend</span> <span class="o">=</span> <span class="p">(</span><span class="n">blockNum</span> <span class="o">==</span> <span class="n">P_NEW</span><span class="p">);</span>
 <span class="k">if</span> <span class="p">(</span><span class="n">isExtend</span><span class="p">)</span>
     <span class="n">blockNum</span> <span class="o">=</span> <span class="n">smgrnblocks</span><span class="p">(</span><span class="n">smgr</span><span class="p">,</span> <span class="n">forkNum</span><span class="p">);</span>
 <span class="n">bufHdr</span> <span class="o">=</span> <span class="n">LocalBufferAlloc</span><span class="p">(</span><span class="n">smgr</span><span class="p">,</span> <span class="n">forkNum</span><span class="p">,</span> <span class="n">blockNum</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">found</span><span class="p">);</span>
@@ -970,9 +970,9 @@
 
         
     <div class="updated-badge-container">
-        <span title="Updated @ 2021-09-12 11:48:25 CST" style="cursor:help">
+        <span title="Updated @ 2021-10-22 14:44:34 CST" style="cursor:help">
 
-<svg xmlns="http://www.w3.org/2000/svg" width="130" height="20" class="updated-badge"><linearGradient id="b" x2="0" y2="100%"><stop offset="0" stop-color="#bbb" stop-opacity=".1"/><stop offset="1" stop-opacity=".1"/></linearGradient><clipPath id="a"><rect width="130" height="20" rx="3" fill="#fff"/></clipPath><g clip-path="url(#a)"><path class="updated-badge-left" d="M0 0h55v20H0z"/><path class="updated-badge-right" d="M55 0h75v20H55z"/><path fill="url(#b)" d="M0 0h130v20H0z"/></g><g fill="#fff" text-anchor="middle" font-size="110"><text x="285" y="150" fill="#010101" fill-opacity=".3" textLength="450" transform="scale(.1)">updated</text><text x="285" y="140" textLength="450" transform="scale(.1)">updated</text><text x="915" y="150" fill="#010101" fill-opacity=".3" textLength="650" transform="scale(.1)">2021-09-12</text><text x="915" y="140" textLength="650" transform="scale(.1)">2021-09-12</text></g></svg>
+<svg xmlns="http://www.w3.org/2000/svg" width="130" height="20" class="updated-badge"><linearGradient id="b" x2="0" y2="100%"><stop offset="0" stop-color="#bbb" stop-opacity=".1"/><stop offset="1" stop-opacity=".1"/></linearGradient><clipPath id="a"><rect width="130" height="20" rx="3" fill="#fff"/></clipPath><g clip-path="url(#a)"><path class="updated-badge-left" d="M0 0h55v20H0z"/><path class="updated-badge-right" d="M55 0h75v20H55z"/><path fill="url(#b)" d="M0 0h130v20H0z"/></g><g fill="#fff" text-anchor="middle" font-size="110"><text x="285" y="150" fill="#010101" fill-opacity=".3" textLength="450" transform="scale(.1)">updated</text><text x="285" y="140" textLength="450" transform="scale(.1)">updated</text><text x="915" y="150" fill="#010101" fill-opacity=".3" textLength="650" transform="scale(.1)">2021-10-22</text><text x="915" y="140" textLength="650" transform="scale(.1)">2021-10-22</text></g></svg>
         </span></div>
 
 

@@ -3,7 +3,7 @@
     <head prefix="og: http://ogp.me/ns# article: http://ogp.me/ns/article#">
     <meta charset="UTF-8" />
 
-    <meta name="generator" content="Hugo 0.79.0" /><meta name="theme-color" content="#fff" />
+    <meta name="generator" content="Hugo 0.88.1" /><meta name="theme-color" content="#fff" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     
     <meta name="format-detection" content="telephone=no, date=no, address=no, email=no" />
@@ -14,11 +14,11 @@
 
     <title>postgresql 缓存池并发设计 | 学习笔记</title>
 
-    <link rel="stylesheet" href="/css/meme.min.81031e6b78ad2f1f534002ebb3b658886fea2f25d8a44d296d1466a2fe52f1c1.css"/>
+    <link rel="stylesheet" href="/css/meme.min.2d3e1834af2bc8dda20c7d74aaa1d8134845094441b7a554a5206ccd4b472596.css"/>
 
     
     
-        <script src="/js/meme.min.120d98bb614adc6beb13bf79f943d2cceffd323f4de1544029228c3dca2e9bda.js"></script>
+        <script src="/js/meme.min.800f61672145711eb3e1f29fcfcc3dbe0139dd459259718b611a0390f74703d1.js"></script>
 
     
 
@@ -54,7 +54,7 @@
         "@context": "https://schema.org",
         "@type": "BlogPosting",
         "datePublished": "2020-09-08T21:08:52+00:00",
-        "dateModified": "2021-09-12T11:48:25+08:00",
+        "dateModified": "2021-10-22T14:44:34+08:00",
         "url": "https://zhmin.github.io/posts/postgresql-buffer-concurrent/",
         "headline": "postgresql 缓存池并发设计",
         "description": "前言 postgresql 对于缓存池的并发控制，比较复杂。下面通过一步步的优化，来讲述 postgresql 的设计思路。它为了提升锁的性能，大量使用了 CAS 操作，只有在操作比较慢的时候，才会加入读写锁。在继续阅读之前，需要熟悉它的存储设计，可以……",
@@ -97,7 +97,7 @@
 <meta property="og:locale" content="zh" /><meta property="og:image" content="https://zhmin.github.io/icons/apple-touch-icon.png" />
     <meta property="og:type" content="article" />
     <meta property="article:published_time" content="2020-09-08T21:08:52&#43;00:00" />
-    <meta property="article:modified_time" content="2021-09-12T11:48:25&#43;08:00" />
+    <meta property="article:modified_time" content="2021-10-22T14:44:34&#43;08:00" />
     
     <meta property="article:section" content="posts" />
 
@@ -243,7 +243,7 @@
 <p>hash 表保存了 page 到 buffer 的对应关系，很明显所有的读取都需要从 hash 表查找开始，我们可以从 控制 hash 表的锁来开始。假设现在只有 hash 分区锁，我们写的程序应该是这样的</p>
 <div class="highlight"><div class="chroma">
 <div class="table-container"><table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -276,7 +276,7 @@
 </span><span class="lnt">31
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-c" data-lang="c"><span class="c1">// 获取分区 id，page_number 表示要获取的 page 标识
+<pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="c1">// 获取分区 id，page_number 表示要获取的 page 标识
 </span><span class="c1"></span><span class="n">partition_id</span> <span class="o">=</span> <span class="n">get_hash_parition</span><span class="p">(</span><span class="n">page_number</span><span class="p">);</span>
 <span class="c1">// 对此分区加读锁
 </span><span class="c1"></span><span class="n">lock_partition_read</span><span class="p">(</span><span class="n">hash_table</span><span class="p">,</span> <span class="n">partition_id</span><span class="p">);</span>
@@ -313,7 +313,7 @@
 <p>其中 find_victim_buffer 函数负责挑选出可被替换的 buffer，它的原理是找到 pin count 等于 0 的 buffer。所以这里面会有个问题，当我们查找到数据后，需要及时的 pin 操作，不然有可能会被替换掉，造成读取的数据不是想要的 page number。</p>
 <div class="highlight"><div class="chroma">
 <div class="table-container"><table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -350,7 +350,7 @@
 </span><span class="lnt">35
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-c" data-lang="c"><span class="c1">// 获取分区 id，page_number 表示要获取的 page 标识
+<pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="c1">// 获取分区 id，page_number 表示要获取的 page 标识
 </span><span class="c1"></span><span class="n">partition_id</span> <span class="o">=</span> <span class="n">get_hash_parition</span><span class="p">(</span><span class="n">page_number</span><span class="p">);</span>
 <span class="c1">// 对此分区加读锁
 </span><span class="c1"></span><span class="n">lock_partition_read</span><span class="p">(</span><span class="n">hash_table</span><span class="p">,</span> <span class="n">partition_id</span><span class="p">);</span>
@@ -391,7 +391,7 @@
 <p>我们观察上述代码，如果我们没有找到对应的 buffer，那么需要从buffer数组中挑选出一个合适的，这个步骤是很花费时间的。所以会造成长时间的加锁，并且hash表的一个分区会包含了多个 buffer，这样会造成性能影响。所以 在执行这一步之前，我们可以将分区锁释放。不过这样会遇到一个问题，如下所示</p>
 <div class="highlight"><div class="chroma">
 <div class="table-container"><table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -435,7 +435,7 @@
 </span><span class="lnt">42
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-c" data-lang="c"><span class="c1">// 获取分区 id，page_number 表示要获取的 page 标识
+<pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="c1">// 获取分区 id，page_number 表示要获取的 page 标识
 </span><span class="c1"></span><span class="n">partition_id</span> <span class="o">=</span> <span class="n">get_hash_parition</span><span class="p">(</span><span class="n">page_number</span><span class="p">);</span>
 <span class="c1">// 对此分区加读锁
 </span><span class="c1"></span><span class="n">lock_partition_read</span><span class="p">(</span><span class="n">hash_table</span><span class="p">,</span> <span class="n">partition_id</span><span class="p">);</span>
@@ -483,7 +483,7 @@
 <p>我们假设有两个线程都跑到了 步骤1，那么就会产生两个 buffer 都是保存了同一份 Page 的数据。为了避免这一情况，我们在执行步骤1之后，需要检查一下。</p>
 <div class="highlight"><div class="chroma">
 <div class="table-container"><table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -533,7 +533,7 @@
 </span><span class="lnt">48
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-c" data-lang="c"><span class="c1">// 获取分区 id，page_number 表示要获取的 page 标识
+<pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="c1">// 获取分区 id，page_number 表示要获取的 page 标识
 </span><span class="c1"></span><span class="n">partition_id</span> <span class="o">=</span> <span class="n">get_hash_parition</span><span class="p">(</span><span class="n">page_number</span><span class="p">);</span>
 <span class="c1">// 对此分区加读锁
 </span><span class="c1"></span><span class="n">lock_partition_read</span><span class="p">(</span><span class="n">hash_table</span><span class="p">,</span> <span class="n">partition_id</span><span class="p">);</span>
@@ -587,7 +587,7 @@
 <p>同样从磁盘读取数据的操作也会很花费时间，为了避免长时间占用锁，我们需要在执行之前释放相关的锁。如果要实现这一步，需要设置一个 valid 标记位，表示数据是否成功的被磁盘读取。所以我们在哈希表中找到缓存后，还需要分辨数据是否完成磁盘读取，并且我们还需要额外的锁（称为 io_lock），来保证同步等待。</p>
 <div class="highlight"><div class="chroma">
 <div class="table-container"><table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -652,7 +652,7 @@
 </span><span class="lnt">63
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-c" data-lang="c"><span class="c1">// 获取分区 id，page_number 表示要获取的 page 标识
+<pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="c1">// 获取分区 id，page_number 表示要获取的 page 标识
 </span><span class="c1"></span><span class="n">partition_id</span> <span class="o">=</span> <span class="n">get_hash_parition</span><span class="p">(</span><span class="n">page_number</span><span class="p">);</span>
 <span class="c1">// 对此分区加读锁
 </span><span class="c1"></span><span class="n">lock_partition_read</span><span class="p">(</span><span class="n">hash_table</span><span class="p">,</span> <span class="n">partition_id</span><span class="p">);</span>
@@ -721,7 +721,7 @@
 <p>现在基本的流程确定好了，不过 postgresql 认为加载磁盘是很慢的操作，是可以被终止的。所以当检测到一个 buffer 为 invalid 时，可能对应着两种情况，一种是其它进程正在进行读取，一种是之前的读取被终止了。所以当发现 buffer invalid 的时候，都需要主动去磁盘读取。但是这样会造成并发重复读取，所以还需要提供一个锁，专门负责这一块的同步，称为 io_lock。</p>
 <div class="highlight"><div class="chroma">
 <div class="table-container"><table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -792,7 +792,7 @@
 </span><span class="lnt">69
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-c" data-lang="c"><span class="c1">// 获取分区 id，page_number 表示要获取的 page 标识
+<pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="c1">// 获取分区 id，page_number 表示要获取的 page 标识
 </span><span class="c1"></span><span class="n">partition_id</span> <span class="o">=</span> <span class="n">get_hash_parition</span><span class="p">(</span><span class="n">page_number</span><span class="p">);</span>
 <span class="c1">// 对此分区加读锁
 </span><span class="c1"></span><span class="n">lock_partition_read</span><span class="p">(</span><span class="n">hash_table</span><span class="p">,</span> <span class="n">partition_id</span><span class="p">);</span>
@@ -869,13 +869,13 @@
 <p>postgresql 将 hash 表分成多个区，每个区都对应了一个读写锁。</p>
 <div class="highlight"><div class="chroma">
 <div class="table-container"><table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-c" data-lang="c"><span class="n">BufferTag</span>	<span class="n">newTag</span><span class="p">;</span>  <span class="c1">// 表示要查找的 page
+<pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="n">BufferTag</span>	<span class="n">newTag</span><span class="p">;</span>  <span class="c1">// 表示要查找的 page
 </span><span class="c1"></span><span class="n">newHash</span> <span class="o">=</span> <span class="n">BufTableHashCode</span><span class="p">(</span><span class="o">&amp;</span><span class="n">newTag</span><span class="p">);</span>  <span class="c1">// 计算 hash 值
 </span><span class="c1"></span><span class="n">newPartitionLock</span> <span class="o">=</span> <span class="n">BufMappingPartitionLock</span><span class="p">(</span><span class="n">newHash</span><span class="p">);</span>   <span class="c1">// 根据hash值找到对应的分区锁
 </span><span class="c1"></span><span class="n">LWLockAcquire</span><span class="p">(</span><span class="n">newPartitionLock</span><span class="p">,</span> <span class="n">LW_SHARED</span><span class="p">);</span> <span class="c1">// 加读锁
@@ -884,14 +884,14 @@
 </div><p><code>BufMappingPartitionLock</code>函数分为两步，首先是找到对应的分区。然后是找到该分区对应的锁。</p>
 <div class="highlight"><div class="chroma">
 <div class="table-container"><table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
 </span><span class="lnt">5
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-c" data-lang="c"><span class="c1">// 这里只是简单的取余操作，找到对应的分区。NUM_BUFFER_PARTITIONS 表示分区数目
+<pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="c1">// 这里只是简单的取余操作，找到对应的分区。NUM_BUFFER_PARTITIONS 表示分区数目
 </span><span class="c1"></span><span class="cp">#define BufTableHashPartition(hashcode)  ((hashcode) % NUM_BUFFER_PARTITIONS) 
 </span><span class="cp"></span>
 <span class="c1">// postgresql 分配了一个大的lwlock 数组，分区锁占用了其中一部分，从 BUFFER_MAPPING_LWLOCK_OFFSET 位置开始
@@ -902,7 +902,7 @@
 <p><code>BufferDesc</code> 包含了<code>buffer</code>的头部信息，也包含了相关的锁</p>
 <div class="highlight"><div class="chroma">
 <div class="table-container"><table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -915,7 +915,7 @@
 </span><span class="lnt">11
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-c" data-lang="c"><span class="k">typedef</span> <span class="k">struct</span> <span class="n">BufferDesc</span>
+<pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="k">typedef</span> <span class="k">struct</span> <span class="n">BufferDesc</span>
 <span class="p">{</span>
 	<span class="n">BufferTag</span>	<span class="n">tag</span><span class="p">;</span>			<span class="c1">// 缓存哪个文件的block
 </span><span class="c1"></span>	<span class="kt">int</span>			<span class="n">buf_id</span><span class="p">;</span>			<span class="c1">// buffer id
@@ -931,7 +931,7 @@
 </div><p><code>state</code>字段是一个 atomic 类型的值，它的更新非常频繁。它有一个标记位<code>BM_LOCKED</code>，作为锁的实现。postgresql 使用了自旋 + CAS 操作来实现乐观锁。</p>
 <div class="highlight"><div class="chroma">
 <div class="table-container"><table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -954,7 +954,7 @@
 </span><span class="lnt">21
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-c" data-lang="c"><span class="n">uint32</span> <span class="nf">LockBufHdr</span><span class="p">(</span><span class="n">BufferDesc</span> <span class="o">*</span><span class="n">desc</span><span class="p">)</span>
+<pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="n">uint32</span> <span class="nf">LockBufHdr</span><span class="p">(</span><span class="n">BufferDesc</span> <span class="o">*</span><span class="n">desc</span><span class="p">)</span>
 <span class="p">{</span>
     <span class="c1">// 用于自适应控制自旋间隙
 </span><span class="c1"></span>	<span class="n">SpinDelayStatus</span> <span class="n">delayStatus</span><span class="p">;</span>
@@ -980,14 +980,14 @@
 </div><p>释放锁就很简单，只是简单的取消标记位<code>BM_LOCKED</code></p>
 <div class="highlight"><div class="chroma">
 <div class="table-container"><table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
 </span><span class="lnt">5
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-c" data-lang="c"><span class="cp">#define UnlockBufHdr(desc, s)	\
+<pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="cp">#define UnlockBufHdr(desc, s)	\
 </span><span class="cp">	do {	\
 </span><span class="cp">		pg_write_barrier(); \
 </span><span class="cp">		pg_atomic_write_u32(&amp;(desc)-&gt;state, (s) &amp; (~BM_LOCKED)); \
@@ -998,7 +998,7 @@
 <p>pin 操作也是基于 CAS 操作，<code>state</code>字段中保存了 pin count。不过它并没有使用<code>BM_LOCKED</code>标记位，因为 pin 操作非常频繁，postgresql 做了进一步的优化。它分为两种场景，一种是pin操作之前没有获取到锁，一种是已经获取到了锁。</p>
 <div class="highlight"><div class="chroma">
 <div class="table-container"><table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -1020,7 +1020,7 @@
 </span><span class="lnt">20
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-c" data-lang="c"><span class="c1">// 调用之前没有获取到锁
+<pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="c1">// 调用之前没有获取到锁
 </span><span class="c1"></span><span class="k">static</span> <span class="kt">bool</span> <span class="nf">PinBuffer</span><span class="p">(</span><span class="n">BufferDesc</span> <span class="o">*</span><span class="n">buf</span><span class="p">,</span> <span class="n">BufferAccessStrategy</span> <span class="n">strategy</span><span class="p">)</span>
 <span class="p">{</span>
 	<span class="n">Buffer</span>		<span class="n">b</span> <span class="o">=</span> <span class="n">BufferDescriptorGetBuffer</span><span class="p">(</span><span class="n">buf</span><span class="p">);</span>
@@ -1045,7 +1045,7 @@
 </div><p>第二种情况适用于获取到了锁，这种情况只是简单的修改state值就行。</p>
 <div class="highlight"><div class="chroma">
 <div class="table-container"><table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -1058,7 +1058,7 @@
 </span><span class="lnt">11
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-c" data-lang="c"><span class="c1">// 调用之前已经获取到了锁
+<pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="c1">// 调用之前已经获取到了锁
 </span><span class="c1"></span><span class="k">static</span> <span class="kt">void</span> <span class="nf">PinBuffer_Locked</span><span class="p">(</span><span class="n">BufferDesc</span> <span class="o">*</span><span class="n">buf</span><span class="p">)</span>
 <span class="p">{</span>
 	<span class="n">uint32</span>		<span class="n">buf_state</span><span class="p">;</span>
@@ -1076,13 +1076,13 @@
 <p>为了控制 IO 的同步，postgresql 使用了 buffer_io_lock 锁来控制。因为 IO 操作非常耗时，所以这里就不在使用了乐观锁。</p>
 <div class="highlight"><div class="chroma">
 <div class="table-container"><table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-c" data-lang="c">  <span class="c1">// IO 锁数组，对应了每个 Buffer
+<pre tabindex="0" class="chroma"><code class="language-c" data-lang="c">  <span class="c1">// IO 锁数组，对应了每个 Buffer
 </span><span class="c1"></span><span class="n">LWLockMinimallyPadded</span> <span class="o">*</span><span class="n">BufferIOLWLockArray</span> <span class="o">=</span> <span class="nb">NULL</span><span class="p">;</span>
 <span class="c1">// 直接返回对应位置的IO锁
 </span><span class="c1"></span><span class="cp">#define BufferDescriptorGetIOLock(bdesc)  (&amp;(BufferIOLWLockArray[(bdesc)-&gt;buf_id]).lock)
@@ -1117,9 +1117,9 @@
 
         
     <div class="updated-badge-container">
-        <span title="Updated @ 2021-09-12 11:48:25 CST" style="cursor:help">
+        <span title="Updated @ 2021-10-22 14:44:34 CST" style="cursor:help">
 
-<svg xmlns="http://www.w3.org/2000/svg" width="130" height="20" class="updated-badge"><linearGradient id="b" x2="0" y2="100%"><stop offset="0" stop-color="#bbb" stop-opacity=".1"/><stop offset="1" stop-opacity=".1"/></linearGradient><clipPath id="a"><rect width="130" height="20" rx="3" fill="#fff"/></clipPath><g clip-path="url(#a)"><path class="updated-badge-left" d="M0 0h55v20H0z"/><path class="updated-badge-right" d="M55 0h75v20H55z"/><path fill="url(#b)" d="M0 0h130v20H0z"/></g><g fill="#fff" text-anchor="middle" font-size="110"><text x="285" y="150" fill="#010101" fill-opacity=".3" textLength="450" transform="scale(.1)">updated</text><text x="285" y="140" textLength="450" transform="scale(.1)">updated</text><text x="915" y="150" fill="#010101" fill-opacity=".3" textLength="650" transform="scale(.1)">2021-09-12</text><text x="915" y="140" textLength="650" transform="scale(.1)">2021-09-12</text></g></svg>
+<svg xmlns="http://www.w3.org/2000/svg" width="130" height="20" class="updated-badge"><linearGradient id="b" x2="0" y2="100%"><stop offset="0" stop-color="#bbb" stop-opacity=".1"/><stop offset="1" stop-opacity=".1"/></linearGradient><clipPath id="a"><rect width="130" height="20" rx="3" fill="#fff"/></clipPath><g clip-path="url(#a)"><path class="updated-badge-left" d="M0 0h55v20H0z"/><path class="updated-badge-right" d="M55 0h75v20H55z"/><path fill="url(#b)" d="M0 0h130v20H0z"/></g><g fill="#fff" text-anchor="middle" font-size="110"><text x="285" y="150" fill="#010101" fill-opacity=".3" textLength="450" transform="scale(.1)">updated</text><text x="285" y="140" textLength="450" transform="scale(.1)">updated</text><text x="915" y="150" fill="#010101" fill-opacity=".3" textLength="650" transform="scale(.1)">2021-10-22</text><text x="915" y="140" textLength="650" transform="scale(.1)">2021-10-22</text></g></svg>
         </span></div>
 
 

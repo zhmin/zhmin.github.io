@@ -3,7 +3,7 @@
     <head prefix="og: http://ogp.me/ns# article: http://ogp.me/ns/article#">
     <meta charset="UTF-8" />
 
-    <meta name="generator" content="Hugo 0.79.0" /><meta name="theme-color" content="#fff" />
+    <meta name="generator" content="Hugo 0.88.1" /><meta name="theme-color" content="#fff" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     
     <meta name="format-detection" content="telephone=no, date=no, address=no, email=no" />
@@ -14,11 +14,11 @@
 
     <title>Apache Orc 压缩原理 | 学习笔记</title>
 
-    <link rel="stylesheet" href="/css/meme.min.81031e6b78ad2f1f534002ebb3b658886fea2f25d8a44d296d1466a2fe52f1c1.css"/>
+    <link rel="stylesheet" href="/css/meme.min.2d3e1834af2bc8dda20c7d74aaa1d8134845094441b7a554a5206ccd4b472596.css"/>
 
     
     
-        <script src="/js/meme.min.120d98bb614adc6beb13bf79f943d2cceffd323f4de1544029228c3dca2e9bda.js"></script>
+        <script src="/js/meme.min.800f61672145711eb3e1f29fcfcc3dbe0139dd459259718b611a0390f74703d1.js"></script>
 
     
 
@@ -54,7 +54,7 @@
         "@context": "https://schema.org",
         "@type": "BlogPosting",
         "datePublished": "2020-10-18T22:35:34+00:00",
-        "dateModified": "2021-09-12T11:48:25+08:00",
+        "dateModified": "2021-10-22T14:44:34+08:00",
         "url": "https://zhmin.github.io/posts/apache-orc-compress/",
         "headline": "Apache Orc 压缩原理",
         "description": "前言 orc 作为列式存储，其特点之一就是极高的数据压缩比，这篇文章就来讲讲它的压缩原理。 数据类型 orc 对于每种不同的数据类型，对应着不同的压缩方式。比如 string类型压缩，int 类型压缩，字节类型压缩。下面会……",
@@ -97,7 +97,7 @@
 <meta property="og:locale" content="zh" /><meta property="og:image" content="https://zhmin.github.io/icons/apple-touch-icon.png" />
     <meta property="og:type" content="article" />
     <meta property="article:published_time" content="2020-10-18T22:35:34&#43;00:00" />
-    <meta property="article:modified_time" content="2021-09-12T11:48:25&#43;08:00" />
+    <meta property="article:modified_time" content="2021-10-22T14:44:34&#43;08:00" />
     
     <meta property="article:section" content="posts" />
 
@@ -249,14 +249,14 @@
 <p>如果数据元素都是相同的，并且重复的元素长度大于等于3，还要小于等于10，那么就会采用这种编码。它的存储格式如下：</p>
 <div class="highlight"><div class="chroma">
 <div class="table-container"><table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
 </span><span class="lnt">5
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-shell" data-lang="shell">-----------------------------------------------------------------
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell">-----------------------------------------------------------------
   encoding <span class="nb">type</span>   <span class="p">|</span>   重复值的长度  ｜  重复的元素数目  ｜   重复值   ｜     
 ------------------------------------------------------------------
   <span class="m">2</span> bits          <span class="p">|</span>    <span class="m">3</span> bits     ｜   <span class="m">3</span> bits       ｜           ｜
@@ -277,14 +277,14 @@
 <p>delta 编码的通用格式如下：</p>
 <div class="highlight"><div class="chroma">
 <div class="table-container"><table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
 </span><span class="lnt">5
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-shell" data-lang="shell">-------------------------------------------------------------------
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell">-------------------------------------------------------------------
   encoding <span class="nb">type</span>   <span class="p">|</span>   值占用的位数 fb  ｜   元素数目       ｜   blob   ｜     
 -------------------------------------------------------------------
   <span class="m">2</span> bits          <span class="p">|</span>    <span class="m">5</span> bits        ｜   <span class="m">9</span> bits        ｜           ｜
@@ -297,14 +297,14 @@
 <p>如果元素的值，它们占用的 bit 位数，相差不大的话，就会采用 direct 编码。那么这个相差不大，是如何判断的。首先它会遍历元素，使用直方图统计出各个 bit 位数对应了多少个元素，如果第90%的元素所占用的 bit 位数，与最大值的元素所占用的 bit 位数相等，那么就认定为相差不大。direct 编码的格式为：</p>
 <div class="highlight"><div class="chroma">
 <div class="table-container"><table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
 </span><span class="lnt">5
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-shell" data-lang="shell">------------------------------------------------------------------------
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell">------------------------------------------------------------------------
   encoding <span class="nb">type</span>   <span class="p">|</span>   每个值存储占用的位数  ｜   元素数目       ｜   blob   ｜     
 -------------------------------------------------------------------------
   <span class="m">2</span> bits          <span class="p">|</span>    <span class="m">5</span> bits           ｜   <span class="m">9</span> bits        ｜           ｜
@@ -319,14 +319,14 @@
 <p>对于字节类型的数据，编码方式比较简单，只是简单的合并重复值，也称为RLE算法。当重复值连续出现3次，才会触发该编码。</p>
 <div class="highlight"><div class="chroma">
 <div class="table-container"><table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
 </span><span class="lnt">5
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-shell" data-lang="shell">----------------------------
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell">----------------------------
   control byte   <span class="p">|</span>   blob  ｜      
 ----------------------------
   <span class="m">1</span> byte         <span class="p">|</span>         ｜
@@ -364,9 +364,9 @@
 
         
     <div class="updated-badge-container">
-        <span title="Updated @ 2021-09-12 11:48:25 CST" style="cursor:help">
+        <span title="Updated @ 2021-10-22 14:44:34 CST" style="cursor:help">
 
-<svg xmlns="http://www.w3.org/2000/svg" width="130" height="20" class="updated-badge"><linearGradient id="b" x2="0" y2="100%"><stop offset="0" stop-color="#bbb" stop-opacity=".1"/><stop offset="1" stop-opacity=".1"/></linearGradient><clipPath id="a"><rect width="130" height="20" rx="3" fill="#fff"/></clipPath><g clip-path="url(#a)"><path class="updated-badge-left" d="M0 0h55v20H0z"/><path class="updated-badge-right" d="M55 0h75v20H55z"/><path fill="url(#b)" d="M0 0h130v20H0z"/></g><g fill="#fff" text-anchor="middle" font-size="110"><text x="285" y="150" fill="#010101" fill-opacity=".3" textLength="450" transform="scale(.1)">updated</text><text x="285" y="140" textLength="450" transform="scale(.1)">updated</text><text x="915" y="150" fill="#010101" fill-opacity=".3" textLength="650" transform="scale(.1)">2021-09-12</text><text x="915" y="140" textLength="650" transform="scale(.1)">2021-09-12</text></g></svg>
+<svg xmlns="http://www.w3.org/2000/svg" width="130" height="20" class="updated-badge"><linearGradient id="b" x2="0" y2="100%"><stop offset="0" stop-color="#bbb" stop-opacity=".1"/><stop offset="1" stop-opacity=".1"/></linearGradient><clipPath id="a"><rect width="130" height="20" rx="3" fill="#fff"/></clipPath><g clip-path="url(#a)"><path class="updated-badge-left" d="M0 0h55v20H0z"/><path class="updated-badge-right" d="M55 0h75v20H55z"/><path fill="url(#b)" d="M0 0h130v20H0z"/></g><g fill="#fff" text-anchor="middle" font-size="110"><text x="285" y="150" fill="#010101" fill-opacity=".3" textLength="450" transform="scale(.1)">updated</text><text x="285" y="140" textLength="450" transform="scale(.1)">updated</text><text x="915" y="150" fill="#010101" fill-opacity=".3" textLength="650" transform="scale(.1)">2021-10-22</text><text x="915" y="140" textLength="650" transform="scale(.1)">2021-10-22</text></g></svg>
         </span></div>
 
 

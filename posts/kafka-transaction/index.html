@@ -3,7 +3,7 @@
     <head prefix="og: http://ogp.me/ns# article: http://ogp.me/ns/article#">
     <meta charset="UTF-8" />
 
-    <meta name="generator" content="Hugo 0.79.0" /><meta name="theme-color" content="#fff" />
+    <meta name="generator" content="Hugo 0.88.1" /><meta name="theme-color" content="#fff" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     
     <meta name="format-detection" content="telephone=no, date=no, address=no, email=no" />
@@ -14,11 +14,11 @@
 
     <title>Kafka 事务实现原理 | 学习笔记</title>
 
-    <link rel="stylesheet" href="/css/meme.min.81031e6b78ad2f1f534002ebb3b658886fea2f25d8a44d296d1466a2fe52f1c1.css"/>
+    <link rel="stylesheet" href="/css/meme.min.2d3e1834af2bc8dda20c7d74aaa1d8134845094441b7a554a5206ccd4b472596.css"/>
 
     
     
-        <script src="/js/meme.min.120d98bb614adc6beb13bf79f943d2cceffd323f4de1544029228c3dca2e9bda.js"></script>
+        <script src="/js/meme.min.800f61672145711eb3e1f29fcfcc3dbe0139dd459259718b611a0390f74703d1.js"></script>
 
     
 
@@ -54,7 +54,7 @@
         "@context": "https://schema.org",
         "@type": "BlogPosting",
         "datePublished": "2019-05-20T22:22:10+00:00",
-        "dateModified": "2021-09-12T11:48:25+08:00",
+        "dateModified": "2021-10-22T14:44:34+08:00",
         "url": "https://zhmin.github.io/posts/kafka-transaction/",
         "headline": "Kafka 事务实现原理",
         "description": "Kafka 事务实现原理 Kafka 事务在流处理中应用很广泛，比如原子性的读取消息，立即处理和发送，如果中途出现错误，支持回滚操作。这篇文章来讲讲事务是如何实现的，首先来看看事务流程图。 事务流程 Kafka的整个事务处理流……",
@@ -97,7 +97,7 @@
 <meta property="og:locale" content="zh" /><meta property="og:image" content="https://zhmin.github.io/kafka-transaction.svg" />
 <meta property="og:type" content="article" />
     <meta property="article:published_time" content="2019-05-20T22:22:10&#43;00:00" />
-    <meta property="article:modified_time" content="2021-09-12T11:48:25&#43;08:00" />
+    <meta property="article:modified_time" content="2021-10-22T14:44:34&#43;08:00" />
     
     <meta property="article:section" content="posts" />
 
@@ -264,7 +264,7 @@
 <p>下面代码实现，消费者读取消息，并且发送到多个分区的事务</p>
 <div class="highlight"><div class="chroma">
 <div class="table-container"><table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -295,7 +295,7 @@
 </span><span class="lnt">29
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-java" data-lang="java"><span class="c1">// 创建 Producer 实例，并且指定 transaction id
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="c1">// 创建 Producer 实例，并且指定 transaction id
 </span><span class="c1"></span><span class="n">KafkaProducer</span> <span class="n">producer</span> <span class="o">=</span> <span class="n">createKafkaProducer</span><span class="o">(</span>
   <span class="err">“</span><span class="n">bootstrap</span><span class="o">.</span><span class="na">servers</span><span class="err">”</span><span class="o">,</span> <span class="err">“</span><span class="n">localhost</span><span class="o">:</span><span class="n">9092</span><span class="err">”</span><span class="o">,</span>
   <span class="err">“</span><span class="n">transactional</span><span class="o">.</span><span class="na">id</span><span class="err">”</span><span class="o">,</span> <span class="err">“</span><span class="n">my</span><span class="o">-</span><span class="n">transactional</span><span class="o">-</span><span class="n">id</span><span class="err">”</span><span class="o">);</span>
@@ -328,7 +328,7 @@
 </div>
 </div><h3 id="运行原理"><a href="#运行原理" class="anchor-link"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon anchor-icon"><path d="M326.612 185.391c59.747 59.809 58.927 155.698.36 214.59-.11.12-.24.25-.36.37l-67.2 67.2c-59.27 59.27-155.699 59.262-214.96 0-59.27-59.26-59.27-155.7 0-214.96l37.106-37.106c9.84-9.84 26.786-3.3 27.294 10.606.648 17.722 3.826 35.527 9.69 52.721 1.986 5.822.567 12.262-3.783 16.612l-13.087 13.087c-28.026 28.026-28.905 73.66-1.155 101.96 28.024 28.579 74.086 28.749 102.325.51l67.2-67.19c28.191-28.191 28.073-73.757 0-101.83-3.701-3.694-7.429-6.564-10.341-8.569a16.037 16.037 0 0 1-6.947-12.606c-.396-10.567 3.348-21.456 11.698-29.806l21.054-21.055c5.521-5.521 14.182-6.199 20.584-1.731a152.482 152.482 0 0 1 20.522 17.197zM467.547 44.449c-59.261-59.262-155.69-59.27-214.96 0l-67.2 67.2c-.12.12-.25.25-.36.37-58.566 58.892-59.387 154.781.36 214.59a152.454 152.454 0 0 0 20.521 17.196c6.402 4.468 15.064 3.789 20.584-1.731l21.054-21.055c8.35-8.35 12.094-19.239 11.698-29.806a16.037 16.037 0 0 0-6.947-12.606c-2.912-2.005-6.64-4.875-10.341-8.569-28.073-28.073-28.191-73.639 0-101.83l67.2-67.19c28.239-28.239 74.3-28.069 102.325.51 27.75 28.3 26.872 73.934-1.155 101.96l-13.087 13.087c-4.35 4.35-5.769 10.79-3.783 16.612 5.864 17.194 9.042 34.999 9.69 52.721.509 13.906 17.454 20.446 27.294 10.606l37.106-37.106c59.271-59.259 59.271-155.699.001-214.959z"/></svg></a>运行原理</h3>
 <p>上面的例子使用了 Producer的接口实现了事务，但负责与 TC 服务通信的是 TransactionManager 类。TransactionManager 类会发送申请分配 producer id 请求，上传消息分区请求和事务提交请求，在完成每一步请求，TransactionManager 都会更新自身的状态。</p>
-<pre><code class="language-mermaid" data-lang="mermaid">graph TD
+<pre tabindex="0"><code class="language-mermaid" data-lang="mermaid">graph TD
     UNINITIALIZED((UNINITIALIZED))
     INITIALIZING((INITIALIZING))
     READY((READY))
@@ -347,7 +347,7 @@
 </code></pre><p>状态</p>
 <div class="highlight"><div class="chroma">
 <div class="table-container"><table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -359,7 +359,7 @@
 </span><span class="lnt">10
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-java" data-lang="java"><span class="kd">private</span> <span class="kd">enum</span> <span class="n">State</span> <span class="o">{</span>
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="kd">private</span> <span class="kd">enum</span> <span class="n">State</span> <span class="o">{</span>
     <span class="n">UNINITIALIZED</span><span class="o">,</span>
     <span class="n">INITIALIZING</span><span class="o">,</span>
     <span class="n">READY</span><span class="o">,</span>
@@ -376,7 +376,7 @@
 <p>TC 服务会为每个 transaction id 都维护了元数据，元数据的字段如下：</p>
 <div class="highlight"><div class="chroma">
 <div class="table-container"><table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
@@ -387,7 +387,7 @@
 </span><span class="lnt">9
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-scala" data-lang="scala"><span class="k">class</span> <span class="nc">TransactionMetadata</span><span class="o">(</span>
+<pre tabindex="0" class="chroma"><code class="language-scala" data-lang="scala"><span class="k">class</span> <span class="nc">TransactionMetadata</span><span class="o">(</span>
     <span class="k">val</span> <span class="n">transactionalId</span><span class="k">:</span> <span class="kt">String</span><span class="o">,</span>      <span class="c1">// 事务 id
 </span><span class="c1"></span>    <span class="k">var</span> <span class="n">producerId</span><span class="k">:</span> <span class="kt">Long</span><span class="o">,</span>             <span class="c1">// pruducer id
 </span><span class="c1"></span>    <span class="k">var</span> <span class="n">producerEpoch</span><span class="k">:</span> <span class="kt">Short</span><span class="o">,</span>         <span class="c1">// producer epoch
@@ -399,7 +399,7 @@
 </span></code></pre></td></tr></table></div>
 </div>
 </div><p>对于服务端，每个事务也有对应的状态图</p>
-<pre><code class="language-mermaid" data-lang="mermaid">graph TD
+<pre tabindex="0"><code class="language-mermaid" data-lang="mermaid">graph TD
     Empty((Empty))
     Ongoing((Ongoing))
     PrepareCommit((PrepareCommit))
@@ -430,7 +430,7 @@
 <p>事务的客户端，只能是 Producer。下面首先介绍下 Producer 与事务相关的接口。</p>
 <div class="highlight"><div class="chroma">
 <div class="table-container"><table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -445,7 +445,7 @@
 </span><span class="lnt">13
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">interface</span> <span class="nc">Producer</span><span class="o">&lt;</span><span class="n">K</span><span class="o">,</span> <span class="n">V</span><span class="o">&gt;</span> <span class="kd">extends</span> <span class="n">Closeable</span> <span class="o">{</span>
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">interface</span> <span class="nc">Producer</span><span class="o">&lt;</span><span class="n">K</span><span class="o">,</span> <span class="n">V</span><span class="o">&gt;</span> <span class="kd">extends</span> <span class="n">Closeable</span> <span class="o">{</span>
     <span class="c1">// 初始化事务，包括申请 producer id
 </span><span class="c1"></span>    <span class="kt">void</span> <span class="nf">initTransactions</span><span class="o">();</span>
     <span class="c1">// 开始事务，这里会更改事务的本地状态
@@ -501,7 +501,7 @@
 <p>initializeTransactions 方法负责事务初始化，它会发送 InitProducerIdRequest 请求。</p>
 <div class="highlight"><div class="chroma">
 <div class="table-container"><table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -521,7 +521,7 @@
 </span><span class="lnt">18
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">synchronized</span> <span class="n">TransactionalRequestResult</span> <span class="nf">initializeTransactions</span><span class="o">()</span> <span class="o">{</span>
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">synchronized</span> <span class="n">TransactionalRequestResult</span> <span class="nf">initializeTransactions</span><span class="o">()</span> <span class="o">{</span>
     <span class="c1">// 检查transaction id是否已经设置
 </span><span class="c1"></span>    <span class="n">ensureTransactional</span><span class="o">();</span>
     <span class="c1">// 更改自身状态为INITIALIZING
@@ -544,7 +544,7 @@
 </div><p>InitProducerIdHandler 类的定义如下：</p>
 <div class="highlight"><div class="chroma">
 <div class="table-container"><table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -578,7 +578,7 @@
 </span><span class="lnt">32
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-java" data-lang="java"><span class="kd">private</span> <span class="kd">class</span> <span class="nc">InitProducerIdHandler</span> <span class="kd">extends</span> <span class="n">TxnRequestHandler</span> <span class="o">{</span>
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="kd">private</span> <span class="kd">class</span> <span class="nc">InitProducerIdHandler</span> <span class="kd">extends</span> <span class="n">TxnRequestHandler</span> <span class="o">{</span>
 
     <span class="nd">@Override</span>
     <span class="kd">public</span> <span class="kt">void</span> <span class="nf">handleResponse</span><span class="o">(</span><span class="n">AbstractResponse</span> <span class="n">response</span><span class="o">)</span> <span class="o">{</span>
@@ -615,7 +615,7 @@
 </div><p>beginTransaction 方法负责开始新事务，它只是更改自身状态为 IN_TRANSACTION，并不会发送任何请求</p>
 <div class="highlight"><div class="chroma">
 <div class="table-container"><table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
@@ -625,7 +625,7 @@
 </span><span class="lnt">8
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">synchronized</span> <span class="kt">void</span> <span class="nf">beginTransaction</span><span class="o">()</span> <span class="o">{</span>
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">synchronized</span> <span class="kt">void</span> <span class="nf">beginTransaction</span><span class="o">()</span> <span class="o">{</span>
     <span class="c1">// 检查 transaction id
 </span><span class="c1"></span>    <span class="n">ensureTransactional</span><span class="o">();</span>
     <span class="c1">// 检查之前响应是否出错
@@ -638,7 +638,7 @@
 </div><p>我们知道Producer发送消息，都是先将消息发送到缓存队列里，最后是由Sender线程发送出去 。Producer 如果开启了事务， 它在发送消息到缓存之前，会将消息所在的分区保存在 TransactionCoordinator 里。然后Sender线程在发送消息之前，会去从 TransactionCoordinator 检查是否需要上次分区到 TC 服务，如果有就先上次分区，随后才发送消息。</p>
 <div class="highlight"><div class="chroma">
 <div class="table-container"><table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -652,7 +652,7 @@
 </span><span class="lnt">12
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">KafkaProducer</span><span class="o">&lt;</span><span class="n">K</span><span class="o">,</span> <span class="n">V</span><span class="o">&gt;</span> <span class="kd">implements</span> <span class="n">Producer</span><span class="o">&lt;</span><span class="n">K</span><span class="o">,</span> <span class="n">V</span><span class="o">&gt;</span> <span class="o">{</span>
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">KafkaProducer</span><span class="o">&lt;</span><span class="n">K</span><span class="o">,</span> <span class="n">V</span><span class="o">&gt;</span> <span class="kd">implements</span> <span class="n">Producer</span><span class="o">&lt;</span><span class="n">K</span><span class="o">,</span> <span class="n">V</span><span class="o">&gt;</span> <span class="o">{</span>
     <span class="kd">private</span> <span class="n">Future</span><span class="o">&lt;</span><span class="n">RecordMetadata</span><span class="o">&gt;</span> <span class="nf">doSend</span><span class="o">(</span><span class="n">ProducerRecord</span><span class="o">&lt;</span><span class="n">K</span><span class="o">,</span> <span class="n">V</span><span class="o">&gt;</span> <span class="n">record</span><span class="o">,</span> <span class="n">Callback</span> <span class="n">callback</span><span class="o">)</span> <span class="o">{</span>
         <span class="o">.......</span>
         <span class="kt">int</span> <span class="n">partition</span> <span class="o">=</span> <span class="n">partition</span><span class="o">(</span><span class="n">record</span><span class="o">,</span> <span class="n">serializedKey</span><span class="o">,</span> <span class="n">serializedValue</span><span class="o">,</span> <span class="n">cluster</span><span class="o">);</span>
@@ -669,7 +669,7 @@
 </div><p>TransactionManager 提供了 maybeAddPartitionToTransaction 方法添加分区。</p>
 <div class="highlight"><div class="chroma">
 <div class="table-container"><table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -701,7 +701,7 @@
 </span><span class="lnt">30
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">TransactionManager</span> <span class="o">{</span>
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">TransactionManager</span> <span class="o">{</span>
     <span class="c1">// 新增的上传分区集合
 </span><span class="c1"></span>    <span class="kd">private</span> <span class="kd">final</span> <span class="n">Set</span><span class="o">&lt;</span><span class="n">TopicPartition</span><span class="o">&gt;</span> <span class="n">newPartitionsInTransaction</span><span class="o">;</span>
     <span class="c1">// 本次事务已经上传的分区集合
@@ -736,7 +736,7 @@
 </div><p>TransactionManager 的 addPartitionsToTransactionHandler 方法，会生成分区上传请求，然后由Sender发送。</p>
 <div class="highlight"><div class="chroma">
 <div class="table-container"><table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -751,7 +751,7 @@
 </span><span class="lnt">13
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">TransactionManager</span> <span class="o">{</span>
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">TransactionManager</span> <span class="o">{</span>
 
     <span class="kd">private</span> <span class="kd">synchronized</span> <span class="n">TxnRequestHandler</span> <span class="nf">addPartitionsToTransactionHandler</span><span class="o">()</span> <span class="o">{</span>
         <span class="c1">// 将新增的分区，添加到 pendingPartitionsInTransaction 集合
@@ -769,7 +769,7 @@
 </div><p>AddPartitionsToTxnHandler 负责处理响应</p>
 <div class="highlight"><div class="chroma">
 <div class="table-container"><table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -804,7 +804,7 @@
 </span><span class="lnt">33
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-java" data-lang="java"><span class="kd">private</span> <span class="kd">class</span> <span class="nc">AddPartitionsToTxnHandler</span> <span class="kd">extends</span> <span class="n">TxnRequestHandler</span> <span class="o">{</span>
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="kd">private</span> <span class="kd">class</span> <span class="nc">AddPartitionsToTxnHandler</span> <span class="kd">extends</span> <span class="n">TxnRequestHandler</span> <span class="o">{</span>
 
     <span class="nd">@Override</span>
     <span class="kd">public</span> <span class="kt">void</span> <span class="nf">handleResponse</span><span class="o">(</span><span class="n">AbstractResponse</span> <span class="n">response</span><span class="o">)</span> <span class="o">{</span>
@@ -842,7 +842,7 @@
 </div><p>sendOffsetsToTransaction 方法负责发送消费位置提交请求</p>
 <div class="highlight"><div class="chroma">
 <div class="table-container"><table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -862,7 +862,7 @@
 </span><span class="lnt">18
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">TransactionManager</span> <span class="o">{</span>
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">TransactionManager</span> <span class="o">{</span>
     <span class="kd">public</span> <span class="kd">synchronized</span> <span class="n">TransactionalRequestResult</span> <span class="nf">sendOffsetsToTransaction</span><span class="o">(</span><span class="n">Map</span><span class="o">&lt;</span><span class="n">TopicPartition</span><span class="o">,</span> <span class="n">OffsetAndMetadata</span><span class="o">&gt;</span> <span class="n">offsets</span><span class="o">,</span> <span class="n">String</span> <span class="n">consumerGroupId</span><span class="o">)</span> <span class="o">{</span>
         <span class="c1">// 保证transaction id
 </span><span class="c1"></span>        <span class="n">ensureTransactional</span><span class="o">();</span>
@@ -886,7 +886,7 @@
 <p>最后还剩下事务提交或回滚请求，还没讲述。Producer 在调用 commitTransaction 或 abortTransaction 方法，本质都是调用了 TransactionManager 的 beginCompletingTransaction 方法发送请求。</p>
 <div class="highlight"><div class="chroma">
 <div class="table-container"><table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -921,7 +921,7 @@
 </span><span class="lnt">33
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">synchronized</span> <span class="n">TransactionalRequestResult</span> <span class="nf">beginCommit</span><span class="o">()</span> <span class="o">{</span>
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">synchronized</span> <span class="n">TransactionalRequestResult</span> <span class="nf">beginCommit</span><span class="o">()</span> <span class="o">{</span>
     <span class="n">ensureTransactional</span><span class="o">();</span>
     <span class="n">maybeFailWithError</span><span class="o">();</span>
     <span class="c1">// 更改状态为 COMMITTING_TRANSACTION
@@ -959,7 +959,7 @@
 </div><p>EndTxnHandler 负责处理事务提交或回滚响应，EndTxnHandler的处理逻辑比较简单，它只是调用了 completeTransaction 方法。</p>
 <div class="highlight"><div class="chroma">
 <div class="table-container"><table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -971,7 +971,7 @@
 </span><span class="lnt">10
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-java" data-lang="java"><span class="kd">private</span> <span class="kd">synchronized</span> <span class="kt">void</span> <span class="nf">completeTransaction</span><span class="o">()</span> <span class="o">{</span>
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="kd">private</span> <span class="kd">synchronized</span> <span class="kt">void</span> <span class="nf">completeTransaction</span><span class="o">()</span> <span class="o">{</span>
     <span class="c1">// 更改状态为READY
 </span><span class="c1"></span>    <span class="n">transitionTo</span><span class="o">(</span><span class="n">State</span><span class="o">.</span><span class="na">READY</span><span class="o">);</span>
     <span class="n">lastError</span> <span class="o">=</span> <span class="kc">null</span><span class="o">;</span>
@@ -987,7 +987,7 @@
 <p>服务端的结构会相对复杂一些，这里尽量简单的讲讲大概逻辑。首先介绍下 TransactionStateManager 类，它负责管理事务的元数据，它也提供持久化事务的元数据，和从事务 topic 加载数据的功能。</p>
 <div class="highlight"><div class="chroma">
 <div class="table-container"><table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
@@ -998,7 +998,7 @@
 </span><span class="lnt">9
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-scala" data-lang="scala"><span class="k">class</span> <span class="nc">TransactionStateManager</span><span class="o">(...)</span> <span class="o">{</span>
+<pre tabindex="0" class="chroma"><code class="language-scala" data-lang="scala"><span class="k">class</span> <span class="nc">TransactionStateManager</span><span class="o">(...)</span> <span class="o">{</span>
   <span class="c1">// key值为 partition id，value为 TxnMetadataCacheEntry对象
 </span><span class="c1"></span>  <span class="k">private</span> <span class="k">val</span> <span class="n">transactionMetadataCache</span><span class="k">:</span> <span class="kt">mutable.Map</span><span class="o">[</span><span class="kt">Int</span>, <span class="kt">TxnMetadataCacheEntry</span><span class="o">]</span> <span class="k">=</span> <span class="n">mutable</span><span class="o">.</span><span class="nc">Map</span><span class="o">()</span>
 <span class="o">}</span>
@@ -1012,7 +1012,7 @@
 </div><p>TransactionStateManager 提供了 appendTransactionToLog 方法用于持久化。</p>
 <div class="highlight"><div class="chroma">
 <div class="table-container"><table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -1052,7 +1052,7 @@
 </span><span class="lnt">38
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-scala" data-lang="scala"><span class="k">class</span> <span class="nc">TransactionStateManager</span> <span class="o">{</span>
+<pre tabindex="0" class="chroma"><code class="language-scala" data-lang="scala"><span class="k">class</span> <span class="nc">TransactionStateManager</span> <span class="o">{</span>
     
   <span class="k">def</span> <span class="n">appendTransactionToLog</span><span class="o">(</span><span class="n">transactionalId</span><span class="k">:</span> <span class="kt">String</span><span class="o">,</span>
                              <span class="n">coordinatorEpoch</span><span class="k">:</span> <span class="kt">Int</span><span class="o">,</span>
@@ -1121,7 +1121,7 @@
 <p>handleEndTransaction 方法会稍微复杂一些，因为它需要将这个消息转发给各个分区。</p>
 <div class="highlight"><div class="chroma">
 <div class="table-container"><table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -1183,7 +1183,7 @@
 </span><span class="lnt">60
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-scala" data-lang="scala">  <span class="k">def</span> <span class="n">handleEndTransaction</span><span class="o">(</span><span class="n">transactionalId</span><span class="k">:</span> <span class="kt">String</span><span class="o">,</span>
+<pre tabindex="0" class="chroma"><code class="language-scala" data-lang="scala">  <span class="k">def</span> <span class="n">handleEndTransaction</span><span class="o">(</span><span class="n">transactionalId</span><span class="k">:</span> <span class="kt">String</span><span class="o">,</span>
                            <span class="n">producerId</span><span class="k">:</span> <span class="kt">Long</span><span class="o">,</span>
                            <span class="n">producerEpoch</span><span class="k">:</span> <span class="kt">Short</span><span class="o">,</span>
                            <span class="n">txnMarkerResult</span><span class="k">:</span> <span class="kt">TransactionResult</span><span class="o">,</span>
@@ -1249,7 +1249,7 @@
 <p>这里需要提下延迟任务 DelayedTxnMarker，它负责检查是否收到所有分区的响应。它设置的延迟时间达到365天，所以可以认为次任务几乎不会过期。</p>
 <div class="highlight"><div class="chroma">
 <div class="table-container"><table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -1274,7 +1274,7 @@
 </span><span class="lnt">23
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-scala" data-lang="scala"><span class="k">private</span><span class="o">[</span><span class="kt">transaction</span><span class="o">]</span> <span class="k">class</span> <span class="nc">DelayedTxnMarker</span><span class="o">(</span><span class="n">txnMetadata</span><span class="k">:</span> <span class="kt">TransactionMetadata</span><span class="o">,</span>
+<pre tabindex="0" class="chroma"><code class="language-scala" data-lang="scala"><span class="k">private</span><span class="o">[</span><span class="kt">transaction</span><span class="o">]</span> <span class="k">class</span> <span class="nc">DelayedTxnMarker</span><span class="o">(</span><span class="n">txnMetadata</span><span class="k">:</span> <span class="kt">TransactionMetadata</span><span class="o">,</span>
                                            <span class="n">completionCallback</span><span class="k">:</span> <span class="kt">Errors</span> <span class="o">=&gt;</span> <span class="nc">Unit</span><span class="o">,</span>
                                            <span class="n">lock</span><span class="k">:</span> <span class="kt">Lock</span><span class="o">)</span>
   <span class="k">extends</span> <span class="nc">DelayedOperation</span><span class="o">(</span><span class="nc">TimeUnit</span><span class="o">.</span><span class="nc">DAYS</span><span class="o">.</span><span class="n">toMillis</span><span class="o">(</span><span class="mi">100</span> <span class="o">*</span> <span class="mi">365</span><span class="o">),</span> <span class="nc">Some</span><span class="o">(</span><span class="n">lock</span><span class="o">))</span> <span class="o">{</span>
@@ -1302,7 +1302,7 @@
 </div><p>DelayedTxnMarker 是在 TransactionMarkerChannelManager 的 addTxnMarkersToSend 方法中实例化的，它的 completionCallback 参数，就是定义在 addTxnMarkersToSend 方法里面。</p>
 <div class="highlight"><div class="chroma">
 <div class="table-container"><table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -1332,7 +1332,7 @@
 </span><span class="lnt">28
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-scala" data-lang="scala"><span class="k">def</span> <span class="n">addTxnMarkersToSend</span><span class="o">(</span><span class="n">transactionalId</span><span class="k">:</span> <span class="kt">String</span><span class="o">,</span>
+<pre tabindex="0" class="chroma"><code class="language-scala" data-lang="scala"><span class="k">def</span> <span class="n">addTxnMarkersToSend</span><span class="o">(</span><span class="n">transactionalId</span><span class="k">:</span> <span class="kt">String</span><span class="o">,</span>
                         <span class="n">coordinatorEpoch</span><span class="k">:</span> <span class="kt">Int</span><span class="o">,</span>
                         <span class="n">txnResult</span><span class="k">:</span> <span class="kt">TransactionResult</span><span class="o">,</span>
                         <span class="n">txnMetadata</span><span class="k">:</span> <span class="kt">TransactionMetadata</span><span class="o">,</span>
@@ -1389,9 +1389,9 @@
 
         
     <div class="updated-badge-container">
-        <span title="Updated @ 2021-09-12 11:48:25 CST" style="cursor:help">
+        <span title="Updated @ 2021-10-22 14:44:34 CST" style="cursor:help">
 
-<svg xmlns="http://www.w3.org/2000/svg" width="130" height="20" class="updated-badge"><linearGradient id="b" x2="0" y2="100%"><stop offset="0" stop-color="#bbb" stop-opacity=".1"/><stop offset="1" stop-opacity=".1"/></linearGradient><clipPath id="a"><rect width="130" height="20" rx="3" fill="#fff"/></clipPath><g clip-path="url(#a)"><path class="updated-badge-left" d="M0 0h55v20H0z"/><path class="updated-badge-right" d="M55 0h75v20H55z"/><path fill="url(#b)" d="M0 0h130v20H0z"/></g><g fill="#fff" text-anchor="middle" font-size="110"><text x="285" y="150" fill="#010101" fill-opacity=".3" textLength="450" transform="scale(.1)">updated</text><text x="285" y="140" textLength="450" transform="scale(.1)">updated</text><text x="915" y="150" fill="#010101" fill-opacity=".3" textLength="650" transform="scale(.1)">2021-09-12</text><text x="915" y="140" textLength="650" transform="scale(.1)">2021-09-12</text></g></svg>
+<svg xmlns="http://www.w3.org/2000/svg" width="130" height="20" class="updated-badge"><linearGradient id="b" x2="0" y2="100%"><stop offset="0" stop-color="#bbb" stop-opacity=".1"/><stop offset="1" stop-opacity=".1"/></linearGradient><clipPath id="a"><rect width="130" height="20" rx="3" fill="#fff"/></clipPath><g clip-path="url(#a)"><path class="updated-badge-left" d="M0 0h55v20H0z"/><path class="updated-badge-right" d="M55 0h75v20H55z"/><path fill="url(#b)" d="M0 0h130v20H0z"/></g><g fill="#fff" text-anchor="middle" font-size="110"><text x="285" y="150" fill="#010101" fill-opacity=".3" textLength="450" transform="scale(.1)">updated</text><text x="285" y="140" textLength="450" transform="scale(.1)">updated</text><text x="915" y="150" fill="#010101" fill-opacity=".3" textLength="650" transform="scale(.1)">2021-10-22</text><text x="915" y="140" textLength="650" transform="scale(.1)">2021-10-22</text></g></svg>
         </span></div>
 
 

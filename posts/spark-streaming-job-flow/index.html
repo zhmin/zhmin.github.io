@@ -3,7 +3,7 @@
     <head prefix="og: http://ogp.me/ns# article: http://ogp.me/ns/article#">
     <meta charset="UTF-8" />
 
-    <meta name="generator" content="Hugo 0.79.0" /><meta name="theme-color" content="#fff" />
+    <meta name="generator" content="Hugo 0.88.1" /><meta name="theme-color" content="#fff" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     
     <meta name="format-detection" content="telephone=no, date=no, address=no, email=no" />
@@ -14,11 +14,11 @@
 
     <title>Spark Streaming 运行原理 | 学习笔记</title>
 
-    <link rel="stylesheet" href="/css/meme.min.81031e6b78ad2f1f534002ebb3b658886fea2f25d8a44d296d1466a2fe52f1c1.css"/>
+    <link rel="stylesheet" href="/css/meme.min.2d3e1834af2bc8dda20c7d74aaa1d8134845094441b7a554a5206ccd4b472596.css"/>
 
     
     
-        <script src="/js/meme.min.120d98bb614adc6beb13bf79f943d2cceffd323f4de1544029228c3dca2e9bda.js"></script>
+        <script src="/js/meme.min.800f61672145711eb3e1f29fcfcc3dbe0139dd459259718b611a0390f74703d1.js"></script>
 
     
 
@@ -54,7 +54,7 @@
         "@context": "https://schema.org",
         "@type": "BlogPosting",
         "datePublished": "2019-02-18T21:25:01+00:00",
-        "dateModified": "2021-09-12T11:48:25+08:00",
+        "dateModified": "2021-10-22T14:44:34+08:00",
         "url": "https://zhmin.github.io/posts/spark-streaming-job-flow/",
         "headline": "Spark Streaming 运行原理",
         "description": "Spark Streaming 的运行原理 先来看看spark streaming的一个例子，引用自官网 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 import org.apache.spark._ import org.apache.spark.streaming._ import org.apache.spark.streaming.StreamingContext._ // not necessary since Spark 1.3 // Create a local StreamingContext with two working thread and batch interval of 1 second. // The master requires 2 cores to prevent from a starvation scenario. val conf = new……",
@@ -97,7 +97,7 @@
 <meta property="og:locale" content="zh" /><meta property="og:image" content="https://zhmin.github.io/spark-streaming-dstream.svg" />
 <meta property="og:type" content="article" />
     <meta property="article:published_time" content="2019-02-18T21:25:01&#43;00:00" />
-    <meta property="article:modified_time" content="2021-09-12T11:48:25&#43;08:00" />
+    <meta property="article:modified_time" content="2021-10-22T14:44:34&#43;08:00" />
     
     <meta property="article:section" content="posts" />
 
@@ -239,7 +239,7 @@
 <p>先来看看spark streaming的一个例子，引用自官网</p>
 <div class="highlight"><div class="chroma">
 <div class="table-container"><table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -262,7 +262,7 @@
 </span><span class="lnt">21
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-scala" data-lang="scala"><span class="k">import</span> <span class="nn">org.apache.spark._</span>
+<pre tabindex="0" class="chroma"><code class="language-scala" data-lang="scala"><span class="k">import</span> <span class="nn">org.apache.spark._</span>
 <span class="k">import</span> <span class="nn">org.apache.spark.streaming._</span>
 <span class="k">import</span> <span class="nn">org.apache.spark.streaming.StreamingContext._</span> <span class="c1">// not necessary since Spark 1.3
 </span><span class="c1"></span>
@@ -295,7 +295,7 @@
 <p>ReceiverInputDStream表示数据源流，它的数据存在spark的BlockManager里。 ReceiverInputDStream流会从ReceiverTracker服务中获取存放数据的Block位置，然后根据位置生成BlockRDD。</p>
 <div class="highlight"><div class="chroma">
 <div class="table-container"><table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -361,7 +361,7 @@
 </span><span class="lnt">64
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-scala" data-lang="scala"><span class="k">abstract</span> <span class="k">class</span> <span class="nc">ReceiverInputDStream</span><span class="o">[</span><span class="kt">T:</span> <span class="kt">ClassTag</span><span class="o">](</span><span class="nc">_ssc</span><span class="k">:</span> <span class="kt">StreamingContext</span><span class="o">)</span>
+<pre tabindex="0" class="chroma"><code class="language-scala" data-lang="scala"><span class="k">abstract</span> <span class="k">class</span> <span class="nc">ReceiverInputDStream</span><span class="o">[</span><span class="kt">T:</span> <span class="kt">ClassTag</span><span class="o">](</span><span class="nc">_ssc</span><span class="k">:</span> <span class="kt">StreamingContext</span><span class="o">)</span>
   <span class="k">extends</span> <span class="nc">InputDStream</span><span class="o">[</span><span class="kt">T</span><span class="o">](</span><span class="nc">_ssc</span><span class="o">)</span> <span class="o">{</span>
   
   <span class="k">override</span> <span class="k">def</span> <span class="n">compute</span><span class="o">(</span><span class="n">validTime</span><span class="k">:</span> <span class="kt">Time</span><span class="o">)</span><span class="k">:</span> <span class="kt">Option</span><span class="o">[</span><span class="kt">RDD</span><span class="o">[</span><span class="kt">T</span><span class="o">]]</span> <span class="k">=</span> <span class="o">{</span>
@@ -432,12 +432,12 @@
 <p>当Dsteam调用map后，会返回MappedDStream。</p>
 <div class="highlight"><div class="chroma">
 <div class="table-container"><table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-scala" data-lang="scala"><span class="k">def</span> <span class="n">map</span><span class="o">[</span><span class="kt">U:</span> <span class="kt">ClassTag</span><span class="o">](</span><span class="n">mapFunc</span><span class="k">:</span> <span class="kt">T</span> <span class="o">=&gt;</span> <span class="n">U</span><span class="o">)</span><span class="k">:</span> <span class="kt">DStream</span><span class="o">[</span><span class="kt">U</span><span class="o">]</span> <span class="k">=</span> <span class="n">ssc</span><span class="o">.</span><span class="n">withScope</span> <span class="o">{</span>
+<pre tabindex="0" class="chroma"><code class="language-scala" data-lang="scala"><span class="k">def</span> <span class="n">map</span><span class="o">[</span><span class="kt">U:</span> <span class="kt">ClassTag</span><span class="o">](</span><span class="n">mapFunc</span><span class="k">:</span> <span class="kt">T</span> <span class="o">=&gt;</span> <span class="n">U</span><span class="o">)</span><span class="k">:</span> <span class="kt">DStream</span><span class="o">[</span><span class="kt">U</span><span class="o">]</span> <span class="k">=</span> <span class="n">ssc</span><span class="o">.</span><span class="n">withScope</span> <span class="o">{</span>
   <span class="k">new</span> <span class="nc">MappedDStream</span><span class="o">(</span><span class="k">this</span><span class="o">,</span> <span class="n">context</span><span class="o">.</span><span class="n">sparkContext</span><span class="o">.</span><span class="n">clean</span><span class="o">(</span><span class="n">mapFunc</span><span class="o">))</span>
 <span class="o">}</span>
 </code></pre></td></tr></table></div>
@@ -445,7 +445,7 @@
 </div><p>MappedDStream的compute方法很简单，通过获取父DStream的RDD，然后调用RDD的map方法。</p>
 <div class="highlight"><div class="chroma">
 <div class="table-container"><table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
@@ -456,7 +456,7 @@
 </span><span class="lnt">9
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-scala" data-lang="scala"><span class="k">class</span> <span class="nc">MappedDStream</span><span class="o">[</span><span class="kt">T:</span> <span class="kt">ClassTag</span>, <span class="kt">U:</span> <span class="kt">ClassTag</span><span class="o">]</span> <span class="o">(</span>
+<pre tabindex="0" class="chroma"><code class="language-scala" data-lang="scala"><span class="k">class</span> <span class="nc">MappedDStream</span><span class="o">[</span><span class="kt">T:</span> <span class="kt">ClassTag</span>, <span class="kt">U:</span> <span class="kt">ClassTag</span><span class="o">]</span> <span class="o">(</span>
     <span class="n">parent</span><span class="k">:</span> <span class="kt">DStream</span><span class="o">[</span><span class="kt">T</span><span class="o">],</span>
     <span class="n">mapFunc</span><span class="k">:</span> <span class="kt">T</span> <span class="o">=&gt;</span> <span class="n">U</span>
   <span class="o">)</span> <span class="k">extends</span> <span class="nc">DStream</span><span class="o">[</span><span class="kt">U</span><span class="o">](</span><span class="n">parent</span><span class="o">.</span><span class="n">ssc</span><span class="o">)</span> <span class="o">{</span>
@@ -470,12 +470,12 @@
 </div><p>当Dsteam调用flatMap后，会返回FlatMappedDStream。</p>
 <div class="highlight"><div class="chroma">
 <div class="table-container"><table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-scala" data-lang="scala"><span class="k">def</span> <span class="n">flatMap</span><span class="o">[</span><span class="kt">U:</span> <span class="kt">ClassTag</span><span class="o">](</span><span class="n">flatMapFunc</span><span class="k">:</span> <span class="kt">T</span> <span class="o">=&gt;</span> <span class="nc">TraversableOnce</span><span class="o">[</span><span class="kt">U</span><span class="o">])</span><span class="k">:</span> <span class="kt">DStream</span><span class="o">[</span><span class="kt">U</span><span class="o">]</span> <span class="k">=</span> <span class="n">ssc</span><span class="o">.</span><span class="n">withScope</span> <span class="o">{</span>
+<pre tabindex="0" class="chroma"><code class="language-scala" data-lang="scala"><span class="k">def</span> <span class="n">flatMap</span><span class="o">[</span><span class="kt">U:</span> <span class="kt">ClassTag</span><span class="o">](</span><span class="n">flatMapFunc</span><span class="k">:</span> <span class="kt">T</span> <span class="o">=&gt;</span> <span class="nc">TraversableOnce</span><span class="o">[</span><span class="kt">U</span><span class="o">])</span><span class="k">:</span> <span class="kt">DStream</span><span class="o">[</span><span class="kt">U</span><span class="o">]</span> <span class="k">=</span> <span class="n">ssc</span><span class="o">.</span><span class="n">withScope</span> <span class="o">{</span>
   <span class="k">new</span> <span class="nc">FlatMappedDStream</span><span class="o">(</span><span class="k">this</span><span class="o">,</span> <span class="n">context</span><span class="o">.</span><span class="n">sparkContext</span><span class="o">.</span><span class="n">clean</span><span class="o">(</span><span class="n">flatMapFunc</span><span class="o">))</span>
 <span class="o">}</span>
 </code></pre></td></tr></table></div>
@@ -483,7 +483,7 @@
 </div><p>FlatMappedDStream的compute方法很简单，通过获取父DStream的RDD，然后调用RDD的flatMap方法。</p>
 <div class="highlight"><div class="chroma">
 <div class="table-container"><table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
@@ -494,7 +494,7 @@
 </span><span class="lnt">9
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-scala" data-lang="scala"><span class="k">class</span> <span class="nc">FlatMappedDStream</span><span class="o">[</span><span class="kt">T:</span> <span class="kt">ClassTag</span>, <span class="kt">U:</span> <span class="kt">ClassTag</span><span class="o">](</span>
+<pre tabindex="0" class="chroma"><code class="language-scala" data-lang="scala"><span class="k">class</span> <span class="nc">FlatMappedDStream</span><span class="o">[</span><span class="kt">T:</span> <span class="kt">ClassTag</span>, <span class="kt">U:</span> <span class="kt">ClassTag</span><span class="o">](</span>
     <span class="n">parent</span><span class="k">:</span> <span class="kt">DStream</span><span class="o">[</span><span class="kt">T</span><span class="o">],</span>
     <span class="n">flatMapFunc</span><span class="k">:</span> <span class="kt">T</span> <span class="o">=&gt;</span> <span class="nc">TraversableOnce</span><span class="o">[</span><span class="kt">U</span><span class="o">]</span>
   <span class="o">)</span> <span class="k">extends</span> <span class="nc">DStream</span><span class="o">[</span><span class="kt">U</span><span class="o">](</span><span class="n">parent</span><span class="o">.</span><span class="n">ssc</span><span class="o">)</span> <span class="o">{</span>
@@ -509,7 +509,7 @@
 <p>当Dsteam调用reduceByKey后，会返回ShuffledDStream。Dsteam可以隐式转换PairDStreamFunctions类，reduceByKey的方法定义是在PairDStreamFunctions类。</p>
 <div class="highlight"><div class="chroma">
 <div class="table-container"><table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -541,7 +541,7 @@
 </span><span class="lnt">30
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-scala" data-lang="scala"><span class="k">def</span> <span class="n">reduceByKey</span><span class="o">(</span><span class="n">reduceFunc</span><span class="k">:</span> <span class="o">(</span><span class="kt">V</span><span class="o">,</span> <span class="kt">V</span><span class="o">)</span> <span class="k">=&gt;</span> <span class="n">V</span><span class="o">)</span><span class="k">:</span> <span class="kt">DStream</span><span class="o">[(</span><span class="kt">K</span>, <span class="kt">V</span><span class="o">)]</span> <span class="k">=</span> <span class="n">ssc</span><span class="o">.</span><span class="n">withScope</span> <span class="o">{</span>
+<pre tabindex="0" class="chroma"><code class="language-scala" data-lang="scala"><span class="k">def</span> <span class="n">reduceByKey</span><span class="o">(</span><span class="n">reduceFunc</span><span class="k">:</span> <span class="o">(</span><span class="kt">V</span><span class="o">,</span> <span class="kt">V</span><span class="o">)</span> <span class="k">=&gt;</span> <span class="n">V</span><span class="o">)</span><span class="k">:</span> <span class="kt">DStream</span><span class="o">[(</span><span class="kt">K</span>, <span class="kt">V</span><span class="o">)]</span> <span class="k">=</span> <span class="n">ssc</span><span class="o">.</span><span class="n">withScope</span> <span class="o">{</span>
   <span class="c1">// 使用默认的分区器
 </span><span class="c1"></span>  <span class="n">reduceByKey</span><span class="o">(</span><span class="n">reduceFunc</span><span class="o">,</span> <span class="n">defaultPartitioner</span><span class="o">())</span>
 <span class="o">}</span>
@@ -576,7 +576,7 @@
 </div><p>ShuffledDStream的原理也很简单，它也获取父DStream的RDD，然后调用RDD的combineByKey方法生成新的RDD。</p>
 <div class="highlight"><div class="chroma">
 <div class="table-container"><table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -595,7 +595,7 @@
 </span><span class="lnt">17
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-scala" data-lang="scala"><span class="k">class</span> <span class="nc">ShuffledDStream</span><span class="o">[</span><span class="kt">K:</span> <span class="kt">ClassTag</span>, <span class="kt">V:</span> <span class="kt">ClassTag</span>, <span class="kt">C:</span> <span class="kt">ClassTag</span><span class="o">](</span>
+<pre tabindex="0" class="chroma"><code class="language-scala" data-lang="scala"><span class="k">class</span> <span class="nc">ShuffledDStream</span><span class="o">[</span><span class="kt">K:</span> <span class="kt">ClassTag</span>, <span class="kt">V:</span> <span class="kt">ClassTag</span>, <span class="kt">C:</span> <span class="kt">ClassTag</span><span class="o">](</span>
     <span class="n">parent</span><span class="k">:</span> <span class="kt">DStream</span><span class="o">[(</span><span class="kt">K</span>, <span class="kt">V</span><span class="o">)],</span>
     <span class="n">createCombiner</span><span class="k">:</span> <span class="kt">V</span> <span class="o">=&gt;</span> <span class="n">C</span><span class="o">,</span>
     <span class="n">mergeValue</span><span class="k">:</span> <span class="o">(</span><span class="kt">C</span><span class="o">,</span> <span class="kt">V</span><span class="o">)</span> <span class="k">=&gt;</span> <span class="n">C</span><span class="o">,</span>
@@ -618,7 +618,7 @@
 <p>当Dsteam调用transform后，会返回TransformedDStream。</p>
 <div class="highlight"><div class="chroma">
 <div class="table-container"><table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -636,7 +636,7 @@
 </span><span class="lnt">16
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-scala" data-lang="scala"><span class="k">def</span> <span class="n">transform</span><span class="o">[</span><span class="kt">U:</span> <span class="kt">ClassTag</span><span class="o">](</span><span class="n">transformFunc</span><span class="k">:</span> <span class="kt">RDD</span><span class="o">[</span><span class="kt">T</span><span class="o">]</span> <span class="k">=&gt;</span> <span class="nc">RDD</span><span class="o">[</span><span class="kt">U</span><span class="o">])</span><span class="k">:</span> <span class="kt">DStream</span><span class="o">[</span><span class="kt">U</span><span class="o">]</span> <span class="k">=</span> <span class="n">ssc</span><span class="o">.</span><span class="n">withScope</span> <span class="o">{</span>
+<pre tabindex="0" class="chroma"><code class="language-scala" data-lang="scala"><span class="k">def</span> <span class="n">transform</span><span class="o">[</span><span class="kt">U:</span> <span class="kt">ClassTag</span><span class="o">](</span><span class="n">transformFunc</span><span class="k">:</span> <span class="kt">RDD</span><span class="o">[</span><span class="kt">T</span><span class="o">]</span> <span class="k">=&gt;</span> <span class="nc">RDD</span><span class="o">[</span><span class="kt">U</span><span class="o">])</span><span class="k">:</span> <span class="kt">DStream</span><span class="o">[</span><span class="kt">U</span><span class="o">]</span> <span class="k">=</span> <span class="n">ssc</span><span class="o">.</span><span class="n">withScope</span> <span class="o">{</span>
   <span class="k">val</span> <span class="n">cleanedF</span> <span class="k">=</span> <span class="n">context</span><span class="o">.</span><span class="n">sparkContext</span><span class="o">.</span><span class="n">clean</span><span class="o">(</span><span class="n">transformFunc</span><span class="o">,</span> <span class="kc">false</span><span class="o">)</span>
   <span class="c1">// 封装transformFunc函数
 </span><span class="c1"></span>  <span class="n">transform</span><span class="o">((</span><span class="n">r</span><span class="k">:</span> <span class="kt">RDD</span><span class="o">[</span><span class="kt">T</span><span class="o">],</span> <span class="k">_:</span> <span class="kt">Time</span><span class="o">)</span> <span class="k">=&gt;</span> <span class="n">cleanedF</span><span class="o">(</span><span class="n">r</span><span class="o">))</span>
@@ -657,7 +657,7 @@
 </div><p>继续看TransformedDStream的源码</p>
 <div class="highlight"><div class="chroma">
 <div class="table-container"><table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -679,7 +679,7 @@
 </span><span class="lnt">20
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-scala" data-lang="scala"><span class="k">class</span> <span class="nc">TransformedDStream</span><span class="o">[</span><span class="kt">U:</span> <span class="kt">ClassTag</span><span class="o">]</span> <span class="o">(</span>
+<pre tabindex="0" class="chroma"><code class="language-scala" data-lang="scala"><span class="k">class</span> <span class="nc">TransformedDStream</span><span class="o">[</span><span class="kt">U:</span> <span class="kt">ClassTag</span><span class="o">]</span> <span class="o">(</span>
     <span class="n">parents</span><span class="k">:</span> <span class="kt">Seq</span><span class="o">[</span><span class="kt">DStream</span><span class="o">[</span><span class="k">_</span><span class="o">]],</span>
     <span class="n">transformFunc</span><span class="k">:</span> <span class="o">(</span><span class="kt">Seq</span><span class="o">[</span><span class="kt">RDD</span><span class="o">[</span><span class="k">_</span><span class="o">]],</span> <span class="nc">Time</span><span class="o">)</span> <span class="k">=&gt;</span> <span class="nc">RDD</span><span class="o">[</span><span class="kt">U</span><span class="o">]</span>
   <span class="o">)</span> <span class="k">extends</span> <span class="nc">DStream</span><span class="o">[</span><span class="kt">U</span><span class="o">](</span><span class="n">parents</span><span class="o">.</span><span class="n">head</span><span class="o">.</span><span class="n">ssc</span><span class="o">)</span> <span class="o">{</span>
@@ -705,7 +705,7 @@
 <p>当触发action操作时，都会调用DStream的foreach方法，生成ForEachDStream。以print方法为例</p>
 <div class="highlight"><div class="chroma">
 <div class="table-container"><table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -733,7 +733,7 @@
 </span><span class="lnt">26
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-scala" data-lang="scala"><span class="k">def</span> <span class="n">print</span><span class="o">(</span><span class="n">num</span><span class="k">:</span> <span class="kt">Int</span><span class="o">)</span><span class="k">:</span> <span class="kt">Unit</span> <span class="o">=</span> <span class="n">ssc</span><span class="o">.</span><span class="n">withScope</span> <span class="o">{</span>
+<pre tabindex="0" class="chroma"><code class="language-scala" data-lang="scala"><span class="k">def</span> <span class="n">print</span><span class="o">(</span><span class="n">num</span><span class="k">:</span> <span class="kt">Int</span><span class="o">)</span><span class="k">:</span> <span class="kt">Unit</span> <span class="o">=</span> <span class="n">ssc</span><span class="o">.</span><span class="n">withScope</span> <span class="o">{</span>
   <span class="c1">// 定义foreachFunc函数， 参数为RDD和Time
 </span><span class="c1"></span>  <span class="k">def</span> <span class="n">foreachFunc</span><span class="k">:</span> <span class="o">(</span><span class="kt">RDD</span><span class="o">[</span><span class="kt">T</span><span class="o">],</span> <span class="nc">Time</span><span class="o">)</span> <span class="k">=&gt;</span> <span class="nc">Unit</span> <span class="k">=</span> <span class="o">{</span>
     <span class="o">(</span><span class="n">rdd</span><span class="k">:</span> <span class="kt">RDD</span><span class="o">[</span><span class="kt">T</span><span class="o">],</span> <span class="n">time</span><span class="k">:</span> <span class="kt">Time</span><span class="o">)</span> <span class="k">=&gt;</span> <span class="o">{</span>
@@ -764,7 +764,7 @@
 </div><p>ForEachDStream是用来数据输出的，它的compute方法为空，但是它定义了generateJob方法，生成Job提交给spark运行。</p>
 <div class="highlight"><div class="chroma">
 <div class="table-container"><table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -786,7 +786,7 @@
 </span><span class="lnt">20
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-scala" data-lang="scala"><span class="k">class</span> <span class="nc">ForEachDStream</span><span class="o">[</span><span class="kt">T:</span> <span class="kt">ClassTag</span><span class="o">]</span> <span class="o">(</span>
+<pre tabindex="0" class="chroma"><code class="language-scala" data-lang="scala"><span class="k">class</span> <span class="nc">ForEachDStream</span><span class="o">[</span><span class="kt">T:</span> <span class="kt">ClassTag</span><span class="o">]</span> <span class="o">(</span>
     <span class="n">parent</span><span class="k">:</span> <span class="kt">DStream</span><span class="o">[</span><span class="kt">T</span><span class="o">],</span>
     <span class="n">foreachFunc</span><span class="k">:</span> <span class="o">(</span><span class="kt">RDD</span><span class="o">[</span><span class="kt">T</span><span class="o">],</span> <span class="nc">Time</span><span class="o">)</span> <span class="k">=&gt;</span> <span class="nc">Unit</span><span class="o">,</span>
     <span class="n">displayInnerRDDOps</span><span class="k">:</span> <span class="kt">Boolean</span>
@@ -816,7 +816,7 @@
 <p>EventLoop用于线程之间的通信。它包含了一个任务队列，和一个处理任务的线程。子类需要继承onReceive方法，实现任务的处理。</p>
 <div class="highlight"><div class="chroma">
 <div class="table-container"><table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -855,7 +855,7 @@
 </span><span class="lnt">37
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-scala" data-lang="scala"><span class="k">private</span><span class="o">[</span><span class="kt">spark</span><span class="o">]</span> <span class="k">abstract</span> <span class="k">class</span> <span class="nc">EventLoop</span><span class="o">[</span><span class="kt">E</span><span class="o">](</span><span class="n">name</span><span class="k">:</span> <span class="kt">String</span><span class="o">)</span> <span class="k">extends</span> <span class="nc">Logging</span> <span class="o">{</span>
+<pre tabindex="0" class="chroma"><code class="language-scala" data-lang="scala"><span class="k">private</span><span class="o">[</span><span class="kt">spark</span><span class="o">]</span> <span class="k">abstract</span> <span class="k">class</span> <span class="nc">EventLoop</span><span class="o">[</span><span class="kt">E</span><span class="o">](</span><span class="n">name</span><span class="k">:</span> <span class="kt">String</span><span class="o">)</span> <span class="k">extends</span> <span class="nc">Logging</span> <span class="o">{</span>
   <span class="c1">// 任务队列
 </span><span class="c1"></span>  <span class="k">private</span> <span class="k">val</span> <span class="n">eventQueue</span><span class="k">:</span> <span class="kt">BlockingQueue</span><span class="o">[</span><span class="kt">E</span><span class="o">]</span> <span class="k">=</span> <span class="k">new</span> <span class="nc">LinkedBlockingDeque</span><span class="o">[</span><span class="kt">E</span><span class="o">]()</span>
   
@@ -898,7 +898,7 @@
 <p>RecurringTimer负责定时回调，它有一个后台线程，定时检查时间。每隔一段时间，就会回调。</p>
 <div class="highlight"><div class="chroma">
 <div class="table-container"><table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -932,7 +932,7 @@
 </span><span class="lnt">32
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-scala" data-lang="scala"><span class="k">class</span> <span class="nc">RecurringTimer</span><span class="o">(</span><span class="n">clock</span><span class="k">:</span> <span class="kt">Clock</span><span class="o">,</span> <span class="n">period</span><span class="k">:</span> <span class="kt">Long</span><span class="o">,</span> <span class="n">callback</span><span class="k">:</span> <span class="o">(</span><span class="kt">Long</span><span class="o">)</span> <span class="o">=&gt;</span> <span class="nc">Unit</span><span class="o">,</span> <span class="n">name</span><span class="k">:</span> <span class="kt">String</span><span class="o">)</span>
+<pre tabindex="0" class="chroma"><code class="language-scala" data-lang="scala"><span class="k">class</span> <span class="nc">RecurringTimer</span><span class="o">(</span><span class="n">clock</span><span class="k">:</span> <span class="kt">Clock</span><span class="o">,</span> <span class="n">period</span><span class="k">:</span> <span class="kt">Long</span><span class="o">,</span> <span class="n">callback</span><span class="k">:</span> <span class="o">(</span><span class="kt">Long</span><span class="o">)</span> <span class="o">=&gt;</span> <span class="nc">Unit</span><span class="o">,</span> <span class="n">name</span><span class="k">:</span> <span class="kt">String</span><span class="o">)</span>
   <span class="k">extends</span> <span class="nc">Logging</span> <span class="o">{</span>
   <span class="c1">// 定时线程
 </span><span class="c1"></span>  <span class="k">private</span> <span class="k">val</span> <span class="n">thread</span> <span class="k">=</span> <span class="k">new</span> <span class="nc">Thread</span><span class="o">(</span><span class="s">&#34;RecurringTimer - &#34;</span> <span class="o">+</span> <span class="n">name</span><span class="o">)</span> <span class="o">{</span>
@@ -970,7 +970,7 @@
 <p>JobGenerator类，它有一个EventLoop实例，处理JobGeneratorEvent事件。</p>
 <div class="highlight"><div class="chroma">
 <div class="table-container"><table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -989,7 +989,7 @@
 </span><span class="lnt">17
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-scala" data-lang="scala"><span class="k">class</span> <span class="nc">JobGenerator</span><span class="o">(</span><span class="n">jobScheduler</span><span class="k">:</span> <span class="kt">JobScheduler</span><span class="o">)</span> <span class="k">extends</span> <span class="nc">Logging</span> <span class="o">{</span>
+<pre tabindex="0" class="chroma"><code class="language-scala" data-lang="scala"><span class="k">class</span> <span class="nc">JobGenerator</span><span class="o">(</span><span class="n">jobScheduler</span><span class="k">:</span> <span class="kt">JobScheduler</span><span class="o">)</span> <span class="k">extends</span> <span class="nc">Logging</span> <span class="o">{</span>
   <span class="c1">// 事件处理器  
 </span><span class="c1"></span>  <span class="k">private</span> <span class="k">var</span> <span class="n">eventLoop</span><span class="k">:</span> <span class="kt">EventLoop</span><span class="o">[</span><span class="kt">JobGeneratorEvent</span><span class="o">]</span> <span class="k">=</span> <span class="kc">null</span>
   
@@ -1011,7 +1011,7 @@
 </div><p>JobGenerator类还有一个线程，定时发送GenerateJobs事件。</p>
 <div class="highlight"><div class="chroma">
 <div class="table-container"><table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
@@ -1019,7 +1019,7 @@
 </span><span class="lnt">6
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-scala" data-lang="scala"><span class="k">class</span> <span class="nc">JobGenerator</span><span class="o">(</span><span class="n">jobScheduler</span><span class="k">:</span> <span class="kt">JobScheduler</span><span class="o">)</span> <span class="k">extends</span> <span class="nc">Logging</span> <span class="o">{</span>
+<pre tabindex="0" class="chroma"><code class="language-scala" data-lang="scala"><span class="k">class</span> <span class="nc">JobGenerator</span><span class="o">(</span><span class="n">jobScheduler</span><span class="k">:</span> <span class="kt">JobScheduler</span><span class="o">)</span> <span class="k">extends</span> <span class="nc">Logging</span> <span class="o">{</span>
   <span class="c1">// 实例化RecurringTimer，定时向eventLoop发送GenerateJobs事件
 </span><span class="c1"></span>  <span class="c1">// 时间间隔在StreamingContext初始化时指定
 </span><span class="c1"></span>  <span class="k">private</span> <span class="k">val</span> <span class="n">timer</span> <span class="k">=</span> <span class="k">new</span> <span class="nc">RecurringTimer</span><span class="o">(</span><span class="n">clock</span><span class="o">,</span> <span class="n">ssc</span><span class="o">.</span><span class="n">graph</span><span class="o">.</span><span class="n">batchDuration</span><span class="o">.</span><span class="n">milliseconds</span><span class="o">,</span>
@@ -1030,7 +1030,7 @@
 </div><p>JobGenerator当接收到GenerateJobs事件后，就会调用generateJobs方法处理。继续看generateJobs方法，是如何生成Job</p>
 <div class="highlight"><div class="chroma">
 <div class="table-container"><table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -1051,7 +1051,7 @@
 </span><span class="lnt">19
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-scala" data-lang="scala"><span class="k">private</span> <span class="k">def</span> <span class="n">generateJobs</span><span class="o">(</span><span class="n">time</span><span class="k">:</span> <span class="kt">Time</span><span class="o">)</span> <span class="o">{</span>
+<pre tabindex="0" class="chroma"><code class="language-scala" data-lang="scala"><span class="k">private</span> <span class="k">def</span> <span class="n">generateJobs</span><span class="o">(</span><span class="n">time</span><span class="k">:</span> <span class="kt">Time</span><span class="o">)</span> <span class="o">{</span>
   <span class="nc">Try</span> <span class="o">{</span>
     <span class="c1">// 通知receiverTracker生成此次Job的数据批次
 </span><span class="c1"></span>    <span class="n">jobScheduler</span><span class="o">.</span><span class="n">receiverTracker</span><span class="o">.</span><span class="n">allocateBlocksToBatch</span><span class="o">(</span><span class="n">time</span><span class="o">)</span> <span class="c1">// allocate received blocks to batch
@@ -1075,7 +1075,7 @@
 </div><p>上面使用了DStreamGraph生成Job列表。DStreamGraph包含了所有的输出流，它会为每个输出流都生成一个Job</p>
 <div class="highlight"><div class="chroma">
 <div class="table-container"><table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -1095,7 +1095,7 @@
 </span><span class="lnt">18
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-scala" data-lang="scala"><span class="k">final</span> <span class="k">private</span><span class="o">[</span><span class="kt">streaming</span><span class="o">]</span> <span class="k">class</span> <span class="nc">DStreamGraph</span> <span class="k">extends</span> <span class="nc">Serializable</span> <span class="k">with</span> <span class="nc">Logging</span> <span class="o">{</span>
+<pre tabindex="0" class="chroma"><code class="language-scala" data-lang="scala"><span class="k">final</span> <span class="k">private</span><span class="o">[</span><span class="kt">streaming</span><span class="o">]</span> <span class="k">class</span> <span class="nc">DStreamGraph</span> <span class="k">extends</span> <span class="nc">Serializable</span> <span class="k">with</span> <span class="nc">Logging</span> <span class="o">{</span>
   <span class="k">private</span> <span class="k">val</span> <span class="n">outputStreams</span> <span class="k">=</span> <span class="k">new</span> <span class="nc">ArrayBuffer</span><span class="o">[</span><span class="kt">DStream</span><span class="o">[</span><span class="k">_</span><span class="o">]]()</span>
 
   <span class="k">def</span> <span class="n">generateJobs</span><span class="o">(</span><span class="n">time</span><span class="k">:</span> <span class="kt">Time</span><span class="o">)</span><span class="k">:</span> <span class="kt">Seq</span><span class="o">[</span><span class="kt">Job</span><span class="o">]</span> <span class="k">=</span> <span class="o">{</span>
@@ -1121,7 +1121,7 @@
 <p>JobScheduler包含了JobSet的集合和一个线程池负责提交Job。</p>
 <div class="highlight"><div class="chroma">
 <div class="table-container"><table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -1172,7 +1172,7 @@
 </span><span class="lnt">49
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-scala" data-lang="scala"><span class="k">class</span> <span class="nc">JobScheduler</span><span class="o">(</span><span class="k">val</span> <span class="n">ssc</span><span class="k">:</span> <span class="kt">StreamingContext</span><span class="o">)</span> <span class="k">extends</span> <span class="nc">Logging</span> <span class="o">{</span>
+<pre tabindex="0" class="chroma"><code class="language-scala" data-lang="scala"><span class="k">class</span> <span class="nc">JobScheduler</span><span class="o">(</span><span class="k">val</span> <span class="n">ssc</span><span class="k">:</span> <span class="kt">StreamingContext</span><span class="o">)</span> <span class="k">extends</span> <span class="nc">Logging</span> <span class="o">{</span>
   <span class="c1">// JobSet集合，Key为该JobSet的批次时间
 </span><span class="c1"></span>  <span class="k">private</span> <span class="k">val</span> <span class="n">jobSets</span><span class="k">:</span> <span class="kt">java.util.Map</span><span class="o">[</span><span class="kt">Time</span>, <span class="kt">JobSet</span><span class="o">]</span> <span class="k">=</span> <span class="k">new</span> <span class="nc">ConcurrentHashMap</span><span class="o">[</span><span class="kt">Time</span>, <span class="kt">JobSet</span><span class="o">]</span>
   <span class="c1">// 后台线程池，负责提交Job
@@ -1226,7 +1226,7 @@
 </div><p>它还包含了一个事件处理器，负责处理JobSchedulerEvent事件，主要负责更新JobSet的状态。</p>
 <div class="highlight"><div class="chroma">
 <div class="table-container"><table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -1295,7 +1295,7 @@
 </span><span class="lnt">67
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-scala" data-lang="scala"><span class="k">class</span> <span class="nc">JobScheduler</span><span class="o">(</span><span class="k">val</span> <span class="n">ssc</span><span class="k">:</span> <span class="kt">StreamingContext</span><span class="o">)</span> <span class="k">extends</span> <span class="nc">Logging</span> <span class="o">{</span>
+<pre tabindex="0" class="chroma"><code class="language-scala" data-lang="scala"><span class="k">class</span> <span class="nc">JobScheduler</span><span class="o">(</span><span class="k">val</span> <span class="n">ssc</span><span class="k">:</span> <span class="kt">StreamingContext</span><span class="o">)</span> <span class="k">extends</span> <span class="nc">Logging</span> <span class="o">{</span>
 
   <span class="k">private</span> <span class="k">var</span> <span class="n">eventLoop</span><span class="k">:</span> <span class="kt">EventLoop</span><span class="o">[</span><span class="kt">JobSchedulerEvent</span><span class="o">]</span> <span class="k">=</span> <span class="kc">null</span>
 
@@ -1391,9 +1391,9 @@
 
         
     <div class="updated-badge-container">
-        <span title="Updated @ 2021-09-12 11:48:25 CST" style="cursor:help">
+        <span title="Updated @ 2021-10-22 14:44:34 CST" style="cursor:help">
 
-<svg xmlns="http://www.w3.org/2000/svg" width="130" height="20" class="updated-badge"><linearGradient id="b" x2="0" y2="100%"><stop offset="0" stop-color="#bbb" stop-opacity=".1"/><stop offset="1" stop-opacity=".1"/></linearGradient><clipPath id="a"><rect width="130" height="20" rx="3" fill="#fff"/></clipPath><g clip-path="url(#a)"><path class="updated-badge-left" d="M0 0h55v20H0z"/><path class="updated-badge-right" d="M55 0h75v20H55z"/><path fill="url(#b)" d="M0 0h130v20H0z"/></g><g fill="#fff" text-anchor="middle" font-size="110"><text x="285" y="150" fill="#010101" fill-opacity=".3" textLength="450" transform="scale(.1)">updated</text><text x="285" y="140" textLength="450" transform="scale(.1)">updated</text><text x="915" y="150" fill="#010101" fill-opacity=".3" textLength="650" transform="scale(.1)">2021-09-12</text><text x="915" y="140" textLength="650" transform="scale(.1)">2021-09-12</text></g></svg>
+<svg xmlns="http://www.w3.org/2000/svg" width="130" height="20" class="updated-badge"><linearGradient id="b" x2="0" y2="100%"><stop offset="0" stop-color="#bbb" stop-opacity=".1"/><stop offset="1" stop-opacity=".1"/></linearGradient><clipPath id="a"><rect width="130" height="20" rx="3" fill="#fff"/></clipPath><g clip-path="url(#a)"><path class="updated-badge-left" d="M0 0h55v20H0z"/><path class="updated-badge-right" d="M55 0h75v20H55z"/><path fill="url(#b)" d="M0 0h130v20H0z"/></g><g fill="#fff" text-anchor="middle" font-size="110"><text x="285" y="150" fill="#010101" fill-opacity=".3" textLength="450" transform="scale(.1)">updated</text><text x="285" y="140" textLength="450" transform="scale(.1)">updated</text><text x="915" y="150" fill="#010101" fill-opacity=".3" textLength="650" transform="scale(.1)">2021-10-22</text><text x="915" y="140" textLength="650" transform="scale(.1)">2021-10-22</text></g></svg>
         </span></div>
 
 

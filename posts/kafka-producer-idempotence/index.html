@@ -3,7 +3,7 @@
     <head prefix="og: http://ogp.me/ns# article: http://ogp.me/ns/article#">
     <meta charset="UTF-8" />
 
-    <meta name="generator" content="Hugo 0.79.0" /><meta name="theme-color" content="#fff" />
+    <meta name="generator" content="Hugo 0.88.1" /><meta name="theme-color" content="#fff" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     
     <meta name="format-detection" content="telephone=no, date=no, address=no, email=no" />
@@ -14,11 +14,11 @@
 
     <title>Kafka Producer 幂等性原理 | 学习笔记</title>
 
-    <link rel="stylesheet" href="/css/meme.min.81031e6b78ad2f1f534002ebb3b658886fea2f25d8a44d296d1466a2fe52f1c1.css"/>
+    <link rel="stylesheet" href="/css/meme.min.2d3e1834af2bc8dda20c7d74aaa1d8134845094441b7a554a5206ccd4b472596.css"/>
 
     
     
-        <script src="/js/meme.min.120d98bb614adc6beb13bf79f943d2cceffd323f4de1544029228c3dca2e9bda.js"></script>
+        <script src="/js/meme.min.800f61672145711eb3e1f29fcfcc3dbe0139dd459259718b611a0390f74703d1.js"></script>
 
     
 
@@ -54,7 +54,7 @@
         "@context": "https://schema.org",
         "@type": "BlogPosting",
         "datePublished": "2019-04-16T21:17:53+00:00",
-        "dateModified": "2021-09-12T11:48:25+08:00",
+        "dateModified": "2021-10-22T14:44:34+08:00",
         "url": "https://zhmin.github.io/posts/kafka-producer-idempotence/",
         "headline": "Kafka Producer 幂等性原理",
         "description": "Kafka Producer 幂等性原理 幂等性是指发送同样的请求，对系统资源的影响是一致的。结合 Kafka Producer，是指在多次发送同样的消息，Kafka做到发送消息的不丢失和不重复。实现幂等性服务，需要客户端和服务端的相互配合……",
@@ -97,7 +97,7 @@
 <meta property="og:locale" content="zh" /><meta property="og:image" content="https://zhmin.github.io/icons/apple-touch-icon.png" />
     <meta property="og:type" content="article" />
     <meta property="article:published_time" content="2019-04-16T21:17:53&#43;00:00" />
-    <meta property="article:modified_time" content="2021-09-12T11:48:25&#43;08:00" />
+    <meta property="article:modified_time" content="2021-10-22T14:44:34&#43;08:00" />
     
     <meta property="article:section" content="posts" />
 
@@ -249,7 +249,7 @@
 <p>因为客户端的每次请求，都需要服务端的确认，所以KafkaProducer在开启幂等性后，需要设置 ack。</p>
 <div class="highlight"><div class="chroma">
 <div class="table-container"><table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -279,7 +279,7 @@
 </span><span class="lnt">28
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">KafkaProducer</span><span class="o">&lt;</span><span class="n">K</span><span class="o">,</span> <span class="n">V</span><span class="o">&gt;</span> <span class="kd">implements</span> <span class="n">Producer</span><span class="o">&lt;</span><span class="n">K</span><span class="o">,</span> <span class="n">V</span><span class="o">&gt;</span> <span class="o">{</span>
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">KafkaProducer</span><span class="o">&lt;</span><span class="n">K</span><span class="o">,</span> <span class="n">V</span><span class="o">&gt;</span> <span class="kd">implements</span> <span class="n">Producer</span><span class="o">&lt;</span><span class="n">K</span><span class="o">,</span> <span class="n">V</span><span class="o">&gt;</span> <span class="o">{</span>
 
     <span class="kd">private</span> <span class="kd">static</span> <span class="kt">int</span> <span class="nf">configureInflightRequests</span><span class="o">(</span><span class="n">ProducerConfig</span> <span class="n">config</span><span class="o">,</span> <span class="kt">boolean</span> <span class="n">idempotenceEnabled</span><span class="o">)</span> <span class="o">{</span>
         <span class="k">if</span> <span class="o">(</span><span class="n">idempotenceEnabled</span> <span class="o">&amp;&amp;</span> <span class="n">5</span> <span class="o">&lt;</span> <span class="n">config</span><span class="o">.</span><span class="na">getInt</span><span class="o">(</span><span class="n">ProducerConfig</span><span class="o">.</span><span class="na">MAX_IN_FLIGHT_REQUESTS_PER_CONNECTION</span><span class="o">))</span> <span class="o">{</span>
@@ -313,7 +313,7 @@
 <p>如果Producer开启了幂等性，那么Sender在发送消息之前，都会去检查是否已经获取到了 produce_id。如果没有，会向服务端发送请求，然后保存在TransactionManager类里。</p>
 <div class="highlight"><div class="chroma">
 <div class="table-container"><table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -370,7 +370,7 @@
 </span><span class="lnt">55
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">Sender</span> <span class="kd">implements</span> <span class="n">Runnable</span> <span class="o">{</span>
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">Sender</span> <span class="kd">implements</span> <span class="n">Runnable</span> <span class="o">{</span>
 
     <span class="kd">private</span> <span class="kt">void</span> <span class="nf">maybeWaitForProducerId</span><span class="o">()</span> <span class="o">{</span>
         <span class="c1">// 判断是否获取了produce_id
@@ -432,7 +432,7 @@
 <p>当Sender从RecordAccumulator中拉取消息时，会设置produce_id 和 baseSequence两个字段。</p>
 <div class="highlight"><div class="chroma">
 <div class="table-container"><table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -516,7 +516,7 @@
 </span><span class="lnt">82
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">final</span> <span class="kd">class</span> <span class="nc">RecordAccumulator</span> <span class="o">{</span>
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">final</span> <span class="kd">class</span> <span class="nc">RecordAccumulator</span> <span class="o">{</span>
     
     <span class="kd">public</span> <span class="n">Map</span><span class="o">&lt;</span><span class="n">Integer</span><span class="o">,</span> <span class="n">List</span><span class="o">&lt;</span><span class="n">ProducerBatch</span><span class="o">&gt;&gt;</span> <span class="nf">drain</span><span class="o">(</span><span class="n">Cluster</span> <span class="n">cluster</span><span class="o">,</span> <span class="n">Set</span><span class="o">&lt;</span><span class="n">Node</span><span class="o">&gt;</span> <span class="n">nodes</span><span class="o">,</span> <span class="kt">int</span> <span class="n">maxSize</span><span class="o">,</span> <span class="kt">long</span> <span class="n">now</span><span class="o">)</span> <span class="o">{</span>
         <span class="k">if</span> <span class="o">(</span><span class="n">nodes</span><span class="o">.</span><span class="na">isEmpty</span><span class="o">())</span>
@@ -603,7 +603,7 @@
 </div><p>从上面可以看到，TransactionManager负责为每个发送的消息batch，都会生成序列号。每个分区都有独立的序列号。</p>
 <div class="highlight"><div class="chroma">
 <div class="table-container"><table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -629,7 +629,7 @@
 </span><span class="lnt">24
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">TransactionManager</span> <span class="o">{</span>
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">TransactionManager</span> <span class="o">{</span>
     <span class="c1">// 为每个分区，维护一个消息序列号
 </span><span class="c1"></span>    <span class="kd">private</span> <span class="kd">final</span> <span class="n">Map</span><span class="o">&lt;</span><span class="n">TopicPartition</span><span class="o">,</span> <span class="n">Integer</span><span class="o">&gt;</span> <span class="n">nextSequence</span><span class="o">;</span>
 
@@ -659,7 +659,7 @@
 <p>Kafka服务端接收到请求后，会调用ReplicaManager的方法处理。ReplicaManager最后通过Log类，检测请求的有效性，然后存储起来。Log类的 analyzeAndValidateProducerState 方法，负责检测消息的序列号是否有效。</p>
 <div class="highlight"><div class="chroma">
 <div class="table-container"><table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -699,7 +699,7 @@
 </span><span class="lnt">38
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-scala" data-lang="scala"><span class="k">class</span> <span class="nc">Log</span><span class="o">(...)</span> <span class="o">{</span>
+<pre tabindex="0" class="chroma"><code class="language-scala" data-lang="scala"><span class="k">class</span> <span class="nc">Log</span><span class="o">(...)</span> <span class="o">{</span>
     
   <span class="k">private</span> <span class="k">def</span> <span class="n">analyzeAndValidateProducerState</span><span class="o">(</span><span class="n">records</span><span class="k">:</span> <span class="kt">MemoryRecords</span><span class="o">,</span> <span class="n">isFromClient</span><span class="k">:</span> <span class="kt">Boolean</span><span class="o">)</span><span class="k">:</span>
   <span class="o">(</span><span class="kt">mutable.Map</span><span class="o">[</span><span class="kt">Long</span>, <span class="kt">ProducerAppendInfo</span><span class="o">],</span> <span class="nc">List</span><span class="o">[</span><span class="kt">CompletedTxn</span><span class="o">],</span> <span class="nc">Option</span><span class="o">[</span><span class="kt">BatchMetadata</span><span class="o">])</span> <span class="k">=</span> <span class="o">{</span>
@@ -742,7 +742,7 @@
 </div><p>ProducerStateManager保存所有producer最近添加的消息batch。一个ProducerStateManager只负责管理一个分区的producer信息。</p>
 <div class="highlight"><div class="chroma">
 <div class="table-container"><table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -770,7 +770,7 @@
 </span><span class="lnt">26
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-scala" data-lang="scala"><span class="k">class</span> <span class="nc">ProducerStateManager</span><span class="o">(</span><span class="k">val</span> <span class="n">topicPartition</span><span class="k">:</span> <span class="kt">TopicPartition</span><span class="o">,</span>   
+<pre tabindex="0" class="chroma"><code class="language-scala" data-lang="scala"><span class="k">class</span> <span class="nc">ProducerStateManager</span><span class="o">(</span><span class="k">val</span> <span class="n">topicPartition</span><span class="k">:</span> <span class="kt">TopicPartition</span><span class="o">,</span>   
                            <span class="nd">@volatile</span> <span class="k">var</span> <span class="n">logDir</span><span class="k">:</span> <span class="kt">File</span><span class="o">,</span>
                            <span class="k">val</span> <span class="n">maxProducerIdExpirationMs</span><span class="k">:</span> <span class="kt">Int</span> <span class="o">=</span> <span class="mi">60</span> <span class="o">*</span> <span class="mi">60</span> <span class="o">*</span> <span class="mi">1000</span><span class="o">)</span> <span class="k">extends</span> <span class="nc">Logging</span> <span class="o">{</span>
   <span class="c1">// Key为produce_id，Value为对应的信息，由ProducerStateEntry类表示
@@ -802,7 +802,7 @@
 <p>注意这里只是包含了batch的元数据。消息batch的元数据包含，第一条消息和最后一条消息的序列号。</p>
 <div class="highlight"><div class="chroma">
 <div class="table-container"><table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -834,7 +834,7 @@
 </span><span class="lnt">30
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-scala" data-lang="scala"><span class="k">private</span><span class="o">[</span><span class="kt">log</span><span class="o">]</span> <span class="k">object</span> <span class="nc">ProducerStateEntry</span> <span class="o">{</span>
+<pre tabindex="0" class="chroma"><code class="language-scala" data-lang="scala"><span class="k">private</span><span class="o">[</span><span class="kt">log</span><span class="o">]</span> <span class="k">object</span> <span class="nc">ProducerStateEntry</span> <span class="o">{</span>
   <span class="c1">// 最大保存batch的数目
 </span><span class="c1"></span>  <span class="k">private</span><span class="o">[</span><span class="kt">log</span><span class="o">]</span> <span class="k">val</span> <span class="nc">NumBatchesToRetain</span> <span class="k">=</span> <span class="mi">5</span>
   <span class="k">def</span> <span class="n">empty</span><span class="o">(</span><span class="n">producerId</span><span class="k">:</span> <span class="kt">Long</span><span class="o">)</span> <span class="k">=</span> <span class="k">new</span> <span class="nc">ProducerStateEntry</span><span class="o">(</span><span class="n">producerId</span><span class="o">,</span> <span class="n">mutable</span><span class="o">.</span><span class="nc">Queue</span><span class="o">[</span><span class="kt">BatchMetadata</span><span class="o">](),</span> <span class="nc">RecordBatch</span><span class="o">.</span><span class="nc">NO_PRODUCER_EPOCH</span><span class="o">,</span> <span class="o">-</span><span class="mi">1</span><span class="o">,</span> <span class="nc">None</span><span class="o">)</span>
@@ -880,7 +880,7 @@
 <p>ProducerAppendInfo会初始化一个新的ProducerStateEntry，新添加的消息batch，都会存到这个新的里面。</p>
 <div class="highlight"><div class="chroma">
 <div class="table-container"><table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -945,7 +945,7 @@
 </span><span class="lnt">63
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-scala" data-lang="scala"><span class="k">private</span><span class="o">[</span><span class="kt">log</span><span class="o">]</span> <span class="k">class</span> <span class="nc">ProducerAppendInfo</span><span class="o">(</span><span class="k">val</span> <span class="n">producerId</span><span class="k">:</span> <span class="kt">Long</span><span class="o">,</span>
+<pre tabindex="0" class="chroma"><code class="language-scala" data-lang="scala"><span class="k">private</span><span class="o">[</span><span class="kt">log</span><span class="o">]</span> <span class="k">class</span> <span class="nc">ProducerAppendInfo</span><span class="o">(</span><span class="k">val</span> <span class="n">producerId</span><span class="k">:</span> <span class="kt">Long</span><span class="o">,</span>
                                       <span class="k">val</span> <span class="n">currentEntry</span><span class="k">:</span> <span class="kt">ProducerStateEntry</span><span class="o">,</span>  <span class="c1">// 上次添加的消息batch的元数据
 </span><span class="c1"></span>                                      <span class="k">val</span> <span class="n">validationType</span><span class="k">:</span> <span class="kt">ValidationType</span><span class="o">)</span> <span class="o">{</span>  <span class="c1">// 校检策略
 </span><span class="c1"></span>  <span class="c1">// 初始化新的ProducerStateEntry，保存到updatedEntry属性                                     
@@ -1014,7 +1014,7 @@
 <p>当消息成功存储到文件中后，Kafka会根据此次的AppendInfo，生成新的ProducerStateEntry。</p>
 <div class="highlight"><div class="chroma">
 <div class="table-container"><table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -1050,7 +1050,7 @@
 </span><span class="lnt">34
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-scala" data-lang="scala"><span class="k">private</span><span class="o">[</span><span class="kt">log</span><span class="o">]</span> <span class="k">class</span> <span class="nc">ProducerAppendInfo</span><span class="o">(...)</span> <span class="o">{</span>
+<pre tabindex="0" class="chroma"><code class="language-scala" data-lang="scala"><span class="k">private</span><span class="o">[</span><span class="kt">log</span><span class="o">]</span> <span class="k">class</span> <span class="nc">ProducerAppendInfo</span><span class="o">(...)</span> <span class="o">{</span>
   <span class="c1">// 新添加的消息batch都会保存到 updatedEntry 
 </span><span class="c1"></span>  <span class="k">private</span> <span class="k">val</span> <span class="n">updatedEntry</span> <span class="k">=</span> <span class="nc">ProducerStateEntry</span><span class="o">.</span><span class="n">empty</span><span class="o">(</span><span class="n">producerId</span><span class="o">)</span>    
     
@@ -1090,7 +1090,7 @@
 <p>当Producer收到出错的响应时，首先会去检测该错误是否重试。如果支持重试，会将这条失败的请求重新添加到队列里，等待再次发送。否则就会修改序列号，或者重置 produce id。</p>
 <div class="highlight"><div class="chroma">
 <div class="table-container"><table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -1129,7 +1129,7 @@
 </span><span class="lnt">37
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">Sender</span> <span class="kd">implements</span> <span class="n">Runnable</span> <span class="o">{</span>
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">Sender</span> <span class="kd">implements</span> <span class="n">Runnable</span> <span class="o">{</span>
 
     <span class="kd">private</span> <span class="kt">void</span> <span class="nf">completeBatch</span><span class="o">(</span><span class="n">ProducerBatch</span> <span class="n">batch</span><span class="o">,</span> <span class="n">ProduceResponse</span><span class="o">.</span><span class="na">PartitionResponse</span> <span class="n">response</span><span class="o">,</span> <span class="kt">long</span> <span class="n">correlationId</span><span class="o">,</span> <span class="kt">long</span> <span class="n">now</span><span class="o">,</span> <span class="kt">long</span> <span class="n">throttleUntilTimeMs</span><span class="o">)</span> <span class="o">{</span>
         <span class="c1">// 检测错误
@@ -1172,7 +1172,7 @@
 <p>错误都是可重试的，会将消息重新插入到队列里。注意插入消息，是需要保证队列的序列号的顺序。RecordAccumulator提供了reenqueue方法，支持重新插入。</p>
 <div class="highlight"><div class="chroma">
 <div class="table-container"><table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -1209,7 +1209,7 @@
 </span><span class="lnt">35
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">final</span> <span class="kd">class</span> <span class="nc">RecordAccumulator</span> <span class="o">{</span>
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">final</span> <span class="kd">class</span> <span class="nc">RecordAccumulator</span> <span class="o">{</span>
 
     <span class="kd">public</span> <span class="kt">void</span> <span class="nf">reenqueue</span><span class="o">(</span><span class="n">ProducerBatch</span> <span class="n">batch</span><span class="o">,</span> <span class="kt">long</span> <span class="n">now</span><span class="o">)</span> <span class="o">{</span>
         <span class="n">batch</span><span class="o">.</span><span class="na">reenqueued</span><span class="o">(</span><span class="n">now</span><span class="o">);</span>
@@ -1250,7 +1250,7 @@
 <p>如果尝试多次，仍然遇到OutOfOrderSequenceException异常，Kafka会认为无法找到缺失的那条记录，而无法修复。所以Producer为了不影响之后的消息发送，它会重置 produce id，然后申请新的 produce id，继续发送请求。</p>
 <div class="highlight"><div class="chroma">
 <div class="table-container"><table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -1281,7 +1281,7 @@
 </span><span class="lnt">29
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">Sender</span> <span class="kd">implements</span> <span class="n">Runnable</span> <span class="o">{</span>
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">Sender</span> <span class="kd">implements</span> <span class="n">Runnable</span> <span class="o">{</span>
 
     <span class="kd">private</span> <span class="kt">void</span> <span class="nf">failBatch</span><span class="o">(</span><span class="n">ProducerBatch</span> <span class="n">batch</span><span class="o">,</span> <span class="kt">long</span> <span class="n">baseOffset</span><span class="o">,</span> <span class="kt">long</span> <span class="n">logAppendTime</span><span class="o">,</span> <span class="n">RuntimeException</span> <span class="n">exception</span><span class="o">,</span> <span class="kt">boolean</span> <span class="n">adjustSequenceNumbers</span><span class="o">)</span> <span class="o">{</span>
         <span class="k">if</span> <span class="o">(</span><span class="n">transactionManager</span> <span class="o">!=</span> <span class="kc">null</span><span class="o">)</span> <span class="o">{</span>
@@ -1316,7 +1316,7 @@
 <p>当消息batch多次切分，还是因为消息长度过大，那么Kafka会认为这个batch失败，然后会跳过这个batch，更改之后的序列号。</p>
 <div class="highlight"><div class="chroma">
 <div class="table-container"><table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -1350,7 +1350,7 @@
 </span><span class="lnt">32
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">TransactionManager</span> <span class="o">{</span>
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">TransactionManager</span> <span class="o">{</span>
     
     <span class="c1">// 存储着分区的下一个消息的序列号
 </span><span class="c1"></span>    <span class="kd">private</span> <span class="kd">final</span> <span class="n">Map</span><span class="o">&lt;</span><span class="n">TopicPartition</span><span class="o">,</span> <span class="n">Integer</span><span class="o">&gt;</span> <span class="n">nextSequence</span><span class="o">;</span>   
@@ -1411,9 +1411,9 @@
 
         
     <div class="updated-badge-container">
-        <span title="Updated @ 2021-09-12 11:48:25 CST" style="cursor:help">
+        <span title="Updated @ 2021-10-22 14:44:34 CST" style="cursor:help">
 
-<svg xmlns="http://www.w3.org/2000/svg" width="130" height="20" class="updated-badge"><linearGradient id="b" x2="0" y2="100%"><stop offset="0" stop-color="#bbb" stop-opacity=".1"/><stop offset="1" stop-opacity=".1"/></linearGradient><clipPath id="a"><rect width="130" height="20" rx="3" fill="#fff"/></clipPath><g clip-path="url(#a)"><path class="updated-badge-left" d="M0 0h55v20H0z"/><path class="updated-badge-right" d="M55 0h75v20H55z"/><path fill="url(#b)" d="M0 0h130v20H0z"/></g><g fill="#fff" text-anchor="middle" font-size="110"><text x="285" y="150" fill="#010101" fill-opacity=".3" textLength="450" transform="scale(.1)">updated</text><text x="285" y="140" textLength="450" transform="scale(.1)">updated</text><text x="915" y="150" fill="#010101" fill-opacity=".3" textLength="650" transform="scale(.1)">2021-09-12</text><text x="915" y="140" textLength="650" transform="scale(.1)">2021-09-12</text></g></svg>
+<svg xmlns="http://www.w3.org/2000/svg" width="130" height="20" class="updated-badge"><linearGradient id="b" x2="0" y2="100%"><stop offset="0" stop-color="#bbb" stop-opacity=".1"/><stop offset="1" stop-opacity=".1"/></linearGradient><clipPath id="a"><rect width="130" height="20" rx="3" fill="#fff"/></clipPath><g clip-path="url(#a)"><path class="updated-badge-left" d="M0 0h55v20H0z"/><path class="updated-badge-right" d="M55 0h75v20H55z"/><path fill="url(#b)" d="M0 0h130v20H0z"/></g><g fill="#fff" text-anchor="middle" font-size="110"><text x="285" y="150" fill="#010101" fill-opacity=".3" textLength="450" transform="scale(.1)">updated</text><text x="285" y="140" textLength="450" transform="scale(.1)">updated</text><text x="915" y="150" fill="#010101" fill-opacity=".3" textLength="650" transform="scale(.1)">2021-10-22</text><text x="915" y="140" textLength="650" transform="scale(.1)">2021-10-22</text></g></svg>
         </span></div>
 
 

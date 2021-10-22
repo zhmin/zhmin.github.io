@@ -3,7 +3,7 @@
     <head prefix="og: http://ogp.me/ns# article: http://ogp.me/ns/article#">
     <meta charset="UTF-8" />
 
-    <meta name="generator" content="Hugo 0.79.0" /><meta name="theme-color" content="#fff" />
+    <meta name="generator" content="Hugo 0.88.1" /><meta name="theme-color" content="#fff" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     
     <meta name="format-detection" content="telephone=no, date=no, address=no, email=no" />
@@ -14,11 +14,11 @@
 
     <title>Spark Streaming WAL 原理 | 学习笔记</title>
 
-    <link rel="stylesheet" href="/css/meme.min.81031e6b78ad2f1f534002ebb3b658886fea2f25d8a44d296d1466a2fe52f1c1.css"/>
+    <link rel="stylesheet" href="/css/meme.min.2d3e1834af2bc8dda20c7d74aaa1d8134845094441b7a554a5206ccd4b472596.css"/>
 
     
     
-        <script src="/js/meme.min.120d98bb614adc6beb13bf79f943d2cceffd323f4de1544029228c3dca2e9bda.js"></script>
+        <script src="/js/meme.min.800f61672145711eb3e1f29fcfcc3dbe0139dd459259718b611a0390f74703d1.js"></script>
 
     
 
@@ -54,7 +54,7 @@
         "@context": "https://schema.org",
         "@type": "BlogPosting",
         "datePublished": "2019-02-17T21:29:24+00:00",
-        "dateModified": "2021-09-12T11:48:25+08:00",
+        "dateModified": "2021-10-22T14:44:34+08:00",
         "url": "https://zhmin.github.io/posts/spark-streaming-wal/",
         "headline": "Spark Streaming WAL 原理",
         "description": "Spark Streaming WAL 原理 WAL表示预写日志，经常在数据库中会使用到，在宕机后也能根据WAL恢复数据。Spark Streaming为了提高服务的容错性，也引入了WAL。它会将WAL存到可靠的文件系统 hdfs 里。Spark Streaming……",
@@ -97,7 +97,7 @@
 <meta property="og:locale" content="zh" /><meta property="og:image" content="https://zhmin.github.io/icons/apple-touch-icon.png" />
     <meta property="og:type" content="article" />
     <meta property="article:published_time" content="2019-02-17T21:29:24&#43;00:00" />
-    <meta property="article:modified_time" content="2021-09-12T11:48:25&#43;08:00" />
+    <meta property="article:modified_time" content="2021-10-22T14:44:34&#43;08:00" />
     
     <meta property="article:section" content="posts" />
 
@@ -243,7 +243,7 @@
 <p>WriteAheadLog是WAL处理的抽象类，由如下方法，提供了读取，写入，删除WAL。</p>
 <div class="highlight"><div class="chroma">
 <div class="table-container"><table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -260,7 +260,7 @@
 </span><span class="lnt">15
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-scala" data-lang="scala"><span class="n">public</span> <span class="k">abstract</span> <span class="k">class</span> <span class="nc">WriteAheadLog</span> <span class="o">{</span>
+<pre tabindex="0" class="chroma"><code class="language-scala" data-lang="scala"><span class="n">public</span> <span class="k">abstract</span> <span class="k">class</span> <span class="nc">WriteAheadLog</span> <span class="o">{</span>
   
   <span class="c1">// 将数据写入到WAL文件，参数record为即将保存的数据，参数time表示数据的结束时间
 </span><span class="c1"></span>  <span class="c1">// 返回WriteAheadLogRecordHandle对象，包含了存储的信息
@@ -285,7 +285,7 @@
 <p>它的WAL目录格式如下：</p>
 <div class="highlight"><div class="chroma">
 <div class="table-container"><table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
@@ -295,7 +295,7 @@
 </span><span class="lnt">8
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-shell" data-lang="shell">checkpointDir/
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell">checkpointDir/
 ├── receivedData
 │   ├── streamId0
 <span class="p">|</span>   <span class="p">|</span>   <span class="p">|</span>── log-starttime0-endtime0
@@ -312,7 +312,7 @@
 <p>WAL的创建由write方法负责。再介绍write方法之前，需要先介绍FileBasedWriteAheadLogWriter类。它负责wal的写入，会将数据写入到 可靠的文件系统 hdfs 里。</p>
 <div class="highlight"><div class="chroma">
 <div class="table-container"><table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -347,7 +347,7 @@
 </span><span class="lnt">33
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-scala" data-lang="scala"><span class="k">class</span> <span class="nc">FileBasedWriteAheadLogWriter</span><span class="o">(</span><span class="n">path</span><span class="k">:</span> <span class="kt">String</span><span class="o">,</span> <span class="n">hadoopConf</span><span class="k">:</span> <span class="kt">Configuration</span><span class="o">)</span>
+<pre tabindex="0" class="chroma"><code class="language-scala" data-lang="scala"><span class="k">class</span> <span class="nc">FileBasedWriteAheadLogWriter</span><span class="o">(</span><span class="n">path</span><span class="k">:</span> <span class="kt">String</span><span class="o">,</span> <span class="n">hadoopConf</span><span class="k">:</span> <span class="kt">Configuration</span><span class="o">)</span>
   <span class="k">extends</span> <span class="nc">Closeable</span> <span class="o">{</span>
   <span class="c1">// 根据配置，返回hdfs的客户端或者本地文件的客户端，并且创建文件
 </span><span class="c1"></span>  <span class="k">private</span> <span class="k">lazy</span> <span class="k">val</span> <span class="n">stream</span> <span class="k">=</span> <span class="nc">HdfsUtils</span><span class="o">.</span><span class="n">getOutputStream</span><span class="o">(</span><span class="n">path</span><span class="o">,</span> <span class="n">hadoopConf</span><span class="o">)</span>
@@ -386,7 +386,7 @@
 <p>接下来看看FileBasedWriteAheadLog的write方法。它会根据时间范围，存储到不同的文件中。</p>
 <div class="highlight"><div class="chroma">
 <div class="table-container"><table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -455,7 +455,7 @@
 </span><span class="lnt">67
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-scala" data-lang="scala"><span class="k">private</span><span class="o">[</span><span class="kt">streaming</span><span class="o">]</span> <span class="k">class</span> <span class="nc">FileBasedWriteAheadLog</span> <span class="o">{</span>
+<pre tabindex="0" class="chroma"><code class="language-scala" data-lang="scala"><span class="k">private</span><span class="o">[</span><span class="kt">streaming</span><span class="o">]</span> <span class="k">class</span> <span class="nc">FileBasedWriteAheadLog</span> <span class="o">{</span>
   
   <span class="c1">// 记录当前WAL文件的路径
 </span><span class="c1"></span>  <span class="k">private</span> <span class="k">var</span> <span class="n">currentLogPath</span><span class="k">:</span> <span class="kt">Option</span><span class="o">[</span><span class="kt">String</span><span class="o">]</span> <span class="k">=</span> <span class="nc">None</span>
@@ -528,7 +528,7 @@
 <p>WAL的读取由read方法负责，它只是通过FileBasedWriteAheadLogRandomReader来读取。FileBasedWriteAheadLogRandomReader支持seek操作，所以它支持单次数据的读取。</p>
 <div class="highlight"><div class="chroma">
 <div class="table-container"><table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -568,7 +568,7 @@
 </span><span class="lnt">38
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-scala" data-lang="scala"><span class="k">class</span> <span class="nc">FileBasedWriteAheadLog</span> <span class="o">{</span>  
+<pre tabindex="0" class="chroma"><code class="language-scala" data-lang="scala"><span class="k">class</span> <span class="nc">FileBasedWriteAheadLog</span> <span class="o">{</span>  
   <span class="c1">// 参数segment是 write方法返回的FileBasedWriteAheadLogSegment
 </span><span class="c1"></span>  <span class="c1">// 包含了数据的位置信息
 </span><span class="c1"></span>  <span class="k">def</span> <span class="n">read</span><span class="o">(</span><span class="n">segment</span><span class="k">:</span> <span class="kt">WriteAheadLogRecordHandle</span><span class="o">)</span><span class="k">:</span> <span class="kt">ByteBuffer</span> <span class="o">=</span> <span class="o">{</span>
@@ -612,7 +612,7 @@
 <p>spark streaming处理的是流数据，它不可能会将所有的数据都保存下来。所以对于处理过的数据，它会定期删除掉。FileBasedWriteAheadLog同样提供了clean接口，来处理过期的数据</p>
 <div class="highlight"><div class="chroma">
 <div class="table-container"><table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -661,7 +661,7 @@
 </span><span class="lnt">47
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-scala" data-lang="scala"><span class="k">class</span> <span class="nc">FileBasedWriteAheadLog</span> <span class="o">{</span>
+<pre tabindex="0" class="chroma"><code class="language-scala" data-lang="scala"><span class="k">class</span> <span class="nc">FileBasedWriteAheadLog</span> <span class="o">{</span>
   <span class="c1">// WAL文件信息列表
 </span><span class="c1"></span>  <span class="k">private</span> <span class="k">val</span> <span class="n">pastLogs</span> <span class="k">=</span> <span class="k">new</span> <span class="nc">ArrayBuffer</span><span class="o">[</span><span class="kt">LogInfo</span><span class="o">]</span>
   
@@ -715,7 +715,7 @@
 <p>BatchedWriteAheadLog首先将每次请求写入的数据，先缓存到一个队列。</p>
 <div class="highlight"><div class="chroma">
 <div class="table-container"><table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -735,7 +735,7 @@
 </span><span class="lnt">18
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-scala" data-lang="scala"><span class="k">class</span> <span class="nc">BatchedWriteAheadLog</span><span class="o">(</span><span class="k">val</span> <span class="n">wrappedLog</span><span class="k">:</span> <span class="kt">WriteAheadLog</span><span class="o">,</span> <span class="n">conf</span><span class="k">:</span> <span class="kt">SparkConf</span><span class="o">)</span> <span class="o">{</span>
+<pre tabindex="0" class="chroma"><code class="language-scala" data-lang="scala"><span class="k">class</span> <span class="nc">BatchedWriteAheadLog</span><span class="o">(</span><span class="k">val</span> <span class="n">wrappedLog</span><span class="k">:</span> <span class="kt">WriteAheadLog</span><span class="o">,</span> <span class="n">conf</span><span class="k">:</span> <span class="kt">SparkConf</span><span class="o">)</span> <span class="o">{</span>
   <span class="c1">// WAL数据队列
 </span><span class="c1"></span>  <span class="k">private</span> <span class="k">val</span> <span class="n">walWriteQueue</span> <span class="k">=</span> <span class="k">new</span> <span class="nc">LinkedBlockingQueue</span><span class="o">[</span><span class="kt">Record</span><span class="o">]()</span>
   
@@ -758,7 +758,7 @@
 </div><p>BatchedWriteAheadLog还有一个后台线程，会一直从队列中获取数据，然后封装成batch的格式，通过FileBasedWriteAheadLog写入WAL。</p>
 <div class="highlight"><div class="chroma">
 <div class="table-container"><table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -815,7 +815,7 @@
 </span><span class="lnt">55
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-scala" data-lang="scala"><span class="k">class</span> <span class="nc">BatchedWriteAheadLog</span><span class="o">(</span><span class="k">val</span> <span class="n">wrappedLog</span><span class="k">:</span> <span class="kt">WriteAheadLog</span><span class="o">,</span> <span class="n">conf</span><span class="k">:</span> <span class="kt">SparkConf</span><span class="o">)</span> <span class="o">{</span>
+<pre tabindex="0" class="chroma"><code class="language-scala" data-lang="scala"><span class="k">class</span> <span class="nc">BatchedWriteAheadLog</span><span class="o">(</span><span class="k">val</span> <span class="n">wrappedLog</span><span class="k">:</span> <span class="kt">WriteAheadLog</span><span class="o">,</span> <span class="n">conf</span><span class="k">:</span> <span class="kt">SparkConf</span><span class="o">)</span> <span class="o">{</span>
   
   <span class="c1">// WAL数据队列
 </span><span class="c1"></span>  <span class="k">private</span> <span class="k">val</span> <span class="n">walWriteQueue</span> <span class="k">=</span> <span class="k">new</span> <span class="nc">LinkedBlockingQueue</span><span class="o">[</span><span class="kt">Record</span><span class="o">]()</span>
@@ -875,14 +875,14 @@
 </div><p>因为BatchedWriteAheadLog的单位是batch，所以它不支持单次数据的读取。</p>
 <div class="highlight"><div class="chroma">
 <div class="table-container"><table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
 </span><span class="lnt">5
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-scala" data-lang="scala"><span class="k">override</span> <span class="k">def</span> <span class="n">read</span><span class="o">(</span><span class="n">segment</span><span class="k">:</span> <span class="kt">WriteAheadLogRecordHandle</span><span class="o">)</span><span class="k">:</span> <span class="kt">ByteBuffer</span> <span class="o">=</span> <span class="o">{</span>
+<pre tabindex="0" class="chroma"><code class="language-scala" data-lang="scala"><span class="k">override</span> <span class="k">def</span> <span class="n">read</span><span class="o">(</span><span class="n">segment</span><span class="k">:</span> <span class="kt">WriteAheadLogRecordHandle</span><span class="o">)</span><span class="k">:</span> <span class="kt">ByteBuffer</span> <span class="o">=</span> <span class="o">{</span>
   <span class="k">throw</span> <span class="k">new</span> <span class="nc">UnsupportedOperationException</span><span class="o">(</span><span class="s">&#34;read() is not supported for BatchedWriteAheadLog &#34;</span> <span class="o">+</span>
     <span class="s">&#34;as the data may require de-aggregation.&#34;</span><span class="o">)</span>
 <span class="o">}</span>
@@ -892,12 +892,12 @@
 </div><p>BatchedWriteAheadLog的删除操作，也只是转交给了FileBasedWriteAheadLog</p>
 <div class="highlight"><div class="chroma">
 <div class="table-container"><table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-scala" data-lang="scala"><span class="k">override</span> <span class="k">def</span> <span class="n">clean</span><span class="o">(</span><span class="n">threshTime</span><span class="k">:</span> <span class="kt">Long</span><span class="o">,</span> <span class="n">waitForCompletion</span><span class="k">:</span> <span class="kt">Boolean</span><span class="o">)</span><span class="k">:</span> <span class="kt">Unit</span> <span class="o">=</span> <span class="o">{</span>
+<pre tabindex="0" class="chroma"><code class="language-scala" data-lang="scala"><span class="k">override</span> <span class="k">def</span> <span class="n">clean</span><span class="o">(</span><span class="n">threshTime</span><span class="k">:</span> <span class="kt">Long</span><span class="o">,</span> <span class="n">waitForCompletion</span><span class="k">:</span> <span class="kt">Boolean</span><span class="o">)</span><span class="k">:</span> <span class="kt">Unit</span> <span class="o">=</span> <span class="o">{</span>
   <span class="n">wrappedLog</span><span class="o">.</span><span class="n">clean</span><span class="o">(</span><span class="n">threshTime</span><span class="o">,</span> <span class="n">waitForCompletion</span><span class="o">)</span>
 <span class="o">}</span>
 </code></pre></td></tr></table></div>
@@ -929,9 +929,9 @@
 
         
     <div class="updated-badge-container">
-        <span title="Updated @ 2021-09-12 11:48:25 CST" style="cursor:help">
+        <span title="Updated @ 2021-10-22 14:44:34 CST" style="cursor:help">
 
-<svg xmlns="http://www.w3.org/2000/svg" width="130" height="20" class="updated-badge"><linearGradient id="b" x2="0" y2="100%"><stop offset="0" stop-color="#bbb" stop-opacity=".1"/><stop offset="1" stop-opacity=".1"/></linearGradient><clipPath id="a"><rect width="130" height="20" rx="3" fill="#fff"/></clipPath><g clip-path="url(#a)"><path class="updated-badge-left" d="M0 0h55v20H0z"/><path class="updated-badge-right" d="M55 0h75v20H55z"/><path fill="url(#b)" d="M0 0h130v20H0z"/></g><g fill="#fff" text-anchor="middle" font-size="110"><text x="285" y="150" fill="#010101" fill-opacity=".3" textLength="450" transform="scale(.1)">updated</text><text x="285" y="140" textLength="450" transform="scale(.1)">updated</text><text x="915" y="150" fill="#010101" fill-opacity=".3" textLength="650" transform="scale(.1)">2021-09-12</text><text x="915" y="140" textLength="650" transform="scale(.1)">2021-09-12</text></g></svg>
+<svg xmlns="http://www.w3.org/2000/svg" width="130" height="20" class="updated-badge"><linearGradient id="b" x2="0" y2="100%"><stop offset="0" stop-color="#bbb" stop-opacity=".1"/><stop offset="1" stop-opacity=".1"/></linearGradient><clipPath id="a"><rect width="130" height="20" rx="3" fill="#fff"/></clipPath><g clip-path="url(#a)"><path class="updated-badge-left" d="M0 0h55v20H0z"/><path class="updated-badge-right" d="M55 0h75v20H55z"/><path fill="url(#b)" d="M0 0h130v20H0z"/></g><g fill="#fff" text-anchor="middle" font-size="110"><text x="285" y="150" fill="#010101" fill-opacity=".3" textLength="450" transform="scale(.1)">updated</text><text x="285" y="140" textLength="450" transform="scale(.1)">updated</text><text x="915" y="150" fill="#010101" fill-opacity=".3" textLength="650" transform="scale(.1)">2021-10-22</text><text x="915" y="140" textLength="650" transform="scale(.1)">2021-10-22</text></g></svg>
         </span></div>
 
 

@@ -3,7 +3,7 @@
     <head prefix="og: http://ogp.me/ns# article: http://ogp.me/ns/article#">
     <meta charset="UTF-8" />
 
-    <meta name="generator" content="Hugo 0.79.0" /><meta name="theme-color" content="#fff" />
+    <meta name="generator" content="Hugo 0.88.1" /><meta name="theme-color" content="#fff" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     
     <meta name="format-detection" content="telephone=no, date=no, address=no, email=no" />
@@ -14,11 +14,11 @@
 
     <title>Spark Sql  LogicalPlan 介绍 | 学习笔记</title>
 
-    <link rel="stylesheet" href="/css/meme.min.81031e6b78ad2f1f534002ebb3b658886fea2f25d8a44d296d1466a2fe52f1c1.css"/>
+    <link rel="stylesheet" href="/css/meme.min.2d3e1834af2bc8dda20c7d74aaa1d8134845094441b7a554a5206ccd4b472596.css"/>
 
     
     
-        <script src="/js/meme.min.120d98bb614adc6beb13bf79f943d2cceffd323f4de1544029228c3dca2e9bda.js"></script>
+        <script src="/js/meme.min.800f61672145711eb3e1f29fcfcc3dbe0139dd459259718b611a0390f74703d1.js"></script>
 
     
 
@@ -54,13 +54,13 @@
         "@context": "https://schema.org",
         "@type": "BlogPosting",
         "datePublished": "2019-06-18T21:58:42+00:00",
-        "dateModified": "2021-09-12T11:48:25+08:00",
+        "dateModified": "2021-10-22T14:44:34+08:00",
         "url": "https://zhmin.github.io/posts/spark-sql-logicalplan/",
         "headline": "Spark Sql  LogicalPlan 介绍",
         "description": "前言 LogicalPlan 表示逻辑计划，它表示 spark sql 初步解析的成果。之后的验证和优化，都是基于逻辑计划的。spark sql 使用 antrl4 解析 sql 语句生成语法树，然后遍历这棵树生成 LogicalPlan 二叉树。这篇文章介绍常见的 LogicalPlan 子类和是如何生成 LogicalPlan 树的。读者……",
         "inLanguage" : "zh-CN",
         "articleSection": "posts",
-        "wordCount":  4720 ,
+        "wordCount":  4661 ,
         "image": "https://zhmin.github.io/icons/apple-touch-icon.png",
         "author": {
             "@type": "Person",
@@ -97,7 +97,7 @@
 <meta property="og:locale" content="zh" /><meta property="og:image" content="https://zhmin.github.io/icons/apple-touch-icon.png" />
     <meta property="og:type" content="article" />
     <meta property="article:published_time" content="2019-06-18T21:58:42&#43;00:00" />
-    <meta property="article:modified_time" content="2021-09-12T11:48:25&#43;08:00" />
+    <meta property="article:modified_time" content="2021-10-22T14:44:34&#43;08:00" />
     
     <meta property="article:section" content="posts" />
 
@@ -222,7 +222,7 @@
     
     
         
-        <span class="post-meta-item wordcount"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon post-meta-icon"><path d="M497.9 142.1l-46.1 46.1c-4.7 4.7-12.3 4.7-17 0l-111-111c-4.7-4.7-4.7-12.3 0-17l46.1-46.1c18.7-18.7 49.1-18.7 67.9 0l60.1 60.1c18.8 18.7 18.8 49.1 0 67.9zM284.2 99.8L21.6 362.4.4 483.9c-2.9 16.4 11.4 30.6 27.8 27.8l121.5-21.3 262.6-262.6c4.7-4.7 4.7-12.3 0-17l-111-111c-4.8-4.7-12.4-4.7-17.1 0zM124.1 339.9c-5.5-5.5-5.5-14.3 0-19.8l154-154c5.5-5.5 14.3-5.5 19.8 0s5.5 14.3 0 19.8l-154 154c-5.5 5.5-14.3 5.5-19.8 0zM88 424h48v36.3l-64.5 11.3-31.1-31.1L51.7 376H88v48z"/></svg>&nbsp;4720</span>
+        <span class="post-meta-item wordcount"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon post-meta-icon"><path d="M497.9 142.1l-46.1 46.1c-4.7 4.7-12.3 4.7-17 0l-111-111c-4.7-4.7-4.7-12.3 0-17l46.1-46.1c18.7-18.7 49.1-18.7 67.9 0l60.1 60.1c18.8 18.7 18.8 49.1 0 67.9zM284.2 99.8L21.6 362.4.4 483.9c-2.9 16.4 11.4 30.6 27.8 27.8l121.5-21.3 262.6-262.6c4.7-4.7 4.7-12.3 0-17l-111-111c-4.8-4.7-12.4-4.7-17.1 0zM124.1 339.9c-5.5-5.5-5.5-14.3 0-19.8l154-154c5.5-5.5 14.3-5.5 19.8 0s5.5 14.3 0 19.8l-154 154c-5.5 5.5-14.3 5.5-19.8 0zM88 424h48v36.3l-64.5 11.3-31.1-31.1L51.7 376H88v48z"/></svg>&nbsp;4661</span>
     
     
         
@@ -249,34 +249,34 @@
 <h3 id="project-节点"><a href="#project-节点" class="anchor-link"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon anchor-icon"><path d="M326.612 185.391c59.747 59.809 58.927 155.698.36 214.59-.11.12-.24.25-.36.37l-67.2 67.2c-59.27 59.27-155.699 59.262-214.96 0-59.27-59.26-59.27-155.7 0-214.96l37.106-37.106c9.84-9.84 26.786-3.3 27.294 10.606.648 17.722 3.826 35.527 9.69 52.721 1.986 5.822.567 12.262-3.783 16.612l-13.087 13.087c-28.026 28.026-28.905 73.66-1.155 101.96 28.024 28.579 74.086 28.749 102.325.51l67.2-67.19c28.191-28.191 28.073-73.757 0-101.83-3.701-3.694-7.429-6.564-10.341-8.569a16.037 16.037 0 0 1-6.947-12.606c-.396-10.567 3.348-21.456 11.698-29.806l21.054-21.055c5.521-5.521 14.182-6.199 20.584-1.731a152.482 152.482 0 0 1 20.522 17.197zM467.547 44.449c-59.261-59.262-155.69-59.27-214.96 0l-67.2 67.2c-.12.12-.25.25-.36.37-58.566 58.892-59.387 154.781.36 214.59a152.454 152.454 0 0 0 20.521 17.196c6.402 4.468 15.064 3.789 20.584-1.731l21.054-21.055c8.35-8.35 12.094-19.239 11.698-29.806a16.037 16.037 0 0 0-6.947-12.606c-2.912-2.005-6.64-4.875-10.341-8.569-28.073-28.073-28.191-73.639 0-101.83l67.2-67.19c28.239-28.239 74.3-28.069 102.325.51 27.75 28.3 26.872 73.934-1.155 101.96l-13.087 13.087c-4.35 4.35-5.769 10.79-3.783 16.612 5.864 17.194 9.042 34.999 9.69 52.721.509 13.906 17.454 20.446 27.294 10.606l37.106-37.106c59.271-59.259 59.271-155.699.001-214.959z"/></svg></a>Project 节点</h3>
 <div class="highlight"><div class="chroma">
 <div class="table-container"><table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-scala" data-lang="scala"><span class="k">case</span> <span class="k">class</span> <span class="nc">Project</span><span class="o">(</span><span class="n">projectList</span><span class="k">:</span> <span class="kt">Seq</span><span class="o">[</span><span class="kt">NamedExpression</span><span class="o">],</span> <span class="n">child</span><span class="k">:</span> <span class="kt">LogicalPlan</span><span class="o">)</span>
+<pre tabindex="0" class="chroma"><code class="language-scala" data-lang="scala"><span class="k">case</span> <span class="k">class</span> <span class="nc">Project</span><span class="o">(</span><span class="n">projectList</span><span class="k">:</span> <span class="kt">Seq</span><span class="o">[</span><span class="kt">NamedExpression</span><span class="o">],</span> <span class="n">child</span><span class="k">:</span> <span class="kt">LogicalPlan</span><span class="o">)</span>
 </code></pre></td></tr></table></div>
 </div>
 </div><p>Project 节点表示 SELECT 语句中选中列的那部分。它包含了选中列的表达式，这些表达式叫做命名表达式，原理参考下篇博客。</p>
 <h3 id="表节点"><a href="#表节点" class="anchor-link"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon anchor-icon"><path d="M326.612 185.391c59.747 59.809 58.927 155.698.36 214.59-.11.12-.24.25-.36.37l-67.2 67.2c-59.27 59.27-155.699 59.262-214.96 0-59.27-59.26-59.27-155.7 0-214.96l37.106-37.106c9.84-9.84 26.786-3.3 27.294 10.606.648 17.722 3.826 35.527 9.69 52.721 1.986 5.822.567 12.262-3.783 16.612l-13.087 13.087c-28.026 28.026-28.905 73.66-1.155 101.96 28.024 28.579 74.086 28.749 102.325.51l67.2-67.19c28.191-28.191 28.073-73.757 0-101.83-3.701-3.694-7.429-6.564-10.341-8.569a16.037 16.037 0 0 1-6.947-12.606c-.396-10.567 3.348-21.456 11.698-29.806l21.054-21.055c5.521-5.521 14.182-6.199 20.584-1.731a152.482 152.482 0 0 1 20.522 17.197zM467.547 44.449c-59.261-59.262-155.69-59.27-214.96 0l-67.2 67.2c-.12.12-.25.25-.36.37-58.566 58.892-59.387 154.781.36 214.59a152.454 152.454 0 0 0 20.521 17.196c6.402 4.468 15.064 3.789 20.584-1.731l21.054-21.055c8.35-8.35 12.094-19.239 11.698-29.806a16.037 16.037 0 0 0-6.947-12.606c-2.912-2.005-6.64-4.875-10.341-8.569-28.073-28.073-28.191-73.639 0-101.83l67.2-67.19c28.239-28.239 74.3-28.069 102.325.51 27.75 28.3 26.872 73.934-1.155 101.96l-13.087 13.087c-4.35 4.35-5.769 10.79-3.783 16.612 5.864 17.194 9.042 34.999 9.69 52.721.509 13.906 17.454 20.446 27.294 10.606l37.106-37.106c59.271-59.259 59.271-155.699.001-214.959z"/></svg></a>表节点</h3>
 <div class="highlight"><div class="chroma">
 <div class="table-container"><table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-scala" data-lang="scala"><span class="k">case</span> <span class="k">class</span> <span class="nc">UnresolvedRelation</span><span class="o">(</span><span class="n">tableIdentifier</span><span class="k">:</span> <span class="kt">TableIdentifier</span><span class="o">)</span>
+<pre tabindex="0" class="chroma"><code class="language-scala" data-lang="scala"><span class="k">case</span> <span class="k">class</span> <span class="nc">UnresolvedRelation</span><span class="o">(</span><span class="n">tableIdentifier</span><span class="k">:</span> <span class="kt">TableIdentifier</span><span class="o">)</span>
 </code></pre></td></tr></table></div>
 </div>
 </div><p>表表名由 UnresolvedRelation 类表示，在上个 sql 例子中，在 analyse 之后会转换成一个子查询 SubqueryAlias，而这个子查询包含了 Hive 表节点 HiveTableRelation。</p>
 <h3 id="join-节点"><a href="#join-节点" class="anchor-link"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon anchor-icon"><path d="M326.612 185.391c59.747 59.809 58.927 155.698.36 214.59-.11.12-.24.25-.36.37l-67.2 67.2c-59.27 59.27-155.699 59.262-214.96 0-59.27-59.26-59.27-155.7 0-214.96l37.106-37.106c9.84-9.84 26.786-3.3 27.294 10.606.648 17.722 3.826 35.527 9.69 52.721 1.986 5.822.567 12.262-3.783 16.612l-13.087 13.087c-28.026 28.026-28.905 73.66-1.155 101.96 28.024 28.579 74.086 28.749 102.325.51l67.2-67.19c28.191-28.191 28.073-73.757 0-101.83-3.701-3.694-7.429-6.564-10.341-8.569a16.037 16.037 0 0 1-6.947-12.606c-.396-10.567 3.348-21.456 11.698-29.806l21.054-21.055c5.521-5.521 14.182-6.199 20.584-1.731a152.482 152.482 0 0 1 20.522 17.197zM467.547 44.449c-59.261-59.262-155.69-59.27-214.96 0l-67.2 67.2c-.12.12-.25.25-.36.37-58.566 58.892-59.387 154.781.36 214.59a152.454 152.454 0 0 0 20.521 17.196c6.402 4.468 15.064 3.789 20.584-1.731l21.054-21.055c8.35-8.35 12.094-19.239 11.698-29.806a16.037 16.037 0 0 0-6.947-12.606c-2.912-2.005-6.64-4.875-10.341-8.569-28.073-28.073-28.191-73.639 0-101.83l67.2-67.19c28.239-28.239 74.3-28.069 102.325.51 27.75 28.3 26.872 73.934-1.155 101.96l-13.087 13.087c-4.35 4.35-5.769 10.79-3.783 16.612 5.864 17.194 9.042 34.999 9.69 52.721.509 13.906 17.454 20.446 27.294 10.606l37.106-37.106c59.271-59.259 59.271-155.699.001-214.959z"/></svg></a>Join 节点</h3>
 <div class="highlight"><div class="chroma">
 <div class="table-container"><table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
 </span><span class="lnt">5
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-scala" data-lang="scala"><span class="k">case</span> <span class="k">class</span> <span class="nc">Join</span><span class="o">(</span>
+<pre tabindex="0" class="chroma"><code class="language-scala" data-lang="scala"><span class="k">case</span> <span class="k">class</span> <span class="nc">Join</span><span class="o">(</span>
     <span class="n">left</span><span class="k">:</span> <span class="kt">LogicalPlan</span><span class="o">,</span>
     <span class="n">right</span><span class="k">:</span> <span class="kt">LogicalPlan</span><span class="o">,</span>
     <span class="n">joinType</span><span class="k">:</span> <span class="kt">JoinType</span><span class="o">,</span>
@@ -296,23 +296,23 @@
 <h3 id="filter-节点"><a href="#filter-节点" class="anchor-link"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon anchor-icon"><path d="M326.612 185.391c59.747 59.809 58.927 155.698.36 214.59-.11.12-.24.25-.36.37l-67.2 67.2c-59.27 59.27-155.699 59.262-214.96 0-59.27-59.26-59.27-155.7 0-214.96l37.106-37.106c9.84-9.84 26.786-3.3 27.294 10.606.648 17.722 3.826 35.527 9.69 52.721 1.986 5.822.567 12.262-3.783 16.612l-13.087 13.087c-28.026 28.026-28.905 73.66-1.155 101.96 28.024 28.579 74.086 28.749 102.325.51l67.2-67.19c28.191-28.191 28.073-73.757 0-101.83-3.701-3.694-7.429-6.564-10.341-8.569a16.037 16.037 0 0 1-6.947-12.606c-.396-10.567 3.348-21.456 11.698-29.806l21.054-21.055c5.521-5.521 14.182-6.199 20.584-1.731a152.482 152.482 0 0 1 20.522 17.197zM467.547 44.449c-59.261-59.262-155.69-59.27-214.96 0l-67.2 67.2c-.12.12-.25.25-.36.37-58.566 58.892-59.387 154.781.36 214.59a152.454 152.454 0 0 0 20.521 17.196c6.402 4.468 15.064 3.789 20.584-1.731l21.054-21.055c8.35-8.35 12.094-19.239 11.698-29.806a16.037 16.037 0 0 0-6.947-12.606c-2.912-2.005-6.64-4.875-10.341-8.569-28.073-28.073-28.191-73.639 0-101.83l67.2-67.19c28.239-28.239 74.3-28.069 102.325.51 27.75 28.3 26.872 73.934-1.155 101.96l-13.087 13.087c-4.35 4.35-5.769 10.79-3.783 16.612 5.864 17.194 9.042 34.999 9.69 52.721.509 13.906 17.454 20.446 27.294 10.606l37.106-37.106c59.271-59.259 59.271-155.699.001-214.959z"/></svg></a>Filter 节点</h3>
 <div class="highlight"><div class="chroma">
 <div class="table-container"><table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-scala" data-lang="scala"><span class="k">case</span> <span class="k">class</span> <span class="nc">Filter</span><span class="o">(</span><span class="n">condition</span><span class="k">:</span> <span class="kt">Expression</span><span class="o">,</span> <span class="n">child</span><span class="k">:</span> <span class="kt">LogicalPlan</span><span class="o">)</span>
+<pre tabindex="0" class="chroma"><code class="language-scala" data-lang="scala"><span class="k">case</span> <span class="k">class</span> <span class="nc">Filter</span><span class="o">(</span><span class="n">condition</span><span class="k">:</span> <span class="kt">Expression</span><span class="o">,</span> <span class="n">child</span><span class="k">:</span> <span class="kt">LogicalPlan</span><span class="o">)</span>
 </code></pre></td></tr></table></div>
 </div>
 </div><p>Filter 节点包含了布尔表达式，对应了 sql 语句中的 WHERE 条件。</p>
 <h3 id="sort-节点"><a href="#sort-节点" class="anchor-link"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon anchor-icon"><path d="M326.612 185.391c59.747 59.809 58.927 155.698.36 214.59-.11.12-.24.25-.36.37l-67.2 67.2c-59.27 59.27-155.699 59.262-214.96 0-59.27-59.26-59.27-155.7 0-214.96l37.106-37.106c9.84-9.84 26.786-3.3 27.294 10.606.648 17.722 3.826 35.527 9.69 52.721 1.986 5.822.567 12.262-3.783 16.612l-13.087 13.087c-28.026 28.026-28.905 73.66-1.155 101.96 28.024 28.579 74.086 28.749 102.325.51l67.2-67.19c28.191-28.191 28.073-73.757 0-101.83-3.701-3.694-7.429-6.564-10.341-8.569a16.037 16.037 0 0 1-6.947-12.606c-.396-10.567 3.348-21.456 11.698-29.806l21.054-21.055c5.521-5.521 14.182-6.199 20.584-1.731a152.482 152.482 0 0 1 20.522 17.197zM467.547 44.449c-59.261-59.262-155.69-59.27-214.96 0l-67.2 67.2c-.12.12-.25.25-.36.37-58.566 58.892-59.387 154.781.36 214.59a152.454 152.454 0 0 0 20.521 17.196c6.402 4.468 15.064 3.789 20.584-1.731l21.054-21.055c8.35-8.35 12.094-19.239 11.698-29.806a16.037 16.037 0 0 0-6.947-12.606c-2.912-2.005-6.64-4.875-10.341-8.569-28.073-28.073-28.191-73.639 0-101.83l67.2-67.19c28.239-28.239 74.3-28.069 102.325.51 27.75 28.3 26.872 73.934-1.155 101.96l-13.087 13.087c-4.35 4.35-5.769 10.79-3.783 16.612 5.864 17.194 9.042 34.999 9.69 52.721.509 13.906 17.454 20.446 27.294 10.606l37.106-37.106c59.271-59.259 59.271-155.699.001-214.959z"/></svg></a>Sort 节点</h3>
 <div class="highlight"><div class="chroma">
 <div class="table-container"><table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-scala" data-lang="scala"><span class="k">case</span> <span class="k">class</span> <span class="nc">Sort</span><span class="o">(</span>
+<pre tabindex="0" class="chroma"><code class="language-scala" data-lang="scala"><span class="k">case</span> <span class="k">class</span> <span class="nc">Sort</span><span class="o">(</span>
     <span class="n">order</span><span class="k">:</span> <span class="kt">Seq</span><span class="o">[</span><span class="kt">SortOrder</span><span class="o">],</span>  <span class="c1">// 排序的字段或者表达式，还有排序方向
 </span><span class="c1"></span>    <span class="n">global</span><span class="k">:</span> <span class="kt">Boolean</span><span class="o">,</span>       <span class="c1">// 否为全局的排序，还是分区的排序。
 </span><span class="c1"></span>    <span class="n">child</span><span class="k">:</span> <span class="kt">LogicalPlan</span><span class="o">)</span>
@@ -323,23 +323,23 @@
 <h3 id="distinct-节点"><a href="#distinct-节点" class="anchor-link"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon anchor-icon"><path d="M326.612 185.391c59.747 59.809 58.927 155.698.36 214.59-.11.12-.24.25-.36.37l-67.2 67.2c-59.27 59.27-155.699 59.262-214.96 0-59.27-59.26-59.27-155.7 0-214.96l37.106-37.106c9.84-9.84 26.786-3.3 27.294 10.606.648 17.722 3.826 35.527 9.69 52.721 1.986 5.822.567 12.262-3.783 16.612l-13.087 13.087c-28.026 28.026-28.905 73.66-1.155 101.96 28.024 28.579 74.086 28.749 102.325.51l67.2-67.19c28.191-28.191 28.073-73.757 0-101.83-3.701-3.694-7.429-6.564-10.341-8.569a16.037 16.037 0 0 1-6.947-12.606c-.396-10.567 3.348-21.456 11.698-29.806l21.054-21.055c5.521-5.521 14.182-6.199 20.584-1.731a152.482 152.482 0 0 1 20.522 17.197zM467.547 44.449c-59.261-59.262-155.69-59.27-214.96 0l-67.2 67.2c-.12.12-.25.25-.36.37-58.566 58.892-59.387 154.781.36 214.59a152.454 152.454 0 0 0 20.521 17.196c6.402 4.468 15.064 3.789 20.584-1.731l21.054-21.055c8.35-8.35 12.094-19.239 11.698-29.806a16.037 16.037 0 0 0-6.947-12.606c-2.912-2.005-6.64-4.875-10.341-8.569-28.073-28.073-28.191-73.639 0-101.83l67.2-67.19c28.239-28.239 74.3-28.069 102.325.51 27.75 28.3 26.872 73.934-1.155 101.96l-13.087 13.087c-4.35 4.35-5.769 10.79-3.783 16.612 5.864 17.194 9.042 34.999 9.69 52.721.509 13.906 17.454 20.446 27.294 10.606l37.106-37.106c59.271-59.259 59.271-155.699.001-214.959z"/></svg></a>Distinct 节点</h3>
 <div class="highlight"><div class="chroma">
 <div class="table-container"><table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-scala" data-lang="scala"><span class="k">case</span> <span class="k">class</span> <span class="nc">Distinct</span><span class="o">(</span><span class="n">child</span><span class="k">:</span> <span class="kt">LogicalPlan</span><span class="o">)</span>
+<pre tabindex="0" class="chroma"><code class="language-scala" data-lang="scala"><span class="k">case</span> <span class="k">class</span> <span class="nc">Distinct</span><span class="o">(</span><span class="n">child</span><span class="k">:</span> <span class="kt">LogicalPlan</span><span class="o">)</span>
 </code></pre></td></tr></table></div>
 </div>
 </div><p>如果选中的列有 DISTINCT 关键字，那么就会生成 Distinct 节点，表示需要对最后的结果去重。</p>
 <h3 id="aggregate-节点"><a href="#aggregate-节点" class="anchor-link"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon anchor-icon"><path d="M326.612 185.391c59.747 59.809 58.927 155.698.36 214.59-.11.12-.24.25-.36.37l-67.2 67.2c-59.27 59.27-155.699 59.262-214.96 0-59.27-59.26-59.27-155.7 0-214.96l37.106-37.106c9.84-9.84 26.786-3.3 27.294 10.606.648 17.722 3.826 35.527 9.69 52.721 1.986 5.822.567 12.262-3.783 16.612l-13.087 13.087c-28.026 28.026-28.905 73.66-1.155 101.96 28.024 28.579 74.086 28.749 102.325.51l67.2-67.19c28.191-28.191 28.073-73.757 0-101.83-3.701-3.694-7.429-6.564-10.341-8.569a16.037 16.037 0 0 1-6.947-12.606c-.396-10.567 3.348-21.456 11.698-29.806l21.054-21.055c5.521-5.521 14.182-6.199 20.584-1.731a152.482 152.482 0 0 1 20.522 17.197zM467.547 44.449c-59.261-59.262-155.69-59.27-214.96 0l-67.2 67.2c-.12.12-.25.25-.36.37-58.566 58.892-59.387 154.781.36 214.59a152.454 152.454 0 0 0 20.521 17.196c6.402 4.468 15.064 3.789 20.584-1.731l21.054-21.055c8.35-8.35 12.094-19.239 11.698-29.806a16.037 16.037 0 0 0-6.947-12.606c-2.912-2.005-6.64-4.875-10.341-8.569-28.073-28.073-28.191-73.639 0-101.83l67.2-67.19c28.239-28.239 74.3-28.069 102.325.51 27.75 28.3 26.872 73.934-1.155 101.96l-13.087 13.087c-4.35 4.35-5.769 10.79-3.783 16.612 5.864 17.194 9.042 34.999 9.69 52.721.509 13.906 17.454 20.446 27.294 10.606l37.106-37.106c59.271-59.259 59.271-155.699.001-214.959z"/></svg></a>Aggregate 节点</h3>
 <div class="highlight"><div class="chroma">
 <div class="table-container"><table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-scala" data-lang="scala"><span class="k">case</span> <span class="k">class</span> <span class="nc">Aggregate</span><span class="o">(</span>
+<pre tabindex="0" class="chroma"><code class="language-scala" data-lang="scala"><span class="k">case</span> <span class="k">class</span> <span class="nc">Aggregate</span><span class="o">(</span>
     <span class="n">groupingExpressions</span><span class="k">:</span> <span class="kt">Seq</span><span class="o">[</span><span class="kt">Expression</span><span class="o">],</span>     <span class="c1">// GROUP BY 的字段
 </span><span class="c1"></span>    <span class="n">aggregateExpressions</span><span class="k">:</span> <span class="kt">Seq</span><span class="o">[</span><span class="kt">NamedExpression</span><span class="o">],</span>   <span class="c1">// SELECT 的字段
 </span><span class="c1"></span>    <span class="n">child</span><span class="k">:</span> <span class="kt">LogicalPlan</span><span class="o">)</span>
@@ -349,10 +349,10 @@
 <h3 id="union-节点"><a href="#union-节点" class="anchor-link"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon anchor-icon"><path d="M326.612 185.391c59.747 59.809 58.927 155.698.36 214.59-.11.12-.24.25-.36.37l-67.2 67.2c-59.27 59.27-155.699 59.262-214.96 0-59.27-59.26-59.27-155.7 0-214.96l37.106-37.106c9.84-9.84 26.786-3.3 27.294 10.606.648 17.722 3.826 35.527 9.69 52.721 1.986 5.822.567 12.262-3.783 16.612l-13.087 13.087c-28.026 28.026-28.905 73.66-1.155 101.96 28.024 28.579 74.086 28.749 102.325.51l67.2-67.19c28.191-28.191 28.073-73.757 0-101.83-3.701-3.694-7.429-6.564-10.341-8.569a16.037 16.037 0 0 1-6.947-12.606c-.396-10.567 3.348-21.456 11.698-29.806l21.054-21.055c5.521-5.521 14.182-6.199 20.584-1.731a152.482 152.482 0 0 1 20.522 17.197zM467.547 44.449c-59.261-59.262-155.69-59.27-214.96 0l-67.2 67.2c-.12.12-.25.25-.36.37-58.566 58.892-59.387 154.781.36 214.59a152.454 152.454 0 0 0 20.521 17.196c6.402 4.468 15.064 3.789 20.584-1.731l21.054-21.055c8.35-8.35 12.094-19.239 11.698-29.806a16.037 16.037 0 0 0-6.947-12.606c-2.912-2.005-6.64-4.875-10.341-8.569-28.073-28.073-28.191-73.639 0-101.83l67.2-67.19c28.239-28.239 74.3-28.069 102.325.51 27.75 28.3 26.872 73.934-1.155 101.96l-13.087 13.087c-4.35 4.35-5.769 10.79-3.783 16.612 5.864 17.194 9.042 34.999 9.69 52.721.509 13.906 17.454 20.446 27.294 10.606l37.106-37.106c59.271-59.259 59.271-155.699.001-214.959z"/></svg></a>Union 节点</h3>
 <div class="highlight"><div class="chroma">
 <div class="table-container"><table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-scala" data-lang="scala"><span class="k">case</span> <span class="k">class</span> <span class="nc">Union</span><span class="o">(</span><span class="n">children</span><span class="k">:</span> <span class="kt">Seq</span><span class="o">[</span><span class="kt">LogicalPlan</span><span class="o">])</span> 
+<pre tabindex="0" class="chroma"><code class="language-scala" data-lang="scala"><span class="k">case</span> <span class="k">class</span> <span class="nc">Union</span><span class="o">(</span><span class="n">children</span><span class="k">:</span> <span class="kt">Seq</span><span class="o">[</span><span class="kt">LogicalPlan</span><span class="o">])</span> 
 </code></pre></td></tr></table></div>
 </div>
 </div><p>Union 节点 对应 UNION 语句。UNION 内部的每个 SELECT 语句必须拥有相同数量的列，列也必须拥有相似的数据类型。</p>
@@ -362,7 +362,7 @@
 <p>visitChildren 复写了父类的方法，当遍历非叶子节点时，如果该节点只有一个子节点，那么继续遍历，否则就停止遍历。</p>
 <div class="highlight"><div class="chroma">
 <div class="table-container"><table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -388,7 +388,7 @@
 </span><span class="lnt">24
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-scala" data-lang="scala"><span class="k">class</span> <span class="nc">AstBuilder</span><span class="o">(</span><span class="n">conf</span><span class="k">:</span> <span class="kt">SQLConf</span><span class="o">)</span> <span class="k">extends</span> <span class="nc">SqlBaseBaseVisitor</span><span class="o">[</span><span class="kt">AnyRef</span><span class="o">]</span> <span class="k">with</span> <span class="nc">Logging</span> <span class="o">{</span>
+<pre tabindex="0" class="chroma"><code class="language-scala" data-lang="scala"><span class="k">class</span> <span class="nc">AstBuilder</span><span class="o">(</span><span class="n">conf</span><span class="k">:</span> <span class="kt">SQLConf</span><span class="o">)</span> <span class="k">extends</span> <span class="nc">SqlBaseBaseVisitor</span><span class="o">[</span><span class="kt">AnyRef</span><span class="o">]</span> <span class="k">with</span> <span class="nc">Logging</span> <span class="o">{</span>
     
   <span class="c1">// 复写默认的遍历方法
 </span><span class="c1"></span>  <span class="k">override</span> <span class="k">def</span> <span class="n">visitChildren</span><span class="o">(</span><span class="n">node</span><span class="k">:</span> <span class="kt">RuleNode</span><span class="o">)</span><span class="k">:</span> <span class="kt">AnyRef</span> <span class="o">=</span> <span class="o">{</span>
@@ -420,12 +420,12 @@
 <p>首先是 singleStatement 规则，它在 AstBuilder 定义了访问自身的方法。</p>
 <div class="highlight"><div class="chroma">
 <div class="table-container"><table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-scala" data-lang="scala"><span class="k">override</span> <span class="k">def</span> <span class="n">visitSingleStatement</span><span class="o">(</span><span class="n">ctx</span><span class="k">:</span> <span class="kt">SingleStatementContext</span><span class="o">)</span><span class="k">:</span> <span class="kt">LogicalPlan</span> <span class="o">=</span> <span class="n">withOrigin</span><span class="o">(</span><span class="n">ctx</span><span class="o">)</span> <span class="o">{</span>
+<pre tabindex="0" class="chroma"><code class="language-scala" data-lang="scala"><span class="k">override</span> <span class="k">def</span> <span class="n">visitSingleStatement</span><span class="o">(</span><span class="n">ctx</span><span class="k">:</span> <span class="kt">SingleStatementContext</span><span class="o">)</span><span class="k">:</span> <span class="kt">LogicalPlan</span> <span class="o">=</span> <span class="n">withOrigin</span><span class="o">(</span><span class="n">ctx</span><span class="o">)</span> <span class="o">{</span>
   <span class="n">visit</span><span class="o">(</span><span class="n">ctx</span><span class="o">.</span><span class="n">statement</span><span class="o">).</span><span class="n">asInstanceOf</span><span class="o">[</span><span class="kt">LogicalPlan</span><span class="o">]</span>
 <span class="o">}</span>
 </code></pre></td></tr></table></div>
@@ -435,7 +435,7 @@
 <p>query 节点定义了访问自身的方法。注意到 query 语法规则，它有 ctes 和 queryNoWith 两个语法规则组成。 ctes  语法是来匹配 WITH 语句的。</p>
 <div class="highlight"><div class="chroma">
 <div class="table-container"><table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -454,7 +454,7 @@
 </span><span class="lnt">17
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-scala" data-lang="scala"><span class="k">override</span> <span class="k">def</span> <span class="n">visitQuery</span><span class="o">(</span><span class="n">ctx</span><span class="k">:</span> <span class="kt">QueryContext</span><span class="o">)</span><span class="k">:</span> <span class="kt">LogicalPlan</span> <span class="o">=</span> <span class="n">withOrigin</span><span class="o">(</span><span class="n">ctx</span><span class="o">)</span> <span class="o">{</span>
+<pre tabindex="0" class="chroma"><code class="language-scala" data-lang="scala"><span class="k">override</span> <span class="k">def</span> <span class="n">visitQuery</span><span class="o">(</span><span class="n">ctx</span><span class="k">:</span> <span class="kt">QueryContext</span><span class="o">)</span><span class="k">:</span> <span class="kt">LogicalPlan</span> <span class="o">=</span> <span class="n">withOrigin</span><span class="o">(</span><span class="n">ctx</span><span class="o">)</span> <span class="o">{</span>
   <span class="c1">// 首先遍历 queryNoWith 子节点，plan方法就是调用了typedVisit方法
 </span><span class="c1"></span>  <span class="k">val</span> <span class="n">query</span> <span class="k">=</span> <span class="n">plan</span><span class="o">(</span><span class="n">ctx</span><span class="o">.</span><span class="n">queryNoWith</span><span class="o">)</span>
 
@@ -483,7 +483,7 @@
 <p>我们一般使用第二种，它匹配了 queryNoWith 语法的 singleInsertQuery 格式，在 AstBuilder 类定义了访问此格式的方法。</p>
 <div class="highlight"><div class="chroma">
 <div class="table-container"><table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
@@ -494,7 +494,7 @@
 </span><span class="lnt">9
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-scala" data-lang="scala"><span class="k">override</span> <span class="k">def</span> <span class="n">visitSingleInsertQuery</span><span class="o">(</span>
+<pre tabindex="0" class="chroma"><code class="language-scala" data-lang="scala"><span class="k">override</span> <span class="k">def</span> <span class="n">visitSingleInsertQuery</span><span class="o">(</span>
     <span class="n">ctx</span><span class="k">:</span> <span class="kt">SingleInsertQueryContext</span><span class="o">)</span><span class="k">:</span> <span class="kt">LogicalPlan</span> <span class="o">=</span> <span class="n">withOrigin</span><span class="o">(</span><span class="n">ctx</span><span class="o">)</span> <span class="o">{</span>
   <span class="c1">// 解析子节点 queryTerm，生成LogicalPlan子类
 </span><span class="c1"></span>  <span class="n">plan</span><span class="o">(</span><span class="n">ctx</span><span class="o">.</span><span class="n">queryTerm</span><span class="o">).</span>
@@ -573,12 +573,12 @@
 <p>解析 table 格式，会生成 UnresolvedRelation 类，它表示表名</p>
 <div class="highlight"><div class="chroma">
 <div class="table-container"><table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-scala" data-lang="scala"><span class="k">override</span> <span class="k">def</span> <span class="n">visitTable</span><span class="o">(</span><span class="n">ctx</span><span class="k">:</span> <span class="kt">TableContext</span><span class="o">)</span><span class="k">:</span> <span class="kt">LogicalPlan</span> <span class="o">=</span> <span class="n">withOrigin</span><span class="o">(</span><span class="n">ctx</span><span class="o">)</span> <span class="o">{</span>
+<pre tabindex="0" class="chroma"><code class="language-scala" data-lang="scala"><span class="k">override</span> <span class="k">def</span> <span class="n">visitTable</span><span class="o">(</span><span class="n">ctx</span><span class="k">:</span> <span class="kt">TableContext</span><span class="o">)</span><span class="k">:</span> <span class="kt">LogicalPlan</span> <span class="o">=</span> <span class="n">withOrigin</span><span class="o">(</span><span class="n">ctx</span><span class="o">)</span> <span class="o">{</span>
   <span class="nc">UnresolvedRelation</span><span class="o">(</span><span class="n">visitTableIdentifier</span><span class="o">(</span><span class="n">ctx</span><span class="o">.</span><span class="n">tableIdentifier</span><span class="o">))</span>
 <span class="o">}</span>
 </code></pre></td></tr></table></div>
@@ -586,12 +586,12 @@
 </div><p>解析 subquery 格式，也只是继续遍历子规则 queryNoWith。</p>
 <div class="highlight"><div class="chroma">
 <div class="table-container"><table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-scala" data-lang="scala"><span class="k">override</span> <span class="k">def</span> <span class="n">visitSubquery</span><span class="o">(</span><span class="n">ctx</span><span class="k">:</span> <span class="kt">SubqueryContext</span><span class="o">)</span><span class="k">:</span> <span class="kt">LogicalPlan</span> <span class="o">=</span> <span class="n">withOrigin</span><span class="o">(</span><span class="n">ctx</span><span class="o">)</span> <span class="o">{</span>
+<pre tabindex="0" class="chroma"><code class="language-scala" data-lang="scala"><span class="k">override</span> <span class="k">def</span> <span class="n">visitSubquery</span><span class="o">(</span><span class="n">ctx</span><span class="k">:</span> <span class="kt">SubqueryContext</span><span class="o">)</span><span class="k">:</span> <span class="kt">LogicalPlan</span> <span class="o">=</span> <span class="n">withOrigin</span><span class="o">(</span><span class="n">ctx</span><span class="o">)</span> <span class="o">{</span>
   <span class="n">plan</span><span class="o">(</span><span class="n">ctx</span><span class="o">.</span><span class="n">queryNoWith</span><span class="o">)</span>
 <span class="o">}</span>
 </code></pre></td></tr></table></div>
@@ -599,16 +599,16 @@
 </div><p>解析 inlineTableDefault1 格式，这个用法不是很常见。举个简单的例子，</p>
 <div class="highlight"><div class="chroma">
 <div class="table-container"><table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-sql" data-lang="sql"><span class="k">SELECT</span> <span class="o">*</span> <span class="k">FROM</span> <span class="p">(</span><span class="k">VALUES</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="s1">&#39;apple&#39;</span><span class="p">),</span> <span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="s1">&#39;orange&#39;</span><span class="p">))</span> <span class="k">AS</span> <span class="n">FRUIT</span><span class="p">(</span><span class="n">ID</span><span class="p">,</span> <span class="n">NAME</span><span class="p">)</span>
-</code></pre></td></tr></table></div>
+<pre tabindex="0" class="chroma"><code class="language-sql" data-lang="sql"><span class="k">SELECT</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="k">FROM</span><span class="w"> </span><span class="p">(</span><span class="k">VALUES</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;apple&#39;</span><span class="p">),</span><span class="w"> </span><span class="p">(</span><span class="mi">2</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;orange&#39;</span><span class="p">))</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">FRUIT</span><span class="p">(</span><span class="n">ID</span><span class="p">,</span><span class="w"> </span><span class="n">NAME</span><span class="p">)</span><span class="w">
+</span></code></pre></td></tr></table></div>
 </div>
 </div><p>这条语句就使用VALUES语句，创建了一张表 FRUIT，有 ID 和 NAME 两列。</p>
 <div class="highlight"><div class="chroma">
 <div class="table-container"><table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -637,7 +637,7 @@
 </span><span class="lnt">27
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-scala" data-lang="scala"><span class="k">override</span> <span class="k">def</span> <span class="n">visitInlineTable</span><span class="o">(</span><span class="n">ctx</span><span class="k">:</span> <span class="kt">InlineTableContext</span><span class="o">)</span><span class="k">:</span> <span class="kt">LogicalPlan</span> <span class="o">=</span> <span class="n">withOrigin</span><span class="o">(</span><span class="n">ctx</span><span class="o">)</span> <span class="o">{</span>
+<pre tabindex="0" class="chroma"><code class="language-scala" data-lang="scala"><span class="k">override</span> <span class="k">def</span> <span class="n">visitInlineTable</span><span class="o">(</span><span class="n">ctx</span><span class="k">:</span> <span class="kt">InlineTableContext</span><span class="o">)</span><span class="k">:</span> <span class="kt">LogicalPlan</span> <span class="o">=</span> <span class="n">withOrigin</span><span class="o">(</span><span class="n">ctx</span><span class="o">)</span> <span class="o">{</span>
   <span class="c1">// 遍历每个表达式
 </span><span class="c1"></span>  <span class="k">val</span> <span class="n">rows</span> <span class="k">=</span> <span class="n">ctx</span><span class="o">.</span><span class="n">expression</span><span class="o">.</span><span class="n">asScala</span><span class="o">.</span><span class="n">map</span> <span class="o">{</span> <span class="n">e</span> <span class="k">=&gt;</span>
     <span class="n">expression</span><span class="o">(</span><span class="n">e</span><span class="o">)</span> <span class="k">match</span> <span class="o">{</span>
@@ -672,7 +672,7 @@
 <p>querySpecification 规则匹配了基础的 SELECT 语句，它几乎是 sql 的核心了。querySpecification 规则有两种格式，一种是普通的SELECT 操作，另一种是TRANSFORM 类型，它支持执行外部脚本来处理数据。</p>
 <div class="highlight"><div class="chroma">
 <div class="table-container"><table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -702,7 +702,7 @@
 </span><span class="lnt">28
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-scala" data-lang="scala"><span class="k">override</span> <span class="k">def</span> <span class="n">visitQuerySpecification</span><span class="o">(</span>
+<pre tabindex="0" class="chroma"><code class="language-scala" data-lang="scala"><span class="k">override</span> <span class="k">def</span> <span class="n">visitQuerySpecification</span><span class="o">(</span>
     <span class="n">ctx</span><span class="k">:</span> <span class="kt">QuerySpecificationContext</span><span class="o">)</span><span class="k">:</span> <span class="kt">LogicalPlan</span> <span class="o">=</span> <span class="n">withOrigin</span><span class="o">(</span><span class="n">ctx</span><span class="o">)</span> <span class="o">{</span>
   <span class="c1">// 如果有FROM语句,那么先调用visitFromClause方法解析
 </span><span class="c1"></span>  <span class="c1">// 否则返回OneRowRelation实例，表示没有FROM语句的情况
@@ -735,7 +735,7 @@
 </div><p>继续查看withQuerySpecification方法的定义</p>
 <div class="highlight"><div class="chroma">
 <div class="table-container"><table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -812,7 +812,7 @@
 </span><span class="lnt">75
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-scala" data-lang="scala"><span class="k">private</span> <span class="k">def</span> <span class="n">withQuerySpecification</span><span class="o">(</span>
+<pre tabindex="0" class="chroma"><code class="language-scala" data-lang="scala"><span class="k">private</span> <span class="k">def</span> <span class="n">withQuerySpecification</span><span class="o">(</span>
     <span class="n">ctx</span><span class="k">:</span> <span class="kt">QuerySpecificationContext</span><span class="o">,</span>
     <span class="n">relation</span><span class="k">:</span> <span class="kt">LogicalPlan</span><span class="o">)</span><span class="k">:</span> <span class="kt">LogicalPlan</span> <span class="o">=</span> <span class="n">withOrigin</span><span class="o">(</span><span class="n">ctx</span><span class="o">)</span> <span class="o">{</span>
   <span class="k">import</span> <span class="nn">ctx._</span>  <span class="c1">// import QuerySpecificationContext 类的属性
@@ -894,7 +894,7 @@
 <p>A  JOIN B  JOIN C JOIN D</p>
 <div class="highlight"><div class="chroma">
 <div class="table-container"><table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
@@ -903,7 +903,7 @@
 </span><span class="lnt">7
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-shell" data-lang="shell">+- <span class="s1">&#39;Join Inner
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell">+- <span class="s1">&#39;Join Inner
 </span><span class="s1">   :- &#39;</span>Join Inner
    :  :- <span class="s1">&#39;Join Inner
 </span><span class="s1">   :  :  :- &#39;</span>UnresolvedRelation <span class="sb">`</span>A<span class="sb">`</span>
@@ -917,7 +917,7 @@
 <p>这里通过解析常见的 sql 语句，来看看是如何生成 LogicalPlan 树。</p>
 <div class="highlight"><div class="chroma">
 <div class="table-container"><table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -932,35 +932,35 @@
 </span><span class="lnt">13
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-sql" data-lang="sql"> <span class="k">CREATE</span> <span class="k">TABLE</span> <span class="n">fruit</span> <span class="p">(</span>
-     <span class="n">id</span> <span class="nb">INT</span><span class="p">,</span> 
-     <span class="n">name</span> <span class="n">STRING</span><span class="p">,</span> 
-     <span class="n">price</span> <span class="nb">FLOAT</span><span class="p">,</span>
-     <span class="n">amount</span> <span class="nb">INT</span>
- <span class="p">);</span>
-
- <span class="k">CREATE</span> <span class="k">TABLE</span> <span class="n">orders</span> <span class="p">(</span>
- 	<span class="n">id</span> <span class="nb">INT</span><span class="p">,</span>
-    <span class="n">fruit_id</span> <span class="nb">INT</span><span class="p">,</span>
-    <span class="n">create_time</span> <span class="k">TIMESTAMP</span><span class="p">,</span>
-    <span class="n">consumer_name</span> <span class="n">STRING</span>
- <span class="p">);</span>
-</code></pre></td></tr></table></div>
+<pre tabindex="0" class="chroma"><code class="language-sql" data-lang="sql"><span class="w"> </span><span class="k">CREATE</span><span class="w"> </span><span class="k">TABLE</span><span class="w"> </span><span class="n">fruit</span><span class="w"> </span><span class="p">(</span><span class="w">
+</span><span class="w">     </span><span class="n">id</span><span class="w"> </span><span class="nb">INT</span><span class="p">,</span><span class="w"> 
+</span><span class="w">     </span><span class="n">name</span><span class="w"> </span><span class="n">STRING</span><span class="p">,</span><span class="w"> 
+</span><span class="w">     </span><span class="n">price</span><span class="w"> </span><span class="nb">FLOAT</span><span class="p">,</span><span class="w">
+</span><span class="w">     </span><span class="n">amount</span><span class="w"> </span><span class="nb">INT</span><span class="w">
+</span><span class="w"> </span><span class="p">);</span><span class="w">
+</span><span class="w">
+</span><span class="w"> </span><span class="k">CREATE</span><span class="w"> </span><span class="k">TABLE</span><span class="w"> </span><span class="n">orders</span><span class="w"> </span><span class="p">(</span><span class="w">
+</span><span class="w"> 	</span><span class="n">id</span><span class="w"> </span><span class="nb">INT</span><span class="p">,</span><span class="w">
+</span><span class="w">    </span><span class="n">fruit_id</span><span class="w"> </span><span class="nb">INT</span><span class="p">,</span><span class="w">
+</span><span class="w">    </span><span class="n">create_time</span><span class="w"> </span><span class="k">TIMESTAMP</span><span class="p">,</span><span class="w">
+</span><span class="w">    </span><span class="n">consumer_name</span><span class="w"> </span><span class="n">STRING</span><span class="w">
+</span><span class="w"> </span><span class="p">);</span><span class="w">
+</span></code></pre></td></tr></table></div>
 </div>
 </div><h3 id="查询语句一"><a href="#查询语句一" class="anchor-link"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon anchor-icon"><path d="M326.612 185.391c59.747 59.809 58.927 155.698.36 214.59-.11.12-.24.25-.36.37l-67.2 67.2c-59.27 59.27-155.699 59.262-214.96 0-59.27-59.26-59.27-155.7 0-214.96l37.106-37.106c9.84-9.84 26.786-3.3 27.294 10.606.648 17.722 3.826 35.527 9.69 52.721 1.986 5.822.567 12.262-3.783 16.612l-13.087 13.087c-28.026 28.026-28.905 73.66-1.155 101.96 28.024 28.579 74.086 28.749 102.325.51l67.2-67.19c28.191-28.191 28.073-73.757 0-101.83-3.701-3.694-7.429-6.564-10.341-8.569a16.037 16.037 0 0 1-6.947-12.606c-.396-10.567 3.348-21.456 11.698-29.806l21.054-21.055c5.521-5.521 14.182-6.199 20.584-1.731a152.482 152.482 0 0 1 20.522 17.197zM467.547 44.449c-59.261-59.262-155.69-59.27-214.96 0l-67.2 67.2c-.12.12-.25.25-.36.37-58.566 58.892-59.387 154.781.36 214.59a152.454 152.454 0 0 0 20.521 17.196c6.402 4.468 15.064 3.789 20.584-1.731l21.054-21.055c8.35-8.35 12.094-19.239 11.698-29.806a16.037 16.037 0 0 0-6.947-12.606c-2.912-2.005-6.64-4.875-10.341-8.569-28.073-28.073-28.191-73.639 0-101.83l67.2-67.19c28.239-28.239 74.3-28.069 102.325.51 27.75 28.3 26.872 73.934-1.155 101.96l-13.087 13.087c-4.35 4.35-5.769 10.79-3.783 16.612 5.864 17.194 9.042 34.999 9.69 52.721.509 13.906 17.454 20.446 27.294 10.606l37.106-37.106c59.271-59.259 59.271-155.699.001-214.959z"/></svg></a>查询语句一</h3>
 <p>执行下列语句</p>
 <div class="highlight"><div class="chroma">
 <div class="table-container"><table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-sql" data-lang="sql"><span class="k">SELECT</span> <span class="o">*</span> <span class="k">FROM</span> <span class="n">fruit</span> <span class="k">ORDER</span> <span class="k">BY</span> <span class="n">ID</span> <span class="k">LIMIT</span> <span class="mi">10</span><span class="p">;</span> <span class="c1">-- 按序列出前面10个水果
+<pre tabindex="0" class="chroma"><code class="language-sql" data-lang="sql"><span class="k">SELECT</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="k">FROM</span><span class="w"> </span><span class="n">fruit</span><span class="w"> </span><span class="k">ORDER</span><span class="w"> </span><span class="k">BY</span><span class="w"> </span><span class="n">ID</span><span class="w"> </span><span class="k">LIMIT</span><span class="w"> </span><span class="mi">10</span><span class="p">;</span><span class="w"> </span><span class="c1">-- 按序列出前面10个水果
 </span></code></pre></td></tr></table></div>
 </div>
 </div><p>解析过程如下：</p>
 <div class="highlight"><div class="chroma">
 <div class="table-container"><table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -977,7 +977,7 @@
 </span><span class="lnt">15
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-shell" data-lang="shell"><span class="o">==</span> Parsed Logical <span class="nv">Plan</span> <span class="o">==</span>
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="o">==</span> Parsed Logical <span class="nv">Plan</span> <span class="o">==</span>
 <span class="s1">&#39;GlobalLimit 10
 </span><span class="s1">+- &#39;</span>LocalLimit <span class="m">10</span>
    +- <span class="s1">&#39;Sort [&#39;</span>ID ASC NULLS FIRST<span class="o">]</span>, <span class="nb">true</span>
@@ -1006,16 +1006,16 @@ GlobalLimit <span class="m">10</span>
 <p>执行下列语句</p>
 <div class="highlight"><div class="chroma">
 <div class="table-container"><table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-sql" data-lang="sql"><span class="k">SELECT</span> <span class="n">fruit</span><span class="p">.</span><span class="n">name</span><span class="p">,</span> <span class="n">orders</span><span class="p">.</span><span class="n">create_time</span><span class="p">,</span> <span class="n">orderes</span><span class="p">.</span><span class="n">consumer_name</span>  <span class="k">FROM</span> <span class="n">orders</span> <span class="k">INNER</span> <span class="k">JOIN</span>  <span class="n">fruit</span> <span class="k">ON</span> <span class="n">orders</span><span class="p">.</span><span class="n">fruit_id</span> <span class="o">=</span> <span class="n">fruit</span><span class="p">.</span><span class="n">id</span> <span class="k">WHERE</span> <span class="n">create_time</span> <span class="o">&gt;</span> <span class="s1">&#39;2019-06-17&#39;</span><span class="p">;</span>
-</code></pre></td></tr></table></div>
+<pre tabindex="0" class="chroma"><code class="language-sql" data-lang="sql"><span class="k">SELECT</span><span class="w"> </span><span class="n">fruit</span><span class="p">.</span><span class="n">name</span><span class="p">,</span><span class="w"> </span><span class="n">orders</span><span class="p">.</span><span class="n">create_time</span><span class="p">,</span><span class="w"> </span><span class="n">orderes</span><span class="p">.</span><span class="n">consumer_name</span><span class="w">  </span><span class="k">FROM</span><span class="w"> </span><span class="n">orders</span><span class="w"> </span><span class="k">INNER</span><span class="w"> </span><span class="k">JOIN</span><span class="w">  </span><span class="n">fruit</span><span class="w"> </span><span class="k">ON</span><span class="w"> </span><span class="n">orders</span><span class="p">.</span><span class="n">fruit_id</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">fruit</span><span class="p">.</span><span class="n">id</span><span class="w"> </span><span class="k">WHERE</span><span class="w"> </span><span class="n">create_time</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="s1">&#39;2019-06-17&#39;</span><span class="p">;</span><span class="w">
+</span></code></pre></td></tr></table></div>
 </div>
 </div><p>解析过程如下：</p>
 <div class="highlight"><div class="chroma">
 <div class="table-container"><table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -1032,7 +1032,7 @@ GlobalLimit <span class="m">10</span>
 </span><span class="lnt">15
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-shell" data-lang="shell"><span class="o">==</span> Parsed Logical <span class="nv">Plan</span> <span class="o">==</span>
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="o">==</span> Parsed Logical <span class="nv">Plan</span> <span class="o">==</span>
 <span class="s1">&#39;Project [&#39;</span>fruit.name, <span class="s1">&#39;orders.create_time, &#39;</span>orders.consumer_name<span class="o">]</span>
 +- <span class="s1">&#39;Filter (&#39;</span>create_time &gt; 2019-06-17<span class="o">)</span>
    +- <span class="s1">&#39;Join Inner, (&#39;</span>orders.fruit_id <span class="o">=</span> <span class="s1">&#39;fruit.id)
@@ -1078,9 +1078,9 @@ Project <span class="o">[</span>name#41, create_time#38, consumer_name#39<span c
 
         
     <div class="updated-badge-container">
-        <span title="Updated @ 2021-09-12 11:48:25 CST" style="cursor:help">
+        <span title="Updated @ 2021-10-22 14:44:34 CST" style="cursor:help">
 
-<svg xmlns="http://www.w3.org/2000/svg" width="130" height="20" class="updated-badge"><linearGradient id="b" x2="0" y2="100%"><stop offset="0" stop-color="#bbb" stop-opacity=".1"/><stop offset="1" stop-opacity=".1"/></linearGradient><clipPath id="a"><rect width="130" height="20" rx="3" fill="#fff"/></clipPath><g clip-path="url(#a)"><path class="updated-badge-left" d="M0 0h55v20H0z"/><path class="updated-badge-right" d="M55 0h75v20H55z"/><path fill="url(#b)" d="M0 0h130v20H0z"/></g><g fill="#fff" text-anchor="middle" font-size="110"><text x="285" y="150" fill="#010101" fill-opacity=".3" textLength="450" transform="scale(.1)">updated</text><text x="285" y="140" textLength="450" transform="scale(.1)">updated</text><text x="915" y="150" fill="#010101" fill-opacity=".3" textLength="650" transform="scale(.1)">2021-09-12</text><text x="915" y="140" textLength="650" transform="scale(.1)">2021-09-12</text></g></svg>
+<svg xmlns="http://www.w3.org/2000/svg" width="130" height="20" class="updated-badge"><linearGradient id="b" x2="0" y2="100%"><stop offset="0" stop-color="#bbb" stop-opacity=".1"/><stop offset="1" stop-opacity=".1"/></linearGradient><clipPath id="a"><rect width="130" height="20" rx="3" fill="#fff"/></clipPath><g clip-path="url(#a)"><path class="updated-badge-left" d="M0 0h55v20H0z"/><path class="updated-badge-right" d="M55 0h75v20H55z"/><path fill="url(#b)" d="M0 0h130v20H0z"/></g><g fill="#fff" text-anchor="middle" font-size="110"><text x="285" y="150" fill="#010101" fill-opacity=".3" textLength="450" transform="scale(.1)">updated</text><text x="285" y="140" textLength="450" transform="scale(.1)">updated</text><text x="915" y="150" fill="#010101" fill-opacity=".3" textLength="650" transform="scale(.1)">2021-10-22</text><text x="915" y="140" textLength="650" transform="scale(.1)">2021-10-22</text></g></svg>
         </span></div>
 
 

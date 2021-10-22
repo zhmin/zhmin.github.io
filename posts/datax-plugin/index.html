@@ -3,7 +3,7 @@
     <head prefix="og: http://ogp.me/ns# article: http://ogp.me/ns/article#">
     <meta charset="UTF-8" />
 
-    <meta name="generator" content="Hugo 0.79.0" /><meta name="theme-color" content="#fff" />
+    <meta name="generator" content="Hugo 0.88.1" /><meta name="theme-color" content="#fff" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     
     <meta name="format-detection" content="telephone=no, date=no, address=no, email=no" />
@@ -14,11 +14,11 @@
 
     <title>Datax 插件加载原理 | 学习笔记</title>
 
-    <link rel="stylesheet" href="/css/meme.min.81031e6b78ad2f1f534002ebb3b658886fea2f25d8a44d296d1466a2fe52f1c1.css"/>
+    <link rel="stylesheet" href="/css/meme.min.2d3e1834af2bc8dda20c7d74aaa1d8134845094441b7a554a5206ccd4b472596.css"/>
 
     
     
-        <script src="/js/meme.min.120d98bb614adc6beb13bf79f943d2cceffd323f4de1544029228c3dca2e9bda.js"></script>
+        <script src="/js/meme.min.800f61672145711eb3e1f29fcfcc3dbe0139dd459259718b611a0390f74703d1.js"></script>
 
     
 
@@ -54,7 +54,7 @@
         "@context": "https://schema.org",
         "@type": "BlogPosting",
         "datePublished": "2018-12-27T22:30:47+00:00",
-        "dateModified": "2021-09-12T11:48:25+08:00",
+        "dateModified": "2021-10-22T14:44:34+08:00",
         "url": "https://zhmin.github.io/posts/datax-plugin/",
         "headline": "Datax 插件加载原理",
         "description": "Datax 插件加载原理 插件类型 Datax有好几种类型的插件，每个插件都有不同的作用。 reader， 读插件。Reader就是属于这种类型的 writer， 写插件。Writer就是属于这种类型的 transforme……",
@@ -97,7 +97,7 @@
 <meta property="og:locale" content="zh" /><meta property="og:image" content="https://github.com/zhmin/blog/blob/datax/datax/images/plugin-uml.png?raw=true" />
 <meta property="og:type" content="article" />
     <meta property="article:published_time" content="2018-12-27T22:30:47&#43;00:00" />
-    <meta property="article:modified_time" content="2021-09-12T11:48:25&#43;08:00" />
+    <meta property="article:modified_time" content="2021-10-22T14:44:34&#43;08:00" />
     
     <meta property="article:section" content="posts" />
 
@@ -247,12 +247,12 @@
 <p>插件类型由PluginType枚举表示</p>
 <div class="highlight"><div class="chroma">
 <div class="table-container"><table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">enum</span> <span class="n">PluginType</span> <span class="o">{</span>
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">enum</span> <span class="n">PluginType</span> <span class="o">{</span>
 	<span class="n">READER</span><span class="o">(</span><span class="s">&#34;reader&#34;</span><span class="o">),</span> <span class="n">TRANSFORMER</span><span class="o">(</span><span class="s">&#34;transformer&#34;</span><span class="o">),</span> <span class="n">WRITER</span><span class="o">(</span><span class="s">&#34;writer&#34;</span><span class="o">),</span> <span class="n">HANDLER</span><span class="o">(</span><span class="s">&#34;handler&#34;</span><span class="o">);</span>
 <span class="o">}</span>
 </code></pre></td></tr></table></div>
@@ -263,7 +263,7 @@
 <p>ConfigParser首先会读取配置文件，提取需要使用的reader，writer，prehandler 和 posthandler的名称。</p>
 <div class="highlight"><div class="chroma">
 <div class="table-container"><table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -299,7 +299,7 @@
 </span><span class="lnt">34
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-java" data-lang="java">    <span class="kd">public</span> <span class="kd">static</span> <span class="n">Configuration</span> <span class="nf">parse</span><span class="o">(</span><span class="kd">final</span> <span class="n">String</span> <span class="n">jobPath</span><span class="o">)</span> <span class="o">{</span>
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java">    <span class="kd">public</span> <span class="kd">static</span> <span class="n">Configuration</span> <span class="nf">parse</span><span class="o">(</span><span class="kd">final</span> <span class="n">String</span> <span class="n">jobPath</span><span class="o">)</span> <span class="o">{</span>
         <span class="n">Configuration</span> <span class="n">configuration</span> <span class="o">=</span> <span class="n">ConfigParser</span><span class="o">.</span><span class="na">parseJobConfig</span><span class="o">(</span><span class="n">jobPath</span><span class="o">);</span>
         <span class="c1">// 合并 conf/core.json文件的配置, false 表示不覆盖原有的配置
 </span><span class="c1"></span>        <span class="n">configuration</span><span class="o">.</span><span class="na">merge</span><span class="o">(</span>
@@ -338,7 +338,7 @@
 </div><p>提取完插件名称后，会去reader目录和writer目录，寻找插件的位置。目前Datax只支持reader和writer插件，因为它只从这两个目录中寻找。如果想自己扩展其他类型插件的话，比如handler类型的， 需要修改parsePluginConfig的代码。每个插件目录会有一个重要的配置文件 plugin.json ，它定义了插件的名称和对应的类，在LoadUtils类加载插件的时候会使用到。</p>
 <div class="highlight"><div class="chroma">
 <div class="table-container"><table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -403,7 +403,7 @@
 </span><span class="lnt">63
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-java" data-lang="java">    <span class="kd">public</span> <span class="kd">static</span> <span class="n">Configuration</span> <span class="nf">parsePluginConfig</span><span class="o">(</span><span class="n">List</span><span class="o">&lt;</span><span class="n">String</span><span class="o">&gt;</span> <span class="n">wantPluginNames</span><span class="o">)</span> <span class="o">{</span>
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java">    <span class="kd">public</span> <span class="kd">static</span> <span class="n">Configuration</span> <span class="nf">parsePluginConfig</span><span class="o">(</span><span class="n">List</span><span class="o">&lt;</span><span class="n">String</span><span class="o">&gt;</span> <span class="n">wantPluginNames</span><span class="o">)</span> <span class="o">{</span>
         <span class="n">Configuration</span> <span class="n">configuration</span> <span class="o">=</span> <span class="n">Configuration</span><span class="o">.</span><span class="na">newDefault</span><span class="o">();</span>
         <span class="o">......</span>
         <span class="c1">// 遍历plugin.reader目录下的文件夹
@@ -474,7 +474,7 @@
 <p>JarLoader继承URLClassLoader，扩充了可以加载目录的功能。可以从指定的目录下，把传入的路径、及其子路径、以及路径中的jar文件加入到class path。</p>
 <div class="highlight"><div class="chroma">
 <div class="table-container"><table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -556,7 +556,7 @@
 </span><span class="lnt">80
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">JarLoader</span> <span class="kd">extends</span> <span class="n">URLClassLoader</span> <span class="o">{</span>
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">JarLoader</span> <span class="kd">extends</span> <span class="n">URLClassLoader</span> <span class="o">{</span>
     <span class="kd">public</span> <span class="nf">JarLoader</span><span class="o">(</span><span class="n">String</span><span class="o">[]</span> <span class="n">paths</span><span class="o">)</span> <span class="o">{</span>
         <span class="k">this</span><span class="o">(</span><span class="n">paths</span><span class="o">,</span> <span class="n">JarLoader</span><span class="o">.</span><span class="na">class</span><span class="o">.</span><span class="na">getClassLoader</span><span class="o">());</span>
     <span class="o">}</span>
@@ -642,7 +642,7 @@
 <p>LoadUtil管理着插件的加载器，调用getJarLoader返回插件对应的加载器。</p>
 <div class="highlight"><div class="chroma">
 <div class="table-container"><table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -675,7 +675,7 @@
 </span><span class="lnt">31
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">LoadUtil</span> <span class="o">{</span>
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">LoadUtil</span> <span class="o">{</span>
     
     <span class="c1">// 加载器的HashMap, Key由插件类型和名称决定, 格式为plugin.{pulginType}.{pluginName}
 </span><span class="c1"></span>    <span class="kd">private</span> <span class="kd">static</span> <span class="n">Map</span><span class="o">&lt;</span><span class="n">String</span><span class="o">,</span> <span class="n">JarLoader</span><span class="o">&gt;</span> <span class="n">jarLoaderCenter</span> <span class="o">=</span> <span class="k">new</span> <span class="n">HashMap</span><span class="o">&lt;</span><span class="n">String</span><span class="o">,</span> <span class="n">JarLoader</span><span class="o">&gt;();</span>
@@ -711,7 +711,7 @@
 </div><p>当获取类加载器，就可以调用LoadUtil来加载插件。LoadUtil提供了 loadJobPlugin 和  loadTaskPlugin 两个接口，加载Job  和 Task 的两种插件。</p>
 <div class="highlight"><div class="chroma">
 <div class="table-container"><table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -756,7 +756,7 @@
 </span><span class="lnt">43
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-java" data-lang="java"><span class="c1">// 加载Job类型的Plugin
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="c1">// 加载Job类型的Plugin
 </span><span class="c1"></span><span class="kd">public</span> <span class="kd">static</span> <span class="n">AbstractJobPlugin</span> <span class="nf">loadJobPlugin</span><span class="o">(</span><span class="n">PluginType</span> <span class="n">pluginType</span><span class="o">,</span> <span class="n">String</span> <span class="n">pluginName</span><span class="o">)</span> <span class="o">{</span>
         <span class="c1">// 调用loadPluginClass方法，加载插件对应的class
 </span><span class="c1"></span>        <span class="n">Class</span><span class="o">&lt;?</span> <span class="kd">extends</span> <span class="n">AbstractPlugin</span><span class="o">&gt;</span> <span class="n">clazz</span> <span class="o">=</span> <span class="n">LoadUtil</span><span class="o">.</span><span class="na">loadPluginClass</span><span class="o">(</span><span class="n">pluginType</span><span class="o">,</span> <span class="n">pluginName</span><span class="o">,</span> <span class="n">ContainerType</span><span class="o">.</span><span class="na">Job</span><span class="o">);</span>
@@ -805,7 +805,7 @@
 <p>ClassLoaderSwapper类，提供了比较方便的切换接口。</p>
 <div class="highlight"><div class="chroma">
 <div class="table-container"><table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -817,7 +817,7 @@
 </span><span class="lnt">10
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-java" data-lang="java"><span class="c1">// 实例化
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="c1">// 实例化
 </span><span class="c1"></span><span class="n">ClassLoaderSwapper</span> <span class="n">classLoaderSwapper</span> <span class="o">=</span> <span class="n">ClassLoaderSwapper</span><span class="o">.</span><span class="na">newCurrentThreadClassLoaderSwapper</span><span class="o">();</span>
 
 <span class="n">ClassLoader</span> <span class="n">classLoader1</span> <span class="o">=</span> <span class="k">new</span> <span class="n">URLClassLoader</span><span class="o">();</span>
@@ -832,7 +832,7 @@
 </div><p>ClassLoaderSwapper的源码比较简单， 它有一个属性storeClassLoader， 用于保存着切换之前的ClassLoader。</p>
 <div class="highlight"><div class="chroma">
 <div class="table-container"><table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -859,7 +859,7 @@
 </span><span class="lnt">25
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">final</span> <span class="kd">class</span> <span class="nc">ClassLoaderSwapper</span> <span class="o">{</span>
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">final</span> <span class="kd">class</span> <span class="nc">ClassLoaderSwapper</span> <span class="o">{</span>
     
     <span class="c1">// 保存切换之前的加载器
 </span><span class="c1"></span>    <span class="kd">private</span> <span class="n">ClassLoader</span> <span class="n">storeClassLoader</span> <span class="o">=</span> <span class="kc">null</span><span class="o">;</span>
@@ -913,9 +913,9 @@
 
         
     <div class="updated-badge-container">
-        <span title="Updated @ 2021-09-12 11:48:25 CST" style="cursor:help">
+        <span title="Updated @ 2021-10-22 14:44:34 CST" style="cursor:help">
 
-<svg xmlns="http://www.w3.org/2000/svg" width="130" height="20" class="updated-badge"><linearGradient id="b" x2="0" y2="100%"><stop offset="0" stop-color="#bbb" stop-opacity=".1"/><stop offset="1" stop-opacity=".1"/></linearGradient><clipPath id="a"><rect width="130" height="20" rx="3" fill="#fff"/></clipPath><g clip-path="url(#a)"><path class="updated-badge-left" d="M0 0h55v20H0z"/><path class="updated-badge-right" d="M55 0h75v20H55z"/><path fill="url(#b)" d="M0 0h130v20H0z"/></g><g fill="#fff" text-anchor="middle" font-size="110"><text x="285" y="150" fill="#010101" fill-opacity=".3" textLength="450" transform="scale(.1)">updated</text><text x="285" y="140" textLength="450" transform="scale(.1)">updated</text><text x="915" y="150" fill="#010101" fill-opacity=".3" textLength="650" transform="scale(.1)">2021-09-12</text><text x="915" y="140" textLength="650" transform="scale(.1)">2021-09-12</text></g></svg>
+<svg xmlns="http://www.w3.org/2000/svg" width="130" height="20" class="updated-badge"><linearGradient id="b" x2="0" y2="100%"><stop offset="0" stop-color="#bbb" stop-opacity=".1"/><stop offset="1" stop-opacity=".1"/></linearGradient><clipPath id="a"><rect width="130" height="20" rx="3" fill="#fff"/></clipPath><g clip-path="url(#a)"><path class="updated-badge-left" d="M0 0h55v20H0z"/><path class="updated-badge-right" d="M55 0h75v20H55z"/><path fill="url(#b)" d="M0 0h130v20H0z"/></g><g fill="#fff" text-anchor="middle" font-size="110"><text x="285" y="150" fill="#010101" fill-opacity=".3" textLength="450" transform="scale(.1)">updated</text><text x="285" y="140" textLength="450" transform="scale(.1)">updated</text><text x="915" y="150" fill="#010101" fill-opacity=".3" textLength="650" transform="scale(.1)">2021-10-22</text><text x="915" y="140" textLength="650" transform="scale(.1)">2021-10-22</text></g></svg>
         </span></div>
 
 

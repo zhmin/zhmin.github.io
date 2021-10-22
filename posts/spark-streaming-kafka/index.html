@@ -3,7 +3,7 @@
     <head prefix="og: http://ogp.me/ns# article: http://ogp.me/ns/article#">
     <meta charset="UTF-8" />
 
-    <meta name="generator" content="Hugo 0.79.0" /><meta name="theme-color" content="#fff" />
+    <meta name="generator" content="Hugo 0.88.1" /><meta name="theme-color" content="#fff" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     
     <meta name="format-detection" content="telephone=no, date=no, address=no, email=no" />
@@ -14,11 +14,11 @@
 
     <title>Spark Streaming Kafka 原理 | 学习笔记</title>
 
-    <link rel="stylesheet" href="/css/meme.min.81031e6b78ad2f1f534002ebb3b658886fea2f25d8a44d296d1466a2fe52f1c1.css"/>
+    <link rel="stylesheet" href="/css/meme.min.2d3e1834af2bc8dda20c7d74aaa1d8134845094441b7a554a5206ccd4b472596.css"/>
 
     
     
-        <script src="/js/meme.min.120d98bb614adc6beb13bf79f943d2cceffd323f4de1544029228c3dca2e9bda.js"></script>
+        <script src="/js/meme.min.800f61672145711eb3e1f29fcfcc3dbe0139dd459259718b611a0390f74703d1.js"></script>
 
     
 
@@ -54,7 +54,7 @@
         "@context": "https://schema.org",
         "@type": "BlogPosting",
         "datePublished": "2019-02-21T21:25:04+00:00",
-        "dateModified": "2021-09-12T11:48:25+08:00",
+        "dateModified": "2021-10-22T14:44:34+08:00",
         "url": "https://zhmin.github.io/posts/spark-streaming-kafka/",
         "headline": "Spark Streaming Kafka 原理",
         "description": "Spark Streaming Kafka 原理 Kafka作为一个消息队列，具有很高的吞吐量，和Spark Streaming结合起来，可以实现高速实时的流处理。Spark Streaming在以前的版本支持两种方式读取Kafka，一种是通过……",
@@ -97,7 +97,7 @@
 <meta property="og:locale" content="zh" /><meta property="og:image" content="https://zhmin.github.io/spark-streaming-kafka-direct.svg" />
 <meta property="og:type" content="article" />
     <meta property="article:published_time" content="2019-02-21T21:25:04&#43;00:00" />
-    <meta property="article:modified_time" content="2021-09-12T11:48:25&#43;08:00" />
+    <meta property="article:modified_time" content="2021-10-22T14:44:34&#43;08:00" />
     
     <meta property="article:section" content="posts" />
 
@@ -248,7 +248,7 @@
 <p>下面可以看看它的示例代码</p>
 <div class="highlight"><div class="chroma">
 <div class="table-container"><table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -275,7 +275,7 @@
 </span><span class="lnt">25
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-java" data-lang="java"><span class="c1">// kafka 配置项，这里只列出一些重要项
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="c1">// kafka 配置项，这里只列出一些重要项
 </span><span class="c1"></span><span class="n">Map</span><span class="o">&lt;</span><span class="n">String</span><span class="o">,</span> <span class="n">Object</span><span class="o">&gt;</span> <span class="n">kafkaParams</span> <span class="o">=</span> <span class="k">new</span> <span class="n">HashMap</span><span class="o">&lt;&gt;();</span>
 <span class="n">kafkaParams</span><span class="o">.</span><span class="na">put</span><span class="o">(</span><span class="s">&#34;bootstrap.servers&#34;</span><span class="o">,</span> <span class="s">&#34;localhost:9092,anotherhost:9092&#34;</span><span class="o">);</span>
 <span class="n">kafkaParams</span><span class="o">.</span><span class="na">put</span><span class="o">(</span><span class="s">&#34;group.id&#34;</span><span class="o">,</span> <span class="s">&#34;my_consumer_group&#34;</span><span class="o">);</span>
@@ -307,7 +307,7 @@
 <p>DirectKafkaInputDStream继承InputDStream，它的compute方法负责生成RDD</p>
 <div class="highlight"><div class="chroma">
 <div class="table-container"><table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -345,7 +345,7 @@
 </span><span class="lnt">36
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-scala" data-lang="scala"><span class="k">class</span> <span class="nc">DirectKafkaInputDStream</span><span class="o">[</span><span class="kt">K</span>, <span class="kt">V</span><span class="o">](</span>
+<pre tabindex="0" class="chroma"><code class="language-scala" data-lang="scala"><span class="k">class</span> <span class="nc">DirectKafkaInputDStream</span><span class="o">[</span><span class="kt">K</span>, <span class="kt">V</span><span class="o">](</span>
     <span class="nc">_ssc</span><span class="k">:</span> <span class="kt">StreamingContext</span><span class="o">,</span>
     <span class="n">locationStrategy</span><span class="k">:</span> <span class="kt">LocationStrategy</span><span class="o">,</span>
     <span class="n">consumerStrategy</span><span class="k">:</span> <span class="kt">ConsumerStrategy</span><span class="o">[</span><span class="kt">K</span>, <span class="kt">V</span><span class="o">],</span>
@@ -388,14 +388,14 @@
 <p>DirectKafkaInputDStream定期生成的RDD的类型是KafkaRDD。我们首先看看 KafkaRDD是如何划分分区的，它会根据从初始化时接收的offset信息参数，生成KafkaRDDPartition分区，每个分区对应着Kafka的一个topic partition 的一段数据。这段数据的信息由OffsetRange表示， 它保存了数据的位置。</p>
 <div class="highlight"><div class="chroma">
 <div class="table-container"><table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
 </span><span class="lnt">5
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-scala" data-lang="scala"><span class="k">final</span> <span class="k">class</span> <span class="nc">OffsetRange</span> <span class="k">private</span><span class="o">(</span>
+<pre tabindex="0" class="chroma"><code class="language-scala" data-lang="scala"><span class="k">final</span> <span class="k">class</span> <span class="nc">OffsetRange</span> <span class="k">private</span><span class="o">(</span>
     <span class="k">val</span> <span class="n">topic</span><span class="k">:</span> <span class="kt">String</span><span class="o">,</span>   <span class="c1">// Kafka的topic名称
 </span><span class="c1"></span>    <span class="k">val</span> <span class="n">partition</span><span class="k">:</span> <span class="kt">Int</span><span class="o">,</span>  <span class="c1">// 该topic的partition
 </span><span class="c1"></span>    <span class="k">val</span> <span class="n">fromOffset</span><span class="k">:</span> <span class="kt">Long</span><span class="o">,</span>  <span class="c1">// 起始offset
@@ -405,7 +405,7 @@
 </div><p>KafkaRDD继承RDD，它的getPartitions负责生成分区</p>
 <div class="highlight"><div class="chroma">
 <div class="table-container"><table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -417,7 +417,7 @@
 </span><span class="lnt">10
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-scala" data-lang="scala"><span class="k">private</span><span class="o">[</span><span class="kt">spark</span><span class="o">]</span> <span class="k">class</span> <span class="nc">KafkaRDD</span><span class="o">[</span><span class="kt">K</span>, <span class="kt">V</span><span class="o">](</span>
+<pre tabindex="0" class="chroma"><code class="language-scala" data-lang="scala"><span class="k">private</span><span class="o">[</span><span class="kt">spark</span><span class="o">]</span> <span class="k">class</span> <span class="nc">KafkaRDD</span><span class="o">[</span><span class="kt">K</span>, <span class="kt">V</span><span class="o">](</span>
     <span class="k">val</span> <span class="n">offsetRanges</span><span class="k">:</span> <span class="kt">Array</span><span class="o">[</span><span class="kt">OffsetRange</span><span class="o">]</span> 
 <span class="o">)</span> <span class="k">extends</span> <span class="nc">RDD</span><span class="o">[</span><span class="kt">ConsumerRecord</span><span class="o">[</span><span class="kt">K</span>, <span class="kt">V</span><span class="o">]](</span><span class="n">sc</span><span class="o">,</span> <span class="nc">Nil</span><span class="o">)</span> <span class="k">with</span> <span class="nc">Logging</span> <span class="k">with</span> <span class="nc">HasOffsetRanges</span> <span class="o">{</span>
 
@@ -432,7 +432,7 @@
 </div><p>接下来看看KafkaRDD的分区数据是如何读取的。它使用KafkaRDDIterator遍历数据，而KafkaRDDIterator的原理，是调用CachedKafkaConsumer的get方法获取数据</p>
 <div class="highlight"><div class="chroma">
 <div class="table-container"><table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -492,7 +492,7 @@
 </span><span class="lnt">58
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-scala" data-lang="scala"><span class="k">class</span> <span class="nc">KafkaRDD</span><span class="o">[</span><span class="kt">K</span>, <span class="kt">V</span><span class="o">]</span> <span class="o">{</span>
+<pre tabindex="0" class="chroma"><code class="language-scala" data-lang="scala"><span class="k">class</span> <span class="nc">KafkaRDD</span><span class="o">[</span><span class="kt">K</span>, <span class="kt">V</span><span class="o">]</span> <span class="o">{</span>
   <span class="k">override</span> <span class="k">def</span> <span class="n">compute</span><span class="o">(</span><span class="n">thePart</span><span class="k">:</span> <span class="kt">Partition</span><span class="o">,</span> <span class="n">context</span><span class="k">:</span> <span class="kt">TaskContext</span><span class="o">)</span><span class="k">:</span> <span class="kt">Iterator</span><span class="o">[</span><span class="kt">ConsumerRecord</span><span class="o">[</span><span class="kt">K</span>, <span class="kt">V</span><span class="o">]]</span> <span class="k">=</span>   <span class="o">{</span>
     <span class="c1">// 向下转型为KafkaRDDPartition
 </span><span class="c1"></span>    <span class="k">val</span> <span class="n">part</span> <span class="k">=</span> <span class="n">thePart</span><span class="o">.</span><span class="n">asInstanceOf</span><span class="o">[</span><span class="kt">KafkaRDDPartition</span><span class="o">]</span>
@@ -556,7 +556,7 @@
 <p>CachedKafkaConsumer包含了KafkaConsumer实例，它是Kafka的消费者。CachedKafkaConsumer使用KafkaConsumer的assign模式，这种模式需要客户端自己管理offset。CachedKafkaConsumer是运行在 executor 节点上的，它只负责从kafka中读取指定的一段数据，所以不需要管理offset。</p>
 <div class="highlight"><div class="chroma">
 <div class="table-container"><table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -633,7 +633,7 @@
 </span><span class="lnt">75
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-scala" data-lang="scala"><span class="k">class</span> <span class="nc">CachedKafkaConsumer</span><span class="o">[</span><span class="kt">K</span>, <span class="kt">V</span><span class="o">]</span> <span class="nc">private</span><span class="o">(</span>
+<pre tabindex="0" class="chroma"><code class="language-scala" data-lang="scala"><span class="k">class</span> <span class="nc">CachedKafkaConsumer</span><span class="o">[</span><span class="kt">K</span>, <span class="kt">V</span><span class="o">]</span> <span class="nc">private</span><span class="o">(</span>
   <span class="k">val</span> <span class="n">groupId</span><span class="k">:</span> <span class="kt">String</span><span class="o">,</span>
   <span class="k">val</span> <span class="n">topic</span><span class="k">:</span> <span class="kt">String</span><span class="o">,</span>
   <span class="k">val</span> <span class="n">partition</span><span class="k">:</span> <span class="kt">Int</span><span class="o">,</span>
@@ -738,9 +738,9 @@
 
         
     <div class="updated-badge-container">
-        <span title="Updated @ 2021-09-12 11:48:25 CST" style="cursor:help">
+        <span title="Updated @ 2021-10-22 14:44:34 CST" style="cursor:help">
 
-<svg xmlns="http://www.w3.org/2000/svg" width="130" height="20" class="updated-badge"><linearGradient id="b" x2="0" y2="100%"><stop offset="0" stop-color="#bbb" stop-opacity=".1"/><stop offset="1" stop-opacity=".1"/></linearGradient><clipPath id="a"><rect width="130" height="20" rx="3" fill="#fff"/></clipPath><g clip-path="url(#a)"><path class="updated-badge-left" d="M0 0h55v20H0z"/><path class="updated-badge-right" d="M55 0h75v20H55z"/><path fill="url(#b)" d="M0 0h130v20H0z"/></g><g fill="#fff" text-anchor="middle" font-size="110"><text x="285" y="150" fill="#010101" fill-opacity=".3" textLength="450" transform="scale(.1)">updated</text><text x="285" y="140" textLength="450" transform="scale(.1)">updated</text><text x="915" y="150" fill="#010101" fill-opacity=".3" textLength="650" transform="scale(.1)">2021-09-12</text><text x="915" y="140" textLength="650" transform="scale(.1)">2021-09-12</text></g></svg>
+<svg xmlns="http://www.w3.org/2000/svg" width="130" height="20" class="updated-badge"><linearGradient id="b" x2="0" y2="100%"><stop offset="0" stop-color="#bbb" stop-opacity=".1"/><stop offset="1" stop-opacity=".1"/></linearGradient><clipPath id="a"><rect width="130" height="20" rx="3" fill="#fff"/></clipPath><g clip-path="url(#a)"><path class="updated-badge-left" d="M0 0h55v20H0z"/><path class="updated-badge-right" d="M55 0h75v20H55z"/><path fill="url(#b)" d="M0 0h130v20H0z"/></g><g fill="#fff" text-anchor="middle" font-size="110"><text x="285" y="150" fill="#010101" fill-opacity=".3" textLength="450" transform="scale(.1)">updated</text><text x="285" y="140" textLength="450" transform="scale(.1)">updated</text><text x="915" y="150" fill="#010101" fill-opacity=".3" textLength="650" transform="scale(.1)">2021-10-22</text><text x="915" y="140" textLength="650" transform="scale(.1)">2021-10-22</text></g></svg>
         </span></div>
 
 

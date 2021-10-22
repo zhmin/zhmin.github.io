@@ -3,7 +3,7 @@
     <head prefix="og: http://ogp.me/ns# article: http://ogp.me/ns/article#">
     <meta charset="UTF-8" />
 
-    <meta name="generator" content="Hugo 0.79.0" /><meta name="theme-color" content="#fff" />
+    <meta name="generator" content="Hugo 0.88.1" /><meta name="theme-color" content="#fff" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     
     <meta name="format-detection" content="telephone=no, date=no, address=no, email=no" />
@@ -14,11 +14,11 @@
 
     <title>Apache Orc 结构 | 学习笔记</title>
 
-    <link rel="stylesheet" href="/css/meme.min.81031e6b78ad2f1f534002ebb3b658886fea2f25d8a44d296d1466a2fe52f1c1.css"/>
+    <link rel="stylesheet" href="/css/meme.min.2d3e1834af2bc8dda20c7d74aaa1d8134845094441b7a554a5206ccd4b472596.css"/>
 
     
     
-        <script src="/js/meme.min.120d98bb614adc6beb13bf79f943d2cceffd323f4de1544029228c3dca2e9bda.js"></script>
+        <script src="/js/meme.min.800f61672145711eb3e1f29fcfcc3dbe0139dd459259718b611a0390f74703d1.js"></script>
 
     
 
@@ -54,7 +54,7 @@
         "@context": "https://schema.org",
         "@type": "BlogPosting",
         "datePublished": "2020-10-18T22:44:06+00:00",
-        "dateModified": "2021-09-12T11:48:25+08:00",
+        "dateModified": "2021-10-22T14:44:34+08:00",
         "url": "https://zhmin.github.io/posts/apache-orc-structure/",
         "headline": "Apache Orc 结构",
         "description": "前言 最近看完了数据库的行式存储后，也想总结下列式存储。列式存储也有多种实现方式，这里挑选熟悉的存储格式 orc，它在hive里使用的比较多。本篇会先讲讲它的设计结构，然后结合源码来理解，中间还会讲述一些……",
@@ -97,7 +97,7 @@
 <meta property="og:locale" content="zh" /><meta property="og:image" content="https://orc.apache.org/img/OrcFileLayout.png" />
 <meta property="og:type" content="article" />
     <meta property="article:published_time" content="2020-10-18T22:44:06&#43;00:00" />
-    <meta property="article:modified_time" content="2021-09-12T11:48:25&#43;08:00" />
+    <meta property="article:modified_time" content="2021-10-22T14:44:34&#43;08:00" />
     
     <meta property="article:section" content="posts" />
 
@@ -248,14 +248,14 @@
 <p>再继续介绍数据的读写之前，需要详细介绍下，它对外接口提供的数据单位<code>VectorizedRowBatch</code>，它表示多行数据。它是将每列的数据单独存储。</p>
 <div class="highlight"><div class="chroma">
 <div class="table-container"><table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
 </span><span class="lnt">5
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">VectorizedRowBatch</span> <span class="o">{</span>
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">VectorizedRowBatch</span> <span class="o">{</span>
     <span class="kd">public</span> <span class="kt">int</span> <span class="n">numCols</span><span class="o">;</span>           <span class="c1">// 多少列
 </span><span class="c1"></span>    <span class="kd">public</span> <span class="n">ColumnVector</span><span class="o">[]</span> <span class="n">cols</span><span class="o">;</span>   <span class="c1">// 每列的数据
 </span><span class="c1"></span>    <span class="kd">public</span> <span class="kt">int</span> <span class="n">size</span><span class="o">;</span>   <span class="c1">// 行数
@@ -265,7 +265,7 @@
 </div><p><code>ColumnVector</code>表示一列的数据，可以看作是一个数组。<code>ColumnVector</code>有多个子类，每个子类对应于一种数据类型。</p>
 <div class="highlight"><div class="chroma">
 <div class="table-container"><table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
@@ -274,7 +274,7 @@
 </span><span class="lnt">7
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-java" data-lang="java"><span class="c1">// 只包含一列的数据
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="c1">// 只包含一列的数据
 </span><span class="c1"></span><span class="kd">public</span> <span class="kd">abstract</span> <span class="kd">class</span> <span class="nc">ColumnVector</span> <span class="o">{</span>   
     <span class="kd">public</span> <span class="kd">final</span> <span class="n">Type</span> <span class="n">type</span><span class="o">;</span>        <span class="c1">// 列类型
 </span><span class="c1"></span>    <span class="kd">public</span> <span class="kt">boolean</span><span class="o">[]</span> <span class="n">isNull</span><span class="o">;</span>       <span class="c1">// 第几行的列数据是否为空值
@@ -288,14 +288,14 @@
 <p><code>ColumnStatisticsImp</code>中存储了这些类型中相同的部分信息</p>
 <div class="highlight"><div class="chroma">
 <div class="table-container"><table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
 </span><span class="lnt">5
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">abstract</span> <span class="kd">class</span> <span class="nc">ColumnStatisticsImp</span> <span class="o">{</span>
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">abstract</span> <span class="kd">class</span> <span class="nc">ColumnStatisticsImp</span> <span class="o">{</span>
     <span class="kd">protected</span> <span class="kt">long</span> <span class="n">count</span> <span class="o">=</span> <span class="n">0</span><span class="o">;</span>   <span class="c1">// 非空值
 </span><span class="c1"></span>    <span class="kd">private</span> <span class="kt">boolean</span> <span class="n">hasNull</span> <span class="o">=</span> <span class="kc">false</span><span class="o">;</span>  <span class="c1">// 是否存在空值
 </span><span class="c1"></span>    <span class="kd">private</span> <span class="kt">long</span> <span class="n">bytesOnDisk</span> <span class="o">=</span> <span class="n">0</span><span class="o">;</span>  <span class="c1">// 该列存储在磁盘的空间大小
@@ -305,14 +305,14 @@
 </div><p>下面以 int 类型为例，它还有独立的统计信息</p>
 <div class="highlight"><div class="chroma">
 <div class="table-container"><table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
 </span><span class="lnt">5
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-java" data-lang="java"><span class="n">message</span> <span class="n">IntegerStatistics</span>  <span class="o">{</span>
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="n">message</span> <span class="n">IntegerStatistics</span>  <span class="o">{</span>
   <span class="n">optional</span> <span class="n">sint64</span> <span class="n">minimum</span> <span class="o">=</span> <span class="n">1</span><span class="o">;</span>    <span class="c1">// 最小值
 </span><span class="c1"></span>  <span class="n">optional</span> <span class="n">sint64</span> <span class="n">maximum</span> <span class="o">=</span> <span class="n">2</span><span class="o">;</span>   <span class="c1">// 最大值
 </span><span class="c1"></span>  <span class="n">optional</span> <span class="n">sint64</span> <span class="n">sum</span> <span class="o">=</span> <span class="n">3</span><span class="o">;</span>       <span class="c1">// 总和
@@ -325,7 +325,7 @@
 <p>整体写入过程不是很复杂，下面是相关源码</p>
 <div class="highlight"><div class="chroma">
 <div class="table-container"><table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -355,7 +355,7 @@
 </span><span class="lnt">28
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-java" data-lang="java"><span class="nd">@Override</span>
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="nd">@Override</span>
 <span class="kd">public</span> <span class="kt">void</span> <span class="nf">addRowBatch</span><span class="o">(</span><span class="n">VectorizedRowBatch</span> <span class="n">batch</span><span class="o">)</span> <span class="kd">throws</span> <span class="n">IOException</span> <span class="o">{</span>
     <span class="k">if</span> <span class="o">(</span><span class="n">buildIndex</span><span class="o">)</span> <span class="o">{</span>
         <span class="c1">// 如果创建索引，需要记录
@@ -434,9 +434,9 @@
 
         
     <div class="updated-badge-container">
-        <span title="Updated @ 2021-09-12 11:48:25 CST" style="cursor:help">
+        <span title="Updated @ 2021-10-22 14:44:34 CST" style="cursor:help">
 
-<svg xmlns="http://www.w3.org/2000/svg" width="130" height="20" class="updated-badge"><linearGradient id="b" x2="0" y2="100%"><stop offset="0" stop-color="#bbb" stop-opacity=".1"/><stop offset="1" stop-opacity=".1"/></linearGradient><clipPath id="a"><rect width="130" height="20" rx="3" fill="#fff"/></clipPath><g clip-path="url(#a)"><path class="updated-badge-left" d="M0 0h55v20H0z"/><path class="updated-badge-right" d="M55 0h75v20H55z"/><path fill="url(#b)" d="M0 0h130v20H0z"/></g><g fill="#fff" text-anchor="middle" font-size="110"><text x="285" y="150" fill="#010101" fill-opacity=".3" textLength="450" transform="scale(.1)">updated</text><text x="285" y="140" textLength="450" transform="scale(.1)">updated</text><text x="915" y="150" fill="#010101" fill-opacity=".3" textLength="650" transform="scale(.1)">2021-09-12</text><text x="915" y="140" textLength="650" transform="scale(.1)">2021-09-12</text></g></svg>
+<svg xmlns="http://www.w3.org/2000/svg" width="130" height="20" class="updated-badge"><linearGradient id="b" x2="0" y2="100%"><stop offset="0" stop-color="#bbb" stop-opacity=".1"/><stop offset="1" stop-opacity=".1"/></linearGradient><clipPath id="a"><rect width="130" height="20" rx="3" fill="#fff"/></clipPath><g clip-path="url(#a)"><path class="updated-badge-left" d="M0 0h55v20H0z"/><path class="updated-badge-right" d="M55 0h75v20H55z"/><path fill="url(#b)" d="M0 0h130v20H0z"/></g><g fill="#fff" text-anchor="middle" font-size="110"><text x="285" y="150" fill="#010101" fill-opacity=".3" textLength="450" transform="scale(.1)">updated</text><text x="285" y="140" textLength="450" transform="scale(.1)">updated</text><text x="915" y="150" fill="#010101" fill-opacity=".3" textLength="650" transform="scale(.1)">2021-10-22</text><text x="915" y="140" textLength="650" transform="scale(.1)">2021-10-22</text></g></svg>
         </span></div>
 
 
