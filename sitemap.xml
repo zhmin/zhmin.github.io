@@ -2,13 +2,25 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   <url>
+    <loc>https://zhmin.github.io/categories/</loc>
+    <lastmod>2023-07-10T10:03:53+08:00</lastmod>
+  </url><url>
+    <loc>https://zhmin.github.io/posts/gluten-lib-loader/</loc>
+    <lastmod>2023-07-10T10:03:53+08:00</lastmod>
+  </url><url>
+    <loc>https://zhmin.github.io/posts/</loc>
+    <lastmod>2023-07-10T10:03:53+08:00</lastmod>
+  </url><url>
+    <loc>https://zhmin.github.io/categories/vectorized/</loc>
+    <lastmod>2023-07-10T10:03:53+08:00</lastmod>
+  </url><url>
+    <loc>https://zhmin.github.io/</loc>
+    <lastmod>2023-07-10T10:03:53+08:00</lastmod>
+  </url><url>
     <loc>https://zhmin.github.io/about/</loc>
     <lastmod>2022-02-14T15:23:48+08:00</lastmod>
   </url><url>
     <loc>https://zhmin.github.io/posts/apache-orc-structure/</loc>
-    <lastmod>2021-10-22T14:44:34+08:00</lastmod>
-  </url><url>
-    <loc>https://zhmin.github.io/categories/</loc>
     <lastmod>2021-10-22T14:44:34+08:00</lastmod>
   </url><url>
     <loc>https://zhmin.github.io/tags/orc/</loc>
@@ -17,14 +29,8 @@
     <loc>https://zhmin.github.io/categories/orc/</loc>
     <lastmod>2021-10-22T14:44:34+08:00</lastmod>
   </url><url>
-    <loc>https://zhmin.github.io/posts/</loc>
-    <lastmod>2021-10-22T14:44:34+08:00</lastmod>
-  </url><url>
     <loc>https://zhmin.github.io/tags/</loc>
-    <lastmod>2021-10-22T14:44:34+08:00</lastmod>
-  </url><url>
-    <loc>https://zhmin.github.io/</loc>
-    <lastmod>2021-10-22T14:44:34+08:00</lastmod>
+    <lastmod>2023-07-10T09:52:11+08:00</lastmod>
   </url><url>
     <loc>https://zhmin.github.io/posts/apache-orc-compress/</loc>
     <lastmod>2021-10-22T14:44:34+08:00</lastmod>
@@ -510,10 +516,10 @@
     <lastmod>2021-10-22T14:44:34+08:00</lastmod>
   </url><url>
     <loc>https://zhmin.github.io/tags/datax/</loc>
-    <lastmod>2021-10-22T14:44:34+08:00</lastmod>
+    <lastmod>2023-07-10T09:52:11+08:00</lastmod>
   </url><url>
     <loc>https://zhmin.github.io/categories/datax/</loc>
-    <lastmod>2021-10-22T14:44:34+08:00</lastmod>
+    <lastmod>2023-07-10T09:52:11+08:00</lastmod>
   </url><url>
     <loc>https://zhmin.github.io/posts/datax-job/</loc>
     <lastmod>2021-10-22T14:44:34+08:00</lastmod>
@@ -531,13 +537,13 @@
     <lastmod>2021-10-22T14:44:34+08:00</lastmod>
   </url><url>
     <loc>https://zhmin.github.io/posts/datax-flow/</loc>
-    <lastmod>2021-10-22T14:44:34+08:00</lastmod>
+    <lastmod>2023-07-10T09:10:19+08:00</lastmod>
   </url><url>
     <loc>https://zhmin.github.io/posts/datax-statistics/</loc>
-    <lastmod>2021-10-22T14:44:34+08:00</lastmod>
+    <lastmod>2023-07-10T09:52:11+08:00</lastmod>
   </url><url>
     <loc>https://zhmin.github.io/tags/statistics/</loc>
-    <lastmod>2021-10-22T14:44:34+08:00</lastmod>
+    <lastmod>2023-07-10T09:52:11+08:00</lastmod>
   </url><url>
     <loc>https://zhmin.github.io/tags/memory-leak/</loc>
     <lastmod>2021-10-22T14:44:34+08:00</lastmod>
