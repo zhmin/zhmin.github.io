@@ -672,17 +672,10 @@
 
     <script src="https://cdn.jsdelivr.net/npm/mermaid@8.8.3/dist/mermaid.min.js"></script>
 <script>
-    function magic(input) {
-            input = input.replace(/&/g, '&amp;');
-            input = input.replace(/</g, '&lt;');
-            input = input.replace(/>/g, '&gt;');
-            return input;
-    }
     
     Array.from(document.getElementsByClassName("language-mermaid")).forEach(
         (el) => {
-            content = magic(el.innerText)
-            el.parentElement.outerHTML = `<div class="mermaid">${content}</div>`;
+            el.parentElement.outerHTML = `<div class="mermaid">${el.innerHTML}</div>`;
         }
     );
     let mermaidConfig = {

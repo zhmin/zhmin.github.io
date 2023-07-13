@@ -3,19 +3,31 @@
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   <url>
     <loc>https://zhmin.github.io/categories/</loc>
-    <lastmod>2023-07-10T10:03:53+08:00</lastmod>
+    <lastmod>2023-07-13T10:00:55+08:00</lastmod>
   </url><url>
-    <loc>https://zhmin.github.io/posts/gluten-lib-loader/</loc>
-    <lastmod>2023-07-10T10:03:53+08:00</lastmod>
+    <loc>https://zhmin.github.io/tags/gluten/</loc>
+    <lastmod>2023-07-13T10:00:55+08:00</lastmod>
+  </url><url>
+    <loc>https://zhmin.github.io/posts/gluten-columnar/</loc>
+    <lastmod>2023-07-13T10:00:55+08:00</lastmod>
   </url><url>
     <loc>https://zhmin.github.io/posts/</loc>
-    <lastmod>2023-07-10T10:03:53+08:00</lastmod>
+    <lastmod>2023-07-13T10:00:55+08:00</lastmod>
+  </url><url>
+    <loc>https://zhmin.github.io/tags/spark/</loc>
+    <lastmod>2023-07-13T10:00:55+08:00</lastmod>
+  </url><url>
+    <loc>https://zhmin.github.io/tags/</loc>
+    <lastmod>2023-07-13T10:00:55+08:00</lastmod>
   </url><url>
     <loc>https://zhmin.github.io/categories/vectorized/</loc>
-    <lastmod>2023-07-10T10:03:53+08:00</lastmod>
+    <lastmod>2023-07-13T10:00:55+08:00</lastmod>
   </url><url>
     <loc>https://zhmin.github.io/</loc>
-    <lastmod>2023-07-10T10:03:53+08:00</lastmod>
+    <lastmod>2023-07-13T10:00:55+08:00</lastmod>
+  </url><url>
+    <loc>https://zhmin.github.io/posts/gluten-lib-loader/</loc>
+    <lastmod>2023-07-10T16:51:27+08:00</lastmod>
   </url><url>
     <loc>https://zhmin.github.io/about/</loc>
     <lastmod>2022-02-14T15:23:48+08:00</lastmod>
@@ -28,9 +40,6 @@
   </url><url>
     <loc>https://zhmin.github.io/categories/orc/</loc>
     <lastmod>2021-10-22T14:44:34+08:00</lastmod>
-  </url><url>
-    <loc>https://zhmin.github.io/tags/</loc>
-    <lastmod>2023-07-10T09:52:11+08:00</lastmod>
   </url><url>
     <loc>https://zhmin.github.io/posts/apache-orc-compress/</loc>
     <lastmod>2021-10-22T14:44:34+08:00</lastmod>
@@ -234,9 +243,6 @@
     <lastmod>2021-10-22T14:44:34+08:00</lastmod>
   </url><url>
     <loc>https://zhmin.github.io/tags/external-shuffle-service/</loc>
-    <lastmod>2021-10-22T14:44:34+08:00</lastmod>
-  </url><url>
-    <loc>https://zhmin.github.io/tags/spark/</loc>
     <lastmod>2021-10-22T14:44:34+08:00</lastmod>
   </url><url>
     <loc>https://zhmin.github.io/categories/spark/</loc>

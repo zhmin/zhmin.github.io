@@ -54,7 +54,7 @@
         "@context": "https://schema.org",
         "@type": "WebPage",
         "datePublished": "2019-01-20T20:17:43+00:00",
-        "dateModified": "2023-07-10T10:03:53+08:00",
+        "dateModified": "2023-07-13T10:00:55+08:00",
         "url": "https://zhmin.github.io/posts/",
         "name": "Posts",
         "description": "MemE 是一个强大且可高度定制的 GoHugo 博客主题，专为个人博客设计。",
@@ -189,6 +189,10 @@
                         
                         
                             
+                            
+                                
+                                    
+                                
                             
                                 
                                     
@@ -554,6 +558,11 @@
                         <h2 class="list-year">2023</h2>
                         
                             <ul class="list-part">
+        
+            <li class="list-item">
+                <a href="/posts/gluten-columnar/" class="list-item-title">Gluten Columnar 数据格式</a>
+                <time datetime="2023-07-12T22:16:15&#43;08:00" class="list-item-time">7 月 12 日</time>
+            </li>
         
             <li class="list-item">
                 <a href="/posts/gluten-lib-loader/" class="list-item-title">Gluten 本地库加载原理</a>
@@ -1082,17 +1091,10 @@
 
     <script src="https://cdn.jsdelivr.net/npm/mermaid@8.8.3/dist/mermaid.min.js"></script>
 <script>
-    function magic(input) {
-            input = input.replace(/&/g, '&amp;');
-            input = input.replace(/</g, '&lt;');
-            input = input.replace(/>/g, '&gt;');
-            return input;
-    }
     
     Array.from(document.getElementsByClassName("language-mermaid")).forEach(
         (el) => {
-            content = magic(el.innerText)
-            el.parentElement.outerHTML = `<div class="mermaid">${content}</div>`;
+            el.parentElement.outerHTML = `<div class="mermaid">${el.innerHTML}</div>`;
         }
     );
     let mermaidConfig = {
