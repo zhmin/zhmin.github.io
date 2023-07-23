@@ -3,7 +3,7 @@
     <head prefix="og: http://ogp.me/ns# article: http://ogp.me/ns/article#">
     <meta charset="UTF-8" />
 
-    <meta name="generator" content="Hugo 0.88.1" /><meta name="theme-color" content="#fff" />
+    <meta name="generator" content="Hugo 0.115.0"><meta name="theme-color" content="#fff" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     
     <meta name="format-detection" content="telephone=no, date=no, address=no, email=no" />
@@ -14,11 +14,11 @@
 
     <title>Spark RDD之间的依赖 | 学习笔记</title>
 
-    <link rel="stylesheet" href="/css/meme.min.2d3e1834af2bc8dda20c7d74aaa1d8134845094441b7a554a5206ccd4b472596.css"/>
+    <link rel="stylesheet" href="/css/meme.min.91e7f58f97e1c60563ef481c38d9684fa8099537801d6f17bbfc724121e7d8f1.css"/>
 
     
     
-        <script src="/js/meme.min.800f61672145711eb3e1f29fcfcc3dbe0139dd459259718b611a0390f74703d1.js"></script>
+        <script src="/js/meme.min.3210a00c2fdcf6f831170b681b8ee40f83f0224663661e986872616aec45407f.js"></script>
 
     
 
@@ -54,7 +54,7 @@
         "@context": "https://schema.org",
         "@type": "BlogPosting",
         "datePublished": "2019-01-03T21:41:59+00:00",
-        "dateModified": "2021-10-22T14:44:34+08:00",
+        "dateModified": "2023-07-02T16:59:09+08:00",
         "url": "https://zhmin.github.io/posts/spark-rdd-dependency/",
         "headline": "Spark RDD之间的依赖",
         "description": "Spark RDD之间的依赖 RDD表示分布式的数据集，它是由多个分区组成。RDD封装了底层原理，使得我们编程更加抽象，更加方便。 当我们执行RDD的常见操作时(比如map，filter，groupby等trans……",
@@ -98,7 +98,7 @@
 <meta property="og:locale" content="zh" /><meta property="og:image" content="https://zhmin.github.io/spark-rdd-dependency-one.svg" />
 <meta property="og:type" content="article" />
     <meta property="article:published_time" content="2019-01-03T21:41:59&#43;00:00" />
-    <meta property="article:modified_time" content="2021-10-22T14:44:34&#43;08:00" />
+    <meta property="article:modified_time" content="2023-07-02T16:59:09&#43;08:00" />
     
     <meta property="article:section" content="posts" />
 
@@ -253,11 +253,11 @@
 </span><span class="lnt">4
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-scala" data-lang="scala"><span class="k">class</span> <span class="nc">OneToOneDependency</span><span class="o">[</span><span class="kt">T</span><span class="o">](</span><span class="n">rdd</span><span class="k">:</span> <span class="kt">RDD</span><span class="o">[</span><span class="kt">T</span><span class="o">])</span> <span class="k">extends</span> <span class="nc">NarrowDependency</span><span class="o">[</span><span class="kt">T</span><span class="o">](</span><span class="n">rdd</span><span class="o">)</span> <span class="o">{</span>
-  <span class="c1">// 返回父RDD对应的partition
-</span><span class="c1"></span>  <span class="k">override</span> <span class="k">def</span> <span class="n">getParents</span><span class="o">(</span><span class="n">partitionId</span><span class="k">:</span> <span class="kt">Int</span><span class="o">)</span><span class="k">:</span> <span class="kt">List</span><span class="o">[</span><span class="kt">Int</span><span class="o">]</span> <span class="k">=</span> <span class="nc">List</span><span class="o">(</span><span class="n">partitionId</span><span class="o">)</span>
-<span class="o">}</span>
-</code></pre></td></tr></table></div>
+<pre tabindex="0" class="chroma"><code class="language-scala" data-lang="scala"><span class="line"><span class="cl"><span class="k">class</span> <span class="nc">OneToOneDependency</span><span class="o">[</span><span class="kt">T</span><span class="o">](</span><span class="n">rdd</span><span class="k">:</span> <span class="kt">RDD</span><span class="o">[</span><span class="kt">T</span><span class="o">])</span> <span class="k">extends</span> <span class="nc">NarrowDependency</span><span class="o">[</span><span class="kt">T</span><span class="o">](</span><span class="n">rdd</span><span class="o">)</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">  <span class="c1">// 返回父RDD对应的partition
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="k">override</span> <span class="k">def</span> <span class="n">getParents</span><span class="o">(</span><span class="n">partitionId</span><span class="k">:</span> <span class="kt">Int</span><span class="o">)</span><span class="k">:</span> <span class="kt">List</span><span class="o">[</span><span class="kt">Int</span><span class="o">]</span> <span class="k">=</span> <span class="nc">List</span><span class="o">(</span><span class="n">partitionId</span><span class="o">)</span>
+</span></span><span class="line"><span class="cl"><span class="o">}</span>
+</span></span></code></pre></td></tr></table></div>
 </div>
 </div><h3 id="rangedependency"><a href="#rangedependency" class="anchor-link"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon anchor-icon"><path d="M326.612 185.391c59.747 59.809 58.927 155.698.36 214.59-.11.12-.24.25-.36.37l-67.2 67.2c-59.27 59.27-155.699 59.262-214.96 0-59.27-59.26-59.27-155.7 0-214.96l37.106-37.106c9.84-9.84 26.786-3.3 27.294 10.606.648 17.722 3.826 35.527 9.69 52.721 1.986 5.822.567 12.262-3.783 16.612l-13.087 13.087c-28.026 28.026-28.905 73.66-1.155 101.96 28.024 28.579 74.086 28.749 102.325.51l67.2-67.19c28.191-28.191 28.073-73.757 0-101.83-3.701-3.694-7.429-6.564-10.341-8.569a16.037 16.037 0 0 1-6.947-12.606c-.396-10.567 3.348-21.456 11.698-29.806l21.054-21.055c5.521-5.521 14.182-6.199 20.584-1.731a152.482 152.482 0 0 1 20.522 17.197zM467.547 44.449c-59.261-59.262-155.69-59.27-214.96 0l-67.2 67.2c-.12.12-.25.25-.36.37-58.566 58.892-59.387 154.781.36 214.59a152.454 152.454 0 0 0 20.521 17.196c6.402 4.468 15.064 3.789 20.584-1.731l21.054-21.055c8.35-8.35 12.094-19.239 11.698-29.806a16.037 16.037 0 0 0-6.947-12.606c-2.912-2.005-6.64-4.875-10.341-8.569-28.073-28.073-28.191-73.639 0-101.83l67.2-67.19c28.239-28.239 74.3-28.069 102.325.51 27.75 28.3 26.872 73.934-1.155 101.96l-13.087 13.087c-4.35 4.35-5.769 10.79-3.783 16.612 5.864 17.194 9.042 34.999 9.69 52.721.509 13.906 17.454 20.446 27.294 10.606l37.106-37.106c59.271-59.259 59.271-155.699.001-214.959z"/></svg></a>RangeDependency</h3>
 <p>父RDD的分区索引与子RDD的分区索引，存在线性关系，比如union操作。如下图所示：</p>
@@ -281,21 +281,21 @@
 </span><span class="lnt">14
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-scala" data-lang="scala"><span class="c1">// inStart表示父RDD的起始索引，一般是0
-</span><span class="c1">// outStart表示父RDD对应子RDD的起始索引
-</span><span class="c1">// length表示父RDD的分区数目
-</span><span class="c1"></span><span class="k">class</span> <span class="nc">RangeDependency</span><span class="o">[</span><span class="kt">T</span><span class="o">](</span><span class="n">rdd</span><span class="k">:</span> <span class="kt">RDD</span><span class="o">[</span><span class="kt">T</span><span class="o">],</span> <span class="n">inStart</span><span class="k">:</span> <span class="kt">Int</span><span class="o">,</span> <span class="n">outStart</span><span class="k">:</span> <span class="kt">Int</span><span class="o">,</span> <span class="n">length</span><span class="k">:</span> <span class="kt">Int</span><span class="o">)</span>
-  <span class="k">extends</span> <span class="nc">NarrowDependency</span><span class="o">[</span><span class="kt">T</span><span class="o">](</span><span class="n">rdd</span><span class="o">)</span> <span class="o">{</span>
-  <span class="c1">// 线性计算出父RDD的分区索引
-</span><span class="c1"></span>  <span class="k">override</span> <span class="k">def</span> <span class="n">getParents</span><span class="o">(</span><span class="n">partitionId</span><span class="k">:</span> <span class="kt">Int</span><span class="o">)</span><span class="k">:</span> <span class="kt">List</span><span class="o">[</span><span class="kt">Int</span><span class="o">]</span> <span class="k">=</span> <span class="o">{</span>
-    <span class="k">if</span> <span class="o">(</span><span class="n">partitionId</span> <span class="o">&gt;=</span> <span class="n">outStart</span> <span class="o">&amp;&amp;</span> <span class="n">partitionId</span> <span class="o">&lt;</span> <span class="n">outStart</span> <span class="o">+</span> <span class="n">length</span><span class="o">)</span> <span class="o">{</span>
-      <span class="nc">List</span><span class="o">(</span><span class="n">partitionId</span> <span class="o">-</span> <span class="n">outStart</span> <span class="o">+</span> <span class="n">inStart</span><span class="o">)</span>
-    <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
-      <span class="nc">Nil</span>
-    <span class="o">}</span>
-  <span class="o">}</span>
-  
-</code></pre></td></tr></table></div>
+<pre tabindex="0" class="chroma"><code class="language-scala" data-lang="scala"><span class="line"><span class="cl"><span class="c1">// inStart表示父RDD的起始索引，一般是0
+</span></span></span><span class="line"><span class="cl"><span class="c1">// outStart表示父RDD对应子RDD的起始索引
+</span></span></span><span class="line"><span class="cl"><span class="c1">// length表示父RDD的分区数目
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="k">class</span> <span class="nc">RangeDependency</span><span class="o">[</span><span class="kt">T</span><span class="o">](</span><span class="n">rdd</span><span class="k">:</span> <span class="kt">RDD</span><span class="o">[</span><span class="kt">T</span><span class="o">],</span> <span class="n">inStart</span><span class="k">:</span> <span class="kt">Int</span><span class="o">,</span> <span class="n">outStart</span><span class="k">:</span> <span class="kt">Int</span><span class="o">,</span> <span class="n">length</span><span class="k">:</span> <span class="kt">Int</span><span class="o">)</span>
+</span></span><span class="line"><span class="cl">  <span class="k">extends</span> <span class="nc">NarrowDependency</span><span class="o">[</span><span class="kt">T</span><span class="o">](</span><span class="n">rdd</span><span class="o">)</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">  <span class="c1">// 线性计算出父RDD的分区索引
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="k">override</span> <span class="k">def</span> <span class="n">getParents</span><span class="o">(</span><span class="n">partitionId</span><span class="k">:</span> <span class="kt">Int</span><span class="o">)</span><span class="k">:</span> <span class="kt">List</span><span class="o">[</span><span class="kt">Int</span><span class="o">]</span> <span class="k">=</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">    <span class="k">if</span> <span class="o">(</span><span class="n">partitionId</span> <span class="o">&gt;=</span> <span class="n">outStart</span> <span class="o">&amp;&amp;</span> <span class="n">partitionId</span> <span class="o">&lt;</span> <span class="n">outStart</span> <span class="o">+</span> <span class="n">length</span><span class="o">)</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">      <span class="nc">List</span><span class="o">(</span><span class="n">partitionId</span> <span class="o">-</span> <span class="n">outStart</span> <span class="o">+</span> <span class="n">inStart</span><span class="o">)</span>
+</span></span><span class="line"><span class="cl">    <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">      <span class="nc">Nil</span>
+</span></span><span class="line"><span class="cl">    <span class="o">}</span>
+</span></span><span class="line"><span class="cl">  <span class="o">}</span>
+</span></span><span class="line"><span class="cl">  
+</span></span></code></pre></td></tr></table></div>
 </div>
 </div><h3 id="prunedependency"><a href="#prunedependency" class="anchor-link"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon anchor-icon"><path d="M326.612 185.391c59.747 59.809 58.927 155.698.36 214.59-.11.12-.24.25-.36.37l-67.2 67.2c-59.27 59.27-155.699 59.262-214.96 0-59.27-59.26-59.27-155.7 0-214.96l37.106-37.106c9.84-9.84 26.786-3.3 27.294 10.606.648 17.722 3.826 35.527 9.69 52.721 1.986 5.822.567 12.262-3.783 16.612l-13.087 13.087c-28.026 28.026-28.905 73.66-1.155 101.96 28.024 28.579 74.086 28.749 102.325.51l67.2-67.19c28.191-28.191 28.073-73.757 0-101.83-3.701-3.694-7.429-6.564-10.341-8.569a16.037 16.037 0 0 1-6.947-12.606c-.396-10.567 3.348-21.456 11.698-29.806l21.054-21.055c5.521-5.521 14.182-6.199 20.584-1.731a152.482 152.482 0 0 1 20.522 17.197zM467.547 44.449c-59.261-59.262-155.69-59.27-214.96 0l-67.2 67.2c-.12.12-.25.25-.36.37-58.566 58.892-59.387 154.781.36 214.59a152.454 152.454 0 0 0 20.521 17.196c6.402 4.468 15.064 3.789 20.584-1.731l21.054-21.055c8.35-8.35 12.094-19.239 11.698-29.806a16.037 16.037 0 0 0-6.947-12.606c-2.912-2.005-6.64-4.875-10.341-8.569-28.073-28.073-28.191-73.639 0-101.83l67.2-67.19c28.239-28.239 74.3-28.069 102.325.51 27.75 28.3 26.872 73.934-1.155 101.96l-13.087 13.087c-4.35 4.35-5.769 10.79-3.783 16.612 5.864 17.194 9.042 34.999 9.69 52.721.509 13.906 17.454 20.446 27.294 10.606l37.106-37.106c59.271-59.259 59.271-155.699.001-214.959z"/></svg></a>PruneDependency</h3>
 <p>子RDD的分区数目小于父RDD的分区数目，但子RDD的分区与只对应于父RDD的一个分区。 比如从一个有序的rdd，提取出指定范围内的记录。如下图所示：</p>
@@ -321,23 +321,23 @@
 </span><span class="lnt">16
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-scala" data-lang="scala"><span class="c1">// rdd表示父RDD
-</span><span class="c1">// partitionFilterFunc表示需要保留那些分区
-</span><span class="c1"></span><span class="k">class</span> <span class="nc">PruneDependency</span><span class="o">[</span><span class="kt">T</span><span class="o">](</span><span class="n">rdd</span><span class="k">:</span> <span class="kt">RDD</span><span class="o">[</span><span class="kt">T</span><span class="o">],</span> <span class="n">partitionFilterFunc</span><span class="k">:</span> <span class="kt">Int</span> <span class="o">=&gt;</span> <span class="nc">Boolean</span><span class="o">)</span>
-  <span class="k">extends</span> <span class="nc">NarrowDependency</span><span class="o">[</span><span class="kt">T</span><span class="o">](</span><span class="n">rdd</span><span class="o">)</span> <span class="o">{</span>
-
-  <span class="c1">// 从父RDD提取需要保留的分区
-</span><span class="c1"></span>  <span class="k">val</span> <span class="n">partitions</span><span class="k">:</span> <span class="kt">Array</span><span class="o">[</span><span class="kt">Partition</span><span class="o">]</span> <span class="k">=</span> <span class="n">rdd</span><span class="o">.</span><span class="n">partitions</span>
-    <span class="o">.</span><span class="n">filter</span><span class="o">(</span><span class="n">s</span> <span class="k">=&gt;</span> <span class="n">partitionFilterFunc</span><span class="o">(</span><span class="n">s</span><span class="o">.</span><span class="n">index</span><span class="o">)).</span><span class="n">zipWithIndex</span>
-    <span class="c1">// split表示父RDD的分区索引
-</span><span class="c1"></span>    <span class="c1">// idx表示子RDD的分区索引
-</span><span class="c1"></span>    <span class="o">.</span><span class="n">map</span> <span class="o">{</span> <span class="k">case</span><span class="o">(</span><span class="n">split</span><span class="o">,</span> <span class="n">idx</span><span class="o">)</span> <span class="k">=&gt;</span> <span class="k">new</span> <span class="nc">PartitionPruningRDDPartition</span><span class="o">(</span><span class="n">idx</span><span class="o">,</span> <span class="n">split</span><span class="o">)</span> <span class="k">:</span> <span class="kt">Partition</span> <span class="o">}</span>
-
-  <span class="k">override</span> <span class="k">def</span> <span class="n">getParents</span><span class="o">(</span><span class="n">partitionId</span><span class="k">:</span> <span class="kt">Int</span><span class="o">)</span><span class="k">:</span> <span class="kt">List</span><span class="o">[</span><span class="kt">Int</span><span class="o">]</span> <span class="k">=</span> <span class="o">{</span>
-    <span class="nc">List</span><span class="o">(</span><span class="n">partitions</span><span class="o">(</span><span class="n">partitionId</span><span class="o">).</span><span class="n">asInstanceOf</span><span class="o">[</span><span class="kt">PartitionPruningRDDPartition</span><span class="o">].</span><span class="n">parentSplit</span><span class="o">.</span><span class="n">index</span><span class="o">)</span>
-  <span class="o">}</span>
-<span class="o">}</span>
-</code></pre></td></tr></table></div>
+<pre tabindex="0" class="chroma"><code class="language-scala" data-lang="scala"><span class="line"><span class="cl"><span class="c1">// rdd表示父RDD
+</span></span></span><span class="line"><span class="cl"><span class="c1">// partitionFilterFunc表示需要保留那些分区
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="k">class</span> <span class="nc">PruneDependency</span><span class="o">[</span><span class="kt">T</span><span class="o">](</span><span class="n">rdd</span><span class="k">:</span> <span class="kt">RDD</span><span class="o">[</span><span class="kt">T</span><span class="o">],</span> <span class="n">partitionFilterFunc</span><span class="k">:</span> <span class="kt">Int</span> <span class="o">=&gt;</span> <span class="nc">Boolean</span><span class="o">)</span>
+</span></span><span class="line"><span class="cl">  <span class="k">extends</span> <span class="nc">NarrowDependency</span><span class="o">[</span><span class="kt">T</span><span class="o">](</span><span class="n">rdd</span><span class="o">)</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="c1">// 从父RDD提取需要保留的分区
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="k">val</span> <span class="n">partitions</span><span class="k">:</span> <span class="kt">Array</span><span class="o">[</span><span class="kt">Partition</span><span class="o">]</span> <span class="k">=</span> <span class="n">rdd</span><span class="o">.</span><span class="n">partitions</span>
+</span></span><span class="line"><span class="cl">    <span class="o">.</span><span class="n">filter</span><span class="o">(</span><span class="n">s</span> <span class="k">=&gt;</span> <span class="n">partitionFilterFunc</span><span class="o">(</span><span class="n">s</span><span class="o">.</span><span class="n">index</span><span class="o">)).</span><span class="n">zipWithIndex</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// split表示父RDD的分区索引
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="c1">// idx表示子RDD的分区索引
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="o">.</span><span class="n">map</span> <span class="o">{</span> <span class="k">case</span><span class="o">(</span><span class="n">split</span><span class="o">,</span> <span class="n">idx</span><span class="o">)</span> <span class="k">=&gt;</span> <span class="k">new</span> <span class="nc">PartitionPruningRDDPartition</span><span class="o">(</span><span class="n">idx</span><span class="o">,</span> <span class="n">split</span><span class="o">)</span> <span class="k">:</span> <span class="kt">Partition</span> <span class="o">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="k">override</span> <span class="k">def</span> <span class="n">getParents</span><span class="o">(</span><span class="n">partitionId</span><span class="k">:</span> <span class="kt">Int</span><span class="o">)</span><span class="k">:</span> <span class="kt">List</span><span class="o">[</span><span class="kt">Int</span><span class="o">]</span> <span class="k">=</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">    <span class="nc">List</span><span class="o">(</span><span class="n">partitions</span><span class="o">(</span><span class="n">partitionId</span><span class="o">).</span><span class="n">asInstanceOf</span><span class="o">[</span><span class="kt">PartitionPruningRDDPartition</span><span class="o">].</span><span class="n">parentSplit</span><span class="o">.</span><span class="n">index</span><span class="o">)</span>
+</span></span><span class="line"><span class="cl">  <span class="o">}</span>
+</span></span><span class="line"><span class="cl"><span class="o">}</span>
+</span></span></code></pre></td></tr></table></div>
 </div>
 </div><h2 id="宽依赖"><a href="#宽依赖" class="anchor-link"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon anchor-icon"><path d="M326.612 185.391c59.747 59.809 58.927 155.698.36 214.59-.11.12-.24.25-.36.37l-67.2 67.2c-59.27 59.27-155.699 59.262-214.96 0-59.27-59.26-59.27-155.7 0-214.96l37.106-37.106c9.84-9.84 26.786-3.3 27.294 10.606.648 17.722 3.826 35.527 9.69 52.721 1.986 5.822.567 12.262-3.783 16.612l-13.087 13.087c-28.026 28.026-28.905 73.66-1.155 101.96 28.024 28.579 74.086 28.749 102.325.51l67.2-67.19c28.191-28.191 28.073-73.757 0-101.83-3.701-3.694-7.429-6.564-10.341-8.569a16.037 16.037 0 0 1-6.947-12.606c-.396-10.567 3.348-21.456 11.698-29.806l21.054-21.055c5.521-5.521 14.182-6.199 20.584-1.731a152.482 152.482 0 0 1 20.522 17.197zM467.547 44.449c-59.261-59.262-155.69-59.27-214.96 0l-67.2 67.2c-.12.12-.25.25-.36.37-58.566 58.892-59.387 154.781.36 214.59a152.454 152.454 0 0 0 20.521 17.196c6.402 4.468 15.064 3.789 20.584-1.731l21.054-21.055c8.35-8.35 12.094-19.239 11.698-29.806a16.037 16.037 0 0 0-6.947-12.606c-2.912-2.005-6.64-4.875-10.341-8.569-28.073-28.073-28.191-73.639 0-101.83l67.2-67.19c28.239-28.239 74.3-28.069 102.325.51 27.75 28.3 26.872 73.934-1.155 101.96l-13.087 13.087c-4.35 4.35-5.769 10.79-3.783 16.612 5.864 17.194 9.042 34.999 9.69 52.721.509 13.906 17.454 20.446 27.294 10.606l37.106-37.106c59.271-59.259 59.271-155.699.001-214.959z"/></svg></a>宽依赖</h2>
 <p>当父RDD的分区对应于子RDD的多个分区时，两者之间的依赖关系就是宽依赖。当触发shuffle操作时，两者Rdd的关系就是由宽依赖ShuffleDependency表示，它有以下属性：</p>
@@ -368,9 +368,9 @@
 </span><span class="lnt">2
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-scala" data-lang="scala"><span class="k">override</span> <span class="k">def</span> <span class="n">compute</span><span class="o">(</span><span class="n">split</span><span class="k">:</span> <span class="kt">Partition</span><span class="o">,</span> <span class="n">context</span><span class="k">:</span> <span class="kt">TaskContext</span><span class="o">)</span><span class="k">:</span> <span class="kt">Iterator</span><span class="o">[</span><span class="kt">U</span><span class="o">]</span> <span class="k">=</span>
-  <span class="n">f</span><span class="o">(</span><span class="n">context</span><span class="o">,</span> <span class="n">split</span><span class="o">.</span><span class="n">index</span><span class="o">,</span> <span class="n">firstParent</span><span class="o">[</span><span class="kt">T</span><span class="o">].</span><span class="n">iterator</span><span class="o">(</span><span class="n">split</span><span class="o">,</span> <span class="n">context</span><span class="o">))</span>
-</code></pre></td></tr></table></div>
+<pre tabindex="0" class="chroma"><code class="language-scala" data-lang="scala"><span class="line"><span class="cl"><span class="k">override</span> <span class="k">def</span> <span class="n">compute</span><span class="o">(</span><span class="n">split</span><span class="k">:</span> <span class="kt">Partition</span><span class="o">,</span> <span class="n">context</span><span class="k">:</span> <span class="kt">TaskContext</span><span class="o">)</span><span class="k">:</span> <span class="kt">Iterator</span><span class="o">[</span><span class="kt">U</span><span class="o">]</span> <span class="k">=</span>
+</span></span><span class="line"><span class="cl">  <span class="n">f</span><span class="o">(</span><span class="n">context</span><span class="o">,</span> <span class="n">split</span><span class="o">.</span><span class="n">index</span><span class="o">,</span> <span class="n">firstParent</span><span class="o">[</span><span class="kt">T</span><span class="o">].</span><span class="n">iterator</span><span class="o">(</span><span class="n">split</span><span class="o">,</span> <span class="n">context</span><span class="o">))</span>
+</span></span></code></pre></td></tr></table></div>
 </div>
 </div><h3 id="partitionpruningrdd"><a href="#partitionpruningrdd" class="anchor-link"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon anchor-icon"><path d="M326.612 185.391c59.747 59.809 58.927 155.698.36 214.59-.11.12-.24.25-.36.37l-67.2 67.2c-59.27 59.27-155.699 59.262-214.96 0-59.27-59.26-59.27-155.7 0-214.96l37.106-37.106c9.84-9.84 26.786-3.3 27.294 10.606.648 17.722 3.826 35.527 9.69 52.721 1.986 5.822.567 12.262-3.783 16.612l-13.087 13.087c-28.026 28.026-28.905 73.66-1.155 101.96 28.024 28.579 74.086 28.749 102.325.51l67.2-67.19c28.191-28.191 28.073-73.757 0-101.83-3.701-3.694-7.429-6.564-10.341-8.569a16.037 16.037 0 0 1-6.947-12.606c-.396-10.567 3.348-21.456 11.698-29.806l21.054-21.055c5.521-5.521 14.182-6.199 20.584-1.731a152.482 152.482 0 0 1 20.522 17.197zM467.547 44.449c-59.261-59.262-155.69-59.27-214.96 0l-67.2 67.2c-.12.12-.25.25-.36.37-58.566 58.892-59.387 154.781.36 214.59a152.454 152.454 0 0 0 20.521 17.196c6.402 4.468 15.064 3.789 20.584-1.731l21.054-21.055c8.35-8.35 12.094-19.239 11.698-29.806a16.037 16.037 0 0 0-6.947-12.606c-2.912-2.005-6.64-4.875-10.341-8.569-28.073-28.073-28.191-73.639 0-101.83l67.2-67.19c28.239-28.239 74.3-28.069 102.325.51 27.75 28.3 26.872 73.934-1.155 101.96l-13.087 13.087c-4.35 4.35-5.769 10.79-3.783 16.612 5.864 17.194 9.042 34.999 9.69 52.721.509 13.906 17.454 20.446 27.294 10.606l37.106-37.106c59.271-59.259 59.271-155.699.001-214.959z"/></svg></a>PartitionPruningRDD</h3>
 <p>PartitionPruningRDD也只是简单的从对应的父分区读取数据</p>
@@ -384,13 +384,13 @@
 </span><span class="lnt">6
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-scala" data-lang="scala"><span class="k">override</span> <span class="k">def</span> <span class="n">compute</span><span class="o">(</span><span class="n">split</span><span class="k">:</span> <span class="kt">Partition</span><span class="o">,</span> <span class="n">context</span><span class="k">:</span> <span class="kt">TaskContext</span><span class="o">)</span><span class="k">:</span> <span class="kt">Iterator</span><span class="o">[</span><span class="kt">T</span><span class="o">]</span> <span class="k">=</span> <span class="o">{</span>
-  <span class="c1">// split的类型是PartitionPruningRDDPartition， 
-</span><span class="c1"></span>  <span class="c1">// 它有parentSplit，表示父RDD的分区
-</span><span class="c1"></span>  <span class="n">firstParent</span><span class="o">[</span><span class="kt">T</span><span class="o">].</span><span class="n">iterator</span><span class="o">(</span>
-    <span class="n">split</span><span class="o">.</span><span class="n">asInstanceOf</span><span class="o">[</span><span class="kt">PartitionPruningRDDPartition</span><span class="o">].</span><span class="n">parentSplit</span><span class="o">,</span> <span class="n">context</span><span class="o">)</span>
-<span class="o">}</span>
-</code></pre></td></tr></table></div>
+<pre tabindex="0" class="chroma"><code class="language-scala" data-lang="scala"><span class="line"><span class="cl"><span class="k">override</span> <span class="k">def</span> <span class="n">compute</span><span class="o">(</span><span class="n">split</span><span class="k">:</span> <span class="kt">Partition</span><span class="o">,</span> <span class="n">context</span><span class="k">:</span> <span class="kt">TaskContext</span><span class="o">)</span><span class="k">:</span> <span class="kt">Iterator</span><span class="o">[</span><span class="kt">T</span><span class="o">]</span> <span class="k">=</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">  <span class="c1">// split的类型是PartitionPruningRDDPartition， 
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="c1">// 它有parentSplit，表示父RDD的分区
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="n">firstParent</span><span class="o">[</span><span class="kt">T</span><span class="o">].</span><span class="n">iterator</span><span class="o">(</span>
+</span></span><span class="line"><span class="cl">    <span class="n">split</span><span class="o">.</span><span class="n">asInstanceOf</span><span class="o">[</span><span class="kt">PartitionPruningRDDPartition</span><span class="o">].</span><span class="n">parentSplit</span><span class="o">,</span> <span class="n">context</span><span class="o">)</span>
+</span></span><span class="line"><span class="cl"><span class="o">}</span>
+</span></span></code></pre></td></tr></table></div>
 </div>
 </div><h3 id="shuffledrdd"><a href="#shuffledrdd" class="anchor-link"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon anchor-icon"><path d="M326.612 185.391c59.747 59.809 58.927 155.698.36 214.59-.11.12-.24.25-.36.37l-67.2 67.2c-59.27 59.27-155.699 59.262-214.96 0-59.27-59.26-59.27-155.7 0-214.96l37.106-37.106c9.84-9.84 26.786-3.3 27.294 10.606.648 17.722 3.826 35.527 9.69 52.721 1.986 5.822.567 12.262-3.783 16.612l-13.087 13.087c-28.026 28.026-28.905 73.66-1.155 101.96 28.024 28.579 74.086 28.749 102.325.51l67.2-67.19c28.191-28.191 28.073-73.757 0-101.83-3.701-3.694-7.429-6.564-10.341-8.569a16.037 16.037 0 0 1-6.947-12.606c-.396-10.567 3.348-21.456 11.698-29.806l21.054-21.055c5.521-5.521 14.182-6.199 20.584-1.731a152.482 152.482 0 0 1 20.522 17.197zM467.547 44.449c-59.261-59.262-155.69-59.27-214.96 0l-67.2 67.2c-.12.12-.25.25-.36.37-58.566 58.892-59.387 154.781.36 214.59a152.454 152.454 0 0 0 20.521 17.196c6.402 4.468 15.064 3.789 20.584-1.731l21.054-21.055c8.35-8.35 12.094-19.239 11.698-29.806a16.037 16.037 0 0 0-6.947-12.606c-2.912-2.005-6.64-4.875-10.341-8.569-28.073-28.073-28.191-73.639 0-101.83l67.2-67.19c28.239-28.239 74.3-28.069 102.325.51 27.75 28.3 26.872 73.934-1.155 101.96l-13.087 13.087c-4.35 4.35-5.769 10.79-3.783 16.612 5.864 17.194 9.042 34.999 9.69 52.721.509 13.906 17.454 20.446 27.294 10.606l37.106-37.106c59.271-59.259 59.271-155.699.001-214.959z"/></svg></a>ShuffledRDD</h3>
 <div class="highlight"><div class="chroma">
@@ -403,13 +403,13 @@
 </span><span class="lnt">6
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-scala" data-lang="scala"><span class="k">override</span> <span class="k">def</span> <span class="n">compute</span><span class="o">(</span><span class="n">split</span><span class="k">:</span> <span class="kt">Partition</span><span class="o">,</span> <span class="n">context</span><span class="k">:</span> <span class="kt">TaskContext</span><span class="o">)</span><span class="k">:</span> <span class="kt">Iterator</span><span class="o">[(</span><span class="kt">K</span>, <span class="kt">C</span><span class="o">)]</span> <span class="k">=</span> <span class="o">{</span>
-  <span class="k">val</span> <span class="n">dep</span> <span class="k">=</span> <span class="n">dependencies</span><span class="o">.</span><span class="n">head</span><span class="o">.</span><span class="n">asInstanceOf</span><span class="o">[</span><span class="kt">ShuffleDependency</span><span class="o">[</span><span class="kt">K</span>, <span class="kt">V</span>, <span class="kt">C</span><span class="o">]]</span>
-  <span class="nc">SparkEnv</span><span class="o">.</span><span class="n">get</span><span class="o">.</span><span class="n">shuffleManager</span><span class="o">.</span><span class="n">getReader</span><span class="o">(</span><span class="n">dep</span><span class="o">.</span><span class="n">shuffleHandle</span><span class="o">,</span> <span class="n">split</span><span class="o">.</span><span class="n">index</span><span class="o">,</span> <span class="n">split</span><span class="o">.</span><span class="n">index</span> <span class="o">+</span> <span class="mi">1</span><span class="o">,</span> <span class="n">context</span><span class="o">)</span>
-    <span class="o">.</span><span class="n">read</span><span class="o">()</span>
-    <span class="o">.</span><span class="n">asInstanceOf</span><span class="o">[</span><span class="kt">Iterator</span><span class="o">[(</span><span class="kt">K</span>, <span class="kt">C</span><span class="o">)]]</span>
-<span class="o">}</span>
-</code></pre></td></tr></table></div>
+<pre tabindex="0" class="chroma"><code class="language-scala" data-lang="scala"><span class="line"><span class="cl"><span class="k">override</span> <span class="k">def</span> <span class="n">compute</span><span class="o">(</span><span class="n">split</span><span class="k">:</span> <span class="kt">Partition</span><span class="o">,</span> <span class="n">context</span><span class="k">:</span> <span class="kt">TaskContext</span><span class="o">)</span><span class="k">:</span> <span class="kt">Iterator</span><span class="o">[(</span><span class="kt">K</span>, <span class="kt">C</span><span class="o">)]</span> <span class="k">=</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">  <span class="k">val</span> <span class="n">dep</span> <span class="k">=</span> <span class="n">dependencies</span><span class="o">.</span><span class="n">head</span><span class="o">.</span><span class="n">asInstanceOf</span><span class="o">[</span><span class="kt">ShuffleDependency</span><span class="o">[</span><span class="kt">K</span>, <span class="kt">V</span>, <span class="kt">C</span><span class="o">]]</span>
+</span></span><span class="line"><span class="cl">  <span class="nc">SparkEnv</span><span class="o">.</span><span class="n">get</span><span class="o">.</span><span class="n">shuffleManager</span><span class="o">.</span><span class="n">getReader</span><span class="o">(</span><span class="n">dep</span><span class="o">.</span><span class="n">shuffleHandle</span><span class="o">,</span> <span class="n">split</span><span class="o">.</span><span class="n">index</span><span class="o">,</span> <span class="n">split</span><span class="o">.</span><span class="n">index</span> <span class="o">+</span> <span class="mi">1</span><span class="o">,</span> <span class="n">context</span><span class="o">)</span>
+</span></span><span class="line"><span class="cl">    <span class="o">.</span><span class="n">read</span><span class="o">()</span>
+</span></span><span class="line"><span class="cl">    <span class="o">.</span><span class="n">asInstanceOf</span><span class="o">[</span><span class="kt">Iterator</span><span class="o">[(</span><span class="kt">K</span>, <span class="kt">C</span><span class="o">)]]</span>
+</span></span><span class="line"><span class="cl"><span class="o">}</span>
+</span></span></code></pre></td></tr></table></div>
 </div>
 </div><p>当rdd调用groupby或reduce操作时，会返回ShuffledRDD。ShuffledRDD对应的关系是ShuffleDependency。它计算分区的数据时，是调用了ShuffleReader读取上一步rdd产生的数据。</p>
 
@@ -439,9 +439,9 @@
 
         
     <div class="updated-badge-container">
-        <span title="Updated @ 2021-10-22 14:44:34 CST" style="cursor:help">
+        <span title="Updated @ 2023-07-02 16:59:09 CST" style="cursor:help">
 
-<svg xmlns="http://www.w3.org/2000/svg" width="130" height="20" class="updated-badge"><linearGradient id="b" x2="0" y2="100%"><stop offset="0" stop-color="#bbb" stop-opacity=".1"/><stop offset="1" stop-opacity=".1"/></linearGradient><clipPath id="a"><rect width="130" height="20" rx="3" fill="#fff"/></clipPath><g clip-path="url(#a)"><path class="updated-badge-left" d="M0 0h55v20H0z"/><path class="updated-badge-right" d="M55 0h75v20H55z"/><path fill="url(#b)" d="M0 0h130v20H0z"/></g><g fill="#fff" text-anchor="middle" font-size="110"><text x="285" y="150" fill="#010101" fill-opacity=".3" textLength="450" transform="scale(.1)">updated</text><text x="285" y="140" textLength="450" transform="scale(.1)">updated</text><text x="915" y="150" fill="#010101" fill-opacity=".3" textLength="650" transform="scale(.1)">2021-10-22</text><text x="915" y="140" textLength="650" transform="scale(.1)">2021-10-22</text></g></svg>
+<svg xmlns="http://www.w3.org/2000/svg" width="130" height="20" class="updated-badge"><linearGradient id="b" x2="0" y2="100%"><stop offset="0" stop-color="#bbb" stop-opacity=".1"/><stop offset="1" stop-opacity=".1"/></linearGradient><clipPath id="a"><rect width="130" height="20" rx="3" fill="#fff"/></clipPath><g clip-path="url(#a)"><path class="updated-badge-left" d="M0 0h55v20H0z"/><path class="updated-badge-right" d="M55 0h75v20H55z"/><path fill="url(#b)" d="M0 0h130v20H0z"/></g><g fill="#fff" text-anchor="middle" font-size="110"><text x="285" y="150" fill="#010101" fill-opacity=".3" textLength="450" transform="scale(.1)">updated</text><text x="285" y="140" textLength="450" transform="scale(.1)">updated</text><text x="915" y="150" fill="#010101" fill-opacity=".3" textLength="650" transform="scale(.1)">2023-07-02</text><text x="915" y="140" textLength="650" transform="scale(.1)">2023-07-02</text></g></svg>
         </span></div>
 
 

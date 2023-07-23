@@ -3,7 +3,7 @@
     <head prefix="og: http://ogp.me/ns# article: http://ogp.me/ns/article#">
     <meta charset="UTF-8" />
 
-    <meta name="generator" content="Hugo 0.88.1" /><meta name="theme-color" content="#fff" />
+    <meta name="generator" content="Hugo 0.115.0"><meta name="theme-color" content="#fff" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     
     <meta name="format-detection" content="telephone=no, date=no, address=no, email=no" />
@@ -14,11 +14,11 @@
 
     <title>Spark Shuffle 聚合原理 | 学习笔记</title>
 
-    <link rel="stylesheet" href="/css/meme.min.2d3e1834af2bc8dda20c7d74aaa1d8134845094441b7a554a5206ccd4b472596.css"/>
+    <link rel="stylesheet" href="/css/meme.min.91e7f58f97e1c60563ef481c38d9684fa8099537801d6f17bbfc724121e7d8f1.css"/>
 
     
     
-        <script src="/js/meme.min.800f61672145711eb3e1f29fcfcc3dbe0139dd459259718b611a0390f74703d1.js"></script>
+        <script src="/js/meme.min.3210a00c2fdcf6f831170b681b8ee40f83f0224663661e986872616aec45407f.js"></script>
 
     
 
@@ -54,7 +54,7 @@
         "@context": "https://schema.org",
         "@type": "BlogPosting",
         "datePublished": "2019-01-28T22:28:57+00:00",
-        "dateModified": "2021-10-22T14:44:34+08:00",
+        "dateModified": "2023-07-02T16:59:09+08:00",
         "url": "https://zhmin.github.io/posts/spark-shuffle-aggregator/",
         "headline": "Spark Shuffle 聚合原理",
         "description": "Spark 聚合原理 spark在触发shuffle的时候，在一些场景下会涉及到聚合操作。聚合操作起到了一个优化整体计算效率的作用。 聚合算法简介 Aggregator类表示Spark的聚合算法。 聚合只能用于数据源是……",
@@ -98,7 +98,7 @@
 <meta property="og:locale" content="zh" /><meta property="og:image" content="https://zhmin.github.io/spark-aggregate.svg" />
 <meta property="og:type" content="article" />
     <meta property="article:published_time" content="2019-01-28T22:28:57&#43;00:00" />
-    <meta property="article:modified_time" content="2021-10-22T14:44:34&#43;08:00" />
+    <meta property="article:modified_time" content="2023-07-02T16:59:09&#43;08:00" />
     
     <meta property="article:section" content="posts" />
 
@@ -287,33 +287,33 @@
 </span><span class="lnt">26
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-scala" data-lang="scala"><span class="k">def</span> <span class="n">combineByKeyWithClassTag</span><span class="o">[</span><span class="kt">C</span><span class="o">](</span>
-    <span class="n">createCombiner</span><span class="k">:</span> <span class="kt">V</span> <span class="o">=&gt;</span> <span class="n">C</span><span class="o">,</span>
-    <span class="n">mergeValue</span><span class="k">:</span> <span class="o">(</span><span class="kt">C</span><span class="o">,</span> <span class="kt">V</span><span class="o">)</span> <span class="k">=&gt;</span> <span class="n">C</span><span class="o">,</span>
-    <span class="n">mergeCombiners</span><span class="k">:</span> <span class="o">(</span><span class="kt">C</span><span class="o">,</span> <span class="kt">C</span><span class="o">)</span> <span class="k">=&gt;</span> <span class="n">C</span><span class="o">,</span>
-    <span class="n">partitioner</span><span class="k">:</span> <span class="kt">Partitioner</span><span class="o">,</span>
-    <span class="n">mapSideCombine</span><span class="k">:</span> <span class="kt">Boolean</span> <span class="o">=</span> <span class="kc">true</span><span class="o">,</span>
-    <span class="n">serializer</span><span class="k">:</span> <span class="kt">Serializer</span> <span class="o">=</span> <span class="kc">null</span><span class="o">)(</span><span class="k">implicit</span> <span class="n">ct</span><span class="k">:</span> <span class="kt">ClassTag</span><span class="o">[</span><span class="kt">C</span><span class="o">])</span><span class="k">:</span> <span class="kt">RDD</span><span class="o">[(</span><span class="kt">K</span>, <span class="kt">C</span><span class="o">)]</span> <span class="k">=</span> <span class="n">self</span><span class="o">.</span><span class="n">withScope</span> <span class="o">{</span>
-  <span class="c1">// 生成aggregator
-</span><span class="c1"></span>  <span class="k">val</span> <span class="n">aggregator</span> <span class="k">=</span> <span class="k">new</span> <span class="nc">Aggregator</span><span class="o">[</span><span class="kt">K</span>, <span class="kt">V</span>, <span class="kt">C</span><span class="o">](</span>
-    <span class="n">self</span><span class="o">.</span><span class="n">context</span><span class="o">.</span><span class="n">clean</span><span class="o">(</span><span class="n">createCombiner</span><span class="o">),</span>
-    <span class="n">self</span><span class="o">.</span><span class="n">context</span><span class="o">.</span><span class="n">clean</span><span class="o">(</span><span class="n">mergeValue</span><span class="o">),</span>
-    <span class="n">self</span><span class="o">.</span><span class="n">context</span><span class="o">.</span><span class="n">clean</span><span class="o">(</span><span class="n">mergeCombiners</span><span class="o">))</span>
-  <span class="k">if</span> <span class="o">(</span><span class="n">self</span><span class="o">.</span><span class="n">partitioner</span> <span class="o">==</span> <span class="nc">Some</span><span class="o">(</span><span class="n">partitioner</span><span class="o">))</span> <span class="o">{</span>
-    <span class="c1">// 如果新的分区器和原有的一样，则表示key的分布是一样。所以没必要shuffle，直接调用mapPartitions
-</span><span class="c1"></span>    <span class="n">self</span><span class="o">.</span><span class="n">mapPartitions</span><span class="o">(</span><span class="n">iter</span> <span class="k">=&gt;</span> <span class="o">{</span>
-      <span class="k">val</span> <span class="n">context</span> <span class="k">=</span> <span class="nc">TaskContext</span><span class="o">.</span><span class="n">get</span><span class="o">()</span>
-      <span class="k">new</span> <span class="nc">InterruptibleIterator</span><span class="o">(</span><span class="n">context</span><span class="o">,</span> <span class="n">aggregator</span><span class="o">.</span><span class="n">combineValuesByKey</span><span class="o">(</span><span class="n">iter</span><span class="o">,</span> <span class="n">context</span><span class="o">))</span>
-    <span class="o">},</span> <span class="n">preservesPartitioning</span> <span class="k">=</span> <span class="kc">true</span><span class="o">)</span>
-  <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
-    <span class="c1">// 否则，生成ShuffledRDD
-</span><span class="c1"></span>    <span class="k">new</span> <span class="nc">ShuffledRDD</span><span class="o">[</span><span class="kt">K</span>, <span class="kt">V</span>, <span class="kt">C</span><span class="o">](</span><span class="n">self</span><span class="o">,</span> <span class="n">partitioner</span><span class="o">)</span>
-      <span class="o">.</span><span class="n">setSerializer</span><span class="o">(</span><span class="n">serializer</span><span class="o">)</span>
-      <span class="o">.</span><span class="n">setAggregator</span><span class="o">(</span><span class="n">aggregator</span><span class="o">)</span>
-      <span class="o">.</span><span class="n">setMapSideCombine</span><span class="o">(</span><span class="n">mapSideCombine</span><span class="o">)</span>
-  <span class="o">}</span>
-<span class="o">}</span>
-</code></pre></td></tr></table></div>
+<pre tabindex="0" class="chroma"><code class="language-scala" data-lang="scala"><span class="line"><span class="cl"><span class="k">def</span> <span class="n">combineByKeyWithClassTag</span><span class="o">[</span><span class="kt">C</span><span class="o">](</span>
+</span></span><span class="line"><span class="cl">    <span class="n">createCombiner</span><span class="k">:</span> <span class="kt">V</span> <span class="o">=&gt;</span> <span class="n">C</span><span class="o">,</span>
+</span></span><span class="line"><span class="cl">    <span class="n">mergeValue</span><span class="k">:</span> <span class="o">(</span><span class="kt">C</span><span class="o">,</span> <span class="kt">V</span><span class="o">)</span> <span class="k">=&gt;</span> <span class="n">C</span><span class="o">,</span>
+</span></span><span class="line"><span class="cl">    <span class="n">mergeCombiners</span><span class="k">:</span> <span class="o">(</span><span class="kt">C</span><span class="o">,</span> <span class="kt">C</span><span class="o">)</span> <span class="k">=&gt;</span> <span class="n">C</span><span class="o">,</span>
+</span></span><span class="line"><span class="cl">    <span class="n">partitioner</span><span class="k">:</span> <span class="kt">Partitioner</span><span class="o">,</span>
+</span></span><span class="line"><span class="cl">    <span class="n">mapSideCombine</span><span class="k">:</span> <span class="kt">Boolean</span> <span class="o">=</span> <span class="kc">true</span><span class="o">,</span>
+</span></span><span class="line"><span class="cl">    <span class="n">serializer</span><span class="k">:</span> <span class="kt">Serializer</span> <span class="o">=</span> <span class="kc">null</span><span class="o">)(</span><span class="k">implicit</span> <span class="n">ct</span><span class="k">:</span> <span class="kt">ClassTag</span><span class="o">[</span><span class="kt">C</span><span class="o">])</span><span class="k">:</span> <span class="kt">RDD</span><span class="o">[(</span><span class="kt">K</span>, <span class="kt">C</span><span class="o">)]</span> <span class="k">=</span> <span class="n">self</span><span class="o">.</span><span class="n">withScope</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">  <span class="c1">// 生成aggregator
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="k">val</span> <span class="n">aggregator</span> <span class="k">=</span> <span class="k">new</span> <span class="nc">Aggregator</span><span class="o">[</span><span class="kt">K</span>, <span class="kt">V</span>, <span class="kt">C</span><span class="o">](</span>
+</span></span><span class="line"><span class="cl">    <span class="n">self</span><span class="o">.</span><span class="n">context</span><span class="o">.</span><span class="n">clean</span><span class="o">(</span><span class="n">createCombiner</span><span class="o">),</span>
+</span></span><span class="line"><span class="cl">    <span class="n">self</span><span class="o">.</span><span class="n">context</span><span class="o">.</span><span class="n">clean</span><span class="o">(</span><span class="n">mergeValue</span><span class="o">),</span>
+</span></span><span class="line"><span class="cl">    <span class="n">self</span><span class="o">.</span><span class="n">context</span><span class="o">.</span><span class="n">clean</span><span class="o">(</span><span class="n">mergeCombiners</span><span class="o">))</span>
+</span></span><span class="line"><span class="cl">  <span class="k">if</span> <span class="o">(</span><span class="n">self</span><span class="o">.</span><span class="n">partitioner</span> <span class="o">==</span> <span class="nc">Some</span><span class="o">(</span><span class="n">partitioner</span><span class="o">))</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// 如果新的分区器和原有的一样，则表示key的分布是一样。所以没必要shuffle，直接调用mapPartitions
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="n">self</span><span class="o">.</span><span class="n">mapPartitions</span><span class="o">(</span><span class="n">iter</span> <span class="k">=&gt;</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">      <span class="k">val</span> <span class="n">context</span> <span class="k">=</span> <span class="nc">TaskContext</span><span class="o">.</span><span class="n">get</span><span class="o">()</span>
+</span></span><span class="line"><span class="cl">      <span class="k">new</span> <span class="nc">InterruptibleIterator</span><span class="o">(</span><span class="n">context</span><span class="o">,</span> <span class="n">aggregator</span><span class="o">.</span><span class="n">combineValuesByKey</span><span class="o">(</span><span class="n">iter</span><span class="o">,</span> <span class="n">context</span><span class="o">))</span>
+</span></span><span class="line"><span class="cl">    <span class="o">},</span> <span class="n">preservesPartitioning</span> <span class="k">=</span> <span class="kc">true</span><span class="o">)</span>
+</span></span><span class="line"><span class="cl">  <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// 否则，生成ShuffledRDD
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="k">new</span> <span class="nc">ShuffledRDD</span><span class="o">[</span><span class="kt">K</span>, <span class="kt">V</span>, <span class="kt">C</span><span class="o">](</span><span class="n">self</span><span class="o">,</span> <span class="n">partitioner</span><span class="o">)</span>
+</span></span><span class="line"><span class="cl">      <span class="o">.</span><span class="n">setSerializer</span><span class="o">(</span><span class="n">serializer</span><span class="o">)</span>
+</span></span><span class="line"><span class="cl">      <span class="o">.</span><span class="n">setAggregator</span><span class="o">(</span><span class="n">aggregator</span><span class="o">)</span>
+</span></span><span class="line"><span class="cl">      <span class="o">.</span><span class="n">setMapSideCombine</span><span class="o">(</span><span class="n">mapSideCombine</span><span class="o">)</span>
+</span></span><span class="line"><span class="cl">  <span class="o">}</span>
+</span></span><span class="line"><span class="cl"><span class="o">}</span>
+</span></span></code></pre></td></tr></table></div>
 </div>
 </div><p>上面的代码可以看到，如果分区器是一样的，这里仅仅是调用了mapPartitions方法。传递的函数是aggregator调用combineValuesByKey方法返回的。阅读下面的代码，这里是调用了ExternalAppendOnlyMap类，实现了聚合的执行。</p>
 <div class="highlight"><div class="chroma">
@@ -334,21 +334,21 @@
 </span><span class="lnt">14
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-scala" data-lang="scala"><span class="k">class</span> <span class="nc">Aggregator</span><span class="o">[</span><span class="kt">K</span>, <span class="kt">V</span>, <span class="kt">C</span><span class="o">]</span> <span class="o">(</span>
-    <span class="n">createCombiner</span><span class="k">:</span> <span class="kt">V</span> <span class="o">=&gt;</span> <span class="n">C</span><span class="o">,</span>
-    <span class="n">mergeValue</span><span class="k">:</span> <span class="o">(</span><span class="kt">C</span><span class="o">,</span> <span class="kt">V</span><span class="o">)</span> <span class="k">=&gt;</span> <span class="n">C</span><span class="o">,</span>
-    <span class="n">mergeCombiners</span><span class="k">:</span> <span class="o">(</span><span class="kt">C</span><span class="o">,</span> <span class="kt">C</span><span class="o">)</span> <span class="k">=&gt;</span> <span class="n">C</span><span class="o">)</span> <span class="o">{</span>
-    
-  <span class="k">def</span> <span class="n">combineValuesByKey</span><span class="o">(</span>
-      <span class="n">iter</span><span class="k">:</span> <span class="kt">Iterator</span><span class="o">[</span><span class="k">_</span> <span class="k">&lt;:</span> <span class="kt">Product2</span><span class="o">[</span><span class="kt">K</span>, <span class="kt">V</span><span class="o">]],</span>
-      <span class="n">context</span><span class="k">:</span> <span class="kt">TaskContext</span><span class="o">)</span><span class="k">:</span> <span class="kt">Iterator</span><span class="o">[(</span><span class="kt">K</span>, <span class="kt">C</span><span class="o">)]</span> <span class="k">=</span> <span class="o">{</span>
-    <span class="k">val</span> <span class="n">combiners</span> <span class="k">=</span> <span class="k">new</span> <span class="nc">ExternalAppendOnlyMap</span><span class="o">[</span><span class="kt">K</span>, <span class="kt">V</span>, <span class="kt">C</span><span class="o">](</span><span class="n">createCombiner</span><span class="o">,</span> <span class="n">mergeValue</span><span class="o">,</span> <span class="n">mergeCombiners</span><span class="o">)</span>
-    <span class="n">combiners</span><span class="o">.</span><span class="n">insertAll</span><span class="o">(</span><span class="n">iter</span><span class="o">)</span>
-    <span class="n">updateMetrics</span><span class="o">(</span><span class="n">context</span><span class="o">,</span> <span class="n">combiners</span><span class="o">)</span>
-    <span class="n">combiners</span><span class="o">.</span><span class="n">iterator</span>
-  <span class="o">}</span>
-<span class="o">}</span>
-</code></pre></td></tr></table></div>
+<pre tabindex="0" class="chroma"><code class="language-scala" data-lang="scala"><span class="line"><span class="cl"><span class="k">class</span> <span class="nc">Aggregator</span><span class="o">[</span><span class="kt">K</span>, <span class="kt">V</span>, <span class="kt">C</span><span class="o">]</span> <span class="o">(</span>
+</span></span><span class="line"><span class="cl">    <span class="n">createCombiner</span><span class="k">:</span> <span class="kt">V</span> <span class="o">=&gt;</span> <span class="n">C</span><span class="o">,</span>
+</span></span><span class="line"><span class="cl">    <span class="n">mergeValue</span><span class="k">:</span> <span class="o">(</span><span class="kt">C</span><span class="o">,</span> <span class="kt">V</span><span class="o">)</span> <span class="k">=&gt;</span> <span class="n">C</span><span class="o">,</span>
+</span></span><span class="line"><span class="cl">    <span class="n">mergeCombiners</span><span class="k">:</span> <span class="o">(</span><span class="kt">C</span><span class="o">,</span> <span class="kt">C</span><span class="o">)</span> <span class="k">=&gt;</span> <span class="n">C</span><span class="o">)</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">    
+</span></span><span class="line"><span class="cl">  <span class="k">def</span> <span class="n">combineValuesByKey</span><span class="o">(</span>
+</span></span><span class="line"><span class="cl">      <span class="n">iter</span><span class="k">:</span> <span class="kt">Iterator</span><span class="o">[</span><span class="k">_</span> <span class="k">&lt;:</span> <span class="kt">Product2</span><span class="o">[</span><span class="kt">K</span>, <span class="kt">V</span><span class="o">]],</span>
+</span></span><span class="line"><span class="cl">      <span class="n">context</span><span class="k">:</span> <span class="kt">TaskContext</span><span class="o">)</span><span class="k">:</span> <span class="kt">Iterator</span><span class="o">[(</span><span class="kt">K</span>, <span class="kt">C</span><span class="o">)]</span> <span class="k">=</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">    <span class="k">val</span> <span class="n">combiners</span> <span class="k">=</span> <span class="k">new</span> <span class="nc">ExternalAppendOnlyMap</span><span class="o">[</span><span class="kt">K</span>, <span class="kt">V</span>, <span class="kt">C</span><span class="o">](</span><span class="n">createCombiner</span><span class="o">,</span> <span class="n">mergeValue</span><span class="o">,</span> <span class="n">mergeCombiners</span><span class="o">)</span>
+</span></span><span class="line"><span class="cl">    <span class="n">combiners</span><span class="o">.</span><span class="n">insertAll</span><span class="o">(</span><span class="n">iter</span><span class="o">)</span>
+</span></span><span class="line"><span class="cl">    <span class="n">updateMetrics</span><span class="o">(</span><span class="n">context</span><span class="o">,</span> <span class="n">combiners</span><span class="o">)</span>
+</span></span><span class="line"><span class="cl">    <span class="n">combiners</span><span class="o">.</span><span class="n">iterator</span>
+</span></span><span class="line"><span class="cl">  <span class="o">}</span>
+</span></span><span class="line"><span class="cl"><span class="o">}</span>
+</span></span></code></pre></td></tr></table></div>
 </div>
 </div><p>而如果分区器不是一样的，会生成ShuffleRDD。aggregator会保存在ShuffleRDD里面，提供后续的shuffle计算使用。</p>
 <h2 id="rdd常见聚合操作"><a href="#rdd常见聚合操作" class="anchor-link"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon anchor-icon"><path d="M326.612 185.391c59.747 59.809 58.927 155.698.36 214.59-.11.12-.24.25-.36.37l-67.2 67.2c-59.27 59.27-155.699 59.262-214.96 0-59.27-59.26-59.27-155.7 0-214.96l37.106-37.106c9.84-9.84 26.786-3.3 27.294 10.606.648 17.722 3.826 35.527 9.69 52.721 1.986 5.822.567 12.262-3.783 16.612l-13.087 13.087c-28.026 28.026-28.905 73.66-1.155 101.96 28.024 28.579 74.086 28.749 102.325.51l67.2-67.19c28.191-28.191 28.073-73.757 0-101.83-3.701-3.694-7.429-6.564-10.341-8.569a16.037 16.037 0 0 1-6.947-12.606c-.396-10.567 3.348-21.456 11.698-29.806l21.054-21.055c5.521-5.521 14.182-6.199 20.584-1.731a152.482 152.482 0 0 1 20.522 17.197zM467.547 44.449c-59.261-59.262-155.69-59.27-214.96 0l-67.2 67.2c-.12.12-.25.25-.36.37-58.566 58.892-59.387 154.781.36 214.59a152.454 152.454 0 0 0 20.521 17.196c6.402 4.468 15.064 3.789 20.584-1.731l21.054-21.055c8.35-8.35 12.094-19.239 11.698-29.806a16.037 16.037 0 0 0-6.947-12.606c-2.912-2.005-6.64-4.875-10.341-8.569-28.073-28.073-28.191-73.639 0-101.83l67.2-67.19c28.239-28.239 74.3-28.069 102.325.51 27.75 28.3 26.872 73.934-1.155 101.96l-13.087 13.087c-4.35 4.35-5.769 10.79-3.783 16.612 5.864 17.194 9.042 34.999 9.69 52.721.509 13.906 17.454 20.446 27.294 10.606l37.106-37.106c59.271-59.259 59.271-155.699.001-214.959z"/></svg></a>RDD常见聚合操作</h2>
@@ -371,19 +371,19 @@
 </span><span class="lnt">12
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-scala" data-lang="scala"><span class="k">def</span> <span class="n">groupBy</span><span class="o">[</span><span class="kt">K</span><span class="o">](</span><span class="n">f</span><span class="k">:</span> <span class="kt">T</span> <span class="o">=&gt;</span> <span class="n">K</span><span class="o">)(</span><span class="k">implicit</span> <span class="n">kt</span><span class="k">:</span> <span class="kt">ClassTag</span><span class="o">[</span><span class="kt">K</span><span class="o">])</span><span class="k">:</span> <span class="kt">RDD</span><span class="o">[(</span><span class="kt">K</span>, <span class="kt">Iterable</span><span class="o">[</span><span class="kt">T</span><span class="o">])]</span> <span class="k">=</span> <span class="n">withScope</span> <span class="o">{</span>
-  <span class="c1">// 使用默认的分区器
-</span><span class="c1"></span>  <span class="n">groupBy</span><span class="o">[</span><span class="kt">K</span><span class="o">](</span><span class="n">f</span><span class="o">,</span> <span class="n">defaultPartitioner</span><span class="o">(</span><span class="k">this</span><span class="o">))</span>
-<span class="o">}</span>
-
-<span class="k">def</span> <span class="n">groupBy</span><span class="o">[</span><span class="kt">K</span><span class="o">](</span><span class="n">f</span><span class="k">:</span> <span class="kt">T</span> <span class="o">=&gt;</span> <span class="n">K</span><span class="o">,</span> <span class="n">p</span><span class="k">:</span> <span class="kt">Partitioner</span><span class="o">)(</span><span class="k">implicit</span> <span class="n">kt</span><span class="k">:</span> <span class="kt">ClassTag</span><span class="o">[</span><span class="kt">K</span><span class="o">],</span> <span class="n">ord</span><span class="k">:</span> <span class="kt">Ordering</span><span class="o">[</span><span class="kt">K</span><span class="o">]</span> <span class="k">=</span> <span class="kc">null</span><span class="o">)</span>
-  <span class="k">:</span> <span class="kt">RDD</span><span class="o">[(</span><span class="kt">K</span>, <span class="kt">Iterable</span><span class="o">[</span><span class="kt">T</span><span class="o">])]</span> <span class="k">=</span> <span class="n">withScope</span> <span class="o">{</span>
-    <span class="k">val</span> <span class="n">cleanF</span> <span class="k">=</span> <span class="n">sc</span><span class="o">.</span><span class="n">clean</span><span class="o">(</span><span class="n">f</span><span class="o">)</span>
-    <span class="c1">// 首先使用函数f，生成key。调用map返回（key， value）类型的RDD
-</span><span class="c1"></span>    <span class="c1">// 这里RDD隐式转换成PairRDDFunctions， 然后调用groupByKey方法
-</span><span class="c1"></span>    <span class="k">this</span><span class="o">.</span><span class="n">map</span><span class="o">(</span><span class="n">t</span> <span class="k">=&gt;</span> <span class="o">(</span><span class="n">cleanF</span><span class="o">(</span><span class="n">t</span><span class="o">),</span> <span class="n">t</span><span class="o">)).</span><span class="n">groupByKey</span><span class="o">(</span><span class="n">p</span><span class="o">)</span>
-<span class="o">}</span>
-</code></pre></td></tr></table></div>
+<pre tabindex="0" class="chroma"><code class="language-scala" data-lang="scala"><span class="line"><span class="cl"><span class="k">def</span> <span class="n">groupBy</span><span class="o">[</span><span class="kt">K</span><span class="o">](</span><span class="n">f</span><span class="k">:</span> <span class="kt">T</span> <span class="o">=&gt;</span> <span class="n">K</span><span class="o">)(</span><span class="k">implicit</span> <span class="n">kt</span><span class="k">:</span> <span class="kt">ClassTag</span><span class="o">[</span><span class="kt">K</span><span class="o">])</span><span class="k">:</span> <span class="kt">RDD</span><span class="o">[(</span><span class="kt">K</span>, <span class="kt">Iterable</span><span class="o">[</span><span class="kt">T</span><span class="o">])]</span> <span class="k">=</span> <span class="n">withScope</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">  <span class="c1">// 使用默认的分区器
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="n">groupBy</span><span class="o">[</span><span class="kt">K</span><span class="o">](</span><span class="n">f</span><span class="o">,</span> <span class="n">defaultPartitioner</span><span class="o">(</span><span class="k">this</span><span class="o">))</span>
+</span></span><span class="line"><span class="cl"><span class="o">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="k">def</span> <span class="n">groupBy</span><span class="o">[</span><span class="kt">K</span><span class="o">](</span><span class="n">f</span><span class="k">:</span> <span class="kt">T</span> <span class="o">=&gt;</span> <span class="n">K</span><span class="o">,</span> <span class="n">p</span><span class="k">:</span> <span class="kt">Partitioner</span><span class="o">)(</span><span class="k">implicit</span> <span class="n">kt</span><span class="k">:</span> <span class="kt">ClassTag</span><span class="o">[</span><span class="kt">K</span><span class="o">],</span> <span class="n">ord</span><span class="k">:</span> <span class="kt">Ordering</span><span class="o">[</span><span class="kt">K</span><span class="o">]</span> <span class="k">=</span> <span class="kc">null</span><span class="o">)</span>
+</span></span><span class="line"><span class="cl">  <span class="k">:</span> <span class="kt">RDD</span><span class="o">[(</span><span class="kt">K</span>, <span class="kt">Iterable</span><span class="o">[</span><span class="kt">T</span><span class="o">])]</span> <span class="k">=</span> <span class="n">withScope</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">    <span class="k">val</span> <span class="n">cleanF</span> <span class="k">=</span> <span class="n">sc</span><span class="o">.</span><span class="n">clean</span><span class="o">(</span><span class="n">f</span><span class="o">)</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// 首先使用函数f，生成key。调用map返回（key， value）类型的RDD
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="c1">// 这里RDD隐式转换成PairRDDFunctions， 然后调用groupByKey方法
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="k">this</span><span class="o">.</span><span class="n">map</span><span class="o">(</span><span class="n">t</span> <span class="k">=&gt;</span> <span class="o">(</span><span class="n">cleanF</span><span class="o">(</span><span class="n">t</span><span class="o">),</span> <span class="n">t</span><span class="o">)).</span><span class="n">groupByKey</span><span class="o">(</span><span class="n">p</span><span class="o">)</span>
+</span></span><span class="line"><span class="cl"><span class="o">}</span>
+</span></span></code></pre></td></tr></table></div>
 </div>
 </div><p>接下来看看groupByKey方法，这里生成了Aggregator的函数。它使用Combiner类型是CompactBuffer。</p>
 <p>CompactBuffer可以简单的理解成一个array，只不过将第一个和第二个元素单独存储，将后面的元素存到array里，但是它对外提供了和array一样的接口。这样对于存储数量小的集合，减少了数组的分配。</p>
@@ -403,19 +403,19 @@
 </span><span class="lnt">12
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-scala" data-lang="scala"><span class="k">def</span> <span class="n">groupByKey</span><span class="o">(</span><span class="n">partitioner</span><span class="k">:</span> <span class="kt">Partitioner</span><span class="o">)</span><span class="k">:</span> <span class="kt">RDD</span><span class="o">[(</span><span class="kt">K</span>, <span class="kt">Iterable</span><span class="o">[</span><span class="kt">V</span><span class="o">])]</span> <span class="k">=</span> <span class="n">self</span><span class="o">.</span><span class="n">withScope</span> <span class="o">{</span>
-  <span class="c1">// 生成CompactBuffer，然后将value添加到CompactBuffer里
-</span><span class="c1"></span>  <span class="k">val</span> <span class="n">createCombiner</span> <span class="k">=</span> <span class="o">(</span><span class="n">v</span><span class="k">:</span> <span class="kt">V</span><span class="o">)</span> <span class="k">=&gt;</span> <span class="nc">CompactBuffer</span><span class="o">(</span><span class="n">v</span><span class="o">)</span>
-  <span class="c1">// 将新的value添加到CompactBuffer
-</span><span class="c1"></span>  <span class="k">val</span> <span class="n">mergeValue</span> <span class="k">=</span> <span class="o">(</span><span class="n">buf</span><span class="k">:</span> <span class="kt">CompactBuffer</span><span class="o">[</span><span class="kt">V</span><span class="o">],</span> <span class="n">v</span><span class="k">:</span> <span class="kt">V</span><span class="o">)</span> <span class="k">=&gt;</span> <span class="n">buf</span> <span class="o">+=</span> <span class="n">v</span>
-  <span class="c1">// 将多个CompactBuffer合并
-</span><span class="c1"></span>  <span class="k">val</span> <span class="n">mergeCombiners</span> <span class="k">=</span> <span class="o">(</span><span class="n">c1</span><span class="k">:</span> <span class="kt">CompactBuffer</span><span class="o">[</span><span class="kt">V</span><span class="o">],</span> <span class="n">c2</span><span class="k">:</span> <span class="kt">CompactBuffer</span><span class="o">[</span><span class="kt">V</span><span class="o">])</span> <span class="k">=&gt;</span> <span class="n">c1</span> <span class="o">++=</span> <span class="n">c2</span>
-  <span class="c1">// 调用combineByKeyWithClassTag 生成RDD
-</span><span class="c1"></span>  <span class="k">val</span> <span class="n">bufs</span> <span class="k">=</span> <span class="n">combineByKeyWithClassTag</span><span class="o">[</span><span class="kt">CompactBuffer</span><span class="o">[</span><span class="kt">V</span><span class="o">]](</span>
-    <span class="n">createCombiner</span><span class="o">,</span> <span class="n">mergeValue</span><span class="o">,</span> <span class="n">mergeCombiners</span><span class="o">,</span> <span class="n">partitioner</span><span class="o">,</span> <span class="n">mapSideCombine</span> <span class="k">=</span> <span class="kc">false</span><span class="o">)</span>
-  <span class="n">bufs</span><span class="o">.</span><span class="n">asInstanceOf</span><span class="o">[</span><span class="kt">RDD</span><span class="o">[(</span><span class="kt">K</span>, <span class="kt">Iterable</span><span class="o">[</span><span class="kt">V</span><span class="o">])]]</span>
-<span class="o">}</span>
-</code></pre></td></tr></table></div>
+<pre tabindex="0" class="chroma"><code class="language-scala" data-lang="scala"><span class="line"><span class="cl"><span class="k">def</span> <span class="n">groupByKey</span><span class="o">(</span><span class="n">partitioner</span><span class="k">:</span> <span class="kt">Partitioner</span><span class="o">)</span><span class="k">:</span> <span class="kt">RDD</span><span class="o">[(</span><span class="kt">K</span>, <span class="kt">Iterable</span><span class="o">[</span><span class="kt">V</span><span class="o">])]</span> <span class="k">=</span> <span class="n">self</span><span class="o">.</span><span class="n">withScope</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">  <span class="c1">// 生成CompactBuffer，然后将value添加到CompactBuffer里
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="k">val</span> <span class="n">createCombiner</span> <span class="k">=</span> <span class="o">(</span><span class="n">v</span><span class="k">:</span> <span class="kt">V</span><span class="o">)</span> <span class="k">=&gt;</span> <span class="nc">CompactBuffer</span><span class="o">(</span><span class="n">v</span><span class="o">)</span>
+</span></span><span class="line"><span class="cl">  <span class="c1">// 将新的value添加到CompactBuffer
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="k">val</span> <span class="n">mergeValue</span> <span class="k">=</span> <span class="o">(</span><span class="n">buf</span><span class="k">:</span> <span class="kt">CompactBuffer</span><span class="o">[</span><span class="kt">V</span><span class="o">],</span> <span class="n">v</span><span class="k">:</span> <span class="kt">V</span><span class="o">)</span> <span class="k">=&gt;</span> <span class="n">buf</span> <span class="o">+=</span> <span class="n">v</span>
+</span></span><span class="line"><span class="cl">  <span class="c1">// 将多个CompactBuffer合并
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="k">val</span> <span class="n">mergeCombiners</span> <span class="k">=</span> <span class="o">(</span><span class="n">c1</span><span class="k">:</span> <span class="kt">CompactBuffer</span><span class="o">[</span><span class="kt">V</span><span class="o">],</span> <span class="n">c2</span><span class="k">:</span> <span class="kt">CompactBuffer</span><span class="o">[</span><span class="kt">V</span><span class="o">])</span> <span class="k">=&gt;</span> <span class="n">c1</span> <span class="o">++=</span> <span class="n">c2</span>
+</span></span><span class="line"><span class="cl">  <span class="c1">// 调用combineByKeyWithClassTag 生成RDD
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="k">val</span> <span class="n">bufs</span> <span class="k">=</span> <span class="n">combineByKeyWithClassTag</span><span class="o">[</span><span class="kt">CompactBuffer</span><span class="o">[</span><span class="kt">V</span><span class="o">]](</span>
+</span></span><span class="line"><span class="cl">    <span class="n">createCombiner</span><span class="o">,</span> <span class="n">mergeValue</span><span class="o">,</span> <span class="n">mergeCombiners</span><span class="o">,</span> <span class="n">partitioner</span><span class="o">,</span> <span class="n">mapSideCombine</span> <span class="k">=</span> <span class="kc">false</span><span class="o">)</span>
+</span></span><span class="line"><span class="cl">  <span class="n">bufs</span><span class="o">.</span><span class="n">asInstanceOf</span><span class="o">[</span><span class="kt">RDD</span><span class="o">[(</span><span class="kt">K</span>, <span class="kt">Iterable</span><span class="o">[</span><span class="kt">V</span><span class="o">])]]</span>
+</span></span><span class="line"><span class="cl"><span class="o">}</span>
+</span></span></code></pre></td></tr></table></div>
 </div>
 </div><h3 id="reducebykey-操作"><a href="#reducebykey-操作" class="anchor-link"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon anchor-icon"><path d="M326.612 185.391c59.747 59.809 58.927 155.698.36 214.59-.11.12-.24.25-.36.37l-67.2 67.2c-59.27 59.27-155.699 59.262-214.96 0-59.27-59.26-59.27-155.7 0-214.96l37.106-37.106c9.84-9.84 26.786-3.3 27.294 10.606.648 17.722 3.826 35.527 9.69 52.721 1.986 5.822.567 12.262-3.783 16.612l-13.087 13.087c-28.026 28.026-28.905 73.66-1.155 101.96 28.024 28.579 74.086 28.749 102.325.51l67.2-67.19c28.191-28.191 28.073-73.757 0-101.83-3.701-3.694-7.429-6.564-10.341-8.569a16.037 16.037 0 0 1-6.947-12.606c-.396-10.567 3.348-21.456 11.698-29.806l21.054-21.055c5.521-5.521 14.182-6.199 20.584-1.731a152.482 152.482 0 0 1 20.522 17.197zM467.547 44.449c-59.261-59.262-155.69-59.27-214.96 0l-67.2 67.2c-.12.12-.25.25-.36.37-58.566 58.892-59.387 154.781.36 214.59a152.454 152.454 0 0 0 20.521 17.196c6.402 4.468 15.064 3.789 20.584-1.731l21.054-21.055c8.35-8.35 12.094-19.239 11.698-29.806a16.037 16.037 0 0 0-6.947-12.606c-2.912-2.005-6.64-4.875-10.341-8.569-28.073-28.073-28.191-73.639 0-101.83l67.2-67.19c28.239-28.239 74.3-28.069 102.325.51 27.75 28.3 26.872 73.934-1.155 101.96l-13.087 13.087c-4.35 4.35-5.769 10.79-3.783 16.612 5.864 17.194 9.042 34.999 9.69 52.721.509 13.906 17.454 20.446 27.294 10.606l37.106-37.106c59.271-59.259 59.271-155.699.001-214.959z"/></svg></a>reduceByKey 操作</h3>
 <pre tabindex="0"><code>def reduceByKey(partitioner: Partitioner, func: (V, V) =&gt; V): RDD[(K, V)] = self.withScope {
@@ -441,11 +441,11 @@ def reduceByKey(func: (V, V) =&gt; V): RDD[(K, V)] = self.withScope {
 </span><span class="lnt">4
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-scala" data-lang="scala"><span class="k">def</span> <span class="n">countByKey</span><span class="o">()</span><span class="k">:</span> <span class="kt">Map</span><span class="o">[</span><span class="kt">K</span>, <span class="kt">Long</span><span class="o">]</span> <span class="k">=</span> <span class="n">self</span><span class="o">.</span><span class="n">withScope</span> <span class="o">{</span>
-  <span class="c1">// 调用mapValues生成(key, 1)类型的RDD，然后定义了相加的函数
-</span><span class="c1"></span>  <span class="n">self</span><span class="o">.</span><span class="n">mapValues</span><span class="o">(</span><span class="k">_</span> <span class="k">=&gt;</span> <span class="mi">1L</span><span class="o">).</span><span class="n">reduceByKey</span><span class="o">(</span><span class="k">_</span> <span class="o">+</span> <span class="k">_</span><span class="o">).</span><span class="n">collect</span><span class="o">().</span><span class="n">toMap</span>
-<span class="o">}</span>
-</code></pre></td></tr></table></div>
+<pre tabindex="0" class="chroma"><code class="language-scala" data-lang="scala"><span class="line"><span class="cl"><span class="k">def</span> <span class="n">countByKey</span><span class="o">()</span><span class="k">:</span> <span class="kt">Map</span><span class="o">[</span><span class="kt">K</span>, <span class="kt">Long</span><span class="o">]</span> <span class="k">=</span> <span class="n">self</span><span class="o">.</span><span class="n">withScope</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">  <span class="c1">// 调用mapValues生成(key, 1)类型的RDD，然后定义了相加的函数
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="n">self</span><span class="o">.</span><span class="n">mapValues</span><span class="o">(</span><span class="k">_</span> <span class="k">=&gt;</span> <span class="mi">1L</span><span class="o">).</span><span class="n">reduceByKey</span><span class="o">(</span><span class="k">_</span> <span class="o">+</span> <span class="k">_</span><span class="o">).</span><span class="n">collect</span><span class="o">().</span><span class="n">toMap</span>
+</span></span><span class="line"><span class="cl"><span class="o">}</span>
+</span></span></code></pre></td></tr></table></div>
 </div>
 </div>
             </div>
@@ -474,9 +474,9 @@ def reduceByKey(func: (V, V) =&gt; V): RDD[(K, V)] = self.withScope {
 
         
     <div class="updated-badge-container">
-        <span title="Updated @ 2021-10-22 14:44:34 CST" style="cursor:help">
+        <span title="Updated @ 2023-07-02 16:59:09 CST" style="cursor:help">
 
-<svg xmlns="http://www.w3.org/2000/svg" width="130" height="20" class="updated-badge"><linearGradient id="b" x2="0" y2="100%"><stop offset="0" stop-color="#bbb" stop-opacity=".1"/><stop offset="1" stop-opacity=".1"/></linearGradient><clipPath id="a"><rect width="130" height="20" rx="3" fill="#fff"/></clipPath><g clip-path="url(#a)"><path class="updated-badge-left" d="M0 0h55v20H0z"/><path class="updated-badge-right" d="M55 0h75v20H55z"/><path fill="url(#b)" d="M0 0h130v20H0z"/></g><g fill="#fff" text-anchor="middle" font-size="110"><text x="285" y="150" fill="#010101" fill-opacity=".3" textLength="450" transform="scale(.1)">updated</text><text x="285" y="140" textLength="450" transform="scale(.1)">updated</text><text x="915" y="150" fill="#010101" fill-opacity=".3" textLength="650" transform="scale(.1)">2021-10-22</text><text x="915" y="140" textLength="650" transform="scale(.1)">2021-10-22</text></g></svg>
+<svg xmlns="http://www.w3.org/2000/svg" width="130" height="20" class="updated-badge"><linearGradient id="b" x2="0" y2="100%"><stop offset="0" stop-color="#bbb" stop-opacity=".1"/><stop offset="1" stop-opacity=".1"/></linearGradient><clipPath id="a"><rect width="130" height="20" rx="3" fill="#fff"/></clipPath><g clip-path="url(#a)"><path class="updated-badge-left" d="M0 0h55v20H0z"/><path class="updated-badge-right" d="M55 0h75v20H55z"/><path fill="url(#b)" d="M0 0h130v20H0z"/></g><g fill="#fff" text-anchor="middle" font-size="110"><text x="285" y="150" fill="#010101" fill-opacity=".3" textLength="450" transform="scale(.1)">updated</text><text x="285" y="140" textLength="450" transform="scale(.1)">updated</text><text x="915" y="150" fill="#010101" fill-opacity=".3" textLength="650" transform="scale(.1)">2023-07-02</text><text x="915" y="140" textLength="650" transform="scale(.1)">2023-07-02</text></g></svg>
         </span></div>
 
 

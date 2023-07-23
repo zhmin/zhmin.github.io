@@ -3,7 +3,7 @@
     <head prefix="og: http://ogp.me/ns# article: http://ogp.me/ns/article#">
     <meta charset="UTF-8" />
 
-    <meta name="generator" content="Hugo 0.88.1" /><meta name="theme-color" content="#fff" />
+    <meta name="generator" content="Hugo 0.115.0"><meta name="theme-color" content="#fff" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     
     <meta name="format-detection" content="telephone=no, date=no, address=no, email=no" />
@@ -14,11 +14,11 @@
 
     <title>Postgresql 编写自定义 C 函数 | 学习笔记</title>
 
-    <link rel="stylesheet" href="/css/meme.min.2d3e1834af2bc8dda20c7d74aaa1d8134845094441b7a554a5206ccd4b472596.css"/>
+    <link rel="stylesheet" href="/css/meme.min.91e7f58f97e1c60563ef481c38d9684fa8099537801d6f17bbfc724121e7d8f1.css"/>
 
     
     
-        <script src="/js/meme.min.800f61672145711eb3e1f29fcfcc3dbe0139dd459259718b611a0390f74703d1.js"></script>
+        <script src="/js/meme.min.3210a00c2fdcf6f831170b681b8ee40f83f0224663661e986872616aec45407f.js"></script>
 
     
 
@@ -54,13 +54,13 @@
         "@context": "https://schema.org",
         "@type": "BlogPosting",
         "datePublished": "2019-12-17T22:18:17+00:00",
-        "dateModified": "2021-10-22T14:44:34+08:00",
+        "dateModified": "2023-07-02T16:59:09+08:00",
         "url": "https://zhmin.github.io/posts/postgresql-c-function/",
         "headline": "Postgresql 编写自定义 C 函数",
         "description": "前言 postgresql 支持自定义函数，并且还支持多种语言进行编写， 极大的提高了可扩展性。postgresql 支持使用 pgSQL(postgresql提供的类sql语言)，python 和 c 语言来编写函数，本篇主要讲解 c……",
         "inLanguage" : "zh-CN",
         "articleSection": "posts",
-        "wordCount":  3797 ,
+        "wordCount":  3843 ,
         "image": "https://zhmin.github.io/icons/apple-touch-icon.png",
         "author": {
             "@type": "Person",
@@ -98,7 +98,7 @@
 <meta property="og:locale" content="zh" /><meta property="og:image" content="https://zhmin.github.io/icons/apple-touch-icon.png" />
     <meta property="og:type" content="article" />
     <meta property="article:published_time" content="2019-12-17T22:18:17&#43;00:00" />
-    <meta property="article:modified_time" content="2021-10-22T14:44:34&#43;08:00" />
+    <meta property="article:modified_time" content="2023-07-02T16:59:09&#43;08:00" />
     
     <meta property="article:section" content="posts" />
 
@@ -223,7 +223,7 @@
     
     
         
-        <span class="post-meta-item wordcount"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon post-meta-icon"><path d="M497.9 142.1l-46.1 46.1c-4.7 4.7-12.3 4.7-17 0l-111-111c-4.7-4.7-4.7-12.3 0-17l46.1-46.1c18.7-18.7 49.1-18.7 67.9 0l60.1 60.1c18.8 18.7 18.8 49.1 0 67.9zM284.2 99.8L21.6 362.4.4 483.9c-2.9 16.4 11.4 30.6 27.8 27.8l121.5-21.3 262.6-262.6c4.7-4.7 4.7-12.3 0-17l-111-111c-4.8-4.7-12.4-4.7-17.1 0zM124.1 339.9c-5.5-5.5-5.5-14.3 0-19.8l154-154c5.5-5.5 14.3-5.5 19.8 0s5.5 14.3 0 19.8l-154 154c-5.5 5.5-14.3 5.5-19.8 0zM88 424h48v36.3l-64.5 11.3-31.1-31.1L51.7 376H88v48z"/></svg>&nbsp;3797</span>
+        <span class="post-meta-item wordcount"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon post-meta-icon"><path d="M497.9 142.1l-46.1 46.1c-4.7 4.7-12.3 4.7-17 0l-111-111c-4.7-4.7-4.7-12.3 0-17l46.1-46.1c18.7-18.7 49.1-18.7 67.9 0l60.1 60.1c18.8 18.7 18.8 49.1 0 67.9zM284.2 99.8L21.6 362.4.4 483.9c-2.9 16.4 11.4 30.6 27.8 27.8l121.5-21.3 262.6-262.6c4.7-4.7 4.7-12.3 0-17l-111-111c-4.8-4.7-12.4-4.7-17.1 0zM124.1 339.9c-5.5-5.5-5.5-14.3 0-19.8l154-154c5.5-5.5 14.3-5.5 19.8 0s5.5 14.3 0 19.8l-154 154c-5.5 5.5-14.3 5.5-19.8 0zM88 424h48v36.3l-64.5 11.3-31.1-31.1L51.7 376H88v48z"/></svg>&nbsp;3843</span>
     
     
         
@@ -265,20 +265,20 @@
 </span><span class="lnt">13
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="cp">#include</span> <span class="cpf">&#34;postgres.h&#34;</span><span class="cp">
-</span><span class="cp">#include</span> <span class="cpf">&#34;fmgr.h&#34;</span><span class="cp">
-</span><span class="cp"></span>
-<span class="n">PG_MODULE_MAGIC</span><span class="p">;</span>
-
-<span class="n">PG_FUNCTION_INFO_V1</span><span class="p">(</span><span class="n">my_add_func</span><span class="p">);</span>
-<span class="n">Datum</span> <span class="nf">my_add_func</span><span class="p">(</span><span class="n">PG_FUNCTION_ARGS</span><span class="p">)</span>
-<span class="p">{</span>
-    <span class="n">int32</span> <span class="n">a</span> <span class="o">=</span> <span class="n">PG_GETARG_INT32</span><span class="p">(</span><span class="mi">0</span><span class="p">);</span>
-    <span class="n">int32</span> <span class="n">b</span> <span class="o">=</span> <span class="n">PG_GETARG_INT32</span><span class="p">(</span><span class="mi">1</span><span class="p">);</span>
-    <span class="n">int64</span> <span class="n">result</span> <span class="o">=</span> <span class="n">a</span> <span class="o">+</span> <span class="n">b</span><span class="p">;</span>
-    <span class="n">PG_RETURN_INT64</span><span class="p">(</span><span class="n">result</span><span class="p">);</span>
-<span class="p">}</span>
-</code></pre></td></tr></table></div>
+<pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="line"><span class="cl"><span class="cp">#include</span> <span class="cpf">&#34;postgres.h&#34;</span><span class="cp">
+</span></span></span><span class="line"><span class="cl"><span class="cp">#include</span> <span class="cpf">&#34;fmgr.h&#34;</span><span class="cp">
+</span></span></span><span class="line"><span class="cl"><span class="cp"></span>
+</span></span><span class="line"><span class="cl"><span class="n">PG_MODULE_MAGIC</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="nf">PG_FUNCTION_INFO_V1</span><span class="p">(</span><span class="n">my_add_func</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl"><span class="n">Datum</span> <span class="nf">my_add_func</span><span class="p">(</span><span class="n">PG_FUNCTION_ARGS</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="n">int32</span> <span class="n">a</span> <span class="o">=</span> <span class="nf">PG_GETARG_INT32</span><span class="p">(</span><span class="mi">0</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">    <span class="n">int32</span> <span class="n">b</span> <span class="o">=</span> <span class="nf">PG_GETARG_INT32</span><span class="p">(</span><span class="mi">1</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">    <span class="n">int64</span> <span class="n">result</span> <span class="o">=</span> <span class="n">a</span> <span class="o">+</span> <span class="n">b</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="nf">PG_RETURN_INT64</span><span class="p">(</span><span class="n">result</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table></div>
 </div>
 </div><p>这里面的函数很简单，只不过调用了一些莫名其妙的宏，所以会觉得疑惑。这些宏的原理在后面会讲到，这里先简单的介绍下作用。</p>
 <p><code>PG_MODULE_MAGIC</code>宏必须要使用，后面编译生成的库才可以被 postgresql 加载。</p>
@@ -294,9 +294,9 @@
 </span><span class="lnt">2
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="o">[</span>root@host1<span class="o">]</span><span class="c1"># /usr/pgsql-9.6/bin/pg_config --includedir-server</span>
-/usr/pgsql-9.6/include/server
-</code></pre></td></tr></table></div>
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl"><span class="o">[</span>root@host1<span class="o">]</span><span class="c1"># /usr/pgsql-9.6/bin/pg_config --includedir-server</span>
+</span></span><span class="line"><span class="cl">/usr/pgsql-9.6/include/server
+</span></span></code></pre></td></tr></table></div>
 </div>
 </div><p>然后执行编译命令，记住这个生成共享库（so 结尾的文件）的路径，在创建函数时会用到</p>
 <div class="highlight"><div class="chroma">
@@ -305,9 +305,9 @@
 </span><span class="lnt">2
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell">gcc -fPIC -c my_add_func.c -I/usr/pgsql-9.6/include/server/  <span class="c1"># 生成my_add_func.o文件</span>
-gcc -shared -o my_add_func.so my_add_func.o            <span class="c1"># 生成共享库</span>
-</code></pre></td></tr></table></div>
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">gcc -fPIC -c my_add_func.c -I/usr/pgsql-9.6/include/server/  <span class="c1"># 生成my_add_func.o文件</span>
+</span></span><span class="line"><span class="cl">gcc -shared -o my_add_func.so my_add_func.o            <span class="c1"># 生成共享库</span>
+</span></span></code></pre></td></tr></table></div>
 </div>
 </div><h3 id="创建函数"><a href="#创建函数" class="anchor-link"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon anchor-icon"><path d="M326.612 185.391c59.747 59.809 58.927 155.698.36 214.59-.11.12-.24.25-.36.37l-67.2 67.2c-59.27 59.27-155.699 59.262-214.96 0-59.27-59.26-59.27-155.7 0-214.96l37.106-37.106c9.84-9.84 26.786-3.3 27.294 10.606.648 17.722 3.826 35.527 9.69 52.721 1.986 5.822.567 12.262-3.783 16.612l-13.087 13.087c-28.026 28.026-28.905 73.66-1.155 101.96 28.024 28.579 74.086 28.749 102.325.51l67.2-67.19c28.191-28.191 28.073-73.757 0-101.83-3.701-3.694-7.429-6.564-10.341-8.569a16.037 16.037 0 0 1-6.947-12.606c-.396-10.567 3.348-21.456 11.698-29.806l21.054-21.055c5.521-5.521 14.182-6.199 20.584-1.731a152.482 152.482 0 0 1 20.522 17.197zM467.547 44.449c-59.261-59.262-155.69-59.27-214.96 0l-67.2 67.2c-.12.12-.25.25-.36.37-58.566 58.892-59.387 154.781.36 214.59a152.454 152.454 0 0 0 20.521 17.196c6.402 4.468 15.064 3.789 20.584-1.731l21.054-21.055c8.35-8.35 12.094-19.239 11.698-29.806a16.037 16.037 0 0 0-6.947-12.606c-2.912-2.005-6.64-4.875-10.341-8.569-28.073-28.073-28.191-73.639 0-101.83l67.2-67.19c28.239-28.239 74.3-28.069 102.325.51 27.75 28.3 26.872 73.934-1.155 101.96l-13.087 13.087c-4.35 4.35-5.769 10.79-3.783 16.612 5.864 17.194 9.042 34.999 9.69 52.721.509 13.906 17.454 20.446 27.294 10.606l37.106-37.106c59.271-59.259 59.271-155.699.001-214.959z"/></svg></a>创建函数</h3>
 <p>然后在 postgresql 命令行执行<code>CREATE FUNCTION</code>命令</p>
@@ -317,9 +317,9 @@ gcc -shared -o my_add_func.so my_add_func.o            <span class="c1"># 生成
 </span><span class="lnt">2
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-sql" data-lang="sql"><span class="k">CREATE</span><span class="w"> </span><span class="k">FUNCTION</span><span class="w"> </span><span class="n">my_add</span><span class="p">(</span><span class="n">a</span><span class="w"> </span><span class="nb">integer</span><span class="p">,</span><span class="w"> </span><span class="n">b</span><span class="w"> </span><span class="nb">integer</span><span class="p">)</span><span class="w"> </span><span class="k">RETURNS</span><span class="w"> </span><span class="nb">integer</span><span class="w">
-</span><span class="w">     </span><span class="k">AS</span><span class="w"> </span><span class="s1">&#39;/var/lib/pgsql/my_add_func.so&#39;</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;my_add_func&#39;</span><span class="w"> </span><span class="k">LANGUAGE</span><span class="w"> </span><span class="k">C</span><span class="w"> </span><span class="k">STRICT</span><span class="p">;</span><span class="w">
-</span></code></pre></td></tr></table></div>
+<pre tabindex="0" class="chroma"><code class="language-sql" data-lang="sql"><span class="line"><span class="cl"><span class="k">CREATE</span><span class="w"> </span><span class="k">FUNCTION</span><span class="w"> </span><span class="n">my_add</span><span class="p">(</span><span class="n">a</span><span class="w"> </span><span class="nb">integer</span><span class="p">,</span><span class="w"> </span><span class="n">b</span><span class="w"> </span><span class="nb">integer</span><span class="p">)</span><span class="w"> </span><span class="k">RETURNS</span><span class="w"> </span><span class="nb">integer</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">     </span><span class="k">AS</span><span class="w"> </span><span class="s1">&#39;/var/lib/pgsql/my_add_func.so&#39;</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;my_add_func&#39;</span><span class="w"> </span><span class="k">LANGUAGE</span><span class="w"> </span><span class="k">C</span><span class="w"> </span><span class="k">STRICT</span><span class="p">;</span><span class="w">
+</span></span></span></code></pre></td></tr></table></div>
 </div>
 </div><p>接下来我们尝试使用 my_add 函数</p>
 <div class="highlight"><div class="chroma">
@@ -337,18 +337,18 @@ gcc -shared -o my_add_func.so my_add_func.o            <span class="c1"># 生成
 </span><span class="lnt">11
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="nv">test</span><span class="o">=</span><span class="c1"># select my_add(1, 2);</span>
- my_add 
---------
-      <span class="m">3</span>
-<span class="o">(</span><span class="m">1</span> row<span class="o">)</span>
-
-<span class="nv">test</span><span class="o">=</span><span class="c1"># select my_add(id, price), id, price from orders ;</span>
- my_add <span class="p">|</span> id <span class="p">|</span> price 
---------+----+-------
-    <span class="m">124</span> <span class="p">|</span>  <span class="m">1</span> <span class="p">|</span>   <span class="m">123</span>
-<span class="o">(</span><span class="m">1</span> row<span class="o">)</span>
-</code></pre></td></tr></table></div>
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl"><span class="nv">test</span><span class="o">=</span><span class="c1"># select my_add(1, 2);</span>
+</span></span><span class="line"><span class="cl"> my_add 
+</span></span><span class="line"><span class="cl">--------
+</span></span><span class="line"><span class="cl">      <span class="m">3</span>
+</span></span><span class="line"><span class="cl"><span class="o">(</span><span class="m">1</span> row<span class="o">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="nv">test</span><span class="o">=</span><span class="c1"># select my_add(id, price), id, price from orders ;</span>
+</span></span><span class="line"><span class="cl"> my_add <span class="p">|</span> id <span class="p">|</span> price 
+</span></span><span class="line"><span class="cl">--------+----+-------
+</span></span><span class="line"><span class="cl">    <span class="m">124</span> <span class="p">|</span>  <span class="m">1</span> <span class="p">|</span>   <span class="m">123</span>
+</span></span><span class="line"><span class="cl"><span class="o">(</span><span class="m">1</span> row<span class="o">)</span>
+</span></span></code></pre></td></tr></table></div>
 </div>
 </div><h2 id="数据类型"><a href="#数据类型" class="anchor-link"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon anchor-icon"><path d="M326.612 185.391c59.747 59.809 58.927 155.698.36 214.59-.11.12-.24.25-.36.37l-67.2 67.2c-59.27 59.27-155.699 59.262-214.96 0-59.27-59.26-59.27-155.7 0-214.96l37.106-37.106c9.84-9.84 26.786-3.3 27.294 10.606.648 17.722 3.826 35.527 9.69 52.721 1.986 5.822.567 12.262-3.783 16.612l-13.087 13.087c-28.026 28.026-28.905 73.66-1.155 101.96 28.024 28.579 74.086 28.749 102.325.51l67.2-67.19c28.191-28.191 28.073-73.757 0-101.83-3.701-3.694-7.429-6.564-10.341-8.569a16.037 16.037 0 0 1-6.947-12.606c-.396-10.567 3.348-21.456 11.698-29.806l21.054-21.055c5.521-5.521 14.182-6.199 20.584-1.731a152.482 152.482 0 0 1 20.522 17.197zM467.547 44.449c-59.261-59.262-155.69-59.27-214.96 0l-67.2 67.2c-.12.12-.25.25-.36.37-58.566 58.892-59.387 154.781.36 214.59a152.454 152.454 0 0 0 20.521 17.196c6.402 4.468 15.064 3.789 20.584-1.731l21.054-21.055c8.35-8.35 12.094-19.239 11.698-29.806a16.037 16.037 0 0 0-6.947-12.606c-2.912-2.005-6.64-4.875-10.341-8.569-28.073-28.073-28.191-73.639 0-101.83l67.2-67.19c28.239-28.239 74.3-28.069 102.325.51 27.75 28.3 26.872 73.934-1.155 101.96l-13.087 13.087c-4.35 4.35-5.769 10.79-3.783 16.612 5.864 17.194 9.042 34.999 9.69 52.721.509 13.906 17.454 20.446 27.294 10.606l37.106-37.106c59.271-59.259 59.271-155.699.001-214.959z"/></svg></a>数据类型</h2>
 <p>通过上面的例子，可以看到创建一个 c 函数并不难，不过还有些细节需要注意到，就是数据是如何在 postgresql 和函数之间传递的。</p>
@@ -376,22 +376,22 @@ gcc -shared -o my_add_func.so my_add_func.o            <span class="c1"># 生成
 </span><span class="lnt">15
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="cp">#ifdef USE_FLOAT8_BYVAL
-</span><span class="cp">#define Int64GetDatum(X) ((Datum) (X))
-</span><span class="cp">#else
-</span><span class="cp"></span><span class="k">extern</span> <span class="n">Datum</span> <span class="nf">Int64GetDatum</span><span class="p">(</span><span class="n">int64</span> <span class="n">X</span><span class="p">);</span>
-<span class="cp">#endif
-</span><span class="cp"></span>
-<span class="n">Datum</span> <span class="nf">Int64GetDatum</span><span class="p">(</span><span class="n">int64</span> <span class="n">X</span><span class="p">)</span>
-<span class="p">{</span>
-    <span class="c1">// 使用palloc分配堆内存，palloc的作用同malloc一样，在它基础之上增加了内存管理
-</span><span class="c1"></span>	<span class="n">int64</span>	   <span class="o">*</span><span class="n">retval</span> <span class="o">=</span> <span class="p">(</span><span class="n">int64</span> <span class="o">*</span><span class="p">)</span> <span class="n">palloc</span><span class="p">(</span><span class="k">sizeof</span><span class="p">(</span><span class="n">int64</span><span class="p">));</span>
-    <span class="c1">// 设置堆内存值
-</span><span class="c1"></span>	<span class="o">*</span><span class="n">retval</span> <span class="o">=</span> <span class="n">X</span><span class="p">;</span>
-    <span class="c1">// 将内存地址存储在Datum
-</span><span class="c1"></span>	<span class="k">return</span> <span class="n">PointerGetDatum</span><span class="p">(</span><span class="n">retval</span><span class="p">);</span>
-<span class="p">}</span>
-</code></pre></td></tr></table></div>
+<pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="line"><span class="cl"><span class="cp">#ifdef USE_FLOAT8_BYVAL
+</span></span></span><span class="line"><span class="cl"><span class="cp">#define Int64GetDatum(X) ((Datum) (X))
+</span></span></span><span class="line"><span class="cl"><span class="cp">#else
+</span></span></span><span class="line"><span class="cl"><span class="cp"></span><span class="k">extern</span> <span class="n">Datum</span> <span class="nf">Int64GetDatum</span><span class="p">(</span><span class="n">int64</span> <span class="n">X</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl"><span class="cp">#endif
+</span></span></span><span class="line"><span class="cl"><span class="cp"></span>
+</span></span><span class="line"><span class="cl"><span class="n">Datum</span> <span class="nf">Int64GetDatum</span><span class="p">(</span><span class="n">int64</span> <span class="n">X</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// 使用palloc分配堆内存，palloc的作用同malloc一样，在它基础之上增加了内存管理
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="n">int64</span>	   <span class="o">*</span><span class="n">retval</span> <span class="o">=</span> <span class="p">(</span><span class="n">int64</span> <span class="o">*</span><span class="p">)</span> <span class="nf">palloc</span><span class="p">(</span><span class="k">sizeof</span><span class="p">(</span><span class="n">int64</span><span class="p">));</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// 设置堆内存值
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="o">*</span><span class="n">retval</span> <span class="o">=</span> <span class="n">X</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// 将内存地址存储在Datum
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="k">return</span> <span class="nf">PointerGetDatum</span><span class="p">(</span><span class="n">retval</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table></div>
 </div>
 </div><h3 id="相关宏"><a href="#相关宏" class="anchor-link"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon anchor-icon"><path d="M326.612 185.391c59.747 59.809 58.927 155.698.36 214.59-.11.12-.24.25-.36.37l-67.2 67.2c-59.27 59.27-155.699 59.262-214.96 0-59.27-59.26-59.27-155.7 0-214.96l37.106-37.106c9.84-9.84 26.786-3.3 27.294 10.606.648 17.722 3.826 35.527 9.69 52.721 1.986 5.822.567 12.262-3.783 16.612l-13.087 13.087c-28.026 28.026-28.905 73.66-1.155 101.96 28.024 28.579 74.086 28.749 102.325.51l67.2-67.19c28.191-28.191 28.073-73.757 0-101.83-3.701-3.694-7.429-6.564-10.341-8.569a16.037 16.037 0 0 1-6.947-12.606c-.396-10.567 3.348-21.456 11.698-29.806l21.054-21.055c5.521-5.521 14.182-6.199 20.584-1.731a152.482 152.482 0 0 1 20.522 17.197zM467.547 44.449c-59.261-59.262-155.69-59.27-214.96 0l-67.2 67.2c-.12.12-.25.25-.36.37-58.566 58.892-59.387 154.781.36 214.59a152.454 152.454 0 0 0 20.521 17.196c6.402 4.468 15.064 3.789 20.584-1.731l21.054-21.055c8.35-8.35 12.094-19.239 11.698-29.806a16.037 16.037 0 0 0-6.947-12.606c-2.912-2.005-6.64-4.875-10.341-8.569-28.073-28.073-28.191-73.639 0-101.83l67.2-67.19c28.239-28.239 74.3-28.069 102.325.51 27.75 28.3 26.872 73.934-1.155 101.96l-13.087 13.087c-4.35 4.35-5.769 10.79-3.783 16.612 5.864 17.194 9.042 34.999 9.69 52.721.509 13.906 17.454 20.446 27.294 10.606l37.106-37.106c59.271-59.259 59.271-155.699.001-214.959z"/></svg></a>相关宏</h3>
 <p>这里再来回顾下<code>PG_FUNCTION_ARGS</code>宏，它定义函数参数名称<code>fcinfo</code>，类型为<code>FunctionCallInfo</code>。<code>FunctionCallInfo</code>是一个结构体，里面有个<code>args</code>成员，表示参数数组。</p>
@@ -400,8 +400,8 @@ gcc -shared -o my_add_func.so my_add_func.o            <span class="c1"># 生成
 <pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="cp">#define PG_FUNCTION_ARGS	FunctionCallInfo fcinfo
-</span></code></pre></td></tr></table></div>
+<pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="line"><span class="cl"><span class="cp">#define PG_FUNCTION_ARGS	FunctionCallInfo fcinfo
+</span></span></span></code></pre></td></tr></table></div>
 </div>
 </div><p>postgresql 为我们提供了提取参数的方法，下面列举其中一些</p>
 <div class="highlight"><div class="chroma">
@@ -416,15 +416,15 @@ gcc -shared -o my_add_func.so my_add_func.o            <span class="c1"># 生成
 </span><span class="lnt">8
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="c1">// 提取指定位置的参数
-</span><span class="c1"></span><span class="cp">#define PG_GETARG_DATUM(n)	 (fcinfo-&gt;args[n].value)
-</span><span class="cp"></span>
-<span class="c1">// 将指定位置的参数转换为uint16
-</span><span class="c1"></span><span class="cp">#define PG_GETARG_UINT16(n)  DatumGetUInt16(PG_GETARG_DATUM(n))
-</span><span class="cp"></span>
-<span class="c1">// 将指定位置的参数转换为int32
-</span><span class="c1"></span><span class="cp">#define PG_GETARG_INT32(n)	 DatumGetInt32(PG_GETARG_DATUM(n))
-</span></code></pre></td></tr></table></div>
+<pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="line"><span class="cl"><span class="c1">// 提取指定位置的参数
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="cp">#define PG_GETARG_DATUM(n)	 (fcinfo-&gt;args[n].value)
+</span></span></span><span class="line"><span class="cl"><span class="cp"></span>
+</span></span><span class="line"><span class="cl"><span class="c1">// 将指定位置的参数转换为uint16
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="cp">#define PG_GETARG_UINT16(n)  DatumGetUInt16(PG_GETARG_DATUM(n))
+</span></span></span><span class="line"><span class="cl"><span class="cp"></span>
+</span></span><span class="line"><span class="cl"><span class="c1">// 将指定位置的参数转换为int32
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="cp">#define PG_GETARG_INT32(n)	 DatumGetInt32(PG_GETARG_DATUM(n))
+</span></span></span></code></pre></td></tr></table></div>
 </div>
 </div><p>同样 postgresql 也为我们提供了返回结果的方法，</p>
 <div class="highlight"><div class="chroma">
@@ -435,11 +435,11 @@ gcc -shared -o my_add_func.so my_add_func.o            <span class="c1"># 生成
 </span><span class="lnt">4
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="c1">// 将int32转换为Datum类型，并且返回
-</span><span class="c1"></span><span class="cp">#define PG_RETURN_INT32(x)	 return Int32GetDatum(x)
-</span><span class="cp"></span><span class="c1">// 将uint32转换为Datum类型，并且返回
-</span><span class="c1"></span><span class="cp">#define PG_RETURN_UINT32(x)  return UInt32GetDatum(x)
-</span></code></pre></td></tr></table></div>
+<pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="line"><span class="cl"><span class="c1">// 将int32转换为Datum类型，并且返回
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="cp">#define PG_RETURN_INT32(x)	 return Int32GetDatum(x)
+</span></span></span><span class="line"><span class="cl"><span class="cp"></span><span class="c1">// 将uint32转换为Datum类型，并且返回
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="cp">#define PG_RETURN_UINT32(x)  return UInt32GetDatum(x)
+</span></span></span></code></pre></td></tr></table></div>
 </div>
 </div><h2 id="复合数据传递"><a href="#复合数据传递" class="anchor-link"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon anchor-icon"><path d="M326.612 185.391c59.747 59.809 58.927 155.698.36 214.59-.11.12-.24.25-.36.37l-67.2 67.2c-59.27 59.27-155.699 59.262-214.96 0-59.27-59.26-59.27-155.7 0-214.96l37.106-37.106c9.84-9.84 26.786-3.3 27.294 10.606.648 17.722 3.826 35.527 9.69 52.721 1.986 5.822.567 12.262-3.783 16.612l-13.087 13.087c-28.026 28.026-28.905 73.66-1.155 101.96 28.024 28.579 74.086 28.749 102.325.51l67.2-67.19c28.191-28.191 28.073-73.757 0-101.83-3.701-3.694-7.429-6.564-10.341-8.569a16.037 16.037 0 0 1-6.947-12.606c-.396-10.567 3.348-21.456 11.698-29.806l21.054-21.055c5.521-5.521 14.182-6.199 20.584-1.731a152.482 152.482 0 0 1 20.522 17.197zM467.547 44.449c-59.261-59.262-155.69-59.27-214.96 0l-67.2 67.2c-.12.12-.25.25-.36.37-58.566 58.892-59.387 154.781.36 214.59a152.454 152.454 0 0 0 20.521 17.196c6.402 4.468 15.064 3.789 20.584-1.731l21.054-21.055c8.35-8.35 12.094-19.239 11.698-29.806a16.037 16.037 0 0 0-6.947-12.606c-2.912-2.005-6.64-4.875-10.341-8.569-28.073-28.073-28.191-73.639 0-101.83l67.2-67.19c28.239-28.239 74.3-28.069 102.325.51 27.75 28.3 26.872 73.934-1.155 101.96l-13.087 13.087c-4.35 4.35-5.769 10.79-3.783 16.612 5.864 17.194 9.042 34.999 9.69 52.721.509 13.906 17.454 20.446 27.294 10.606l37.106-37.106c59.271-59.259 59.271-155.699.001-214.959z"/></svg></a>复合数据传递</h2>
 <p>上述介绍的<code>my_add_func</code>例子，只是接收和返回基本类型。postgresql 还可以接收行数据，或者自定义的数据类型（比如postgis插件的  POINT 类型），这种情况叫做复合类型数据，它在 c 语言中 由 tuple 表示，下面演示一个实例：</p>
@@ -475,34 +475,34 @@ gcc -shared -o my_add_func.so my_add_func.o            <span class="c1"># 生成
 </span><span class="lnt">27
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="cp">#include</span> <span class="cpf">&#34;postgres.h&#34;</span><span class="cp">
-</span><span class="cp">#include</span> <span class="cpf">&#34;funcapi.h&#34;</span><span class="cp">
-</span><span class="cp"></span>
-<span class="n">PG_MODULE_MAGIC</span><span class="p">;</span>
-
-<span class="n">PG_FUNCTION_INFO_V1</span><span class="p">(</span><span class="n">my_tuple_func</span><span class="p">);</span>
-<span class="n">Datum</span> <span class="nf">my_tuple_func</span><span class="p">(</span><span class="n">PG_FUNCTION_ARGS</span><span class="p">)</span>
-<span class="p">{</span>
-    <span class="c1">// 第一个参数为复合类型
-</span><span class="c1"></span>	<span class="n">HeapTupleHeader</span> <span class="n">tuple</span> <span class="o">=</span> <span class="n">PG_GETARG_HEAPTUPLEHEADER</span><span class="p">(</span><span class="mi">0</span><span class="p">);</span>
-	
-	<span class="c1">// 取出返回数据的类型，由TupleDesc表示
-</span><span class="c1"></span>	<span class="n">TupleDesc</span>	<span class="n">tupdesc</span><span class="p">;</span>
-	<span class="k">if</span> <span class="p">(</span><span class="n">get_call_result_type</span><span class="p">(</span><span class="n">fcinfo</span><span class="p">,</span> <span class="nb">NULL</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">tupdesc</span><span class="p">)</span> <span class="o">!=</span> <span class="n">TYPEFUNC_COMPOSITE</span><span class="p">)</span>
-		<span class="n">elog</span><span class="p">(</span><span class="n">ERROR</span><span class="p">,</span> <span class="s">&#34;return type must be a row type&#34;</span><span class="p">);</span>
-
-	<span class="c1">// 构建返回值
-</span><span class="c1"></span>	<span class="n">Datum</span> <span class="n">values</span><span class="p">[</span><span class="mi">2</span><span class="p">];</span>
-	<span class="n">values</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">PointerGetDatum</span><span class="p">(</span><span class="n">cstring_to_text</span><span class="p">(</span><span class="s">&#34;hello&#34;</span><span class="p">));</span>
-	<span class="n">values</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">Int32GetDatum</span><span class="p">(</span><span class="mi">1</span><span class="p">);</span>
-    <span class="c1">// nulls 数组表示值是否为空
-</span><span class="c1"></span>	<span class="kt">bool</span>		<span class="n">nulls</span><span class="p">[</span><span class="mi">2</span><span class="p">];</span>
-	<span class="n">memset</span><span class="p">(</span><span class="n">nulls</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="k">sizeof</span><span class="p">(</span><span class="n">nulls</span><span class="p">));</span>
-	<span class="c1">// 构建返回数据，由HeapTuple表示
-</span><span class="c1"></span>	<span class="n">HeapTuple</span> <span class="n">result</span> <span class="o">=</span> <span class="n">heap_form_tuple</span><span class="p">(</span><span class="n">tupdesc</span><span class="p">,</span> <span class="n">values</span><span class="p">,</span> <span class="n">nulls</span><span class="p">);</span>
-	<span class="n">PG_RETURN_DATUM</span><span class="p">(</span><span class="n">HeapTupleGetDatum</span><span class="p">(</span><span class="n">result</span><span class="p">));</span>
-<span class="p">}</span>
-</code></pre></td></tr></table></div>
+<pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="line"><span class="cl"><span class="cp">#include</span> <span class="cpf">&#34;postgres.h&#34;</span><span class="cp">
+</span></span></span><span class="line"><span class="cl"><span class="cp">#include</span> <span class="cpf">&#34;funcapi.h&#34;</span><span class="cp">
+</span></span></span><span class="line"><span class="cl"><span class="cp"></span>
+</span></span><span class="line"><span class="cl"><span class="n">PG_MODULE_MAGIC</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="nf">PG_FUNCTION_INFO_V1</span><span class="p">(</span><span class="n">my_tuple_func</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl"><span class="n">Datum</span> <span class="nf">my_tuple_func</span><span class="p">(</span><span class="n">PG_FUNCTION_ARGS</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// 第一个参数为复合类型
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="n">HeapTupleHeader</span> <span class="n">tuple</span> <span class="o">=</span> <span class="nf">PG_GETARG_HEAPTUPLEHEADER</span><span class="p">(</span><span class="mi">0</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">	
+</span></span><span class="line"><span class="cl">	<span class="c1">// 取出返回数据的类型，由TupleDesc表示
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="n">TupleDesc</span>	<span class="n">tupdesc</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">	<span class="k">if</span> <span class="p">(</span><span class="nf">get_call_result_type</span><span class="p">(</span><span class="n">fcinfo</span><span class="p">,</span> <span class="nb">NULL</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">tupdesc</span><span class="p">)</span> <span class="o">!=</span> <span class="n">TYPEFUNC_COMPOSITE</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">		<span class="nf">elog</span><span class="p">(</span><span class="n">ERROR</span><span class="p">,</span> <span class="s">&#34;return type must be a row type&#34;</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">	<span class="c1">// 构建返回值
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="n">Datum</span> <span class="n">values</span><span class="p">[</span><span class="mi">2</span><span class="p">];</span>
+</span></span><span class="line"><span class="cl">	<span class="n">values</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="nf">PointerGetDatum</span><span class="p">(</span><span class="nf">cstring_to_text</span><span class="p">(</span><span class="s">&#34;hello&#34;</span><span class="p">));</span>
+</span></span><span class="line"><span class="cl">	<span class="n">values</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="nf">Int32GetDatum</span><span class="p">(</span><span class="mi">1</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// nulls 数组表示值是否为空
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="kt">bool</span>		<span class="n">nulls</span><span class="p">[</span><span class="mi">2</span><span class="p">];</span>
+</span></span><span class="line"><span class="cl">	<span class="nf">memset</span><span class="p">(</span><span class="n">nulls</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="k">sizeof</span><span class="p">(</span><span class="n">nulls</span><span class="p">));</span>
+</span></span><span class="line"><span class="cl">	<span class="c1">// 构建返回数据，由HeapTuple表示
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="n">HeapTuple</span> <span class="n">result</span> <span class="o">=</span> <span class="nf">heap_form_tuple</span><span class="p">(</span><span class="n">tupdesc</span><span class="p">,</span> <span class="n">values</span><span class="p">,</span> <span class="n">nulls</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">	<span class="nf">PG_RETURN_DATUM</span><span class="p">(</span><span class="nf">HeapTupleGetDatum</span><span class="p">(</span><span class="n">result</span><span class="p">));</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table></div>
 </div>
 </div><p>创建函数语句如下，定义了接收参数类型为 record， 返回结果有两列（text，int）</p>
 <div class="highlight"><div class="chroma">
@@ -513,11 +513,11 @@ gcc -shared -o my_add_func.so my_add_func.o            <span class="c1"># 生成
 </span><span class="lnt">4
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-sql" data-lang="sql"><span class="k">CREATE</span><span class="w"> </span><span class="k">FUNCTION</span><span class="w"> </span><span class="n">my_tuple_func</span><span class="p">(</span><span class="n">tuple</span><span class="w"> </span><span class="n">record</span><span class="p">)</span><span class="w"> 
-</span><span class="w">     </span><span class="k">RETURNS</span><span class="w"> </span><span class="k">TABLE</span><span class="w"> </span><span class="p">(</span><span class="n">message</span><span class="w"> </span><span class="nb">text</span><span class="w"> </span><span class="p">,</span><span class="n">num</span><span class="w"> </span><span class="nb">int</span><span class="p">)</span><span class="w">
-</span><span class="w"></span><span class="k">AS</span><span class="w"> </span><span class="s1">&#39;/var/lib/pgsql/my_tuple_func&#39;</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;my_tuple_func&#39;</span><span class="w">
-</span><span class="w"></span><span class="k">LANGUAGE</span><span class="w"> </span><span class="k">C</span><span class="w"> </span><span class="k">STRICT</span><span class="p">;</span><span class="w">
-</span></code></pre></td></tr></table></div>
+<pre tabindex="0" class="chroma"><code class="language-sql" data-lang="sql"><span class="line"><span class="cl"><span class="k">CREATE</span><span class="w"> </span><span class="k">FUNCTION</span><span class="w"> </span><span class="n">my_tuple_func</span><span class="p">(</span><span class="n">tuple</span><span class="w"> </span><span class="n">record</span><span class="p">)</span><span class="w"> 
+</span></span></span><span class="line"><span class="cl"><span class="w">     </span><span class="k">RETURNS</span><span class="w"> </span><span class="k">TABLE</span><span class="w"> </span><span class="p">(</span><span class="n">message</span><span class="w"> </span><span class="nb">text</span><span class="w"> </span><span class="p">,</span><span class="n">num</span><span class="w"> </span><span class="nb">int</span><span class="p">)</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="k">AS</span><span class="w"> </span><span class="s1">&#39;/var/lib/pgsql/my_tuple_func&#39;</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;my_tuple_func&#39;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="k">LANGUAGE</span><span class="w"> </span><span class="k">C</span><span class="w"> </span><span class="k">STRICT</span><span class="p">;</span><span class="w">
+</span></span></span></code></pre></td></tr></table></div>
 </div>
 </div><p>执行语句，返回的数据为复合类型，可以通过<code>.*</code>符号展示所有列</p>
 <div class="highlight"><div class="chroma">
@@ -534,17 +534,17 @@ gcc -shared -o my_add_func.so my_add_func.o            <span class="c1"># 生成
 </span><span class="lnt">10
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="nv">test</span><span class="o">=</span><span class="c1"># select my_tuple_func(orders) from orders where id = 1;</span>
- my_tuple_func 
----------------
- <span class="o">(</span>hello,1<span class="o">)</span>
-<span class="o">(</span><span class="m">1</span> row<span class="o">)</span>
-
-<span class="nv">test</span><span class="o">=</span><span class="c1"># select (my_tuple_func(orders)).* from orders where id = 1; </span>
- message <span class="p">|</span> num 
----------+-----
- hello   <span class="p">|</span>   <span class="m">1</span>
-</code></pre></td></tr></table></div>
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl"><span class="nv">test</span><span class="o">=</span><span class="c1"># select my_tuple_func(orders) from orders where id = 1;</span>
+</span></span><span class="line"><span class="cl"> my_tuple_func 
+</span></span><span class="line"><span class="cl">---------------
+</span></span><span class="line"><span class="cl"> <span class="o">(</span>hello,1<span class="o">)</span>
+</span></span><span class="line"><span class="cl"><span class="o">(</span><span class="m">1</span> row<span class="o">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="nv">test</span><span class="o">=</span><span class="c1"># select (my_tuple_func(orders)).* from orders where id = 1; </span>
+</span></span><span class="line"><span class="cl"> message <span class="p">|</span> num 
+</span></span><span class="line"><span class="cl">---------+-----
+</span></span><span class="line"><span class="cl"> hello   <span class="p">|</span>   <span class="m">1</span>
+</span></span></code></pre></td></tr></table></div>
 </div>
 </div><p>通过上面的例子，可以看到可以接收行数据，参数为对应的表名即可。它由<code>HeapTuple</code>类表示，关于<code>HeapTuple</code>的原理，可以参考后续的文件。</p>
 <p>在获取参数时，我们又看到了一个新的宏<code>PG_GETARG_HEAPTUPLEHEADER</code>，它负责提取参数并且转换为<code>HeapTuple</code>类。</p>
@@ -635,85 +635,85 @@ gcc -shared -o my_add_func.so my_add_func.o            <span class="c1"># 生成
 </span><span class="lnt">78
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="cp">#include</span> <span class="cpf">&#34;postgres.h&#34;</span><span class="cp">
-</span><span class="cp">#include</span> <span class="cpf">&#34;funcapi.h&#34;</span><span class="cp">
-</span><span class="cp"></span>
-<span class="n">PG_MODULE_MAGIC</span><span class="p">;</span>
-
-<span class="c1">// 计算斐波那契数列，需要记录前两个结果的值
-</span><span class="c1"></span><span class="k">typedef</span> <span class="k">struct</span> <span class="n">OlderValues</span> <span class="p">{</span>
-    <span class="n">uint64</span> <span class="n">value1</span><span class="p">;</span>
-    <span class="n">uint64</span> <span class="n">value2</span><span class="p">;</span>
-<span class="p">}</span> <span class="n">OlderValues</span><span class="p">;</span>
-
-<span class="n">PG_FUNCTION_INFO_V1</span><span class="p">(</span><span class="n">my_records_func</span><span class="p">);</span>
-<span class="n">Datum</span> <span class="nf">my_records_func</span><span class="p">(</span><span class="n">PG_FUNCTION_ARGS</span><span class="p">)</span>
-<span class="p">{</span>
-    <span class="n">FuncCallContext</span>     <span class="o">*</span><span class="n">funcctx</span><span class="p">;</span>
-
-    <span class="c1">// 判断是否第一次执行
-</span><span class="c1"></span>    <span class="k">if</span> <span class="p">(</span><span class="n">SRF_IS_FIRSTCALL</span><span class="p">())</span>
-    <span class="p">{</span>
-        <span class="c1">// 进行此次函数第一次初始化
-</span><span class="c1"></span>        <span class="n">funcctx</span> <span class="o">=</span> <span class="n">SRF_FIRSTCALL_INIT</span><span class="p">();</span>
-        <span class="c1">// 切换内存分配器
-</span><span class="c1"></span>        <span class="n">MemoryContext</span> <span class="n">oldcontext</span> <span class="o">=</span> <span class="n">MemoryContextSwitchTo</span><span class="p">(</span><span class="n">funcctx</span><span class="o">-&gt;</span><span class="n">multi_call_memory_ctx</span><span class="p">);</span>
-        <span class="c1">// 提取参数，保存到FuncCallContext的max_calls属性里
-</span><span class="c1"></span>        <span class="n">funcctx</span><span class="o">-&gt;</span><span class="n">max_calls</span> <span class="o">=</span> <span class="n">PG_GETARG_UINT32</span><span class="p">(</span><span class="mi">0</span><span class="p">);</span>
-        <span class="c1">// 分配自定义上下文变量
-</span><span class="c1"></span>        <span class="n">OlderValues</span> <span class="o">*</span> <span class="n">mydata</span> <span class="o">=</span> <span class="n">palloc</span><span class="p">(</span><span class="k">sizeof</span><span class="p">(</span><span class="n">OlderValues</span><span class="p">));</span>
-        <span class="n">mydata</span><span class="o">-&gt;</span><span class="n">value1</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
-        <span class="n">mydata</span><span class="o">-&gt;</span><span class="n">value2</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span>
-        <span class="n">funcctx</span><span class="o">-&gt;</span><span class="n">user_fctx</span> <span class="o">=</span> <span class="n">mydata</span><span class="p">;</span>
-        <span class="c1">//切回内存分配器
-</span><span class="c1"></span>        <span class="n">MemoryContextSwitchTo</span><span class="p">(</span><span class="n">oldcontext</span><span class="p">);</span>
-    <span class="p">}</span>
-
-    <span class="c1">// 获取最新的FuncCallContext
-</span><span class="c1"></span>    <span class="n">funcctx</span> <span class="o">=</span> <span class="n">SRF_PERCALL_SETUP</span><span class="p">();</span>
-    <span class="n">uint64</span> <span class="n">call_cntr</span> <span class="o">=</span> <span class="n">funcctx</span><span class="o">-&gt;</span><span class="n">call_cntr</span><span class="p">;</span>
-    <span class="n">uint64</span> <span class="n">max_calls</span> <span class="o">=</span> <span class="n">funcctx</span><span class="o">-&gt;</span><span class="n">max_calls</span><span class="p">;</span>
-
-    <span class="k">if</span> <span class="p">(</span><span class="n">call_cntr</span> <span class="o">&lt;</span> <span class="n">max_calls</span><span class="p">)</span>
-    <span class="p">{</span>
-        <span class="n">TupleDesc</span>            <span class="n">tupdesc</span><span class="p">;</span>
-        <span class="k">if</span> <span class="p">(</span><span class="n">get_call_result_type</span><span class="p">(</span><span class="n">fcinfo</span><span class="p">,</span> <span class="nb">NULL</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">tupdesc</span><span class="p">)</span> <span class="o">!=</span> <span class="n">TYPEFUNC_COMPOSITE</span><span class="p">)</span>
-            <span class="n">elog</span><span class="p">(</span><span class="n">ERROR</span><span class="p">,</span> <span class="s">&#34;return type must be a row type&#34;</span><span class="p">);</span>
-
-        <span class="c1">// 构建返回值，使用调用次数作为第一列的值
-</span><span class="c1"></span>        <span class="n">Datum</span> <span class="n">values</span><span class="p">[</span><span class="mi">2</span><span class="p">];</span>
-        <span class="n">values</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">UInt64GetDatum</span><span class="p">(</span><span class="n">call_cntr</span><span class="p">);</span>
-        <span class="c1">// 计算此次斐波那契的值
-</span><span class="c1"></span>        <span class="n">uint64</span> <span class="n">value</span><span class="p">;</span>
-        <span class="k">if</span> <span class="p">(</span><span class="n">call_cntr</span> <span class="o">==</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
-            <span class="n">value</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
-        <span class="p">}</span>
-        <span class="k">if</span> <span class="p">(</span><span class="n">call_cntr</span> <span class="o">==</span> <span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
-            <span class="n">value</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span>
-        <span class="p">}</span>
-        <span class="k">if</span> <span class="p">(</span><span class="n">call_cntr</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
-            <span class="c1">// 取出上下文的变量，也就是前两个斐波那契的值
-</span><span class="c1"></span>            <span class="n">OlderValues</span> <span class="o">*</span><span class="n">mydata</span> <span class="o">=</span> <span class="p">(</span><span class="n">OlderValues</span> <span class="o">*</span><span class="p">)</span> <span class="n">funcctx</span><span class="o">-&gt;</span><span class="n">user_fctx</span><span class="p">;</span>
-            <span class="n">value</span> <span class="o">=</span> <span class="n">mydata</span><span class="o">-&gt;</span><span class="n">value1</span> <span class="o">+</span> <span class="n">mydata</span><span class="o">-&gt;</span><span class="n">value2</span><span class="p">;</span>
-            <span class="n">mydata</span><span class="o">-&gt;</span><span class="n">value1</span> <span class="o">=</span> <span class="n">mydata</span><span class="o">-&gt;</span><span class="n">value2</span><span class="p">;</span>
-            <span class="n">mydata</span><span class="o">-&gt;</span><span class="n">value2</span> <span class="o">=</span> <span class="n">value</span><span class="p">;</span>
-        <span class="p">}</span>
-        <span class="n">values</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">UInt64GetDatum</span><span class="p">(</span><span class="n">value</span><span class="p">);</span>
-
-        <span class="c1">// nulls 数组表示值是否为空
-</span><span class="c1"></span>        <span class="kt">bool</span>            <span class="n">nulls</span><span class="p">[</span><span class="mi">2</span><span class="p">];</span>
-        <span class="n">memset</span><span class="p">(</span><span class="n">nulls</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="k">sizeof</span><span class="p">(</span><span class="n">nulls</span><span class="p">));</span>
-        <span class="c1">// 构建返回数据，由HeapTuple表示
-</span><span class="c1"></span>        <span class="n">HeapTuple</span> <span class="n">tuple</span> <span class="o">=</span> <span class="n">heap_form_tuple</span><span class="p">(</span><span class="n">tupdesc</span><span class="p">,</span> <span class="n">values</span><span class="p">,</span> <span class="n">nulls</span><span class="p">);</span>
-        <span class="n">Datum</span> <span class="n">result</span> <span class="o">=</span> <span class="n">HeapTupleGetDatum</span><span class="p">(</span><span class="n">tuple</span><span class="p">);</span>
-        <span class="c1">// 返回数据
-</span><span class="c1"></span>        <span class="n">SRF_RETURN_NEXT</span><span class="p">(</span><span class="n">funcctx</span><span class="p">,</span> <span class="n">result</span><span class="p">);</span>
-    <span class="p">}</span>
-
-    <span class="c1">// 数据已经全部返回
-</span><span class="c1"></span>    <span class="n">SRF_RETURN_DONE</span><span class="p">(</span><span class="n">funcctx</span><span class="p">);</span>
-<span class="p">}</span>
-</code></pre></td></tr></table></div>
+<pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="line"><span class="cl"><span class="cp">#include</span> <span class="cpf">&#34;postgres.h&#34;</span><span class="cp">
+</span></span></span><span class="line"><span class="cl"><span class="cp">#include</span> <span class="cpf">&#34;funcapi.h&#34;</span><span class="cp">
+</span></span></span><span class="line"><span class="cl"><span class="cp"></span>
+</span></span><span class="line"><span class="cl"><span class="n">PG_MODULE_MAGIC</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1">// 计算斐波那契数列，需要记录前两个结果的值
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="k">typedef</span> <span class="k">struct</span> <span class="n">OlderValues</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="n">uint64</span> <span class="n">value1</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="n">uint64</span> <span class="n">value2</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span> <span class="n">OlderValues</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="nf">PG_FUNCTION_INFO_V1</span><span class="p">(</span><span class="n">my_records_func</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl"><span class="n">Datum</span> <span class="nf">my_records_func</span><span class="p">(</span><span class="n">PG_FUNCTION_ARGS</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="n">FuncCallContext</span>     <span class="o">*</span><span class="n">funcctx</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="c1">// 判断是否第一次执行
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="k">if</span> <span class="p">(</span><span class="nf">SRF_IS_FIRSTCALL</span><span class="p">())</span>
+</span></span><span class="line"><span class="cl">    <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="c1">// 进行此次函数第一次初始化
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>        <span class="n">funcctx</span> <span class="o">=</span> <span class="nf">SRF_FIRSTCALL_INIT</span><span class="p">();</span>
+</span></span><span class="line"><span class="cl">        <span class="c1">// 切换内存分配器
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>        <span class="n">MemoryContext</span> <span class="n">oldcontext</span> <span class="o">=</span> <span class="nf">MemoryContextSwitchTo</span><span class="p">(</span><span class="n">funcctx</span><span class="o">-&gt;</span><span class="n">multi_call_memory_ctx</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">        <span class="c1">// 提取参数，保存到FuncCallContext的max_calls属性里
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>        <span class="n">funcctx</span><span class="o">-&gt;</span><span class="n">max_calls</span> <span class="o">=</span> <span class="nf">PG_GETARG_UINT32</span><span class="p">(</span><span class="mi">0</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">        <span class="c1">// 分配自定义上下文变量
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>        <span class="n">OlderValues</span> <span class="o">*</span> <span class="n">mydata</span> <span class="o">=</span> <span class="nf">palloc</span><span class="p">(</span><span class="k">sizeof</span><span class="p">(</span><span class="n">OlderValues</span><span class="p">));</span>
+</span></span><span class="line"><span class="cl">        <span class="n">mydata</span><span class="o">-&gt;</span><span class="n">value1</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">        <span class="n">mydata</span><span class="o">-&gt;</span><span class="n">value2</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">        <span class="n">funcctx</span><span class="o">-&gt;</span><span class="n">user_fctx</span> <span class="o">=</span> <span class="n">mydata</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">        <span class="c1">//切回内存分配器
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>        <span class="nf">MemoryContextSwitchTo</span><span class="p">(</span><span class="n">oldcontext</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="c1">// 获取最新的FuncCallContext
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="n">funcctx</span> <span class="o">=</span> <span class="nf">SRF_PERCALL_SETUP</span><span class="p">();</span>
+</span></span><span class="line"><span class="cl">    <span class="n">uint64</span> <span class="n">call_cntr</span> <span class="o">=</span> <span class="n">funcctx</span><span class="o">-&gt;</span><span class="n">call_cntr</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="n">uint64</span> <span class="n">max_calls</span> <span class="o">=</span> <span class="n">funcctx</span><span class="o">-&gt;</span><span class="n">max_calls</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="k">if</span> <span class="p">(</span><span class="n">call_cntr</span> <span class="o">&lt;</span> <span class="n">max_calls</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="n">TupleDesc</span>            <span class="n">tupdesc</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">        <span class="k">if</span> <span class="p">(</span><span class="nf">get_call_result_type</span><span class="p">(</span><span class="n">fcinfo</span><span class="p">,</span> <span class="nb">NULL</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">tupdesc</span><span class="p">)</span> <span class="o">!=</span> <span class="n">TYPEFUNC_COMPOSITE</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">            <span class="nf">elog</span><span class="p">(</span><span class="n">ERROR</span><span class="p">,</span> <span class="s">&#34;return type must be a row type&#34;</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">        <span class="c1">// 构建返回值，使用调用次数作为第一列的值
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>        <span class="n">Datum</span> <span class="n">values</span><span class="p">[</span><span class="mi">2</span><span class="p">];</span>
+</span></span><span class="line"><span class="cl">        <span class="n">values</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="nf">UInt64GetDatum</span><span class="p">(</span><span class="n">call_cntr</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">        <span class="c1">// 计算此次斐波那契的值
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>        <span class="n">uint64</span> <span class="n">value</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">        <span class="k">if</span> <span class="p">(</span><span class="n">call_cntr</span> <span class="o">==</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">            <span class="n">value</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">        <span class="p">}</span>
+</span></span><span class="line"><span class="cl">        <span class="k">if</span> <span class="p">(</span><span class="n">call_cntr</span> <span class="o">==</span> <span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">            <span class="n">value</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">        <span class="p">}</span>
+</span></span><span class="line"><span class="cl">        <span class="k">if</span> <span class="p">(</span><span class="n">call_cntr</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">            <span class="c1">// 取出上下文的变量，也就是前两个斐波那契的值
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>            <span class="n">OlderValues</span> <span class="o">*</span><span class="n">mydata</span> <span class="o">=</span> <span class="p">(</span><span class="n">OlderValues</span> <span class="o">*</span><span class="p">)</span> <span class="n">funcctx</span><span class="o">-&gt;</span><span class="n">user_fctx</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">            <span class="n">value</span> <span class="o">=</span> <span class="n">mydata</span><span class="o">-&gt;</span><span class="n">value1</span> <span class="o">+</span> <span class="n">mydata</span><span class="o">-&gt;</span><span class="n">value2</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">            <span class="n">mydata</span><span class="o">-&gt;</span><span class="n">value1</span> <span class="o">=</span> <span class="n">mydata</span><span class="o">-&gt;</span><span class="n">value2</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">            <span class="n">mydata</span><span class="o">-&gt;</span><span class="n">value2</span> <span class="o">=</span> <span class="n">value</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">        <span class="p">}</span>
+</span></span><span class="line"><span class="cl">        <span class="n">values</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="nf">UInt64GetDatum</span><span class="p">(</span><span class="n">value</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">        <span class="c1">// nulls 数组表示值是否为空
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>        <span class="kt">bool</span>            <span class="n">nulls</span><span class="p">[</span><span class="mi">2</span><span class="p">];</span>
+</span></span><span class="line"><span class="cl">        <span class="nf">memset</span><span class="p">(</span><span class="n">nulls</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="k">sizeof</span><span class="p">(</span><span class="n">nulls</span><span class="p">));</span>
+</span></span><span class="line"><span class="cl">        <span class="c1">// 构建返回数据，由HeapTuple表示
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>        <span class="n">HeapTuple</span> <span class="n">tuple</span> <span class="o">=</span> <span class="nf">heap_form_tuple</span><span class="p">(</span><span class="n">tupdesc</span><span class="p">,</span> <span class="n">values</span><span class="p">,</span> <span class="n">nulls</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">        <span class="n">Datum</span> <span class="n">result</span> <span class="o">=</span> <span class="nf">HeapTupleGetDatum</span><span class="p">(</span><span class="n">tuple</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">        <span class="c1">// 返回数据
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>        <span class="nf">SRF_RETURN_NEXT</span><span class="p">(</span><span class="n">funcctx</span><span class="p">,</span> <span class="n">result</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="c1">// 数据已经全部返回
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="nf">SRF_RETURN_DONE</span><span class="p">(</span><span class="n">funcctx</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table></div>
 </div>
 </div><p>创建函数</p>
 <div class="highlight"><div class="chroma">
@@ -724,11 +724,11 @@ gcc -shared -o my_add_func.so my_add_func.o            <span class="c1"># 生成
 </span><span class="lnt">4
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-sql" data-lang="sql"><span class="k">CREATE</span><span class="w"> </span><span class="k">FUNCTION</span><span class="w"> </span><span class="n">my_records_func</span><span class="p">(</span><span class="n">number_limit</span><span class="w"> </span><span class="nb">int</span><span class="p">)</span><span class="w"> 
-</span><span class="w">     </span><span class="k">RETURNS</span><span class="w"> </span><span class="k">TABLE</span><span class="w"> </span><span class="p">(</span><span class="n">num</span><span class="w"> </span><span class="nb">int</span><span class="w"> </span><span class="p">,</span><span class="n">value</span><span class="w"> </span><span class="nb">int</span><span class="p">)</span><span class="w">
-</span><span class="w"></span><span class="k">AS</span><span class="w"> </span><span class="s1">&#39;/var/lib/pgsql/my_records_func.so&#39;</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;my_records_func&#39;</span><span class="w">
-</span><span class="w"></span><span class="k">LANGUAGE</span><span class="w"> </span><span class="k">C</span><span class="w"> </span><span class="k">STRICT</span><span class="p">;</span><span class="w">
-</span></code></pre></td></tr></table></div>
+<pre tabindex="0" class="chroma"><code class="language-sql" data-lang="sql"><span class="line"><span class="cl"><span class="k">CREATE</span><span class="w"> </span><span class="k">FUNCTION</span><span class="w"> </span><span class="n">my_records_func</span><span class="p">(</span><span class="n">number_limit</span><span class="w"> </span><span class="nb">int</span><span class="p">)</span><span class="w"> 
+</span></span></span><span class="line"><span class="cl"><span class="w">     </span><span class="k">RETURNS</span><span class="w"> </span><span class="k">TABLE</span><span class="w"> </span><span class="p">(</span><span class="n">num</span><span class="w"> </span><span class="nb">int</span><span class="w"> </span><span class="p">,</span><span class="n">value</span><span class="w"> </span><span class="nb">int</span><span class="p">)</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="k">AS</span><span class="w"> </span><span class="s1">&#39;/var/lib/pgsql/my_records_func.so&#39;</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;my_records_func&#39;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="k">LANGUAGE</span><span class="w"> </span><span class="k">C</span><span class="w"> </span><span class="k">STRICT</span><span class="p">;</span><span class="w">
+</span></span></span></code></pre></td></tr></table></div>
 </div>
 </div><p>执行语句</p>
 <div class="highlight"><div class="chroma">
@@ -744,16 +744,16 @@ gcc -shared -o my_add_func.so my_add_func.o            <span class="c1"># 生成
 </span><span class="lnt">9
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="nv">test</span><span class="o">=</span><span class="c1"># select * from my_records_func(5);</span>
- num <span class="p">|</span> value 
--------+-----
-     <span class="m">0</span> <span class="p">|</span>   <span class="m">0</span>
-     <span class="m">1</span> <span class="p">|</span>   <span class="m">1</span>
-     <span class="m">2</span> <span class="p">|</span>   <span class="m">1</span>
-     <span class="m">3</span> <span class="p">|</span>   <span class="m">2</span>
-     <span class="m">4</span> <span class="p">|</span>   <span class="m">3</span>
-<span class="o">(</span><span class="m">5</span> rows<span class="o">)</span>
-</code></pre></td></tr></table></div>
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl"><span class="nv">test</span><span class="o">=</span><span class="c1"># select * from my_records_func(5);</span>
+</span></span><span class="line"><span class="cl"> num <span class="p">|</span> value 
+</span></span><span class="line"><span class="cl">-------+-----
+</span></span><span class="line"><span class="cl">     <span class="m">0</span> <span class="p">|</span>   <span class="m">0</span>
+</span></span><span class="line"><span class="cl">     <span class="m">1</span> <span class="p">|</span>   <span class="m">1</span>
+</span></span><span class="line"><span class="cl">     <span class="m">2</span> <span class="p">|</span>   <span class="m">1</span>
+</span></span><span class="line"><span class="cl">     <span class="m">3</span> <span class="p">|</span>   <span class="m">2</span>
+</span></span><span class="line"><span class="cl">     <span class="m">4</span> <span class="p">|</span>   <span class="m">3</span>
+</span></span><span class="line"><span class="cl"><span class="o">(</span><span class="m">5</span> rows<span class="o">)</span>
+</span></span></code></pre></td></tr></table></div>
 </div>
 </div><h3 id="函数调用上下文"><a href="#函数调用上下文" class="anchor-link"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon anchor-icon"><path d="M326.612 185.391c59.747 59.809 58.927 155.698.36 214.59-.11.12-.24.25-.36.37l-67.2 67.2c-59.27 59.27-155.699 59.262-214.96 0-59.27-59.26-59.27-155.7 0-214.96l37.106-37.106c9.84-9.84 26.786-3.3 27.294 10.606.648 17.722 3.826 35.527 9.69 52.721 1.986 5.822.567 12.262-3.783 16.612l-13.087 13.087c-28.026 28.026-28.905 73.66-1.155 101.96 28.024 28.579 74.086 28.749 102.325.51l67.2-67.19c28.191-28.191 28.073-73.757 0-101.83-3.701-3.694-7.429-6.564-10.341-8.569a16.037 16.037 0 0 1-6.947-12.606c-.396-10.567 3.348-21.456 11.698-29.806l21.054-21.055c5.521-5.521 14.182-6.199 20.584-1.731a152.482 152.482 0 0 1 20.522 17.197zM467.547 44.449c-59.261-59.262-155.69-59.27-214.96 0l-67.2 67.2c-.12.12-.25.25-.36.37-58.566 58.892-59.387 154.781.36 214.59a152.454 152.454 0 0 0 20.521 17.196c6.402 4.468 15.064 3.789 20.584-1.731l21.054-21.055c8.35-8.35 12.094-19.239 11.698-29.806a16.037 16.037 0 0 0-6.947-12.606c-2.912-2.005-6.64-4.875-10.341-8.569-28.073-28.073-28.191-73.639 0-101.83l67.2-67.19c28.239-28.239 74.3-28.069 102.325.51 27.75 28.3 26.872 73.934-1.155 101.96l-13.087 13.087c-4.35 4.35-5.769 10.79-3.783 16.612 5.864 17.194 9.042 34.999 9.69 52.721.509 13.906 17.454 20.446 27.294 10.606l37.106-37.106c59.271-59.259 59.271-155.699.001-214.959z"/></svg></a>函数调用上下文</h3>
 <p>因为要返回多行数据，所以会执行函数多次。这里需要一个上下文变量，来保存需要在执行多次之间传递的变量，比如执行的次数等。<code>FuncCallContext</code>结构体，作为函数调用的内置上下文变量，下面只是列举常见的成员</p>
@@ -768,14 +768,14 @@ gcc -shared -o my_add_func.so my_add_func.o            <span class="c1"># 生成
 </span><span class="lnt">7
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="k">typedef</span> <span class="k">struct</span> <span class="n">FuncCallContext</span>
-<span class="p">{</span>
-	<span class="n">uint64</span>		<span class="n">call_cntr</span><span class="p">;</span>      <span class="c1">// 已经返回结果的次数
-</span><span class="c1"></span>    <span class="kt">void</span>	   <span class="o">*</span><span class="n">user_fctx</span><span class="p">;</span>      <span class="c1">// 用于保存自定义上下文
-</span><span class="c1"></span>	<span class="n">MemoryContext</span> <span class="n">multi_call_memory_ctx</span><span class="p">;</span>   <span class="c1">// 用于分配内存
-</span><span class="c1"></span>    <span class="c1">// .......
-</span><span class="c1"></span><span class="p">}</span> <span class="n">FuncCallContext</span><span class="p">;</span>
-</code></pre></td></tr></table></div>
+<pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="line"><span class="cl"><span class="k">typedef</span> <span class="k">struct</span> <span class="n">FuncCallContext</span>
+</span></span><span class="line"><span class="cl"><span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="n">uint64</span>		<span class="n">call_cntr</span><span class="p">;</span>      <span class="c1">// 已经返回结果的次数
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="kt">void</span>	   <span class="o">*</span><span class="n">user_fctx</span><span class="p">;</span>      <span class="c1">// 用于保存自定义上下文
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="n">MemoryContext</span> <span class="n">multi_call_memory_ctx</span><span class="p">;</span>   <span class="c1">// 用于分配内存
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="c1">// .......
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="p">}</span> <span class="n">FuncCallContext</span><span class="p">;</span>
+</span></span></code></pre></td></tr></table></div>
 </div>
 </div><h3 id="相关宏-1"><a href="#相关宏-1" class="anchor-link"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon anchor-icon"><path d="M326.612 185.391c59.747 59.809 58.927 155.698.36 214.59-.11.12-.24.25-.36.37l-67.2 67.2c-59.27 59.27-155.699 59.262-214.96 0-59.27-59.26-59.27-155.7 0-214.96l37.106-37.106c9.84-9.84 26.786-3.3 27.294 10.606.648 17.722 3.826 35.527 9.69 52.721 1.986 5.822.567 12.262-3.783 16.612l-13.087 13.087c-28.026 28.026-28.905 73.66-1.155 101.96 28.024 28.579 74.086 28.749 102.325.51l67.2-67.19c28.191-28.191 28.073-73.757 0-101.83-3.701-3.694-7.429-6.564-10.341-8.569a16.037 16.037 0 0 1-6.947-12.606c-.396-10.567 3.348-21.456 11.698-29.806l21.054-21.055c5.521-5.521 14.182-6.199 20.584-1.731a152.482 152.482 0 0 1 20.522 17.197zM467.547 44.449c-59.261-59.262-155.69-59.27-214.96 0l-67.2 67.2c-.12.12-.25.25-.36.37-58.566 58.892-59.387 154.781.36 214.59a152.454 152.454 0 0 0 20.521 17.196c6.402 4.468 15.064 3.789 20.584-1.731l21.054-21.055c8.35-8.35 12.094-19.239 11.698-29.806a16.037 16.037 0 0 0-6.947-12.606c-2.912-2.005-6.64-4.875-10.341-8.569-28.073-28.073-28.191-73.639 0-101.83l67.2-67.19c28.239-28.239 74.3-28.069 102.325.51 27.75 28.3 26.872 73.934-1.155 101.96l-13.087 13.087c-4.35 4.35-5.769 10.79-3.783 16.612 5.864 17.194 9.042 34.999 9.69 52.721.509 13.906 17.454 20.446 27.294 10.606l37.106-37.106c59.271-59.259 59.271-155.699.001-214.959z"/></svg></a>相关宏</h3>
 <p>上述的程序调用了多个宏，接下来简单介绍下它们的用途：</p>
@@ -812,9 +812,9 @@ gcc -shared -o my_add_func.so my_add_func.o            <span class="c1"># 生成
 
         
     <div class="updated-badge-container">
-        <span title="Updated @ 2021-10-22 14:44:34 CST" style="cursor:help">
+        <span title="Updated @ 2023-07-02 16:59:09 CST" style="cursor:help">
 
-<svg xmlns="http://www.w3.org/2000/svg" width="130" height="20" class="updated-badge"><linearGradient id="b" x2="0" y2="100%"><stop offset="0" stop-color="#bbb" stop-opacity=".1"/><stop offset="1" stop-opacity=".1"/></linearGradient><clipPath id="a"><rect width="130" height="20" rx="3" fill="#fff"/></clipPath><g clip-path="url(#a)"><path class="updated-badge-left" d="M0 0h55v20H0z"/><path class="updated-badge-right" d="M55 0h75v20H55z"/><path fill="url(#b)" d="M0 0h130v20H0z"/></g><g fill="#fff" text-anchor="middle" font-size="110"><text x="285" y="150" fill="#010101" fill-opacity=".3" textLength="450" transform="scale(.1)">updated</text><text x="285" y="140" textLength="450" transform="scale(.1)">updated</text><text x="915" y="150" fill="#010101" fill-opacity=".3" textLength="650" transform="scale(.1)">2021-10-22</text><text x="915" y="140" textLength="650" transform="scale(.1)">2021-10-22</text></g></svg>
+<svg xmlns="http://www.w3.org/2000/svg" width="130" height="20" class="updated-badge"><linearGradient id="b" x2="0" y2="100%"><stop offset="0" stop-color="#bbb" stop-opacity=".1"/><stop offset="1" stop-opacity=".1"/></linearGradient><clipPath id="a"><rect width="130" height="20" rx="3" fill="#fff"/></clipPath><g clip-path="url(#a)"><path class="updated-badge-left" d="M0 0h55v20H0z"/><path class="updated-badge-right" d="M55 0h75v20H55z"/><path fill="url(#b)" d="M0 0h130v20H0z"/></g><g fill="#fff" text-anchor="middle" font-size="110"><text x="285" y="150" fill="#010101" fill-opacity=".3" textLength="450" transform="scale(.1)">updated</text><text x="285" y="140" textLength="450" transform="scale(.1)">updated</text><text x="915" y="150" fill="#010101" fill-opacity=".3" textLength="650" transform="scale(.1)">2023-07-02</text><text x="915" y="140" textLength="650" transform="scale(.1)">2023-07-02</text></g></svg>
         </span></div>
 
 

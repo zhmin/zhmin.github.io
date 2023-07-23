@@ -3,7 +3,7 @@
     <head prefix="og: http://ogp.me/ns# article: http://ogp.me/ns/article#">
     <meta charset="UTF-8" />
 
-    <meta name="generator" content="Hugo 0.88.1" /><meta name="theme-color" content="#fff" />
+    <meta name="generator" content="Hugo 0.115.0"><meta name="theme-color" content="#fff" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     
     <meta name="format-detection" content="telephone=no, date=no, address=no, email=no" />
@@ -14,11 +14,11 @@
 
     <title>基准测试框架 ycsb | 学习笔记</title>
 
-    <link rel="stylesheet" href="/css/meme.min.2d3e1834af2bc8dda20c7d74aaa1d8134845094441b7a554a5206ccd4b472596.css"/>
+    <link rel="stylesheet" href="/css/meme.min.91e7f58f97e1c60563ef481c38d9684fa8099537801d6f17bbfc724121e7d8f1.css"/>
 
     
     
-        <script src="/js/meme.min.800f61672145711eb3e1f29fcfcc3dbe0139dd459259718b611a0390f74703d1.js"></script>
+        <script src="/js/meme.min.3210a00c2fdcf6f831170b681b8ee40f83f0224663661e986872616aec45407f.js"></script>
 
     
 
@@ -54,13 +54,13 @@
         "@context": "https://schema.org",
         "@type": "BlogPosting",
         "datePublished": "2019-07-22T21:00:50+00:00",
-        "dateModified": "2021-10-22T14:44:34+08:00",
+        "dateModified": "2023-07-02T16:59:09+08:00",
         "url": "https://zhmin.github.io/posts/ycsb/",
         "headline": "基准测试框架 ycsb",
         "description": "前言 ycsb 作为雅虎开源的基准测试框架，支持多种数据库的性能测试，也能通过生成满足指定概率分布的数据，来模拟实际的并发场景。ycsb 的用法也很简单，本篇文章主要介绍 ycsb 框架的原理。 测试流程 框架的测试流程很简单……",
         "inLanguage" : "zh-CN",
         "articleSection": "posts",
-        "wordCount":  3882 ,
+        "wordCount":  3881 ,
         "image": ["https://zhmin.github.io/ycsb-flow.svg"],
         "author": {
             "@type": "Person",
@@ -98,7 +98,7 @@
 <meta property="og:locale" content="zh" /><meta property="og:image" content="https://zhmin.github.io/ycsb-flow.svg" />
 <meta property="og:type" content="article" />
     <meta property="article:published_time" content="2019-07-22T21:00:50&#43;00:00" />
-    <meta property="article:modified_time" content="2021-10-22T14:44:34&#43;08:00" />
+    <meta property="article:modified_time" content="2023-07-02T16:59:09&#43;08:00" />
     
     <meta property="article:section" content="posts" />
 
@@ -223,7 +223,7 @@
     
     
         
-        <span class="post-meta-item wordcount"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon post-meta-icon"><path d="M497.9 142.1l-46.1 46.1c-4.7 4.7-12.3 4.7-17 0l-111-111c-4.7-4.7-4.7-12.3 0-17l46.1-46.1c18.7-18.7 49.1-18.7 67.9 0l60.1 60.1c18.8 18.7 18.8 49.1 0 67.9zM284.2 99.8L21.6 362.4.4 483.9c-2.9 16.4 11.4 30.6 27.8 27.8l121.5-21.3 262.6-262.6c4.7-4.7 4.7-12.3 0-17l-111-111c-4.8-4.7-12.4-4.7-17.1 0zM124.1 339.9c-5.5-5.5-5.5-14.3 0-19.8l154-154c5.5-5.5 14.3-5.5 19.8 0s5.5 14.3 0 19.8l-154 154c-5.5 5.5-14.3 5.5-19.8 0zM88 424h48v36.3l-64.5 11.3-31.1-31.1L51.7 376H88v48z"/></svg>&nbsp;3882</span>
+        <span class="post-meta-item wordcount"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon post-meta-icon"><path d="M497.9 142.1l-46.1 46.1c-4.7 4.7-12.3 4.7-17 0l-111-111c-4.7-4.7-4.7-12.3 0-17l46.1-46.1c18.7-18.7 49.1-18.7 67.9 0l60.1 60.1c18.8 18.7 18.8 49.1 0 67.9zM284.2 99.8L21.6 362.4.4 483.9c-2.9 16.4 11.4 30.6 27.8 27.8l121.5-21.3 262.6-262.6c4.7-4.7 4.7-12.3 0-17l-111-111c-4.8-4.7-12.4-4.7-17.1 0zM124.1 339.9c-5.5-5.5-5.5-14.3 0-19.8l154-154c5.5-5.5 14.3-5.5 19.8 0s5.5 14.3 0 19.8l-154 154c-5.5 5.5-14.3 5.5-19.8 0zM88 424h48v36.3l-64.5 11.3-31.1-31.1L51.7 376H88v48z"/></svg>&nbsp;3881</span>
     
     
         
@@ -289,20 +289,20 @@
 </span><span class="lnt">13
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">abstract</span> <span class="kd">class</span> <span class="nc">DB</span> <span class="o">{</span>
-
-  <span class="kd">public</span> <span class="kd">abstract</span> <span class="n">Status</span> <span class="nf">read</span><span class="o">(</span><span class="n">String</span> <span class="n">table</span><span class="o">,</span> <span class="n">String</span> <span class="n">key</span><span class="o">,</span> <span class="n">Set</span><span class="o">&lt;</span><span class="n">String</span><span class="o">&gt;</span> <span class="n">fields</span><span class="o">,</span> <span class="n">Map</span><span class="o">&lt;</span><span class="n">String</span><span class="o">,</span> <span class="n">ByteIterator</span><span class="o">&gt;</span> <span class="n">result</span><span class="o">);</span>
-
-  <span class="kd">public</span> <span class="kd">abstract</span> <span class="n">Status</span> <span class="nf">scan</span><span class="o">(</span><span class="n">String</span> <span class="n">table</span><span class="o">,</span> <span class="n">String</span> <span class="n">startkey</span><span class="o">,</span> <span class="kt">int</span> <span class="n">recordcount</span><span class="o">,</span> <span class="n">Set</span><span class="o">&lt;</span><span class="n">String</span><span class="o">&gt;</span> <span class="n">fields</span><span class="o">,</span>
-                              <span class="n">Vector</span><span class="o">&lt;</span><span class="n">HashMap</span><span class="o">&lt;</span><span class="n">String</span><span class="o">,</span> <span class="n">ByteIterator</span><span class="o">&gt;&gt;</span> <span class="n">result</span><span class="o">);</span>
-  
-  <span class="kd">public</span> <span class="kd">abstract</span> <span class="n">Status</span> <span class="nf">update</span><span class="o">(</span><span class="n">String</span> <span class="n">table</span><span class="o">,</span> <span class="n">String</span> <span class="n">key</span><span class="o">,</span> <span class="n">Map</span><span class="o">&lt;</span><span class="n">String</span><span class="o">,</span> <span class="n">ByteIterator</span><span class="o">&gt;</span> <span class="n">values</span><span class="o">);</span>
-
-  <span class="kd">public</span> <span class="kd">abstract</span> <span class="n">Status</span> <span class="nf">insert</span><span class="o">(</span><span class="n">String</span> <span class="n">table</span><span class="o">,</span> <span class="n">String</span> <span class="n">key</span><span class="o">,</span> <span class="n">Map</span><span class="o">&lt;</span><span class="n">String</span><span class="o">,</span> <span class="n">ByteIterator</span><span class="o">&gt;</span> <span class="n">values</span><span class="o">);</span>
-    
-  <span class="kd">public</span> <span class="kd">abstract</span> <span class="n">Status</span> <span class="nf">delete</span><span class="o">(</span><span class="n">String</span> <span class="n">table</span><span class="o">,</span> <span class="n">String</span> <span class="n">key</span><span class="o">);</span>
-<span class="o">}</span>
-</code></pre></td></tr></table></div>
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="kd">public</span> <span class="kd">abstract</span> <span class="kd">class</span> <span class="nc">DB</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="kd">public</span> <span class="kd">abstract</span> <span class="n">Status</span> <span class="nf">read</span><span class="o">(</span><span class="n">String</span> <span class="n">table</span><span class="o">,</span> <span class="n">String</span> <span class="n">key</span><span class="o">,</span> <span class="n">Set</span><span class="o">&lt;</span><span class="n">String</span><span class="o">&gt;</span> <span class="n">fields</span><span class="o">,</span> <span class="n">Map</span><span class="o">&lt;</span><span class="n">String</span><span class="o">,</span> <span class="n">ByteIterator</span><span class="o">&gt;</span> <span class="n">result</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="kd">public</span> <span class="kd">abstract</span> <span class="n">Status</span> <span class="nf">scan</span><span class="o">(</span><span class="n">String</span> <span class="n">table</span><span class="o">,</span> <span class="n">String</span> <span class="n">startkey</span><span class="o">,</span> <span class="kt">int</span> <span class="n">recordcount</span><span class="o">,</span> <span class="n">Set</span><span class="o">&lt;</span><span class="n">String</span><span class="o">&gt;</span> <span class="n">fields</span><span class="o">,</span>
+</span></span><span class="line"><span class="cl">                              <span class="n">Vector</span><span class="o">&lt;</span><span class="n">HashMap</span><span class="o">&lt;</span><span class="n">String</span><span class="o">,</span> <span class="n">ByteIterator</span><span class="o">&gt;&gt;</span> <span class="n">result</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">  
+</span></span><span class="line"><span class="cl">  <span class="kd">public</span> <span class="kd">abstract</span> <span class="n">Status</span> <span class="nf">update</span><span class="o">(</span><span class="n">String</span> <span class="n">table</span><span class="o">,</span> <span class="n">String</span> <span class="n">key</span><span class="o">,</span> <span class="n">Map</span><span class="o">&lt;</span><span class="n">String</span><span class="o">,</span> <span class="n">ByteIterator</span><span class="o">&gt;</span> <span class="n">values</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="kd">public</span> <span class="kd">abstract</span> <span class="n">Status</span> <span class="nf">insert</span><span class="o">(</span><span class="n">String</span> <span class="n">table</span><span class="o">,</span> <span class="n">String</span> <span class="n">key</span><span class="o">,</span> <span class="n">Map</span><span class="o">&lt;</span><span class="n">String</span><span class="o">,</span> <span class="n">ByteIterator</span><span class="o">&gt;</span> <span class="n">values</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">    
+</span></span><span class="line"><span class="cl">  <span class="kd">public</span> <span class="kd">abstract</span> <span class="n">Status</span> <span class="nf">delete</span><span class="o">(</span><span class="n">String</span> <span class="n">table</span><span class="o">,</span> <span class="n">String</span> <span class="n">key</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl"><span class="o">}</span>
+</span></span></code></pre></td></tr></table></div>
 </div>
 </div><p>注意到DB 除了增删改查四个操作，还新增了一个 scan 操作。它表示范围查询，在一些 nosql 数据库（比如HBase）中有单独的 scan 操作。在 sql 数据库中，ycsb 使用语句  <code>WHERE id &gt;= target_value ORDER BY id LIMIT number</code> 来表示。</p>
 <h2 id="dbwrapper"><a href="#dbwrapper" class="anchor-link"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon anchor-icon"><path d="M326.612 185.391c59.747 59.809 58.927 155.698.36 214.59-.11.12-.24.25-.36.37l-67.2 67.2c-59.27 59.27-155.699 59.262-214.96 0-59.27-59.26-59.27-155.7 0-214.96l37.106-37.106c9.84-9.84 26.786-3.3 27.294 10.606.648 17.722 3.826 35.527 9.69 52.721 1.986 5.822.567 12.262-3.783 16.612l-13.087 13.087c-28.026 28.026-28.905 73.66-1.155 101.96 28.024 28.579 74.086 28.749 102.325.51l67.2-67.19c28.191-28.191 28.073-73.757 0-101.83-3.701-3.694-7.429-6.564-10.341-8.569a16.037 16.037 0 0 1-6.947-12.606c-.396-10.567 3.348-21.456 11.698-29.806l21.054-21.055c5.521-5.521 14.182-6.199 20.584-1.731a152.482 152.482 0 0 1 20.522 17.197zM467.547 44.449c-59.261-59.262-155.69-59.27-214.96 0l-67.2 67.2c-.12.12-.25.25-.36.37-58.566 58.892-59.387 154.781.36 214.59a152.454 152.454 0 0 0 20.521 17.196c6.402 4.468 15.064 3.789 20.584-1.731l21.054-21.055c8.35-8.35 12.094-19.239 11.698-29.806a16.037 16.037 0 0 0-6.947-12.606c-2.912-2.005-6.64-4.875-10.341-8.569-28.073-28.073-28.191-73.639 0-101.83l67.2-67.19c28.239-28.239 74.3-28.069 102.325.51 27.75 28.3 26.872 73.934-1.155 101.96l-13.087 13.087c-4.35 4.35-5.769 10.79-3.783 16.612 5.864 17.194 9.042 34.999 9.69 52.721.509 13.906 17.454 20.446 27.294 10.606l37.106-37.106c59.271-59.259 59.271-155.699.001-214.959z"/></svg></a>DBWrapper</h2>
@@ -334,30 +334,30 @@
 </span><span class="lnt">23
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">DBWrapper</span> <span class="kd">extends</span> <span class="n">DB</span> <span class="o">{</span>
-  <span class="kd">private</span> <span class="kd">final</span> <span class="n">DB</span> <span class="n">db</span><span class="o">;</span>
-  <span class="kd">private</span> <span class="kd">final</span> <span class="n">Measurements</span> <span class="n">measurements</span><span class="o">;</span>
-  <span class="kd">private</span> <span class="kd">final</span> <span class="n">Tracer</span> <span class="n">tracer</span><span class="o">;</span>
-  
-  <span class="kd">public</span> <span class="n">Status</span> <span class="nf">read</span><span class="o">(</span><span class="n">String</span> <span class="n">table</span><span class="o">,</span> <span class="n">String</span> <span class="n">key</span><span class="o">,</span> <span class="n">Set</span><span class="o">&lt;</span><span class="n">String</span><span class="o">&gt;</span> <span class="n">fields</span><span class="o">,</span>
-                     <span class="n">Map</span><span class="o">&lt;</span><span class="n">String</span><span class="o">,</span> <span class="n">ByteIterator</span><span class="o">&gt;</span> <span class="n">result</span><span class="o">)</span> <span class="o">{</span>
-    <span class="c1">// 开启 HTrace 跟踪
-</span><span class="c1"></span>    <span class="k">try</span> <span class="o">(</span><span class="kd">final</span> <span class="n">TraceScope</span> <span class="n">span</span> <span class="o">=</span> <span class="n">tracer</span><span class="o">.</span><span class="na">newScope</span><span class="o">(</span><span class="n">scopeStringRead</span><span class="o">))</span> <span class="o">{</span>
-      <span class="c1">// 获取测试开始的起始时间
-</span><span class="c1"></span>      <span class="kt">long</span> <span class="n">ist</span> <span class="o">=</span> <span class="n">measurements</span><span class="o">.</span><span class="na">getIntendedtartTimeNs</span><span class="o">();</span>
-      <span class="c1">// 记录请求时间
-</span><span class="c1"></span>      <span class="kt">long</span> <span class="n">st</span> <span class="o">=</span> <span class="n">System</span><span class="o">.</span><span class="na">nanoTime</span><span class="o">();</span>
-      <span class="n">Status</span> <span class="n">res</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="na">read</span><span class="o">(</span><span class="n">table</span><span class="o">,</span> <span class="n">key</span><span class="o">,</span> <span class="n">fields</span><span class="o">,</span> <span class="n">result</span><span class="o">);</span>
-      <span class="kt">long</span> <span class="n">en</span> <span class="o">=</span> <span class="n">System</span><span class="o">.</span><span class="na">nanoTime</span><span class="o">();</span>
-      <span class="c1">// 记录响应时间值
-</span><span class="c1"></span>      <span class="n">measure</span><span class="o">(</span><span class="s">&#34;READ&#34;</span><span class="o">,</span> <span class="n">res</span><span class="o">,</span> <span class="n">ist</span><span class="o">,</span> <span class="n">st</span><span class="o">,</span> <span class="n">en</span><span class="o">);</span>
-      <span class="c1">// 记录响应状态，是否成功
-</span><span class="c1"></span>      <span class="n">measurements</span><span class="o">.</span><span class="na">reportStatus</span><span class="o">(</span><span class="s">&#34;READ&#34;</span><span class="o">,</span> <span class="n">res</span><span class="o">);</span>
-      <span class="k">return</span> <span class="n">res</span><span class="o">;</span>
-    <span class="o">}</span>
-  <span class="o">}</span>
-<span class="o">}</span>
-</code></pre></td></tr></table></div>
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">DBWrapper</span> <span class="kd">extends</span> <span class="n">DB</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">  <span class="kd">private</span> <span class="kd">final</span> <span class="n">DB</span> <span class="n">db</span><span class="o">;</span>
+</span></span><span class="line"><span class="cl">  <span class="kd">private</span> <span class="kd">final</span> <span class="n">Measurements</span> <span class="n">measurements</span><span class="o">;</span>
+</span></span><span class="line"><span class="cl">  <span class="kd">private</span> <span class="kd">final</span> <span class="n">Tracer</span> <span class="n">tracer</span><span class="o">;</span>
+</span></span><span class="line"><span class="cl">  
+</span></span><span class="line"><span class="cl">  <span class="kd">public</span> <span class="n">Status</span> <span class="nf">read</span><span class="o">(</span><span class="n">String</span> <span class="n">table</span><span class="o">,</span> <span class="n">String</span> <span class="n">key</span><span class="o">,</span> <span class="n">Set</span><span class="o">&lt;</span><span class="n">String</span><span class="o">&gt;</span> <span class="n">fields</span><span class="o">,</span>
+</span></span><span class="line"><span class="cl">                     <span class="n">Map</span><span class="o">&lt;</span><span class="n">String</span><span class="o">,</span> <span class="n">ByteIterator</span><span class="o">&gt;</span> <span class="n">result</span><span class="o">)</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// 开启 HTrace 跟踪
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="k">try</span> <span class="o">(</span><span class="kd">final</span> <span class="n">TraceScope</span> <span class="n">span</span> <span class="o">=</span> <span class="n">tracer</span><span class="o">.</span><span class="na">newScope</span><span class="o">(</span><span class="n">scopeStringRead</span><span class="o">))</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">      <span class="c1">// 获取测试开始的起始时间
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>      <span class="kt">long</span> <span class="n">ist</span> <span class="o">=</span> <span class="n">measurements</span><span class="o">.</span><span class="na">getIntendedtartTimeNs</span><span class="o">();</span>
+</span></span><span class="line"><span class="cl">      <span class="c1">// 记录请求时间
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>      <span class="kt">long</span> <span class="n">st</span> <span class="o">=</span> <span class="n">System</span><span class="o">.</span><span class="na">nanoTime</span><span class="o">();</span>
+</span></span><span class="line"><span class="cl">      <span class="n">Status</span> <span class="n">res</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="na">read</span><span class="o">(</span><span class="n">table</span><span class="o">,</span> <span class="n">key</span><span class="o">,</span> <span class="n">fields</span><span class="o">,</span> <span class="n">result</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">      <span class="kt">long</span> <span class="n">en</span> <span class="o">=</span> <span class="n">System</span><span class="o">.</span><span class="na">nanoTime</span><span class="o">();</span>
+</span></span><span class="line"><span class="cl">      <span class="c1">// 记录响应时间值
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>      <span class="n">measure</span><span class="o">(</span><span class="s">&#34;READ&#34;</span><span class="o">,</span> <span class="n">res</span><span class="o">,</span> <span class="n">ist</span><span class="o">,</span> <span class="n">st</span><span class="o">,</span> <span class="n">en</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">      <span class="c1">// 记录响应状态，是否成功
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>      <span class="n">measurements</span><span class="o">.</span><span class="na">reportStatus</span><span class="o">(</span><span class="s">&#34;READ&#34;</span><span class="o">,</span> <span class="n">res</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">      <span class="k">return</span> <span class="n">res</span><span class="o">;</span>
+</span></span><span class="line"><span class="cl">    <span class="o">}</span>
+</span></span><span class="line"><span class="cl">  <span class="o">}</span>
+</span></span><span class="line"><span class="cl"><span class="o">}</span>
+</span></span></code></pre></td></tr></table></div>
 </div>
 </div><p>DBWrapper 使用 HTrace 支持分布式跟踪，使用 Measurements 进行数据统计。Measurements 的原理下面会有介绍</p>
 <h2 id="workload"><a href="#workload" class="anchor-link"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon anchor-icon"><path d="M326.612 185.391c59.747 59.809 58.927 155.698.36 214.59-.11.12-.24.25-.36.37l-67.2 67.2c-59.27 59.27-155.699 59.262-214.96 0-59.27-59.26-59.27-155.7 0-214.96l37.106-37.106c9.84-9.84 26.786-3.3 27.294 10.606.648 17.722 3.826 35.527 9.69 52.721 1.986 5.822.567 12.262-3.783 16.612l-13.087 13.087c-28.026 28.026-28.905 73.66-1.155 101.96 28.024 28.579 74.086 28.749 102.325.51l67.2-67.19c28.191-28.191 28.073-73.757 0-101.83-3.701-3.694-7.429-6.564-10.341-8.569a16.037 16.037 0 0 1-6.947-12.606c-.396-10.567 3.348-21.456 11.698-29.806l21.054-21.055c5.521-5.521 14.182-6.199 20.584-1.731a152.482 152.482 0 0 1 20.522 17.197zM467.547 44.449c-59.261-59.262-155.69-59.27-214.96 0l-67.2 67.2c-.12.12-.25.25-.36.37-58.566 58.892-59.387 154.781.36 214.59a152.454 152.454 0 0 0 20.521 17.196c6.402 4.468 15.064 3.789 20.584-1.731l21.054-21.055c8.35-8.35 12.094-19.239 11.698-29.806a16.037 16.037 0 0 0-6.947-12.606c-2.912-2.005-6.64-4.875-10.341-8.569-28.073-28.073-28.191-73.639 0-101.83l67.2-67.19c28.239-28.239 74.3-28.069 102.325.51 27.75 28.3 26.872 73.934-1.155 101.96l-13.087 13.087c-4.35 4.35-5.769 10.79-3.783 16.612 5.864 17.194 9.042 34.999 9.69 52.721.509 13.906 17.454 20.446 27.294 10.606l37.106-37.106c59.271-59.259 59.271-155.699.001-214.959z"/></svg></a>Workload</h2>
@@ -376,13 +376,13 @@
 </span><span class="lnt">6
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">abstract</span> <span class="kd">class</span> <span class="nc">Workload</span> <span class="o">{</span>
-  <span class="c1">// 对应load模式
-</span><span class="c1"></span>  <span class="kd">public</span> <span class="kd">abstract</span> <span class="kt">boolean</span> <span class="nf">doInsert</span><span class="o">(</span><span class="n">DB</span> <span class="n">db</span><span class="o">,</span> <span class="n">Object</span> <span class="n">threadstate</span><span class="o">);</span>
-  <span class="c1">// 对应测试模式
-</span><span class="c1"></span>  <span class="kd">public</span> <span class="kd">abstract</span> <span class="kt">boolean</span> <span class="nf">doTransaction</span><span class="o">(</span><span class="n">DB</span> <span class="n">db</span><span class="o">,</span> <span class="n">Object</span> <span class="n">threadstate</span><span class="o">);</span>
-<span class="o">}</span>
-</code></pre></td></tr></table></div>
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="kd">public</span> <span class="kd">abstract</span> <span class="kd">class</span> <span class="nc">Workload</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">  <span class="c1">// 对应load模式
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="kd">public</span> <span class="kd">abstract</span> <span class="kt">boolean</span> <span class="nf">doInsert</span><span class="o">(</span><span class="n">DB</span> <span class="n">db</span><span class="o">,</span> <span class="n">Object</span> <span class="n">threadstate</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">  <span class="c1">// 对应测试模式
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="kd">public</span> <span class="kd">abstract</span> <span class="kt">boolean</span> <span class="nf">doTransaction</span><span class="o">(</span><span class="n">DB</span> <span class="n">db</span><span class="o">,</span> <span class="n">Object</span> <span class="n">threadstate</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl"><span class="o">}</span>
+</span></span></code></pre></td></tr></table></div>
 </div>
 </div><h3 id="uml-类"><a href="#uml-类" class="anchor-link"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon anchor-icon"><path d="M326.612 185.391c59.747 59.809 58.927 155.698.36 214.59-.11.12-.24.25-.36.37l-67.2 67.2c-59.27 59.27-155.699 59.262-214.96 0-59.27-59.26-59.27-155.7 0-214.96l37.106-37.106c9.84-9.84 26.786-3.3 27.294 10.606.648 17.722 3.826 35.527 9.69 52.721 1.986 5.822.567 12.262-3.783 16.612l-13.087 13.087c-28.026 28.026-28.905 73.66-1.155 101.96 28.024 28.579 74.086 28.749 102.325.51l67.2-67.19c28.191-28.191 28.073-73.757 0-101.83-3.701-3.694-7.429-6.564-10.341-8.569a16.037 16.037 0 0 1-6.947-12.606c-.396-10.567 3.348-21.456 11.698-29.806l21.054-21.055c5.521-5.521 14.182-6.199 20.584-1.731a152.482 152.482 0 0 1 20.522 17.197zM467.547 44.449c-59.261-59.262-155.69-59.27-214.96 0l-67.2 67.2c-.12.12-.25.25-.36.37-58.566 58.892-59.387 154.781.36 214.59a152.454 152.454 0 0 0 20.521 17.196c6.402 4.468 15.064 3.789 20.584-1.731l21.054-21.055c8.35-8.35 12.094-19.239 11.698-29.806a16.037 16.037 0 0 0-6.947-12.606c-2.912-2.005-6.64-4.875-10.341-8.569-28.073-28.073-28.191-73.639 0-101.83l67.2-67.19c28.239-28.239 74.3-28.069 102.325.51 27.75 28.3 26.872 73.934-1.155 101.96l-13.087 13.087c-4.35 4.35-5.769 10.79-3.783 16.612 5.864 17.194 9.042 34.999 9.69 52.721.509 13.906 17.454 20.446 27.294 10.606l37.106-37.106c59.271-59.259 59.271-155.699.001-214.959z"/></svg></a>uml 类</h3>
 <p>{% plantuml %}</p>
@@ -422,14 +422,14 @@ Workload &lt;|-- TimeSeriesWorkload
 </span><span class="lnt">7
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">abstract</span> <span class="kd">class</span> <span class="nc">Generator</span><span class="o">&lt;</span><span class="n">V</span><span class="o">&gt;</span> <span class="o">{</span>
-  <span class="c1">// 生成新的数据
-</span><span class="c1"></span>  <span class="kd">public</span> <span class="kd">abstract</span> <span class="n">V</span> <span class="nf">nextValue</span><span class="o">();</span>
- 
-  <span class="c1">// 返回上一次的数据
-</span><span class="c1"></span>  <span class="kd">public</span> <span class="kd">abstract</span> <span class="n">V</span> <span class="nf">lastValue</span><span class="o">();</span>
-<span class="o">}</span>
-</code></pre></td></tr></table></div>
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="kd">public</span> <span class="kd">abstract</span> <span class="kd">class</span> <span class="nc">Generator</span><span class="o">&lt;</span><span class="n">V</span><span class="o">&gt;</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">  <span class="c1">// 生成新的数据
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="kd">public</span> <span class="kd">abstract</span> <span class="n">V</span> <span class="nf">nextValue</span><span class="o">();</span>
+</span></span><span class="line"><span class="cl"> 
+</span></span><span class="line"><span class="cl">  <span class="c1">// 返回上一次的数据
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="kd">public</span> <span class="kd">abstract</span> <span class="n">V</span> <span class="nf">lastValue</span><span class="o">();</span>
+</span></span><span class="line"><span class="cl"><span class="o">}</span>
+</span></span></code></pre></td></tr></table></div>
 </div>
 </div><h3 id="数字类型"><a href="#数字类型" class="anchor-link"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon anchor-icon"><path d="M326.612 185.391c59.747 59.809 58.927 155.698.36 214.59-.11.12-.24.25-.36.37l-67.2 67.2c-59.27 59.27-155.699 59.262-214.96 0-59.27-59.26-59.27-155.7 0-214.96l37.106-37.106c9.84-9.84 26.786-3.3 27.294 10.606.648 17.722 3.826 35.527 9.69 52.721 1.986 5.822.567 12.262-3.783 16.612l-13.087 13.087c-28.026 28.026-28.905 73.66-1.155 101.96 28.024 28.579 74.086 28.749 102.325.51l67.2-67.19c28.191-28.191 28.073-73.757 0-101.83-3.701-3.694-7.429-6.564-10.341-8.569a16.037 16.037 0 0 1-6.947-12.606c-.396-10.567 3.348-21.456 11.698-29.806l21.054-21.055c5.521-5.521 14.182-6.199 20.584-1.731a152.482 152.482 0 0 1 20.522 17.197zM467.547 44.449c-59.261-59.262-155.69-59.27-214.96 0l-67.2 67.2c-.12.12-.25.25-.36.37-58.566 58.892-59.387 154.781.36 214.59a152.454 152.454 0 0 0 20.521 17.196c6.402 4.468 15.064 3.789 20.584-1.731l21.054-21.055c8.35-8.35 12.094-19.239 11.698-29.806a16.037 16.037 0 0 0-6.947-12.606c-2.912-2.005-6.64-4.875-10.341-8.569-28.073-28.073-28.191-73.639 0-101.83l67.2-67.19c28.239-28.239 74.3-28.069 102.325.51 27.75 28.3 26.872 73.934-1.155 101.96l-13.087 13.087c-4.35 4.35-5.769 10.79-3.783 16.612 5.864 17.194 9.042 34.999 9.69 52.721.509 13.906 17.454 20.446 27.294 10.606l37.106-37.106c59.271-59.259 59.271-155.699.001-214.959z"/></svg></a>数字类型</h3>
 <p>数字类型的生成由 NumberGenerator 类和它的子类构成。它的子类比较多，分为规律型和概率型。</p>
@@ -476,23 +476,23 @@ Workload &lt;|-- TimeSeriesWorkload
 </span><span class="lnt">16
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">CoreWorkload</span> <span class="kd">extends</span> <span class="n">Workload</span> <span class="o">{</span>
-  <span class="kd">protected</span> <span class="n">NumberGenerator</span> <span class="n">keysequence</span><span class="o">;</span> <span class="c1">// 生成主键，类型为CounterGenerator
-</span><span class="c1"></span>  
-  <span class="kd">private</span> <span class="n">List</span><span class="o">&lt;</span><span class="n">String</span><span class="o">&gt;</span> <span class="n">fieldnames</span><span class="o">;</span> <span class="c1">// 字段名集合
-</span><span class="c1"></span>  <span class="kd">protected</span> <span class="n">NumberGenerator</span> <span class="n">fieldlengthgenerator</span><span class="o">;</span> <span class="c1">// 在构建字段值，指定字段的数据长度
-</span><span class="c1"></span>    
-  <span class="kd">public</span> <span class="kt">boolean</span> <span class="nf">doInsert</span><span class="o">(</span><span class="n">DB</span> <span class="n">db</span><span class="o">,</span> <span class="n">Object</span> <span class="n">threadstate</span><span class="o">)</span> <span class="o">{</span>
-    <span class="c1">// 生成主键
-</span><span class="c1"></span>    <span class="kt">int</span> <span class="n">keynum</span> <span class="o">=</span> <span class="n">keysequence</span><span class="o">.</span><span class="na">nextValue</span><span class="o">().</span><span class="na">intValue</span><span class="o">();</span>
-    <span class="n">String</span> <span class="n">dbkey</span> <span class="o">=</span> <span class="n">buildKeyName</span><span class="o">(</span><span class="n">keynum</span><span class="o">);</span>
-    <span class="c1">// 生成字段值，每个字段的长度都是通过 fieldlengthgenerator 生成的
-</span><span class="c1"></span>    <span class="n">HashMap</span><span class="o">&lt;</span><span class="n">String</span><span class="o">,</span> <span class="n">ByteIterator</span><span class="o">&gt;</span> <span class="n">values</span> <span class="o">=</span> <span class="n">buildValues</span><span class="o">(</span><span class="n">dbkey</span><span class="o">);</span>
-    <span class="c1">// 调用 DB 完成底层插入
-</span><span class="c1"></span>    <span class="n">status</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="na">insert</span><span class="o">(</span><span class="n">table</span><span class="o">,</span> <span class="n">dbkey</span><span class="o">,</span> <span class="n">values</span><span class="o">);</span>      
-    <span class="c1">// .....
-</span><span class="c1"></span><span class="o">}</span>   
-</code></pre></td></tr></table></div>
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">CoreWorkload</span> <span class="kd">extends</span> <span class="n">Workload</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">  <span class="kd">protected</span> <span class="n">NumberGenerator</span> <span class="n">keysequence</span><span class="o">;</span> <span class="c1">// 生成主键，类型为CounterGenerator
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  
+</span></span><span class="line"><span class="cl">  <span class="kd">private</span> <span class="n">List</span><span class="o">&lt;</span><span class="n">String</span><span class="o">&gt;</span> <span class="n">fieldnames</span><span class="o">;</span> <span class="c1">// 字段名集合
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="kd">protected</span> <span class="n">NumberGenerator</span> <span class="n">fieldlengthgenerator</span><span class="o">;</span> <span class="c1">// 在构建字段值，指定字段的数据长度
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    
+</span></span><span class="line"><span class="cl">  <span class="kd">public</span> <span class="kt">boolean</span> <span class="nf">doInsert</span><span class="o">(</span><span class="n">DB</span> <span class="n">db</span><span class="o">,</span> <span class="n">Object</span> <span class="n">threadstate</span><span class="o">)</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// 生成主键
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="kt">int</span> <span class="n">keynum</span> <span class="o">=</span> <span class="n">keysequence</span><span class="o">.</span><span class="na">nextValue</span><span class="o">().</span><span class="na">intValue</span><span class="o">();</span>
+</span></span><span class="line"><span class="cl">    <span class="n">String</span> <span class="n">dbkey</span> <span class="o">=</span> <span class="n">buildKeyName</span><span class="o">(</span><span class="n">keynum</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// 生成字段值，每个字段的长度都是通过 fieldlengthgenerator 生成的
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="n">HashMap</span><span class="o">&lt;</span><span class="n">String</span><span class="o">,</span> <span class="n">ByteIterator</span><span class="o">&gt;</span> <span class="n">values</span> <span class="o">=</span> <span class="n">buildValues</span><span class="o">(</span><span class="n">dbkey</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// 调用 DB 完成底层插入
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="n">status</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="na">insert</span><span class="o">(</span><span class="n">table</span><span class="o">,</span> <span class="n">dbkey</span><span class="o">,</span> <span class="n">values</span><span class="o">);</span>      
+</span></span><span class="line"><span class="cl">    <span class="c1">// .....
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="o">}</span>   
+</span></span></code></pre></td></tr></table></div>
 </div>
 </div><h3 id="测试模式"><a href="#测试模式" class="anchor-link"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon anchor-icon"><path d="M326.612 185.391c59.747 59.809 58.927 155.698.36 214.59-.11.12-.24.25-.36.37l-67.2 67.2c-59.27 59.27-155.699 59.262-214.96 0-59.27-59.26-59.27-155.7 0-214.96l37.106-37.106c9.84-9.84 26.786-3.3 27.294 10.606.648 17.722 3.826 35.527 9.69 52.721 1.986 5.822.567 12.262-3.783 16.612l-13.087 13.087c-28.026 28.026-28.905 73.66-1.155 101.96 28.024 28.579 74.086 28.749 102.325.51l67.2-67.19c28.191-28.191 28.073-73.757 0-101.83-3.701-3.694-7.429-6.564-10.341-8.569a16.037 16.037 0 0 1-6.947-12.606c-.396-10.567 3.348-21.456 11.698-29.806l21.054-21.055c5.521-5.521 14.182-6.199 20.584-1.731a152.482 152.482 0 0 1 20.522 17.197zM467.547 44.449c-59.261-59.262-155.69-59.27-214.96 0l-67.2 67.2c-.12.12-.25.25-.36.37-58.566 58.892-59.387 154.781.36 214.59a152.454 152.454 0 0 0 20.521 17.196c6.402 4.468 15.064 3.789 20.584-1.731l21.054-21.055c8.35-8.35 12.094-19.239 11.698-29.806a16.037 16.037 0 0 0-6.947-12.606c-2.912-2.005-6.64-4.875-10.341-8.569-28.073-28.073-28.191-73.639 0-101.83l67.2-67.19c28.239-28.239 74.3-28.069 102.325.51 27.75 28.3 26.872 73.934-1.155 101.96l-13.087 13.087c-4.35 4.35-5.769 10.79-3.783 16.612 5.864 17.194 9.042 34.999 9.69 52.721.509 13.906 17.454 20.446 27.294 10.606l37.106-37.106c59.271-59.259 59.271-155.699.001-214.959z"/></svg></a>测试模式</h3>
 <p>测试模式负责实际的读写性能测试。它支持5种类型的请求 READ，INSERT，UPDATE，DELETE， SCAN，READMODIFYWRITE。上面新增了一个操作类型 READMODIFYWRITE， 表示对数据先读取，然后再更改。</p>
@@ -530,37 +530,37 @@ Workload &lt;|-- TimeSeriesWorkload
 </span><span class="lnt">30
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">CoreWorkload</span> <span class="kd">extends</span> <span class="n">Workload</span> <span class="o">{</span>
-  <span class="c1">// 按照概率返回操作类型（READ，INSERT，UPDATE，DELETE， SCAN，READMODIFYWRITE）
-</span><span class="c1"></span>  <span class="kd">protected</span> <span class="n">DiscreteGenerator</span> <span class="n">operationchooser</span><span class="o">;</span>  
-    
-  <span class="kd">public</span> <span class="kt">boolean</span> <span class="nf">doTransaction</span><span class="o">(</span><span class="n">DB</span> <span class="n">db</span><span class="o">,</span> <span class="n">Object</span> <span class="n">threadstate</span><span class="o">)</span> <span class="o">{</span>
-    <span class="c1">// 随机生成操作类型
-</span><span class="c1"></span>    <span class="n">String</span> <span class="n">operation</span> <span class="o">=</span> <span class="n">operationchooser</span><span class="o">.</span><span class="na">nextString</span><span class="o">();</span>
-    <span class="k">if</span><span class="o">(</span><span class="n">operation</span> <span class="o">==</span> <span class="kc">null</span><span class="o">)</span> <span class="o">{</span>
-      <span class="k">return</span> <span class="kc">false</span><span class="o">;</span>
-    <span class="o">}</span>
-    <span class="k">switch</span> <span class="o">(</span><span class="n">operation</span><span class="o">)</span> <span class="o">{</span>
-    <span class="k">case</span> <span class="s">&#34;READ&#34;</span><span class="o">:</span>
-      <span class="n">doTransactionRead</span><span class="o">(</span><span class="n">db</span><span class="o">);</span>
-      <span class="k">break</span><span class="o">;</span>
-    <span class="k">case</span> <span class="s">&#34;UPDATE&#34;</span><span class="o">:</span>
-      <span class="n">doTransactionUpdate</span><span class="o">(</span><span class="n">db</span><span class="o">);</span>
-      <span class="k">break</span><span class="o">;</span>
-    <span class="k">case</span> <span class="s">&#34;INSERT&#34;</span><span class="o">:</span>
-      <span class="n">doTransactionInsert</span><span class="o">(</span><span class="n">db</span><span class="o">);</span>
-      <span class="k">break</span><span class="o">;</span>
-    <span class="k">case</span> <span class="s">&#34;SCAN&#34;</span><span class="o">:</span>
-      <span class="n">doTransactionScan</span><span class="o">(</span><span class="n">db</span><span class="o">);</span>
-      <span class="k">break</span><span class="o">;</span>
-    <span class="k">default</span><span class="o">:</span>
-      <span class="n">doTransactionReadModifyWrite</span><span class="o">(</span><span class="n">db</span><span class="o">);</span>
-    <span class="o">}</span>
-
-    <span class="k">return</span> <span class="kc">true</span><span class="o">;</span>
-  <span class="o">}</span>    
-<span class="o">}</span>
-</code></pre></td></tr></table></div>
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">CoreWorkload</span> <span class="kd">extends</span> <span class="n">Workload</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">  <span class="c1">// 按照概率返回操作类型（READ，INSERT，UPDATE，DELETE， SCAN，READMODIFYWRITE）
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="kd">protected</span> <span class="n">DiscreteGenerator</span> <span class="n">operationchooser</span><span class="o">;</span>  
+</span></span><span class="line"><span class="cl">    
+</span></span><span class="line"><span class="cl">  <span class="kd">public</span> <span class="kt">boolean</span> <span class="nf">doTransaction</span><span class="o">(</span><span class="n">DB</span> <span class="n">db</span><span class="o">,</span> <span class="n">Object</span> <span class="n">threadstate</span><span class="o">)</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// 随机生成操作类型
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="n">String</span> <span class="n">operation</span> <span class="o">=</span> <span class="n">operationchooser</span><span class="o">.</span><span class="na">nextString</span><span class="o">();</span>
+</span></span><span class="line"><span class="cl">    <span class="k">if</span><span class="o">(</span><span class="n">operation</span> <span class="o">==</span> <span class="kc">null</span><span class="o">)</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">      <span class="k">return</span> <span class="kc">false</span><span class="o">;</span>
+</span></span><span class="line"><span class="cl">    <span class="o">}</span>
+</span></span><span class="line"><span class="cl">    <span class="k">switch</span> <span class="o">(</span><span class="n">operation</span><span class="o">)</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">    <span class="k">case</span> <span class="s">&#34;READ&#34;</span><span class="o">:</span>
+</span></span><span class="line"><span class="cl">      <span class="n">doTransactionRead</span><span class="o">(</span><span class="n">db</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">      <span class="k">break</span><span class="o">;</span>
+</span></span><span class="line"><span class="cl">    <span class="k">case</span> <span class="s">&#34;UPDATE&#34;</span><span class="o">:</span>
+</span></span><span class="line"><span class="cl">      <span class="n">doTransactionUpdate</span><span class="o">(</span><span class="n">db</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">      <span class="k">break</span><span class="o">;</span>
+</span></span><span class="line"><span class="cl">    <span class="k">case</span> <span class="s">&#34;INSERT&#34;</span><span class="o">:</span>
+</span></span><span class="line"><span class="cl">      <span class="n">doTransactionInsert</span><span class="o">(</span><span class="n">db</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">      <span class="k">break</span><span class="o">;</span>
+</span></span><span class="line"><span class="cl">    <span class="k">case</span> <span class="s">&#34;SCAN&#34;</span><span class="o">:</span>
+</span></span><span class="line"><span class="cl">      <span class="n">doTransactionScan</span><span class="o">(</span><span class="n">db</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">      <span class="k">break</span><span class="o">;</span>
+</span></span><span class="line"><span class="cl">    <span class="k">default</span><span class="o">:</span>
+</span></span><span class="line"><span class="cl">      <span class="n">doTransactionReadModifyWrite</span><span class="o">(</span><span class="n">db</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">    <span class="o">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="k">return</span> <span class="kc">true</span><span class="o">;</span>
+</span></span><span class="line"><span class="cl">  <span class="o">}</span>    
+</span></span><span class="line"><span class="cl"><span class="o">}</span>
+</span></span></code></pre></td></tr></table></div>
 </div>
 </div><h3 id="配置文件"><a href="#配置文件" class="anchor-link"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon anchor-icon"><path d="M326.612 185.391c59.747 59.809 58.927 155.698.36 214.59-.11.12-.24.25-.36.37l-67.2 67.2c-59.27 59.27-155.699 59.262-214.96 0-59.27-59.26-59.27-155.7 0-214.96l37.106-37.106c9.84-9.84 26.786-3.3 27.294 10.606.648 17.722 3.826 35.527 9.69 52.721 1.986 5.822.567 12.262-3.783 16.612l-13.087 13.087c-28.026 28.026-28.905 73.66-1.155 101.96 28.024 28.579 74.086 28.749 102.325.51l67.2-67.19c28.191-28.191 28.073-73.757 0-101.83-3.701-3.694-7.429-6.564-10.341-8.569a16.037 16.037 0 0 1-6.947-12.606c-.396-10.567 3.348-21.456 11.698-29.806l21.054-21.055c5.521-5.521 14.182-6.199 20.584-1.731a152.482 152.482 0 0 1 20.522 17.197zM467.547 44.449c-59.261-59.262-155.69-59.27-214.96 0l-67.2 67.2c-.12.12-.25.25-.36.37-58.566 58.892-59.387 154.781.36 214.59a152.454 152.454 0 0 0 20.521 17.196c6.402 4.468 15.064 3.789 20.584-1.731l21.054-21.055c8.35-8.35 12.094-19.239 11.698-29.806a16.037 16.037 0 0 0-6.947-12.606c-2.912-2.005-6.64-4.875-10.341-8.569-28.073-28.073-28.191-73.639 0-101.83l67.2-67.19c28.239-28.239 74.3-28.069 102.325.51 27.75 28.3 26.872 73.934-1.155 101.96l-13.087 13.087c-4.35 4.35-5.769 10.79-3.783 16.612 5.864 17.194 9.042 34.999 9.69 52.721.509 13.906 17.454 20.446 27.294 10.606l37.106-37.106c59.271-59.259 59.271-155.699.001-214.959z"/></svg></a>配置文件</h3>
 <p>上面测试模式的 operationchooser，负责生成操作类型。它的生成概率，是由配置文件指定的。Workload 在构建请求时，会根据配置，合理的限制各个请求类型数量。比如以 workloada 配置文件为例，</p>
@@ -573,12 +573,12 @@ Workload &lt;|-- TimeSeriesWorkload
 </span><span class="lnt">5
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="nv">readproportion</span><span class="o">=</span>0.5  <span class="c1"># 读概率</span>
-<span class="nv">updateproportion</span><span class="o">=</span>0.5 <span class="c1"># 更新概率</span>
-<span class="nv">scanproportion</span><span class="o">=</span><span class="m">0</span>
-<span class="nv">insertproportion</span><span class="o">=</span><span class="m">0</span>
-<span class="nv">requestdistribution</span><span class="o">=</span>zipfian <span class="c1"># zipfian 分布</span>
-</code></pre></td></tr></table></div>
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl"><span class="nv">readproportion</span><span class="o">=</span>0.5  <span class="c1"># 读概率</span>
+</span></span><span class="line"><span class="cl"><span class="nv">updateproportion</span><span class="o">=</span>0.5 <span class="c1"># 更新概率</span>
+</span></span><span class="line"><span class="cl"><span class="nv">scanproportion</span><span class="o">=</span><span class="m">0</span>
+</span></span><span class="line"><span class="cl"><span class="nv">insertproportion</span><span class="o">=</span><span class="m">0</span>
+</span></span><span class="line"><span class="cl"><span class="nv">requestdistribution</span><span class="o">=</span>zipfian <span class="c1"># zipfian 分布</span>
+</span></span></code></pre></td></tr></table></div>
 </div>
 </div><h2 id="统计计算"><a href="#统计计算" class="anchor-link"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon anchor-icon"><path d="M326.612 185.391c59.747 59.809 58.927 155.698.36 214.59-.11.12-.24.25-.36.37l-67.2 67.2c-59.27 59.27-155.699 59.262-214.96 0-59.27-59.26-59.27-155.7 0-214.96l37.106-37.106c9.84-9.84 26.786-3.3 27.294 10.606.648 17.722 3.826 35.527 9.69 52.721 1.986 5.822.567 12.262-3.783 16.612l-13.087 13.087c-28.026 28.026-28.905 73.66-1.155 101.96 28.024 28.579 74.086 28.749 102.325.51l67.2-67.19c28.191-28.191 28.073-73.757 0-101.83-3.701-3.694-7.429-6.564-10.341-8.569a16.037 16.037 0 0 1-6.947-12.606c-.396-10.567 3.348-21.456 11.698-29.806l21.054-21.055c5.521-5.521 14.182-6.199 20.584-1.731a152.482 152.482 0 0 1 20.522 17.197zM467.547 44.449c-59.261-59.262-155.69-59.27-214.96 0l-67.2 67.2c-.12.12-.25.25-.36.37-58.566 58.892-59.387 154.781.36 214.59a152.454 152.454 0 0 0 20.521 17.196c6.402 4.468 15.064 3.789 20.584-1.731l21.054-21.055c8.35-8.35 12.094-19.239 11.698-29.806a16.037 16.037 0 0 0-6.947-12.606c-2.912-2.005-6.64-4.875-10.341-8.569-28.073-28.073-28.191-73.639 0-101.83l67.2-67.19c28.239-28.239 74.3-28.069 102.325.51 27.75 28.3 26.872 73.934-1.155 101.96l-13.087 13.087c-4.35 4.35-5.769 10.79-3.783 16.612 5.864 17.194 9.042 34.999 9.69 52.721.509 13.906 17.454 20.446 27.294 10.606l37.106-37.106c59.271-59.259 59.271-155.699.001-214.959z"/></svg></a>统计计算</h2>
 <p>上面介绍完了整个请求的发送流程，这些请求的响应时间都会被汇集起来做统计计算。Measurements 类负责统计计算，支持最大最小值，平均值，tp1，tp50，tp99，tp95等指标。对于这些指标的计算，也有多种方法实现，这些统计方法由 OneMeasurement 和其子类表示，下面依次介绍</p>
@@ -626,42 +626,42 @@ Workload &lt;|-- TimeSeriesWorkload
 </span><span class="lnt">35
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">OneMeasurementHistogram</span> <span class="kd">extends</span> <span class="n">OneMeasurement</span> <span class="o">{</span>
-  <span class="c1">// 分区数量，默认为1000
-</span><span class="c1"></span>  <span class="kd">private</span> <span class="kd">final</span> <span class="kt">int</span> <span class="n">buckets</span><span class="o">;</span>
-  <span class="c1">// 保存直方图的值
-</span><span class="c1"></span>  <span class="kd">private</span> <span class="kt">long</span><span class="o">[]</span> <span class="n">histogram</span><span class="o">;</span>
-    
-  <span class="c1">// 参数latency以us为单位
-</span><span class="c1"></span>  <span class="kd">public</span> <span class="kd">synchronized</span> <span class="kt">void</span> <span class="nf">measure</span><span class="o">(</span><span class="kt">int</span> <span class="n">latency</span><span class="o">)</span> <span class="o">{</span>
-    <span class="c1">// 将大于直方图的统计区间，单独存储
-</span><span class="c1"></span>    <span class="k">if</span> <span class="o">(</span><span class="n">latency</span> <span class="o">/</span> <span class="n">1000</span> <span class="o">&gt;=</span> <span class="n">buckets</span><span class="o">)</span> <span class="o">{</span>
-      <span class="n">histogramoverflow</span><span class="o">++;</span>
-    <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
-      <span class="n">histogram</span><span class="o">[</span><span class="n">latency</span> <span class="o">/</span> <span class="n">1000</span><span class="o">]++;</span>
-    <span class="o">}</span>
-  <span class="o">}</span>
-    
-  <span class="kd">public</span> <span class="kt">void</span> <span class="nf">exportMeasurements</span><span class="o">(</span><span class="n">MeasurementsExporter</span> <span class="n">exporter</span><span class="o">)</span> <span class="kd">throws</span> <span class="n">IOException</span> <span class="o">{</span>  
-	<span class="kt">long</span> <span class="n">opcounter</span><span class="o">=</span><span class="n">0</span><span class="o">;</span>
-    <span class="kt">boolean</span> <span class="n">done95th</span> <span class="o">=</span> <span class="kc">false</span><span class="o">;</span>
-    <span class="c1">// 遍历直方图，累积个数
-</span><span class="c1"></span>    <span class="k">for</span> <span class="o">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="n">0</span><span class="o">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">buckets</span><span class="o">;</span> <span class="n">i</span><span class="o">++)</span> <span class="o">{</span>
-      <span class="n">opcounter</span> <span class="o">+=</span> <span class="n">histogram</span><span class="o">[</span><span class="n">i</span><span class="o">];</span>
-      <span class="c1">// 通过个数查看是否到了 95%
-</span><span class="c1"></span>      <span class="k">if</span> <span class="o">((!</span><span class="n">done95th</span><span class="o">)</span> <span class="o">&amp;&amp;</span> <span class="o">(((</span><span class="kt">double</span><span class="o">)</span> <span class="n">opcounter</span><span class="o">)</span> <span class="o">/</span> <span class="o">((</span><span class="kt">double</span><span class="o">)</span> <span class="n">operations</span><span class="o">)</span> <span class="o">&gt;=</span> <span class="n">0</span><span class="o">.</span><span class="na">95</span><span class="o">))</span> <span class="o">{</span>
-        <span class="n">exporter</span><span class="o">.</span><span class="na">write</span><span class="o">(</span><span class="n">getName</span><span class="o">(),</span> <span class="s">&#34;95thPercentileLatency(us)&#34;</span><span class="o">,</span> <span class="n">i</span> <span class="o">*</span> <span class="n">1000</span><span class="o">);</span>
-        <span class="n">done95th</span> <span class="o">=</span> <span class="kc">true</span><span class="o">;</span>
-      <span class="o">}</span>
-      <span class="c1">// 通过个数查看是否到了 99%
-</span><span class="c1"></span>      <span class="k">if</span> <span class="o">(((</span><span class="kt">double</span><span class="o">)</span> <span class="n">opcounter</span><span class="o">)</span> <span class="o">/</span> <span class="o">((</span><span class="kt">double</span><span class="o">)</span> <span class="n">operations</span><span class="o">)</span> <span class="o">&gt;=</span> <span class="n">0</span><span class="o">.</span><span class="na">99</span><span class="o">)</span> <span class="o">{</span>
-        <span class="n">exporter</span><span class="o">.</span><span class="na">write</span><span class="o">(</span><span class="n">getName</span><span class="o">(),</span> <span class="s">&#34;99thPercentileLatency(us)&#34;</span><span class="o">,</span> <span class="n">i</span> <span class="o">*</span> <span class="n">1000</span><span class="o">);</span>
-        <span class="k">break</span><span class="o">;</span>
-      <span class="o">}</span>
-    <span class="o">}</span>
-  <span class="o">}</span>
-<span class="o">}</span>     
-</code></pre></td></tr></table></div>
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">OneMeasurementHistogram</span> <span class="kd">extends</span> <span class="n">OneMeasurement</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">  <span class="c1">// 分区数量，默认为1000
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="kd">private</span> <span class="kd">final</span> <span class="kt">int</span> <span class="n">buckets</span><span class="o">;</span>
+</span></span><span class="line"><span class="cl">  <span class="c1">// 保存直方图的值
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="kd">private</span> <span class="kt">long</span><span class="o">[]</span> <span class="n">histogram</span><span class="o">;</span>
+</span></span><span class="line"><span class="cl">    
+</span></span><span class="line"><span class="cl">  <span class="c1">// 参数latency以us为单位
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="kd">public</span> <span class="kd">synchronized</span> <span class="kt">void</span> <span class="nf">measure</span><span class="o">(</span><span class="kt">int</span> <span class="n">latency</span><span class="o">)</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// 将大于直方图的统计区间，单独存储
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="k">if</span> <span class="o">(</span><span class="n">latency</span> <span class="o">/</span> <span class="mi">1000</span> <span class="o">&gt;=</span> <span class="n">buckets</span><span class="o">)</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">      <span class="n">histogramoverflow</span><span class="o">++;</span>
+</span></span><span class="line"><span class="cl">    <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">      <span class="n">histogram</span><span class="o">[</span><span class="n">latency</span> <span class="o">/</span> <span class="mi">1000</span><span class="o">]++;</span>
+</span></span><span class="line"><span class="cl">    <span class="o">}</span>
+</span></span><span class="line"><span class="cl">  <span class="o">}</span>
+</span></span><span class="line"><span class="cl">    
+</span></span><span class="line"><span class="cl">  <span class="kd">public</span> <span class="kt">void</span> <span class="nf">exportMeasurements</span><span class="o">(</span><span class="n">MeasurementsExporter</span> <span class="n">exporter</span><span class="o">)</span> <span class="kd">throws</span> <span class="n">IOException</span> <span class="o">{</span>  
+</span></span><span class="line"><span class="cl">	<span class="kt">long</span> <span class="n">opcounter</span><span class="o">=</span><span class="mi">0</span><span class="o">;</span>
+</span></span><span class="line"><span class="cl">    <span class="kt">boolean</span> <span class="n">done95th</span> <span class="o">=</span> <span class="kc">false</span><span class="o">;</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// 遍历直方图，累积个数
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="k">for</span> <span class="o">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="o">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">buckets</span><span class="o">;</span> <span class="n">i</span><span class="o">++)</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">      <span class="n">opcounter</span> <span class="o">+=</span> <span class="n">histogram</span><span class="o">[</span><span class="n">i</span><span class="o">];</span>
+</span></span><span class="line"><span class="cl">      <span class="c1">// 通过个数查看是否到了 95%
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>      <span class="k">if</span> <span class="o">((!</span><span class="n">done95th</span><span class="o">)</span> <span class="o">&amp;&amp;</span> <span class="o">(((</span><span class="kt">double</span><span class="o">)</span> <span class="n">opcounter</span><span class="o">)</span> <span class="o">/</span> <span class="o">((</span><span class="kt">double</span><span class="o">)</span> <span class="n">operations</span><span class="o">)</span> <span class="o">&gt;=</span> <span class="mf">0.95</span><span class="o">))</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">        <span class="n">exporter</span><span class="o">.</span><span class="na">write</span><span class="o">(</span><span class="n">getName</span><span class="o">(),</span> <span class="s">&#34;95thPercentileLatency(us)&#34;</span><span class="o">,</span> <span class="n">i</span> <span class="o">*</span> <span class="mi">1000</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">        <span class="n">done95th</span> <span class="o">=</span> <span class="kc">true</span><span class="o">;</span>
+</span></span><span class="line"><span class="cl">      <span class="o">}</span>
+</span></span><span class="line"><span class="cl">      <span class="c1">// 通过个数查看是否到了 99%
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>      <span class="k">if</span> <span class="o">(((</span><span class="kt">double</span><span class="o">)</span> <span class="n">opcounter</span><span class="o">)</span> <span class="o">/</span> <span class="o">((</span><span class="kt">double</span><span class="o">)</span> <span class="n">operations</span><span class="o">)</span> <span class="o">&gt;=</span> <span class="mf">0.99</span><span class="o">)</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">        <span class="n">exporter</span><span class="o">.</span><span class="na">write</span><span class="o">(</span><span class="n">getName</span><span class="o">(),</span> <span class="s">&#34;99thPercentileLatency(us)&#34;</span><span class="o">,</span> <span class="n">i</span> <span class="o">*</span> <span class="mi">1000</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">        <span class="k">break</span><span class="o">;</span>
+</span></span><span class="line"><span class="cl">      <span class="o">}</span>
+</span></span><span class="line"><span class="cl">    <span class="o">}</span>
+</span></span><span class="line"><span class="cl">  <span class="o">}</span>
+</span></span><span class="line"><span class="cl"><span class="o">}</span>     
+</span></span></code></pre></td></tr></table></div>
 </div>
 </div><p>线性直方图统计相比原始统计，所需的内存和计算较小，但是精度存在误差，误差范围小于 1 ms。</p>
 <h3 id="hdr直方图统计"><a href="#hdr直方图统计" class="anchor-link"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon anchor-icon"><path d="M326.612 185.391c59.747 59.809 58.927 155.698.36 214.59-.11.12-.24.25-.36.37l-67.2 67.2c-59.27 59.27-155.699 59.262-214.96 0-59.27-59.26-59.27-155.7 0-214.96l37.106-37.106c9.84-9.84 26.786-3.3 27.294 10.606.648 17.722 3.826 35.527 9.69 52.721 1.986 5.822.567 12.262-3.783 16.612l-13.087 13.087c-28.026 28.026-28.905 73.66-1.155 101.96 28.024 28.579 74.086 28.749 102.325.51l67.2-67.19c28.191-28.191 28.073-73.757 0-101.83-3.701-3.694-7.429-6.564-10.341-8.569a16.037 16.037 0 0 1-6.947-12.606c-.396-10.567 3.348-21.456 11.698-29.806l21.054-21.055c5.521-5.521 14.182-6.199 20.584-1.731a152.482 152.482 0 0 1 20.522 17.197zM467.547 44.449c-59.261-59.262-155.69-59.27-214.96 0l-67.2 67.2c-.12.12-.25.25-.36.37-58.566 58.892-59.387 154.781.36 214.59a152.454 152.454 0 0 0 20.521 17.196c6.402 4.468 15.064 3.789 20.584-1.731l21.054-21.055c8.35-8.35 12.094-19.239 11.698-29.806a16.037 16.037 0 0 0-6.947-12.606c-2.912-2.005-6.64-4.875-10.341-8.569-28.073-28.073-28.191-73.639 0-101.83l67.2-67.19c28.239-28.239 74.3-28.069 102.325.51 27.75 28.3 26.872 73.934-1.155 101.96l-13.087 13.087c-4.35 4.35-5.769 10.79-3.783 16.612 5.864 17.194 9.042 34.999 9.69 52.721.509 13.906 17.454 20.446 27.294 10.606l37.106-37.106c59.271-59.259 59.271-155.699.001-214.959z"/></svg></a>HDR直方图统计</h3>
@@ -681,16 +681,14 @@ Workload &lt;|-- TimeSeriesWorkload
 </span><span class="lnt">3
 </span><span class="lnt">4
 </span><span class="lnt">5
-</span><span class="lnt">6
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-json" data-lang="json"><span class="p">{</span>
-    <span class="nt">&#34;metric&#34;</span><span class="err">;</span> <span class="s2">&#34;&#34;</span><span class="p">,</span>
-    <span class="nt">&#34;measurement&#34;</span><span class="p">:</span> <span class="s2">&#34;&#34;</span><span class="p">,</span>
-    <span class="nt">&#34;value&#34;</span><span class="p">:</span> <span class="err">xxx</span>
-<span class="p">}</span>
-
-</code></pre></td></tr></table></div>
+<pre tabindex="0" class="chroma"><code class="language-json" data-lang="json"><span class="line"><span class="cl"><span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="nt">&#34;metric&#34;</span><span class="err">;</span> <span class="s2">&#34;&#34;</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">    <span class="nt">&#34;measurement&#34;</span><span class="p">:</span> <span class="s2">&#34;&#34;</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">    <span class="nt">&#34;value&#34;</span><span class="p">:</span> <span class="err">xxx</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table></div>
 </div>
 </div>
             </div>
@@ -719,9 +717,9 @@ Workload &lt;|-- TimeSeriesWorkload
 
         
     <div class="updated-badge-container">
-        <span title="Updated @ 2021-10-22 14:44:34 CST" style="cursor:help">
+        <span title="Updated @ 2023-07-02 16:59:09 CST" style="cursor:help">
 
-<svg xmlns="http://www.w3.org/2000/svg" width="130" height="20" class="updated-badge"><linearGradient id="b" x2="0" y2="100%"><stop offset="0" stop-color="#bbb" stop-opacity=".1"/><stop offset="1" stop-opacity=".1"/></linearGradient><clipPath id="a"><rect width="130" height="20" rx="3" fill="#fff"/></clipPath><g clip-path="url(#a)"><path class="updated-badge-left" d="M0 0h55v20H0z"/><path class="updated-badge-right" d="M55 0h75v20H55z"/><path fill="url(#b)" d="M0 0h130v20H0z"/></g><g fill="#fff" text-anchor="middle" font-size="110"><text x="285" y="150" fill="#010101" fill-opacity=".3" textLength="450" transform="scale(.1)">updated</text><text x="285" y="140" textLength="450" transform="scale(.1)">updated</text><text x="915" y="150" fill="#010101" fill-opacity=".3" textLength="650" transform="scale(.1)">2021-10-22</text><text x="915" y="140" textLength="650" transform="scale(.1)">2021-10-22</text></g></svg>
+<svg xmlns="http://www.w3.org/2000/svg" width="130" height="20" class="updated-badge"><linearGradient id="b" x2="0" y2="100%"><stop offset="0" stop-color="#bbb" stop-opacity=".1"/><stop offset="1" stop-opacity=".1"/></linearGradient><clipPath id="a"><rect width="130" height="20" rx="3" fill="#fff"/></clipPath><g clip-path="url(#a)"><path class="updated-badge-left" d="M0 0h55v20H0z"/><path class="updated-badge-right" d="M55 0h75v20H55z"/><path fill="url(#b)" d="M0 0h130v20H0z"/></g><g fill="#fff" text-anchor="middle" font-size="110"><text x="285" y="150" fill="#010101" fill-opacity=".3" textLength="450" transform="scale(.1)">updated</text><text x="285" y="140" textLength="450" transform="scale(.1)">updated</text><text x="915" y="150" fill="#010101" fill-opacity=".3" textLength="650" transform="scale(.1)">2023-07-02</text><text x="915" y="140" textLength="650" transform="scale(.1)">2023-07-02</text></g></svg>
         </span></div>
 
 

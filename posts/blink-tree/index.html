@@ -3,7 +3,7 @@
     <head prefix="og: http://ogp.me/ns# article: http://ogp.me/ns/article#">
     <meta charset="UTF-8" />
 
-    <meta name="generator" content="Hugo 0.88.1" /><meta name="theme-color" content="#fff" />
+    <meta name="generator" content="Hugo 0.115.0"><meta name="theme-color" content="#fff" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     
     <meta name="format-detection" content="telephone=no, date=no, address=no, email=no" />
@@ -14,11 +14,11 @@
 
     <title>B&#43;Tree 的并发优化 BLink-Tree | 学习笔记</title>
 
-    <link rel="stylesheet" href="/css/meme.min.2d3e1834af2bc8dda20c7d74aaa1d8134845094441b7a554a5206ccd4b472596.css"/>
+    <link rel="stylesheet" href="/css/meme.min.91e7f58f97e1c60563ef481c38d9684fa8099537801d6f17bbfc724121e7d8f1.css"/>
 
     
     
-        <script src="/js/meme.min.800f61672145711eb3e1f29fcfcc3dbe0139dd459259718b611a0390f74703d1.js"></script>
+        <script src="/js/meme.min.3210a00c2fdcf6f831170b681b8ee40f83f0224663661e986872616aec45407f.js"></script>
 
     
 
@@ -54,7 +54,7 @@
         "@context": "https://schema.org",
         "@type": "BlogPosting",
         "datePublished": "2020-08-27T21:14:27+00:00",
-        "dateModified": "2021-10-22T14:44:34+08:00",
+        "dateModified": "2023-07-02T16:59:09+08:00",
         "url": "https://zhmin.github.io/posts/blink-tree/",
         "headline": "B+Tree 的并发优化 BLink-Tree",
         "description": "前言 B+Tree 被数据库普遍使用，作为索引实现的基础。网上的资料也非常多，所以这里也不再详细介绍。但是基于 B+Tree 的并发优化，资料却非常少，所以这篇来讲讲 B+Tree 的一种并发优化，那就是BLink-Tree。为了讲述得更加清……",
@@ -98,7 +98,7 @@
 <meta property="og:locale" content="zh" /><meta property="og:image" content="https://zhmin.github.io/blink-tree.svg" />
 <meta property="og:type" content="article" />
     <meta property="article:published_time" content="2020-08-27T21:14:27&#43;00:00" />
-    <meta property="article:modified_time" content="2021-10-22T14:44:34&#43;08:00" />
+    <meta property="article:modified_time" content="2023-07-02T16:59:09&#43;08:00" />
     
     <meta property="article:section" content="posts" />
 
@@ -295,9 +295,9 @@
 
         
     <div class="updated-badge-container">
-        <span title="Updated @ 2021-10-22 14:44:34 CST" style="cursor:help">
+        <span title="Updated @ 2023-07-02 16:59:09 CST" style="cursor:help">
 
-<svg xmlns="http://www.w3.org/2000/svg" width="130" height="20" class="updated-badge"><linearGradient id="b" x2="0" y2="100%"><stop offset="0" stop-color="#bbb" stop-opacity=".1"/><stop offset="1" stop-opacity=".1"/></linearGradient><clipPath id="a"><rect width="130" height="20" rx="3" fill="#fff"/></clipPath><g clip-path="url(#a)"><path class="updated-badge-left" d="M0 0h55v20H0z"/><path class="updated-badge-right" d="M55 0h75v20H55z"/><path fill="url(#b)" d="M0 0h130v20H0z"/></g><g fill="#fff" text-anchor="middle" font-size="110"><text x="285" y="150" fill="#010101" fill-opacity=".3" textLength="450" transform="scale(.1)">updated</text><text x="285" y="140" textLength="450" transform="scale(.1)">updated</text><text x="915" y="150" fill="#010101" fill-opacity=".3" textLength="650" transform="scale(.1)">2021-10-22</text><text x="915" y="140" textLength="650" transform="scale(.1)">2021-10-22</text></g></svg>
+<svg xmlns="http://www.w3.org/2000/svg" width="130" height="20" class="updated-badge"><linearGradient id="b" x2="0" y2="100%"><stop offset="0" stop-color="#bbb" stop-opacity=".1"/><stop offset="1" stop-opacity=".1"/></linearGradient><clipPath id="a"><rect width="130" height="20" rx="3" fill="#fff"/></clipPath><g clip-path="url(#a)"><path class="updated-badge-left" d="M0 0h55v20H0z"/><path class="updated-badge-right" d="M55 0h75v20H55z"/><path fill="url(#b)" d="M0 0h130v20H0z"/></g><g fill="#fff" text-anchor="middle" font-size="110"><text x="285" y="150" fill="#010101" fill-opacity=".3" textLength="450" transform="scale(.1)">updated</text><text x="285" y="140" textLength="450" transform="scale(.1)">updated</text><text x="915" y="150" fill="#010101" fill-opacity=".3" textLength="650" transform="scale(.1)">2023-07-02</text><text x="915" y="140" textLength="650" transform="scale(.1)">2023-07-02</text></g></svg>
         </span></div>
 
 

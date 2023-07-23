@@ -3,7 +3,7 @@
     <head prefix="og: http://ogp.me/ns# article: http://ogp.me/ns/article#">
     <meta charset="UTF-8" />
 
-    <meta name="generator" content="Hugo 0.88.1" /><meta name="theme-color" content="#fff" />
+    <meta name="generator" content="Hugo 0.115.0"><meta name="theme-color" content="#fff" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     
     <meta name="format-detection" content="telephone=no, date=no, address=no, email=no" />
@@ -14,11 +14,11 @@
 
     <title>Kafka 客户端的缓存管理 | 学习笔记</title>
 
-    <link rel="stylesheet" href="/css/meme.min.2d3e1834af2bc8dda20c7d74aaa1d8134845094441b7a554a5206ccd4b472596.css"/>
+    <link rel="stylesheet" href="/css/meme.min.91e7f58f97e1c60563ef481c38d9684fa8099537801d6f17bbfc724121e7d8f1.css"/>
 
     
     
-        <script src="/js/meme.min.800f61672145711eb3e1f29fcfcc3dbe0139dd459259718b611a0390f74703d1.js"></script>
+        <script src="/js/meme.min.3210a00c2fdcf6f831170b681b8ee40f83f0224663661e986872616aec45407f.js"></script>
 
     
 
@@ -54,7 +54,7 @@
         "@context": "https://schema.org",
         "@type": "BlogPosting",
         "datePublished": "2019-07-24T20:49:00+00:00",
-        "dateModified": "2021-10-22T14:44:34+08:00",
+        "dateModified": "2023-07-02T16:59:09+08:00",
         "url": "https://zhmin.github.io/posts/kafka-client-buffer-manage/",
         "headline": "Kafka 客户端的缓存管理",
         "description": "前言 Kafka 作为一个高吞吐量的消息队列，它的很多设计都体现了这一点。比如它的客户端，无论是 Producer 还是 Consumer ，都会内置一个缓存用来存储消息。这样类似于我们写文件时，并不会一次只写一个字节，而是先写到一个缓存里，然后等……",
@@ -98,7 +98,7 @@
 <meta property="og:locale" content="zh" /><meta property="og:image" content="https://zhmin.github.io/kafka-producer-bufferpool.svg" />
 <meta property="og:type" content="article" />
     <meta property="article:published_time" content="2019-07-24T20:49:00&#43;00:00" />
-    <meta property="article:modified_time" content="2021-10-22T14:44:34&#43;08:00" />
+    <meta property="article:modified_time" content="2023-07-02T16:59:09&#43;08:00" />
     
     <meta property="article:section" content="posts" />
 
@@ -260,21 +260,21 @@
 </span><span class="lnt">14
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">final</span> <span class="kd">class</span> <span class="nc">RecordAccumulator</span> <span class="o">{</span>
-    <span class="c1">// 消息缓存队列，以batch格式存储
-</span><span class="c1"></span>    <span class="kd">private</span> <span class="kd">final</span> <span class="n">ConcurrentMap</span><span class="o">&lt;</span><span class="n">TopicPartition</span><span class="o">,</span> <span class="n">Deque</span><span class="o">&lt;</span><span class="n">ProducerBatch</span><span class="o">&gt;&gt;</span> <span class="n">batches</span><span class="o">;</span>    
-    <span class="c1">// 内存池
-</span><span class="c1"></span>    <span class="kd">private</span> <span class="kd">final</span> <span class="n">BufferPool</span> <span class="n">free</span><span class="o">;</span>
-    
-    <span class="kd">public</span> <span class="n">RecordAppendResult</span> <span class="nf">append</span><span class="o">(....)</span> <span class="o">{</span>
-        <span class="c1">// 计算该消息占用的内存大小    
-</span><span class="c1"></span>        <span class="kt">int</span> <span class="n">size</span> <span class="o">=</span> <span class="n">Math</span><span class="o">.</span><span class="na">max</span><span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="na">batchSize</span><span class="o">,</span> <span class="n">AbstractRecords</span><span class="o">.</span><span class="na">estimateSizeInBytesUpperBound</span><span class="o">(</span><span class="n">maxUsableMagic</span><span class="o">,</span> <span class="n">compression</span><span class="o">,</span> <span class="n">key</span><span class="o">,</span> <span class="n">value</span><span class="o">,</span> <span class="n">headers</span><span class="o">));</span>
-        <span class="c1">// 向内存池申请内存
-</span><span class="c1"></span>        <span class="n">buffer</span> <span class="o">=</span> <span class="n">free</span><span class="o">.</span><span class="na">allocate</span><span class="o">(</span><span class="n">size</span><span class="o">,</span> <span class="n">maxTimeToBlock</span><span class="o">);</span>
-        <span class="o">.......</span>
-    <span class="o">}</span>
-<span class="o">}</span>
-</code></pre></td></tr></table></div>
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="kd">public</span> <span class="kd">final</span> <span class="kd">class</span> <span class="nc">RecordAccumulator</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// 消息缓存队列，以batch格式存储
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="kd">private</span> <span class="kd">final</span> <span class="n">ConcurrentMap</span><span class="o">&lt;</span><span class="n">TopicPartition</span><span class="o">,</span> <span class="n">Deque</span><span class="o">&lt;</span><span class="n">ProducerBatch</span><span class="o">&gt;&gt;</span> <span class="n">batches</span><span class="o">;</span>    
+</span></span><span class="line"><span class="cl">    <span class="c1">// 内存池
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="kd">private</span> <span class="kd">final</span> <span class="n">BufferPool</span> <span class="n">free</span><span class="o">;</span>
+</span></span><span class="line"><span class="cl">    
+</span></span><span class="line"><span class="cl">    <span class="kd">public</span> <span class="n">RecordAppendResult</span> <span class="nf">append</span><span class="o">(....)</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">        <span class="c1">// 计算该消息占用的内存大小    
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>        <span class="kt">int</span> <span class="n">size</span> <span class="o">=</span> <span class="n">Math</span><span class="o">.</span><span class="na">max</span><span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="na">batchSize</span><span class="o">,</span> <span class="n">AbstractRecords</span><span class="o">.</span><span class="na">estimateSizeInBytesUpperBound</span><span class="o">(</span><span class="n">maxUsableMagic</span><span class="o">,</span> <span class="n">compression</span><span class="o">,</span> <span class="n">key</span><span class="o">,</span> <span class="n">value</span><span class="o">,</span> <span class="n">headers</span><span class="o">));</span>
+</span></span><span class="line"><span class="cl">        <span class="c1">// 向内存池申请内存
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>        <span class="n">buffer</span> <span class="o">=</span> <span class="n">free</span><span class="o">.</span><span class="na">allocate</span><span class="o">(</span><span class="n">size</span><span class="o">,</span> <span class="n">maxTimeToBlock</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">        <span class="o">.......</span>
+</span></span><span class="line"><span class="cl">    <span class="o">}</span>
+</span></span><span class="line"><span class="cl"><span class="o">}</span>
+</span></span></code></pre></td></tr></table></div>
 </div>
 </div><p>当消息发送后，会触发 RecordAccumulator 释放内存。</p>
 <div class="highlight"><div class="chroma">
@@ -293,19 +293,19 @@
 </span><span class="lnt">12
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">final</span> <span class="kd">class</span> <span class="nc">RecordAccumulator</span> <span class="o">{</span>
-    <span class="c1">// 内存池
-</span><span class="c1"></span>    <span class="kd">private</span> <span class="kd">final</span> <span class="n">BufferPool</span> <span class="n">free</span><span class="o">;</span>
-    
-    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">deallocate</span><span class="o">(</span><span class="n">ProducerBatch</span> <span class="n">batch</span><span class="o">)</span> <span class="o">{</span>
-        <span class="n">incomplete</span><span class="o">.</span><span class="na">remove</span><span class="o">(</span><span class="n">batch</span><span class="o">);</span>
-        <span class="c1">// 检测是否该消息batch数据太大了，如果太大了则需要切割。所以这种情况不需要释放内存
-</span><span class="c1"></span>        <span class="k">if</span> <span class="o">(!</span><span class="n">batch</span><span class="o">.</span><span class="na">isSplitBatch</span><span class="o">())</span>
-            <span class="c1">// 向内存池释放内存
-</span><span class="c1"></span>            <span class="n">free</span><span class="o">.</span><span class="na">deallocate</span><span class="o">(</span><span class="n">batch</span><span class="o">.</span><span class="na">buffer</span><span class="o">(),</span> <span class="n">batch</span><span class="o">.</span><span class="na">initialCapacity</span><span class="o">());</span>
-    <span class="o">}</span>    
-<span class="o">}</span>
-</code></pre></td></tr></table></div>
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="kd">public</span> <span class="kd">final</span> <span class="kd">class</span> <span class="nc">RecordAccumulator</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// 内存池
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="kd">private</span> <span class="kd">final</span> <span class="n">BufferPool</span> <span class="n">free</span><span class="o">;</span>
+</span></span><span class="line"><span class="cl">    
+</span></span><span class="line"><span class="cl">    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">deallocate</span><span class="o">(</span><span class="n">ProducerBatch</span> <span class="n">batch</span><span class="o">)</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">        <span class="n">incomplete</span><span class="o">.</span><span class="na">remove</span><span class="o">(</span><span class="n">batch</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">        <span class="c1">// 检测是否该消息batch数据太大了，如果太大了则需要切割。所以这种情况不需要释放内存
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>        <span class="k">if</span> <span class="o">(!</span><span class="n">batch</span><span class="o">.</span><span class="na">isSplitBatch</span><span class="o">())</span>
+</span></span><span class="line"><span class="cl">            <span class="c1">// 向内存池释放内存
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>            <span class="n">free</span><span class="o">.</span><span class="na">deallocate</span><span class="o">(</span><span class="n">batch</span><span class="o">.</span><span class="na">buffer</span><span class="o">(),</span> <span class="n">batch</span><span class="o">.</span><span class="na">initialCapacity</span><span class="o">());</span>
+</span></span><span class="line"><span class="cl">    <span class="o">}</span>    
+</span></span><span class="line"><span class="cl"><span class="o">}</span>
+</span></span></code></pre></td></tr></table></div>
 </div>
 </div><h3 id="内存池结构"><a href="#内存池结构" class="anchor-link"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon anchor-icon"><path d="M326.612 185.391c59.747 59.809 58.927 155.698.36 214.59-.11.12-.24.25-.36.37l-67.2 67.2c-59.27 59.27-155.699 59.262-214.96 0-59.27-59.26-59.27-155.7 0-214.96l37.106-37.106c9.84-9.84 26.786-3.3 27.294 10.606.648 17.722 3.826 35.527 9.69 52.721 1.986 5.822.567 12.262-3.783 16.612l-13.087 13.087c-28.026 28.026-28.905 73.66-1.155 101.96 28.024 28.579 74.086 28.749 102.325.51l67.2-67.19c28.191-28.191 28.073-73.757 0-101.83-3.701-3.694-7.429-6.564-10.341-8.569a16.037 16.037 0 0 1-6.947-12.606c-.396-10.567 3.348-21.456 11.698-29.806l21.054-21.055c5.521-5.521 14.182-6.199 20.584-1.731a152.482 152.482 0 0 1 20.522 17.197zM467.547 44.449c-59.261-59.262-155.69-59.27-214.96 0l-67.2 67.2c-.12.12-.25.25-.36.37-58.566 58.892-59.387 154.781.36 214.59a152.454 152.454 0 0 0 20.521 17.196c6.402 4.468 15.064 3.789 20.584-1.731l21.054-21.055c8.35-8.35 12.094-19.239 11.698-29.806a16.037 16.037 0 0 0-6.947-12.606c-2.912-2.005-6.64-4.875-10.341-8.569-28.073-28.073-28.191-73.639 0-101.83l67.2-67.19c28.239-28.239 74.3-28.069 102.325.51 27.75 28.3 26.872 73.934-1.155 101.96l-13.087 13.087c-4.35 4.35-5.769 10.79-3.783 16.612 5.864 17.194 9.042 34.999 9.69 52.721.509 13.906 17.454 20.446 27.294 10.606l37.106-37.106c59.271-59.259 59.271-155.699.001-214.959z"/></svg></a>内存池结构</h3>
 <p>使用内存池有两个优点，一个是能够限制内存的使用量，另一个是减少内存的申请和回收频率。虽然 java 支持自动 gc ，但是 gc 也是有成本的。如果之前申请的内存用完之后，还可以重新复用，那么就不会触发 gc。但是内存池的实现有一个难点，那就是如何高效的重新利用。因为每次申请的内存大小都不相同，这样就没办法直接利用了。一种常见的做法是只缓存那些特定大小的内存，对于其他大小的内存则使用后直接丢弃。</p>
@@ -396,78 +396,78 @@
 </span><span class="lnt">71
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">BufferPool</span> <span class="o">{</span>
-    <span class="kd">private</span> <span class="kd">final</span> <span class="kt">long</span> <span class="n">totalMemory</span><span class="o">;</span>  <span class="c1">// 整个内存池的总容量
-</span><span class="c1"></span>    <span class="kd">private</span> <span class="kt">long</span> <span class="n">nonPooledAvailableMemory</span><span class="o">;</span>  <span class="c1">// 非缓存池的空闲大小    
-</span><span class="c1"></span>    <span class="kd">private</span> <span class="kd">final</span> <span class="kt">int</span> <span class="n">poolableSize</span><span class="o">;</span>  <span class="c1">// 缓存池中，特定内存的大小
-</span><span class="c1"></span>    <span class="kd">private</span> <span class="kd">final</span> <span class="n">ReentrantLock</span> <span class="n">lock</span><span class="o">;</span>  <span class="c1">// 锁用来防治并发
-</span><span class="c1"></span>    <span class="kd">private</span> <span class="kd">final</span> <span class="n">Deque</span><span class="o">&lt;</span><span class="n">ByteBuffer</span><span class="o">&gt;</span> <span class="n">free</span><span class="o">;</span>  <span class="c1">// 缓存池中的空闲内存块
-</span><span class="c1"></span>    <span class="kd">private</span> <span class="kd">final</span> <span class="n">Deque</span><span class="o">&lt;</span><span class="n">Condition</span><span class="o">&gt;</span> <span class="n">waiters</span><span class="o">;</span>  <span class="c1">// 等待申请的用户
-</span><span class="c1"></span>
-    <span class="c1">// 参数size表示申请的内存大小，参数maxTimeToBlockMs表示等待的最长时间
-</span><span class="c1"></span>    <span class="kd">public</span> <span class="n">ByteBuffer</span> <span class="nf">allocate</span><span class="o">(</span><span class="kt">int</span> <span class="n">size</span><span class="o">,</span> <span class="kt">long</span> <span class="n">maxTimeToBlockMs</span><span class="o">)</span> <span class="kd">throws</span> <span class="n">InterruptedException</span> <span class="o">{</span>
-        <span class="k">if</span> <span class="o">(</span><span class="n">size</span> <span class="o">&gt;</span> <span class="k">this</span><span class="o">.</span><span class="na">totalMemory</span><span class="o">)</span>
-            <span class="k">throw</span> <span class="k">new</span> <span class="n">IllegalArgumentException</span><span class="o">(</span><span class="s">&#34;...&#34;</span><span class="o">)</span>
-        <span class="n">ByteBuffer</span> <span class="n">buffer</span> <span class="o">=</span> <span class="kc">null</span><span class="o">;</span>
-        <span class="k">this</span><span class="o">.</span><span class="na">lock</span><span class="o">.</span><span class="na">lock</span><span class="o">();</span>
-        <span class="c1">// 如果申请大小等于指定的值，并且缓存池中有空闲的内存块，则直接返回
-</span><span class="c1"></span>         <span class="k">if</span> <span class="o">(</span><span class="n">size</span> <span class="o">==</span> <span class="n">poolableSize</span> <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="k">this</span><span class="o">.</span><span class="na">free</span><span class="o">.</span><span class="na">isEmpty</span><span class="o">())</span>
-             <span class="k">return</span> <span class="k">this</span><span class="o">.</span><span class="na">free</span><span class="o">.</span><span class="na">pollFirst</span><span class="o">();</span>
-        <span class="c1">// 计算总的空闲内存大小， 等于缓存池的大小 + 非缓存池的空闲大小
-</span><span class="c1"></span>        <span class="kt">int</span> <span class="n">freeListSize</span> <span class="o">=</span> <span class="n">freeSize</span><span class="o">()</span> <span class="o">*</span> <span class="k">this</span><span class="o">.</span><span class="na">poolableSize</span><span class="o">;</span>
-        <span class="k">if</span> <span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="na">nonPooledAvailableMemory</span> <span class="o">+</span> <span class="n">freeListSize</span> <span class="o">&gt;=</span> <span class="n">size</span><span class="o">)</span> <span class="o">{</span>
-            <span class="c1">// 如果空闲内存足够，那么需要保证非缓存池的空闲空间足够
-</span><span class="c1"></span>            <span class="c1">// 因为所有的内存分配都是从非缓存池开始
-</span><span class="c1"></span>            <span class="n">freeUp</span><span class="o">(</span><span class="n">size</span><span class="o">);</span>
-            <span class="k">this</span><span class="o">.</span><span class="na">nonPooledAvailableMemory</span> <span class="o">-=</span> <span class="n">size</span><span class="o">;</span>
-        <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
-            <span class="c1">// 如果空闲内存不够，那么需要等待别的用户释放内存
-</span><span class="c1"></span>            <span class="kt">int</span> <span class="n">accumulated</span> <span class="o">=</span> <span class="n">0</span><span class="o">;</span> <span class="c1">// 表示已经成功申请的内存大小
-</span><span class="c1"></span>            <span class="n">Condition</span> <span class="n">moreMemory</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="na">lock</span><span class="o">.</span><span class="na">newCondition</span><span class="o">();</span>
-            
-            <span class="kt">long</span> <span class="n">remainingTimeToBlockNs</span> <span class="o">=</span> <span class="n">TimeUnit</span><span class="o">.</span><span class="na">MILLISECONDS</span><span class="o">.</span><span class="na">toNanos</span><span class="o">(</span><span class="n">maxTimeToBlockMs</span><span class="o">);</span>
-            <span class="c1">// 添加到等待集合中
-</span><span class="c1"></span>            <span class="k">this</span><span class="o">.</span><span class="na">waiters</span><span class="o">.</span><span class="na">addLast</span><span class="o">(</span><span class="n">moreMemory</span><span class="o">);</span>
-            <span class="c1">// 循环等待
-</span><span class="c1"></span>            <span class="k">while</span> <span class="o">(</span><span class="n">accumulated</span> <span class="o">&lt;</span> <span class="n">size</span><span class="o">)</span> <span class="o">{</span>
-                <span class="o">......</span>
-                <span class="c1">// 等待通知
-</span><span class="c1"></span>                <span class="n">waitingTimeElapsed</span> <span class="o">=</span> <span class="o">!</span><span class="n">moreMemory</span><span class="o">.</span><span class="na">await</span><span class="o">(</span><span class="n">remainingTimeToBlockNs</span><span class="o">,</span> <span class="n">TimeUnit</span><span class="o">.</span><span class="na">NANOSECONDS</span><span class="o">);</span>
-                <span class="k">if</span> <span class="o">(</span><span class="n">waitingTimeElapsed</span><span class="o">)</span> <span class="o">{</span>
-                    <span class="c1">// 超过等待时间还没有分配到足够的内存，那么就抛出异常
-</span><span class="c1"></span>                    <span class="k">throw</span> <span class="k">new</span> <span class="n">TimeoutException</span><span class="o">(</span><span class="s">&#34;Failed to allocate memory within the configured max blocking time &#34;</span> <span class="o">+</span> <span class="n">maxTimeToBlockMs</span> <span class="o">+</span> <span class="s">&#34; ms.&#34;</span><span class="o">);</span>
-                <span class="o">}</span>
-                <span class="c1">// 如果申请大小等于指定的值，而这时刚好有其他用户释放了内存，那么就直接从缓存池中获取
-</span><span class="c1"></span>                <span class="k">if</span> <span class="o">(</span><span class="n">accumulated</span> <span class="o">==</span> <span class="n">0</span> <span class="o">&amp;&amp;</span> <span class="n">size</span> <span class="o">==</span> <span class="k">this</span><span class="o">.</span><span class="na">poolableSize</span> <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="k">this</span><span class="o">.</span><span class="na">free</span><span class="o">.</span><span class="na">isEmpty</span><span class="o">())</span> <span class="o">{</span>
-                    <span class="n">buffer</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="na">free</span><span class="o">.</span><span class="na">pollFirst</span><span class="o">();</span>
-                    <span class="n">accumulated</span> <span class="o">=</span> <span class="n">size</span><span class="o">;</span>
-                <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
-                    <span class="c1">// 继续释放足够的内存
-</span><span class="c1"></span>                    <span class="n">freeUp</span><span class="o">(</span><span class="n">size</span> <span class="o">-</span> <span class="n">accumulated</span><span class="o">);</span>
-                    <span class="c1">// 计算可以分配的内存大小
-</span><span class="c1"></span>                    <span class="kt">int</span> <span class="n">got</span> <span class="o">=</span> <span class="o">(</span><span class="kt">int</span><span class="o">)</span> <span class="n">Math</span><span class="o">.</span><span class="na">min</span><span class="o">(</span><span class="n">size</span> <span class="o">-</span> <span class="n">accumulated</span><span class="o">,</span> <span class="k">this</span><span class="o">.</span><span class="na">nonPooledAvailableMemory</span><span class="o">);</span>
-                    <span class="c1">// 更改非缓存池的空闲内存大小
-</span><span class="c1"></span>                    <span class="k">this</span><span class="o">.</span><span class="na">nonPooledAvailableMemory</span> <span class="o">-=</span> <span class="n">got</span><span class="o">;</span>
-                    <span class="n">accumulated</span> <span class="o">+=</span> <span class="n">got</span><span class="o">;</span>
-                <span class="o">}</span>
-            <span class="o">}</span>
-
-            <span class="c1">// 这里会检查是否还有剩下的空闲内存，如果有则需要通知下一个用户。
-</span><span class="c1"></span>            <span class="c1">// 因为这时可能有多个用户都释放了内存，而用户释放内存只会通知第一个用户（也就是当前用户），而下个用户还在一直等待中，如果当前用户不主动通知的话，可能造成下个用户等待超时。
-</span><span class="c1"></span>            <span class="k">if</span> <span class="o">(!(</span><span class="k">this</span><span class="o">.</span><span class="na">nonPooledAvailableMemory</span> <span class="o">==</span> <span class="n">0</span> <span class="o">&amp;&amp;</span> <span class="k">this</span><span class="o">.</span><span class="na">free</span><span class="o">.</span><span class="na">isEmpty</span><span class="o">())</span> <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="k">this</span><span class="o">.</span><span class="na">waiters</span><span class="o">.</span><span class="na">isEmpty</span><span class="o">())</span>
-                    <span class="k">this</span><span class="o">.</span><span class="na">waiters</span><span class="o">.</span><span class="na">peekFirst</span><span class="o">().</span><span class="na">signal</span><span class="o">();</span>
-            
-            <span class="c1">// 运行到这里，说明已经成功了申请到了内存          
-</span><span class="c1"></span>            <span class="k">if</span> <span class="o">(</span><span class="n">buffer</span> <span class="o">==</span> <span class="kc">null</span><span class="o">)</span>
-                <span class="c1">// 表示buffer不是从缓存池中获取的，需要执行内存分配
-</span><span class="c1"></span>                <span class="k">return</span> <span class="n">safeAllocateByteBuffer</span><span class="o">(</span><span class="n">size</span><span class="o">);</span>
-            <span class="k">else</span><span class="o">:</span>
-                <span class="c1">// 已经从缓存池中获取到了，则直接返回
-</span><span class="c1"></span>                <span class="k">return</span> <span class="n">buffer</span><span class="o">;</span>
-        <span class="o">}</span>
-    <span class="o">}</span>
-<span class="o">}</span>   
-</code></pre></td></tr></table></div>
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">BufferPool</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">    <span class="kd">private</span> <span class="kd">final</span> <span class="kt">long</span> <span class="n">totalMemory</span><span class="o">;</span>  <span class="c1">// 整个内存池的总容量
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="kd">private</span> <span class="kt">long</span> <span class="n">nonPooledAvailableMemory</span><span class="o">;</span>  <span class="c1">// 非缓存池的空闲大小    
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="kd">private</span> <span class="kd">final</span> <span class="kt">int</span> <span class="n">poolableSize</span><span class="o">;</span>  <span class="c1">// 缓存池中，特定内存的大小
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="kd">private</span> <span class="kd">final</span> <span class="n">ReentrantLock</span> <span class="n">lock</span><span class="o">;</span>  <span class="c1">// 锁用来防治并发
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="kd">private</span> <span class="kd">final</span> <span class="n">Deque</span><span class="o">&lt;</span><span class="n">ByteBuffer</span><span class="o">&gt;</span> <span class="n">free</span><span class="o">;</span>  <span class="c1">// 缓存池中的空闲内存块
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="kd">private</span> <span class="kd">final</span> <span class="n">Deque</span><span class="o">&lt;</span><span class="n">Condition</span><span class="o">&gt;</span> <span class="n">waiters</span><span class="o">;</span>  <span class="c1">// 等待申请的用户
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// 参数size表示申请的内存大小，参数maxTimeToBlockMs表示等待的最长时间
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="kd">public</span> <span class="n">ByteBuffer</span> <span class="nf">allocate</span><span class="o">(</span><span class="kt">int</span> <span class="n">size</span><span class="o">,</span> <span class="kt">long</span> <span class="n">maxTimeToBlockMs</span><span class="o">)</span> <span class="kd">throws</span> <span class="n">InterruptedException</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">        <span class="k">if</span> <span class="o">(</span><span class="n">size</span> <span class="o">&gt;</span> <span class="k">this</span><span class="o">.</span><span class="na">totalMemory</span><span class="o">)</span>
+</span></span><span class="line"><span class="cl">            <span class="k">throw</span> <span class="k">new</span> <span class="n">IllegalArgumentException</span><span class="o">(</span><span class="s">&#34;...&#34;</span><span class="o">)</span>
+</span></span><span class="line"><span class="cl">        <span class="n">ByteBuffer</span> <span class="n">buffer</span> <span class="o">=</span> <span class="kc">null</span><span class="o">;</span>
+</span></span><span class="line"><span class="cl">        <span class="k">this</span><span class="o">.</span><span class="na">lock</span><span class="o">.</span><span class="na">lock</span><span class="o">();</span>
+</span></span><span class="line"><span class="cl">        <span class="c1">// 如果申请大小等于指定的值，并且缓存池中有空闲的内存块，则直接返回
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>         <span class="k">if</span> <span class="o">(</span><span class="n">size</span> <span class="o">==</span> <span class="n">poolableSize</span> <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="k">this</span><span class="o">.</span><span class="na">free</span><span class="o">.</span><span class="na">isEmpty</span><span class="o">())</span>
+</span></span><span class="line"><span class="cl">             <span class="k">return</span> <span class="k">this</span><span class="o">.</span><span class="na">free</span><span class="o">.</span><span class="na">pollFirst</span><span class="o">();</span>
+</span></span><span class="line"><span class="cl">        <span class="c1">// 计算总的空闲内存大小， 等于缓存池的大小 + 非缓存池的空闲大小
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>        <span class="kt">int</span> <span class="n">freeListSize</span> <span class="o">=</span> <span class="n">freeSize</span><span class="o">()</span> <span class="o">*</span> <span class="k">this</span><span class="o">.</span><span class="na">poolableSize</span><span class="o">;</span>
+</span></span><span class="line"><span class="cl">        <span class="k">if</span> <span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="na">nonPooledAvailableMemory</span> <span class="o">+</span> <span class="n">freeListSize</span> <span class="o">&gt;=</span> <span class="n">size</span><span class="o">)</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">            <span class="c1">// 如果空闲内存足够，那么需要保证非缓存池的空闲空间足够
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>            <span class="c1">// 因为所有的内存分配都是从非缓存池开始
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>            <span class="n">freeUp</span><span class="o">(</span><span class="n">size</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">            <span class="k">this</span><span class="o">.</span><span class="na">nonPooledAvailableMemory</span> <span class="o">-=</span> <span class="n">size</span><span class="o">;</span>
+</span></span><span class="line"><span class="cl">        <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">            <span class="c1">// 如果空闲内存不够，那么需要等待别的用户释放内存
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>            <span class="kt">int</span> <span class="n">accumulated</span> <span class="o">=</span> <span class="mi">0</span><span class="o">;</span> <span class="c1">// 表示已经成功申请的内存大小
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>            <span class="n">Condition</span> <span class="n">moreMemory</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="na">lock</span><span class="o">.</span><span class="na">newCondition</span><span class="o">();</span>
+</span></span><span class="line"><span class="cl">            
+</span></span><span class="line"><span class="cl">            <span class="kt">long</span> <span class="n">remainingTimeToBlockNs</span> <span class="o">=</span> <span class="n">TimeUnit</span><span class="o">.</span><span class="na">MILLISECONDS</span><span class="o">.</span><span class="na">toNanos</span><span class="o">(</span><span class="n">maxTimeToBlockMs</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">            <span class="c1">// 添加到等待集合中
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>            <span class="k">this</span><span class="o">.</span><span class="na">waiters</span><span class="o">.</span><span class="na">addLast</span><span class="o">(</span><span class="n">moreMemory</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">            <span class="c1">// 循环等待
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>            <span class="k">while</span> <span class="o">(</span><span class="n">accumulated</span> <span class="o">&lt;</span> <span class="n">size</span><span class="o">)</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">                <span class="o">......</span>
+</span></span><span class="line"><span class="cl">                <span class="c1">// 等待通知
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>                <span class="n">waitingTimeElapsed</span> <span class="o">=</span> <span class="o">!</span><span class="n">moreMemory</span><span class="o">.</span><span class="na">await</span><span class="o">(</span><span class="n">remainingTimeToBlockNs</span><span class="o">,</span> <span class="n">TimeUnit</span><span class="o">.</span><span class="na">NANOSECONDS</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">                <span class="k">if</span> <span class="o">(</span><span class="n">waitingTimeElapsed</span><span class="o">)</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">                    <span class="c1">// 超过等待时间还没有分配到足够的内存，那么就抛出异常
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>                    <span class="k">throw</span> <span class="k">new</span> <span class="n">TimeoutException</span><span class="o">(</span><span class="s">&#34;Failed to allocate memory within the configured max blocking time &#34;</span> <span class="o">+</span> <span class="n">maxTimeToBlockMs</span> <span class="o">+</span> <span class="s">&#34; ms.&#34;</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">                <span class="o">}</span>
+</span></span><span class="line"><span class="cl">                <span class="c1">// 如果申请大小等于指定的值，而这时刚好有其他用户释放了内存，那么就直接从缓存池中获取
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>                <span class="k">if</span> <span class="o">(</span><span class="n">accumulated</span> <span class="o">==</span> <span class="mi">0</span> <span class="o">&amp;&amp;</span> <span class="n">size</span> <span class="o">==</span> <span class="k">this</span><span class="o">.</span><span class="na">poolableSize</span> <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="k">this</span><span class="o">.</span><span class="na">free</span><span class="o">.</span><span class="na">isEmpty</span><span class="o">())</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">                    <span class="n">buffer</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="na">free</span><span class="o">.</span><span class="na">pollFirst</span><span class="o">();</span>
+</span></span><span class="line"><span class="cl">                    <span class="n">accumulated</span> <span class="o">=</span> <span class="n">size</span><span class="o">;</span>
+</span></span><span class="line"><span class="cl">                <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">                    <span class="c1">// 继续释放足够的内存
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>                    <span class="n">freeUp</span><span class="o">(</span><span class="n">size</span> <span class="o">-</span> <span class="n">accumulated</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">                    <span class="c1">// 计算可以分配的内存大小
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>                    <span class="kt">int</span> <span class="n">got</span> <span class="o">=</span> <span class="o">(</span><span class="kt">int</span><span class="o">)</span> <span class="n">Math</span><span class="o">.</span><span class="na">min</span><span class="o">(</span><span class="n">size</span> <span class="o">-</span> <span class="n">accumulated</span><span class="o">,</span> <span class="k">this</span><span class="o">.</span><span class="na">nonPooledAvailableMemory</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">                    <span class="c1">// 更改非缓存池的空闲内存大小
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>                    <span class="k">this</span><span class="o">.</span><span class="na">nonPooledAvailableMemory</span> <span class="o">-=</span> <span class="n">got</span><span class="o">;</span>
+</span></span><span class="line"><span class="cl">                    <span class="n">accumulated</span> <span class="o">+=</span> <span class="n">got</span><span class="o">;</span>
+</span></span><span class="line"><span class="cl">                <span class="o">}</span>
+</span></span><span class="line"><span class="cl">            <span class="o">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">            <span class="c1">// 这里会检查是否还有剩下的空闲内存，如果有则需要通知下一个用户。
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>            <span class="c1">// 因为这时可能有多个用户都释放了内存，而用户释放内存只会通知第一个用户（也就是当前用户），而下个用户还在一直等待中，如果当前用户不主动通知的话，可能造成下个用户等待超时。
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>            <span class="k">if</span> <span class="o">(!(</span><span class="k">this</span><span class="o">.</span><span class="na">nonPooledAvailableMemory</span> <span class="o">==</span> <span class="mi">0</span> <span class="o">&amp;&amp;</span> <span class="k">this</span><span class="o">.</span><span class="na">free</span><span class="o">.</span><span class="na">isEmpty</span><span class="o">())</span> <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="k">this</span><span class="o">.</span><span class="na">waiters</span><span class="o">.</span><span class="na">isEmpty</span><span class="o">())</span>
+</span></span><span class="line"><span class="cl">                    <span class="k">this</span><span class="o">.</span><span class="na">waiters</span><span class="o">.</span><span class="na">peekFirst</span><span class="o">().</span><span class="na">signal</span><span class="o">();</span>
+</span></span><span class="line"><span class="cl">            
+</span></span><span class="line"><span class="cl">            <span class="c1">// 运行到这里，说明已经成功了申请到了内存          
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>            <span class="k">if</span> <span class="o">(</span><span class="n">buffer</span> <span class="o">==</span> <span class="kc">null</span><span class="o">)</span>
+</span></span><span class="line"><span class="cl">                <span class="c1">// 表示buffer不是从缓存池中获取的，需要执行内存分配
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>                <span class="k">return</span> <span class="n">safeAllocateByteBuffer</span><span class="o">(</span><span class="n">size</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">            <span class="k">else</span><span class="o">:</span>
+</span></span><span class="line"><span class="cl">                <span class="c1">// 已经从缓存池中获取到了，则直接返回
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>                <span class="k">return</span> <span class="n">buffer</span><span class="o">;</span>
+</span></span><span class="line"><span class="cl">        <span class="o">}</span>
+</span></span><span class="line"><span class="cl">    <span class="o">}</span>
+</span></span><span class="line"><span class="cl"><span class="o">}</span>   
+</span></span></code></pre></td></tr></table></div>
 </div>
 </div><p>deallocate 接口的源码比较简单</p>
 <div class="highlight"><div class="chroma">
@@ -500,33 +500,33 @@
 </span><span class="lnt">26
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">BufferPool</span> <span class="o">{</span>
-    
-    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">deallocate</span><span class="o">(</span><span class="n">ByteBuffer</span> <span class="n">buffer</span><span class="o">)</span> <span class="o">{</span>
-        <span class="n">deallocate</span><span class="o">(</span><span class="n">buffer</span><span class="o">,</span> <span class="n">buffer</span><span class="o">.</span><span class="na">capacity</span><span class="o">());</span>
-    <span class="o">}</span>
-
-    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">deallocate</span><span class="o">(</span><span class="n">ByteBuffer</span> <span class="n">buffer</span><span class="o">,</span> <span class="kt">int</span> <span class="n">size</span><span class="o">)</span> <span class="o">{</span>
-        <span class="n">lock</span><span class="o">.</span><span class="na">lock</span><span class="o">();</span>
-        <span class="k">try</span> <span class="o">{</span>
-            <span class="c1">// 如果释放的内存大小等于指定的值，那么就将它添加到缓存池。free列表存储这些内存块
-</span><span class="c1"></span>            <span class="k">if</span> <span class="o">(</span><span class="n">size</span> <span class="o">==</span> <span class="k">this</span><span class="o">.</span><span class="na">poolableSize</span> <span class="o">&amp;&amp;</span> <span class="n">size</span> <span class="o">==</span> <span class="n">buffer</span><span class="o">.</span><span class="na">capacity</span><span class="o">())</span> <span class="o">{</span>
-                <span class="n">buffer</span><span class="o">.</span><span class="na">clear</span><span class="o">();</span>
-                <span class="k">this</span><span class="o">.</span><span class="na">free</span><span class="o">.</span><span class="na">add</span><span class="o">(</span><span class="n">buffer</span><span class="o">);</span>
-            <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
-                <span class="c1">// 否则更新非缓存池的空闲大小，这个ByteBuffer实例等待jvm自动gc
-</span><span class="c1"></span>                <span class="k">this</span><span class="o">.</span><span class="na">nonPooledAvailableMemory</span> <span class="o">+=</span> <span class="n">size</span><span class="o">;</span>
-            <span class="o">}</span>
-            <span class="c1">// 通知队列的第一个用户
-</span><span class="c1"></span>            <span class="n">Condition</span> <span class="n">moreMem</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="na">waiters</span><span class="o">.</span><span class="na">peekFirst</span><span class="o">();</span>
-            <span class="k">if</span> <span class="o">(</span><span class="n">moreMem</span> <span class="o">!=</span> <span class="kc">null</span><span class="o">)</span>
-                <span class="n">moreMem</span><span class="o">.</span><span class="na">signal</span><span class="o">();</span>
-        <span class="o">}</span> <span class="k">finally</span> <span class="o">{</span>
-            <span class="n">lock</span><span class="o">.</span><span class="na">unlock</span><span class="o">();</span>
-        <span class="o">}</span>
-    <span class="o">}</span>
-<span class="o">}</span>
-</code></pre></td></tr></table></div>
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">BufferPool</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">    
+</span></span><span class="line"><span class="cl">    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">deallocate</span><span class="o">(</span><span class="n">ByteBuffer</span> <span class="n">buffer</span><span class="o">)</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">        <span class="n">deallocate</span><span class="o">(</span><span class="n">buffer</span><span class="o">,</span> <span class="n">buffer</span><span class="o">.</span><span class="na">capacity</span><span class="o">());</span>
+</span></span><span class="line"><span class="cl">    <span class="o">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">deallocate</span><span class="o">(</span><span class="n">ByteBuffer</span> <span class="n">buffer</span><span class="o">,</span> <span class="kt">int</span> <span class="n">size</span><span class="o">)</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">        <span class="n">lock</span><span class="o">.</span><span class="na">lock</span><span class="o">();</span>
+</span></span><span class="line"><span class="cl">        <span class="k">try</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">            <span class="c1">// 如果释放的内存大小等于指定的值，那么就将它添加到缓存池。free列表存储这些内存块
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>            <span class="k">if</span> <span class="o">(</span><span class="n">size</span> <span class="o">==</span> <span class="k">this</span><span class="o">.</span><span class="na">poolableSize</span> <span class="o">&amp;&amp;</span> <span class="n">size</span> <span class="o">==</span> <span class="n">buffer</span><span class="o">.</span><span class="na">capacity</span><span class="o">())</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">                <span class="n">buffer</span><span class="o">.</span><span class="na">clear</span><span class="o">();</span>
+</span></span><span class="line"><span class="cl">                <span class="k">this</span><span class="o">.</span><span class="na">free</span><span class="o">.</span><span class="na">add</span><span class="o">(</span><span class="n">buffer</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">            <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">                <span class="c1">// 否则更新非缓存池的空闲大小，这个ByteBuffer实例等待jvm自动gc
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>                <span class="k">this</span><span class="o">.</span><span class="na">nonPooledAvailableMemory</span> <span class="o">+=</span> <span class="n">size</span><span class="o">;</span>
+</span></span><span class="line"><span class="cl">            <span class="o">}</span>
+</span></span><span class="line"><span class="cl">            <span class="c1">// 通知队列的第一个用户
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>            <span class="n">Condition</span> <span class="n">moreMem</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="na">waiters</span><span class="o">.</span><span class="na">peekFirst</span><span class="o">();</span>
+</span></span><span class="line"><span class="cl">            <span class="k">if</span> <span class="o">(</span><span class="n">moreMem</span> <span class="o">!=</span> <span class="kc">null</span><span class="o">)</span>
+</span></span><span class="line"><span class="cl">                <span class="n">moreMem</span><span class="o">.</span><span class="na">signal</span><span class="o">();</span>
+</span></span><span class="line"><span class="cl">        <span class="o">}</span> <span class="k">finally</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">            <span class="n">lock</span><span class="o">.</span><span class="na">unlock</span><span class="o">();</span>
+</span></span><span class="line"><span class="cl">        <span class="o">}</span>
+</span></span><span class="line"><span class="cl">    <span class="o">}</span>
+</span></span><span class="line"><span class="cl"><span class="o">}</span>
+</span></span></code></pre></td></tr></table></div>
 </div>
 </div><h2 id="consumer-缓存"><a href="#consumer-缓存" class="anchor-link"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon anchor-icon"><path d="M326.612 185.391c59.747 59.809 58.927 155.698.36 214.59-.11.12-.24.25-.36.37l-67.2 67.2c-59.27 59.27-155.699 59.262-214.96 0-59.27-59.26-59.27-155.7 0-214.96l37.106-37.106c9.84-9.84 26.786-3.3 27.294 10.606.648 17.722 3.826 35.527 9.69 52.721 1.986 5.822.567 12.262-3.783 16.612l-13.087 13.087c-28.026 28.026-28.905 73.66-1.155 101.96 28.024 28.579 74.086 28.749 102.325.51l67.2-67.19c28.191-28.191 28.073-73.757 0-101.83-3.701-3.694-7.429-6.564-10.341-8.569a16.037 16.037 0 0 1-6.947-12.606c-.396-10.567 3.348-21.456 11.698-29.806l21.054-21.055c5.521-5.521 14.182-6.199 20.584-1.731a152.482 152.482 0 0 1 20.522 17.197zM467.547 44.449c-59.261-59.262-155.69-59.27-214.96 0l-67.2 67.2c-.12.12-.25.25-.36.37-58.566 58.892-59.387 154.781.36 214.59a152.454 152.454 0 0 0 20.521 17.196c6.402 4.468 15.064 3.789 20.584-1.731l21.054-21.055c8.35-8.35 12.094-19.239 11.698-29.806a16.037 16.037 0 0 0-6.947-12.606c-2.912-2.005-6.64-4.875-10.341-8.569-28.073-28.073-28.191-73.639 0-101.83l67.2-67.19c28.239-28.239 74.3-28.069 102.325.51 27.75 28.3 26.872 73.934-1.155 101.96l-13.087 13.087c-4.35 4.35-5.769 10.79-3.783 16.612 5.864 17.194 9.042 34.999 9.69 52.721.509 13.906 17.454 20.446 27.294 10.606l37.106-37.106c59.271-59.259 59.271-155.699.001-214.959z"/></svg></a>Consumer 缓存</h2>
 <p>Consumer 从服务端获取消息，也是以消息 batch 的格式获取，然后存到缓存里。KafkaConsumer 提供了 poll 方法读取消息。它的原理是从缓存里直接获取，如果缓存里没有，才会向服务端发出请求。</p>
@@ -577,43 +577,43 @@
 </span><span class="lnt">36
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">KafkaConsumer</span><span class="o">&lt;</span><span class="n">K</span><span class="o">,</span> <span class="n">V</span><span class="o">&gt;</span> <span class="kd">implements</span> <span class="n">Consumer</span><span class="o">&lt;</span><span class="n">K</span><span class="o">,</span> <span class="n">V</span><span class="o">&gt;</span> <span class="o">{</span>
-    
-    <span class="kd">private</span> <span class="kd">final</span> <span class="n">Fetcher</span><span class="o">&lt;</span><span class="n">K</span><span class="o">,</span> <span class="n">V</span><span class="o">&gt;</span> <span class="n">fetcher</span><span class="o">;</span> <span class="c1">// 消息缓存
-</span><span class="c1"></span>    
-    <span class="c1">// poll 方法做过简化，省略了Metadata和topic subcribe的步骤 
-</span><span class="c1"></span>    <span class="kd">private</span> <span class="n">ConsumerRecords</span><span class="o">&lt;</span><span class="n">K</span><span class="o">,</span> <span class="n">V</span><span class="o">&gt;</span> <span class="nf">poll</span><span class="o">(</span><span class="kd">final</span> <span class="kt">long</span> <span class="n">timeoutMs</span><span class="o">,</span> <span class="kd">final</span> <span class="kt">boolean</span> <span class="n">includeMetadataInTimeout</span><span class="o">)</span> <span class="o">{</span>
-        <span class="c1">// 调用 pollForFetches 获取消息
-</span><span class="c1"></span>        <span class="kd">final</span> <span class="n">Map</span><span class="o">&lt;</span><span class="n">TopicPartition</span><span class="o">,</span> <span class="n">List</span><span class="o">&lt;</span><span class="n">ConsumerRecord</span><span class="o">&lt;</span><span class="n">K</span><span class="o">,</span> <span class="n">V</span><span class="o">&gt;&gt;&gt;</span> <span class="n">records</span> <span class="o">=</span> <span class="n">pollForFetches</span><span class="o">(</span><span class="n">remainingTimeAtLeastZero</span><span class="o">(</span><span class="n">timeoutMs</span><span class="o">,</span> <span class="n">elapsedTime</span><span class="o">));</span>
-        <span class="k">if</span> <span class="o">(!</span><span class="n">records</span><span class="o">.</span><span class="na">isEmpty</span><span class="o">())</span> <span class="o">{</span>
-            <span class="c1">// 注意到这里，成功获取之后，还会调用sendFetches方法，发送请求
-</span><span class="c1"></span>            <span class="c1">// 因为kafka发送请求都是异步的，这里提前发出请求，可以有效的减少下次缓存为空而需要等待请求的时间
-</span><span class="c1"></span>            <span class="k">if</span> <span class="o">(</span><span class="n">fetcher</span><span class="o">.</span><span class="na">sendFetches</span><span class="o">()</span> <span class="o">&gt;</span> <span class="n">0</span> <span class="o">||</span> <span class="n">client</span><span class="o">.</span><span class="na">hasPendingRequests</span><span class="o">())</span> <span class="o">{</span>
-                <span class="n">client</span><span class="o">.</span><span class="na">pollNoWakeup</span><span class="o">();</span>
-            <span class="o">}</span>
-            <span class="k">return</span> <span class="k">this</span><span class="o">.</span><span class="na">interceptors</span><span class="o">.</span><span class="na">onConsume</span><span class="o">(</span><span class="k">new</span> <span class="n">ConsumerRecords</span><span class="o">&lt;&gt;(</span><span class="n">records</span><span class="o">));</span>
-        <span class="o">}</span>
-    <span class="o">}</span>
-    
-    <span class="kd">private</span> <span class="n">Map</span><span class="o">&lt;</span><span class="n">TopicPartition</span><span class="o">,</span> <span class="n">List</span><span class="o">&lt;</span><span class="n">ConsumerRecord</span><span class="o">&lt;</span><span class="n">K</span><span class="o">,</span> <span class="n">V</span><span class="o">&gt;&gt;&gt;</span> <span class="nf">pollForFetches</span><span class="o">(</span><span class="kd">final</span> <span class="kt">long</span> <span class="n">timeoutMs</span><span class="o">)</span> <span class="o">{</span>
-        <span class="c1">// 首先从缓存中尝试读取
-</span><span class="c1"></span>        <span class="kd">final</span> <span class="n">Map</span><span class="o">&lt;</span><span class="n">TopicPartition</span><span class="o">,</span> <span class="n">List</span><span class="o">&lt;</span><span class="n">ConsumerRecord</span><span class="o">&lt;</span><span class="n">K</span><span class="o">,</span> <span class="n">V</span><span class="o">&gt;&gt;&gt;</span> <span class="n">records</span> <span class="o">=</span> <span class="n">fetcher</span><span class="o">.</span><span class="na">fetchedRecords</span><span class="o">();</span>
-        <span class="k">if</span> <span class="o">(!</span><span class="n">records</span><span class="o">.</span><span class="na">isEmpty</span><span class="o">())</span> <span class="o">{</span>
-            <span class="k">return</span> <span class="n">records</span><span class="o">;</span>
-        <span class="o">}</span>
-
-        <span class="c1">// 如果缓存为空，则向服务端发出请求
-</span><span class="c1"></span>        <span class="n">fetcher</span><span class="o">.</span><span class="na">sendFetches</span><span class="o">();</span>
-        <span class="c1">// 等待服务端的响应
-</span><span class="c1"></span>        <span class="n">client</span><span class="o">.</span><span class="na">poll</span><span class="o">(</span><span class="n">pollTimeout</span><span class="o">,</span> <span class="n">startMs</span><span class="o">,</span> <span class="o">()</span> <span class="o">-&gt;</span> <span class="o">{</span>
-            <span class="c1">// hasCompletedFetches 表示是否有成功的响应
-</span><span class="c1"></span>            <span class="k">return</span> <span class="o">!</span><span class="n">fetcher</span><span class="o">.</span><span class="na">hasCompletedFetches</span><span class="o">();</span>
-        <span class="o">});</span>
-        <span class="c1">// 从缓存中获取消息
-</span><span class="c1"></span>        <span class="k">return</span> <span class="n">fetcher</span><span class="o">.</span><span class="na">fetchedRecords</span><span class="o">();</span>
-    <span class="o">}</span>
-<span class="o">}</span>
-</code></pre></td></tr></table></div>
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">KafkaConsumer</span><span class="o">&lt;</span><span class="n">K</span><span class="o">,</span> <span class="n">V</span><span class="o">&gt;</span> <span class="kd">implements</span> <span class="n">Consumer</span><span class="o">&lt;</span><span class="n">K</span><span class="o">,</span> <span class="n">V</span><span class="o">&gt;</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">    
+</span></span><span class="line"><span class="cl">    <span class="kd">private</span> <span class="kd">final</span> <span class="n">Fetcher</span><span class="o">&lt;</span><span class="n">K</span><span class="o">,</span> <span class="n">V</span><span class="o">&gt;</span> <span class="n">fetcher</span><span class="o">;</span> <span class="c1">// 消息缓存
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    
+</span></span><span class="line"><span class="cl">    <span class="c1">// poll 方法做过简化，省略了Metadata和topic subcribe的步骤 
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="kd">private</span> <span class="n">ConsumerRecords</span><span class="o">&lt;</span><span class="n">K</span><span class="o">,</span> <span class="n">V</span><span class="o">&gt;</span> <span class="nf">poll</span><span class="o">(</span><span class="kd">final</span> <span class="kt">long</span> <span class="n">timeoutMs</span><span class="o">,</span> <span class="kd">final</span> <span class="kt">boolean</span> <span class="n">includeMetadataInTimeout</span><span class="o">)</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">        <span class="c1">// 调用 pollForFetches 获取消息
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>        <span class="kd">final</span> <span class="n">Map</span><span class="o">&lt;</span><span class="n">TopicPartition</span><span class="o">,</span> <span class="n">List</span><span class="o">&lt;</span><span class="n">ConsumerRecord</span><span class="o">&lt;</span><span class="n">K</span><span class="o">,</span> <span class="n">V</span><span class="o">&gt;&gt;&gt;</span> <span class="n">records</span> <span class="o">=</span> <span class="n">pollForFetches</span><span class="o">(</span><span class="n">remainingTimeAtLeastZero</span><span class="o">(</span><span class="n">timeoutMs</span><span class="o">,</span> <span class="n">elapsedTime</span><span class="o">));</span>
+</span></span><span class="line"><span class="cl">        <span class="k">if</span> <span class="o">(!</span><span class="n">records</span><span class="o">.</span><span class="na">isEmpty</span><span class="o">())</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">            <span class="c1">// 注意到这里，成功获取之后，还会调用sendFetches方法，发送请求
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>            <span class="c1">// 因为kafka发送请求都是异步的，这里提前发出请求，可以有效的减少下次缓存为空而需要等待请求的时间
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>            <span class="k">if</span> <span class="o">(</span><span class="n">fetcher</span><span class="o">.</span><span class="na">sendFetches</span><span class="o">()</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="o">||</span> <span class="n">client</span><span class="o">.</span><span class="na">hasPendingRequests</span><span class="o">())</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">                <span class="n">client</span><span class="o">.</span><span class="na">pollNoWakeup</span><span class="o">();</span>
+</span></span><span class="line"><span class="cl">            <span class="o">}</span>
+</span></span><span class="line"><span class="cl">            <span class="k">return</span> <span class="k">this</span><span class="o">.</span><span class="na">interceptors</span><span class="o">.</span><span class="na">onConsume</span><span class="o">(</span><span class="k">new</span> <span class="n">ConsumerRecords</span><span class="o">&lt;&gt;(</span><span class="n">records</span><span class="o">));</span>
+</span></span><span class="line"><span class="cl">        <span class="o">}</span>
+</span></span><span class="line"><span class="cl">    <span class="o">}</span>
+</span></span><span class="line"><span class="cl">    
+</span></span><span class="line"><span class="cl">    <span class="kd">private</span> <span class="n">Map</span><span class="o">&lt;</span><span class="n">TopicPartition</span><span class="o">,</span> <span class="n">List</span><span class="o">&lt;</span><span class="n">ConsumerRecord</span><span class="o">&lt;</span><span class="n">K</span><span class="o">,</span> <span class="n">V</span><span class="o">&gt;&gt;&gt;</span> <span class="nf">pollForFetches</span><span class="o">(</span><span class="kd">final</span> <span class="kt">long</span> <span class="n">timeoutMs</span><span class="o">)</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">        <span class="c1">// 首先从缓存中尝试读取
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>        <span class="kd">final</span> <span class="n">Map</span><span class="o">&lt;</span><span class="n">TopicPartition</span><span class="o">,</span> <span class="n">List</span><span class="o">&lt;</span><span class="n">ConsumerRecord</span><span class="o">&lt;</span><span class="n">K</span><span class="o">,</span> <span class="n">V</span><span class="o">&gt;&gt;&gt;</span> <span class="n">records</span> <span class="o">=</span> <span class="n">fetcher</span><span class="o">.</span><span class="na">fetchedRecords</span><span class="o">();</span>
+</span></span><span class="line"><span class="cl">        <span class="k">if</span> <span class="o">(!</span><span class="n">records</span><span class="o">.</span><span class="na">isEmpty</span><span class="o">())</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">            <span class="k">return</span> <span class="n">records</span><span class="o">;</span>
+</span></span><span class="line"><span class="cl">        <span class="o">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">        <span class="c1">// 如果缓存为空，则向服务端发出请求
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>        <span class="n">fetcher</span><span class="o">.</span><span class="na">sendFetches</span><span class="o">();</span>
+</span></span><span class="line"><span class="cl">        <span class="c1">// 等待服务端的响应
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>        <span class="n">client</span><span class="o">.</span><span class="na">poll</span><span class="o">(</span><span class="n">pollTimeout</span><span class="o">,</span> <span class="n">startMs</span><span class="o">,</span> <span class="o">()</span> <span class="o">-&gt;</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">            <span class="c1">// hasCompletedFetches 表示是否有成功的响应
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>            <span class="k">return</span> <span class="o">!</span><span class="n">fetcher</span><span class="o">.</span><span class="na">hasCompletedFetches</span><span class="o">();</span>
+</span></span><span class="line"><span class="cl">        <span class="o">});</span>
+</span></span><span class="line"><span class="cl">        <span class="c1">// 从缓存中获取消息
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>        <span class="k">return</span> <span class="n">fetcher</span><span class="o">.</span><span class="na">fetchedRecords</span><span class="o">();</span>
+</span></span><span class="line"><span class="cl">    <span class="o">}</span>
+</span></span><span class="line"><span class="cl"><span class="o">}</span>
+</span></span></code></pre></td></tr></table></div>
 </div>
 </div><p>我们注意到 Consumer 在每次读取消息之后，都会触发一次发送请求，这样对于提高性能有好处，减少了下一次的请求等待时间。但是这样会存在一个问题，假想我们把  max.poll.records 设置为 1，这样每次从服务端返回的消息数量都比 1 大，那么缓存就会持续的增长，造成 OOM。</p>
 <p>其实 Fetcher 每次发送请求，并不是拉取所有分区的消息。它的 fetchablePartitions 方法决定了请求的分区，它会检查分区在缓存中是否有对应的消息，如果有那么就不请求。这样就基本保证了缓存里拥有每个分区的消息。</p>
@@ -643,29 +643,29 @@
 </span><span class="lnt">22
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">Fetcher</span><span class="o">&lt;</span><span class="n">K</span><span class="o">,</span> <span class="n">V</span><span class="o">&gt;</span> <span class="kd">implements</span> <span class="n">SubscriptionState</span><span class="o">.</span><span class="na">Listener</span><span class="o">,</span> <span class="n">Closeable</span> <span class="o">{</span>
-    <span class="c1">// CompletedFetch代表着响应，对应着一个分区的消息
-</span><span class="c1"></span>    <span class="kd">private</span> <span class="kd">final</span> <span class="n">ConcurrentLinkedQueue</span><span class="o">&lt;</span><span class="n">CompletedFetch</span><span class="o">&gt;</span> <span class="n">completedFetches</span><span class="o">;</span>
-    
-    <span class="kd">private</span> <span class="n">List</span><span class="o">&lt;</span><span class="n">TopicPartition</span><span class="o">&gt;</span> <span class="nf">fetchablePartitions</span><span class="o">()</span> <span class="o">{</span>
-        <span class="c1">// 存储着哪些分区不需要请求
-</span><span class="c1"></span>        <span class="n">Set</span><span class="o">&lt;</span><span class="n">TopicPartition</span><span class="o">&gt;</span> <span class="n">exclude</span> <span class="o">=</span> <span class="k">new</span> <span class="n">HashSet</span><span class="o">&lt;&gt;();</span>  
-        <span class="c1">// 获取分配的分区
-</span><span class="c1"></span>        <span class="n">List</span><span class="o">&lt;</span><span class="n">TopicPartition</span><span class="o">&gt;</span> <span class="n">fetchable</span> <span class="o">=</span> <span class="n">subscriptions</span><span class="o">.</span><span class="na">fetchablePartitions</span><span class="o">();</span>
-        <span class="c1">// nextInLineRecords 表示正在解析的响应
-</span><span class="c1"></span>        <span class="k">if</span> <span class="o">(</span><span class="n">nextInLineRecords</span> <span class="o">!=</span> <span class="kc">null</span> <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="n">nextInLineRecords</span><span class="o">.</span><span class="na">isFetched</span><span class="o">)</span> <span class="o">{</span>
-            <span class="n">exclude</span><span class="o">.</span><span class="na">add</span><span class="o">(</span><span class="n">nextInLineRecords</span><span class="o">.</span><span class="na">partition</span><span class="o">);</span>
-        <span class="o">}</span>
-        <span class="c1">// 如果在缓存里，该分区已经有了消息，则不需要请求
-</span><span class="c1"></span>        <span class="k">for</span> <span class="o">(</span><span class="n">CompletedFetch</span> <span class="n">completedFetch</span> <span class="o">:</span> <span class="n">completedFetches</span><span class="o">)</span> <span class="o">{</span>
-            <span class="n">exclude</span><span class="o">.</span><span class="na">add</span><span class="o">(</span><span class="n">completedFetch</span><span class="o">.</span><span class="na">partition</span><span class="o">);</span>
-        <span class="o">}</span>
-        <span class="c1">// 剔除掉那些不需要请求的分区
-</span><span class="c1"></span>        <span class="n">fetchable</span><span class="o">.</span><span class="na">removeAll</span><span class="o">(</span><span class="n">exclude</span><span class="o">);</span>
-        <span class="k">return</span> <span class="n">fetchable</span><span class="o">;</span>
-    <span class="o">}</span>
-<span class="o">}</span>
-</code></pre></td></tr></table></div>
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">Fetcher</span><span class="o">&lt;</span><span class="n">K</span><span class="o">,</span> <span class="n">V</span><span class="o">&gt;</span> <span class="kd">implements</span> <span class="n">SubscriptionState</span><span class="o">.</span><span class="na">Listener</span><span class="o">,</span> <span class="n">Closeable</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// CompletedFetch代表着响应，对应着一个分区的消息
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="kd">private</span> <span class="kd">final</span> <span class="n">ConcurrentLinkedQueue</span><span class="o">&lt;</span><span class="n">CompletedFetch</span><span class="o">&gt;</span> <span class="n">completedFetches</span><span class="o">;</span>
+</span></span><span class="line"><span class="cl">    
+</span></span><span class="line"><span class="cl">    <span class="kd">private</span> <span class="n">List</span><span class="o">&lt;</span><span class="n">TopicPartition</span><span class="o">&gt;</span> <span class="nf">fetchablePartitions</span><span class="o">()</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">        <span class="c1">// 存储着哪些分区不需要请求
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>        <span class="n">Set</span><span class="o">&lt;</span><span class="n">TopicPartition</span><span class="o">&gt;</span> <span class="n">exclude</span> <span class="o">=</span> <span class="k">new</span> <span class="n">HashSet</span><span class="o">&lt;&gt;();</span>  
+</span></span><span class="line"><span class="cl">        <span class="c1">// 获取分配的分区
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>        <span class="n">List</span><span class="o">&lt;</span><span class="n">TopicPartition</span><span class="o">&gt;</span> <span class="n">fetchable</span> <span class="o">=</span> <span class="n">subscriptions</span><span class="o">.</span><span class="na">fetchablePartitions</span><span class="o">();</span>
+</span></span><span class="line"><span class="cl">        <span class="c1">// nextInLineRecords 表示正在解析的响应
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>        <span class="k">if</span> <span class="o">(</span><span class="n">nextInLineRecords</span> <span class="o">!=</span> <span class="kc">null</span> <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="n">nextInLineRecords</span><span class="o">.</span><span class="na">isFetched</span><span class="o">)</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">            <span class="n">exclude</span><span class="o">.</span><span class="na">add</span><span class="o">(</span><span class="n">nextInLineRecords</span><span class="o">.</span><span class="na">partition</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">        <span class="o">}</span>
+</span></span><span class="line"><span class="cl">        <span class="c1">// 如果在缓存里，该分区已经有了消息，则不需要请求
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>        <span class="k">for</span> <span class="o">(</span><span class="n">CompletedFetch</span> <span class="n">completedFetch</span> <span class="o">:</span> <span class="n">completedFetches</span><span class="o">)</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">            <span class="n">exclude</span><span class="o">.</span><span class="na">add</span><span class="o">(</span><span class="n">completedFetch</span><span class="o">.</span><span class="na">partition</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">        <span class="o">}</span>
+</span></span><span class="line"><span class="cl">        <span class="c1">// 剔除掉那些不需要请求的分区
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>        <span class="n">fetchable</span><span class="o">.</span><span class="na">removeAll</span><span class="o">(</span><span class="n">exclude</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">        <span class="k">return</span> <span class="n">fetchable</span><span class="o">;</span>
+</span></span><span class="line"><span class="cl">    <span class="o">}</span>
+</span></span><span class="line"><span class="cl"><span class="o">}</span>
+</span></span></code></pre></td></tr></table></div>
 </div>
 </div><p>对于请求，不仅有分区的限制，还有每次请求返回的数据大小限制。不然如果一次请求的数据过大，容易造成内存溢出。我们可以观察请求的格式，发现有多个值来限制请求大小。</p>
 <ul>
@@ -700,9 +700,9 @@
 
         
     <div class="updated-badge-container">
-        <span title="Updated @ 2021-10-22 14:44:34 CST" style="cursor:help">
+        <span title="Updated @ 2023-07-02 16:59:09 CST" style="cursor:help">
 
-<svg xmlns="http://www.w3.org/2000/svg" width="130" height="20" class="updated-badge"><linearGradient id="b" x2="0" y2="100%"><stop offset="0" stop-color="#bbb" stop-opacity=".1"/><stop offset="1" stop-opacity=".1"/></linearGradient><clipPath id="a"><rect width="130" height="20" rx="3" fill="#fff"/></clipPath><g clip-path="url(#a)"><path class="updated-badge-left" d="M0 0h55v20H0z"/><path class="updated-badge-right" d="M55 0h75v20H55z"/><path fill="url(#b)" d="M0 0h130v20H0z"/></g><g fill="#fff" text-anchor="middle" font-size="110"><text x="285" y="150" fill="#010101" fill-opacity=".3" textLength="450" transform="scale(.1)">updated</text><text x="285" y="140" textLength="450" transform="scale(.1)">updated</text><text x="915" y="150" fill="#010101" fill-opacity=".3" textLength="650" transform="scale(.1)">2021-10-22</text><text x="915" y="140" textLength="650" transform="scale(.1)">2021-10-22</text></g></svg>
+<svg xmlns="http://www.w3.org/2000/svg" width="130" height="20" class="updated-badge"><linearGradient id="b" x2="0" y2="100%"><stop offset="0" stop-color="#bbb" stop-opacity=".1"/><stop offset="1" stop-opacity=".1"/></linearGradient><clipPath id="a"><rect width="130" height="20" rx="3" fill="#fff"/></clipPath><g clip-path="url(#a)"><path class="updated-badge-left" d="M0 0h55v20H0z"/><path class="updated-badge-right" d="M55 0h75v20H55z"/><path fill="url(#b)" d="M0 0h130v20H0z"/></g><g fill="#fff" text-anchor="middle" font-size="110"><text x="285" y="150" fill="#010101" fill-opacity=".3" textLength="450" transform="scale(.1)">updated</text><text x="285" y="140" textLength="450" transform="scale(.1)">updated</text><text x="915" y="150" fill="#010101" fill-opacity=".3" textLength="650" transform="scale(.1)">2023-07-02</text><text x="915" y="140" textLength="650" transform="scale(.1)">2023-07-02</text></g></svg>
         </span></div>
 
 

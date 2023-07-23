@@ -3,7 +3,7 @@
     <head prefix="og: http://ogp.me/ns# article: http://ogp.me/ns/article#">
     <meta charset="UTF-8" />
 
-    <meta name="generator" content="Hugo 0.88.1" /><meta name="theme-color" content="#fff" />
+    <meta name="generator" content="Hugo 0.115.0"><meta name="theme-color" content="#fff" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     
     <meta name="format-detection" content="telephone=no, date=no, address=no, email=no" />
@@ -14,11 +14,11 @@
 
     <title>Apache Shiro Filter 原理 | 学习笔记</title>
 
-    <link rel="stylesheet" href="/css/meme.min.2d3e1834af2bc8dda20c7d74aaa1d8134845094441b7a554a5206ccd4b472596.css"/>
+    <link rel="stylesheet" href="/css/meme.min.91e7f58f97e1c60563ef481c38d9684fa8099537801d6f17bbfc724121e7d8f1.css"/>
 
     
     
-        <script src="/js/meme.min.800f61672145711eb3e1f29fcfcc3dbe0139dd459259718b611a0390f74703d1.js"></script>
+        <script src="/js/meme.min.3210a00c2fdcf6f831170b681b8ee40f83f0224663661e986872616aec45407f.js"></script>
 
     
 
@@ -54,7 +54,7 @@
         "@context": "https://schema.org",
         "@type": "BlogPosting",
         "datePublished": "2020-04-15T21:13:08+00:00",
-        "dateModified": "2021-10-22T14:44:34+08:00",
+        "dateModified": "2023-07-02T16:59:09+08:00",
         "url": "https://zhmin.github.io/posts/shiro-filter/",
         "headline": "Apache Shiro Filter 原理",
         "description": "前言 shiro 最常见的使用场景就是在 spring web 里面，本篇文章会讲解 shiro 如何集成 spring web 的原理。shiro 会自定义 Filter 嵌入到 servlet 中，当每次请求到来时，会先经过 shiro filter。shiro filter 会解析请求提取出 cookie，然后根据 cookie……",
@@ -98,7 +98,7 @@
 <meta property="og:locale" content="zh" /><meta property="og:image" content="https://zhmin.github.io/icons/apple-touch-icon.png" />
     <meta property="og:type" content="article" />
     <meta property="article:published_time" content="2020-04-15T21:13:08&#43;00:00" />
-    <meta property="article:modified_time" content="2021-10-22T14:44:34&#43;08:00" />
+    <meta property="article:modified_time" content="2023-07-02T16:59:09&#43;08:00" />
     
     <meta property="article:section" content="posts" />
 
@@ -326,24 +326,24 @@
 </span><span class="lnt">17
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">abstract</span> <span class="kd">class</span> <span class="nc">AbstractShiroFilter</span> <span class="kd">extends</span> <span class="n">OncePerRequestFilter</span> <span class="o">{</span>
-    
-    <span class="kd">protected</span> <span class="kt">void</span> <span class="nf">doFilterInternal</span><span class="o">(</span><span class="n">ServletRequest</span> <span class="n">servletRequest</span><span class="o">,</span> <span class="n">ServletResponse</span> <span class="n">servletResponse</span><span class="o">,</span> <span class="kd">final</span> <span class="n">FilterChain</span> <span class="n">chain</span><span class="o">)</span> <span class="o">{</span>         
-        <span class="kd">final</span> <span class="n">ServletRequest</span> <span class="n">request</span> <span class="o">=</span> <span class="n">prepareServletRequest</span><span class="o">(</span><span class="n">servletRequest</span><span class="o">,</span> <span class="n">servletResponse</span><span class="o">,</span> <span class="n">chain</span><span class="o">);</span>
-        <span class="kd">final</span> <span class="n">ServletResponse</span> <span class="n">response</span> <span class="o">=</span> <span class="n">prepareServletResponse</span><span class="o">(</span><span class="n">request</span><span class="o">,</span> <span class="n">servletResponse</span><span class="o">,</span> <span class="n">chain</span><span class="o">);</span>
-        <span class="c1">// 创建Subject，这里会创建WebSubject类型的实例
-</span><span class="c1"></span>        <span class="kd">final</span> <span class="n">Subject</span> <span class="n">subject</span> <span class="o">=</span> <span class="n">createSubject</span><span class="o">(</span><span class="n">request</span><span class="o">,</span> <span class="n">response</span><span class="o">);</span>
-        <span class="n">subject</span><span class="o">.</span><span class="na">execute</span><span class="o">(</span><span class="k">new</span> <span class="n">Callable</span><span class="o">()</span> <span class="o">{</span>
-            <span class="kd">public</span> <span class="n">Object</span> <span class="nf">call</span><span class="o">()</span> <span class="kd">throws</span> <span class="n">Exception</span> <span class="o">{</span>
-                <span class="n">updateSessionLastAccessTime</span><span class="o">(</span><span class="n">request</span><span class="o">,</span> <span class="n">response</span><span class="o">);</span>
-                <span class="c1">// 执行 filter chain
-</span><span class="c1"></span>                <span class="n">executeChain</span><span class="o">(</span><span class="n">request</span><span class="o">,</span> <span class="n">response</span><span class="o">,</span> <span class="n">chain</span><span class="o">);</span>
-                <span class="k">return</span> <span class="kc">null</span><span class="o">;</span>
-            <span class="o">}</span>
-        <span class="o">});</span>
-    <span class="o">}</span>
-<span class="o">}</span>
-</code></pre></td></tr></table></div>
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="kd">public</span> <span class="kd">abstract</span> <span class="kd">class</span> <span class="nc">AbstractShiroFilter</span> <span class="kd">extends</span> <span class="n">OncePerRequestFilter</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">    
+</span></span><span class="line"><span class="cl">    <span class="kd">protected</span> <span class="kt">void</span> <span class="nf">doFilterInternal</span><span class="o">(</span><span class="n">ServletRequest</span> <span class="n">servletRequest</span><span class="o">,</span> <span class="n">ServletResponse</span> <span class="n">servletResponse</span><span class="o">,</span> <span class="kd">final</span> <span class="n">FilterChain</span> <span class="n">chain</span><span class="o">)</span> <span class="o">{</span>         
+</span></span><span class="line"><span class="cl">        <span class="kd">final</span> <span class="n">ServletRequest</span> <span class="n">request</span> <span class="o">=</span> <span class="n">prepareServletRequest</span><span class="o">(</span><span class="n">servletRequest</span><span class="o">,</span> <span class="n">servletResponse</span><span class="o">,</span> <span class="n">chain</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">        <span class="kd">final</span> <span class="n">ServletResponse</span> <span class="n">response</span> <span class="o">=</span> <span class="n">prepareServletResponse</span><span class="o">(</span><span class="n">request</span><span class="o">,</span> <span class="n">servletResponse</span><span class="o">,</span> <span class="n">chain</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">        <span class="c1">// 创建Subject，这里会创建WebSubject类型的实例
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>        <span class="kd">final</span> <span class="n">Subject</span> <span class="n">subject</span> <span class="o">=</span> <span class="n">createSubject</span><span class="o">(</span><span class="n">request</span><span class="o">,</span> <span class="n">response</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">        <span class="n">subject</span><span class="o">.</span><span class="na">execute</span><span class="o">(</span><span class="k">new</span> <span class="n">Callable</span><span class="o">()</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">            <span class="kd">public</span> <span class="n">Object</span> <span class="nf">call</span><span class="o">()</span> <span class="kd">throws</span> <span class="n">Exception</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">                <span class="n">updateSessionLastAccessTime</span><span class="o">(</span><span class="n">request</span><span class="o">,</span> <span class="n">response</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">                <span class="c1">// 执行 filter chain
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>                <span class="n">executeChain</span><span class="o">(</span><span class="n">request</span><span class="o">,</span> <span class="n">response</span><span class="o">,</span> <span class="n">chain</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">                <span class="k">return</span> <span class="kc">null</span><span class="o">;</span>
+</span></span><span class="line"><span class="cl">            <span class="o">}</span>
+</span></span><span class="line"><span class="cl">        <span class="o">});</span>
+</span></span><span class="line"><span class="cl">    <span class="o">}</span>
+</span></span><span class="line"><span class="cl"><span class="o">}</span>
+</span></span></code></pre></td></tr></table></div>
 </div>
 </div><p>在创建线程的时候，shiro 做了一些初始化，它会绑定当前的<code>Subject</code>和<code>SecurityManager</code>，存储到线程上下文。结合前期这篇文章，就可以看到线程安全的使用。</p>
 <p>继续看看<code>executeChain</code>的代码，可以看到 shiro 会有一个根据请求选择<code>FilterChain</code>的过程。</p>
@@ -359,15 +359,15 @@
 </span><span class="lnt">8
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">abstract</span> <span class="kd">class</span> <span class="nc">AbstractShiroFilter</span> <span class="kd">extends</span> <span class="n">OncePerRequestFilter</span> <span class="o">{</span>
-    
-	<span class="kd">protected</span> <span class="kt">void</span> <span class="nf">executeChain</span><span class="o">(</span><span class="n">ServletRequest</span> <span class="n">request</span><span class="o">,</span> <span class="n">ServletResponse</span> <span class="n">response</span><span class="o">,</span> <span class="n">FilterChain</span> <span class="n">origChain</span><span class="o">)</span> <span class="o">{</span>
-        <span class="c1">// 选择对应的FilterChain执行
-</span><span class="c1"></span>        <span class="n">FilterChain</span> <span class="n">chain</span> <span class="o">=</span> <span class="n">getExecutionChain</span><span class="o">(</span><span class="n">request</span><span class="o">,</span> <span class="n">response</span><span class="o">,</span> <span class="n">origChain</span><span class="o">);</span>
-        <span class="n">chain</span><span class="o">.</span><span class="na">doFilter</span><span class="o">(</span><span class="n">request</span><span class="o">,</span> <span class="n">response</span><span class="o">);</span>
-    <span class="o">}</span>
-<span class="o">}</span>
-</code></pre></td></tr></table></div>
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="kd">public</span> <span class="kd">abstract</span> <span class="kd">class</span> <span class="nc">AbstractShiroFilter</span> <span class="kd">extends</span> <span class="n">OncePerRequestFilter</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">    
+</span></span><span class="line"><span class="cl">	<span class="kd">protected</span> <span class="kt">void</span> <span class="nf">executeChain</span><span class="o">(</span><span class="n">ServletRequest</span> <span class="n">request</span><span class="o">,</span> <span class="n">ServletResponse</span> <span class="n">response</span><span class="o">,</span> <span class="n">FilterChain</span> <span class="n">origChain</span><span class="o">)</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">        <span class="c1">// 选择对应的FilterChain执行
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>        <span class="n">FilterChain</span> <span class="n">chain</span> <span class="o">=</span> <span class="n">getExecutionChain</span><span class="o">(</span><span class="n">request</span><span class="o">,</span> <span class="n">response</span><span class="o">,</span> <span class="n">origChain</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">        <span class="n">chain</span><span class="o">.</span><span class="na">doFilter</span><span class="o">(</span><span class="n">request</span><span class="o">,</span> <span class="n">response</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">    <span class="o">}</span>
+</span></span><span class="line"><span class="cl"><span class="o">}</span>
+</span></span></code></pre></td></tr></table></div>
 </div>
 </div><h2 id="filterchain-匹配原理"><a href="#filterchain-匹配原理" class="anchor-link"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon anchor-icon"><path d="M326.612 185.391c59.747 59.809 58.927 155.698.36 214.59-.11.12-.24.25-.36.37l-67.2 67.2c-59.27 59.27-155.699 59.262-214.96 0-59.27-59.26-59.27-155.7 0-214.96l37.106-37.106c9.84-9.84 26.786-3.3 27.294 10.606.648 17.722 3.826 35.527 9.69 52.721 1.986 5.822.567 12.262-3.783 16.612l-13.087 13.087c-28.026 28.026-28.905 73.66-1.155 101.96 28.024 28.579 74.086 28.749 102.325.51l67.2-67.19c28.191-28.191 28.073-73.757 0-101.83-3.701-3.694-7.429-6.564-10.341-8.569a16.037 16.037 0 0 1-6.947-12.606c-.396-10.567 3.348-21.456 11.698-29.806l21.054-21.055c5.521-5.521 14.182-6.199 20.584-1.731a152.482 152.482 0 0 1 20.522 17.197zM467.547 44.449c-59.261-59.262-155.69-59.27-214.96 0l-67.2 67.2c-.12.12-.25.25-.36.37-58.566 58.892-59.387 154.781.36 214.59a152.454 152.454 0 0 0 20.521 17.196c6.402 4.468 15.064 3.789 20.584-1.731l21.054-21.055c8.35-8.35 12.094-19.239 11.698-29.806a16.037 16.037 0 0 0-6.947-12.606c-2.912-2.005-6.64-4.875-10.341-8.569-28.073-28.073-28.191-73.639 0-101.83l67.2-67.19c28.239-28.239 74.3-28.069 102.325.51 27.75 28.3 26.872 73.934-1.155 101.96l-13.087 13.087c-4.35 4.35-5.769 10.79-3.783 16.612 5.864 17.194 9.042 34.999 9.69 52.721.509 13.906 17.454 20.446 27.294 10.606l37.106-37.106c59.271-59.259 59.271-155.699.001-214.959z"/></svg></a>FilterChain 匹配原理</h2>
 <p>shiro 支持根据请求来选择对应的<code>FilterChain</code>，这个功能由<code>FilterChainResolver</code>接口定义。</p>
@@ -379,11 +379,11 @@
 </span><span class="lnt">4
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">interface</span> <span class="nc">FilterChainResolver</span> <span class="o">{</span>
-    <span class="c1">// 根据请求来获取对应的FilterChain
-</span><span class="c1"></span>    <span class="n">FilterChain</span> <span class="nf">getChain</span><span class="o">(</span><span class="n">ServletRequest</span> <span class="n">request</span><span class="o">,</span> <span class="n">ServletResponse</span> <span class="n">response</span><span class="o">,</span> <span class="n">FilterChain</span> <span class="n">originalChain</span><span class="o">);</span>
-<span class="o">}</span>
-</code></pre></td></tr></table></div>
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="kd">public</span> <span class="kd">interface</span> <span class="nc">FilterChainResolver</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// 根据请求来获取对应的FilterChain
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="n">FilterChain</span> <span class="nf">getChain</span><span class="o">(</span><span class="n">ServletRequest</span> <span class="n">request</span><span class="o">,</span> <span class="n">ServletResponse</span> <span class="n">response</span><span class="o">,</span> <span class="n">FilterChain</span> <span class="n">originalChain</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl"><span class="o">}</span>
+</span></span></code></pre></td></tr></table></div>
 </div>
 </div><p>它有两个子类，<code>PathMatchingFilterChainResolver</code>和<code>SimpleFilterChainResolver</code>，都是根据请求路径来判断的。两者的实现没什么本质区别，都是使用<code>Map</code>保存了匹配规则和对应的<code>FilterChain</code>，只不过前者将路径匹配和<code>FilterChain</code>管理分离开了。</p>
 <h3 id="simplefilterchainresolver-类"><a href="#simplefilterchainresolver-类" class="anchor-link"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon anchor-icon"><path d="M326.612 185.391c59.747 59.809 58.927 155.698.36 214.59-.11.12-.24.25-.36.37l-67.2 67.2c-59.27 59.27-155.699 59.262-214.96 0-59.27-59.26-59.27-155.7 0-214.96l37.106-37.106c9.84-9.84 26.786-3.3 27.294 10.606.648 17.722 3.826 35.527 9.69 52.721 1.986 5.822.567 12.262-3.783 16.612l-13.087 13.087c-28.026 28.026-28.905 73.66-1.155 101.96 28.024 28.579 74.086 28.749 102.325.51l67.2-67.19c28.191-28.191 28.073-73.757 0-101.83-3.701-3.694-7.429-6.564-10.341-8.569a16.037 16.037 0 0 1-6.947-12.606c-.396-10.567 3.348-21.456 11.698-29.806l21.054-21.055c5.521-5.521 14.182-6.199 20.584-1.731a152.482 152.482 0 0 1 20.522 17.197zM467.547 44.449c-59.261-59.262-155.69-59.27-214.96 0l-67.2 67.2c-.12.12-.25.25-.36.37-58.566 58.892-59.387 154.781.36 214.59a152.454 152.454 0 0 0 20.521 17.196c6.402 4.468 15.064 3.789 20.584-1.731l21.054-21.055c8.35-8.35 12.094-19.239 11.698-29.806a16.037 16.037 0 0 0-6.947-12.606c-2.912-2.005-6.64-4.875-10.341-8.569-28.073-28.073-28.191-73.639 0-101.83l67.2-67.19c28.239-28.239 74.3-28.069 102.325.51 27.75 28.3 26.872 73.934-1.155 101.96l-13.087 13.087c-4.35 4.35-5.769 10.79-3.783 16.612 5.864 17.194 9.042 34.999 9.69 52.721.509 13.906 17.454 20.446 27.294 10.606l37.106-37.106c59.271-59.259 59.271-155.699.001-214.959z"/></svg></a>SimpleFilterChainResolver 类</h3>
@@ -406,21 +406,21 @@
 </span><span class="lnt">14
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="kd">class</span> <span class="nc">SimpleFilterChainResolver</span> <span class="kd">implements</span> <span class="n">FilterChainResolver</span> <span class="o">{</span>
-    <span class="c1">// key 为 匹配路径，value 为 Filter列表。
-</span><span class="c1"></span>    <span class="kd">private</span> <span class="kd">final</span> <span class="n">Map</span><span class="o">&lt;</span><span class="n">String</span><span class="o">,</span> <span class="n">Key</span><span class="o">&lt;?</span> <span class="kd">extends</span> <span class="n">Filter</span><span class="o">&gt;[]&gt;</span> <span class="n">chains</span><span class="o">;</span>
-    
-    <span class="kd">public</span> <span class="n">FilterChain</span> <span class="nf">getChain</span><span class="o">(</span><span class="n">ServletRequest</span> <span class="n">request</span><span class="o">,</span> <span class="n">ServletResponse</span> <span class="n">response</span><span class="o">,</span> <span class="kd">final</span> <span class="n">FilterChain</span> <span class="n">originalChain</span><span class="o">)</span> <span class="o">{</span>
-        <span class="c1">// 提取请求路径
-</span><span class="c1"></span>        <span class="n">String</span> <span class="n">path</span> <span class="o">=</span> <span class="n">WebUtils</span><span class="o">.</span><span class="na">getPathWithinApplication</span><span class="o">(</span><span class="n">WebUtils</span><span class="o">.</span><span class="na">toHttp</span><span class="o">(</span><span class="n">request</span><span class="o">));</span>
-        <span class="c1">// 然后遍历Map，直到找到第一个路径匹配的FilterChain，返回封装后的SimpleFilterChain
-</span><span class="c1"></span>        <span class="k">for</span> <span class="o">(</span><span class="kd">final</span> <span class="n">String</span> <span class="n">pathPattern</span> <span class="o">:</span> <span class="n">chains</span><span class="o">.</span><span class="na">keySet</span><span class="o">())</span> <span class="o">{</span>
-            <span class="k">if</span> <span class="o">(</span><span class="n">patternMatcher</span><span class="o">.</span><span class="na">matches</span><span class="o">(</span><span class="n">pathPattern</span><span class="o">,</span> <span class="n">path</span><span class="o">))</span> <span class="o">{</span>
-                <span class="kd">final</span> <span class="n">Iterator</span><span class="o">&lt;</span><span class="n">Key</span><span class="o">&lt;?</span> <span class="kd">extends</span> <span class="n">Filter</span><span class="o">&gt;&gt;</span> <span class="n">chain</span> <span class="o">=</span> <span class="n">Arrays</span><span class="o">.</span><span class="na">asList</span><span class="o">(</span><span class="n">chains</span><span class="o">.</span><span class="na">get</span><span class="o">(</span><span class="n">pathPattern</span><span class="o">)).</span><span class="na">iterator</span><span class="o">();</span>
-                <span class="k">return</span> <span class="k">new</span> <span class="n">SimpleFilterChain</span><span class="o">(</span><span class="n">originalChain</span><span class="o">,</span> <span class="k">new</span> <span class="n">Iterator</span><span class="o">&lt;</span><span class="n">Filter</span><span class="o">&gt;();</span>
-                                             <span class="o">}</span>
-                                             <span class="o">}</span>
-</code></pre></td></tr></table></div>
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="kd">class</span> <span class="nc">SimpleFilterChainResolver</span> <span class="kd">implements</span> <span class="n">FilterChainResolver</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// key 为 匹配路径，value 为 Filter列表。
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="kd">private</span> <span class="kd">final</span> <span class="n">Map</span><span class="o">&lt;</span><span class="n">String</span><span class="o">,</span> <span class="n">Key</span><span class="o">&lt;?</span> <span class="kd">extends</span> <span class="n">Filter</span><span class="o">&gt;[]&gt;</span> <span class="n">chains</span><span class="o">;</span>
+</span></span><span class="line"><span class="cl">    
+</span></span><span class="line"><span class="cl">    <span class="kd">public</span> <span class="n">FilterChain</span> <span class="nf">getChain</span><span class="o">(</span><span class="n">ServletRequest</span> <span class="n">request</span><span class="o">,</span> <span class="n">ServletResponse</span> <span class="n">response</span><span class="o">,</span> <span class="kd">final</span> <span class="n">FilterChain</span> <span class="n">originalChain</span><span class="o">)</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">        <span class="c1">// 提取请求路径
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>        <span class="n">String</span> <span class="n">path</span> <span class="o">=</span> <span class="n">WebUtils</span><span class="o">.</span><span class="na">getPathWithinApplication</span><span class="o">(</span><span class="n">WebUtils</span><span class="o">.</span><span class="na">toHttp</span><span class="o">(</span><span class="n">request</span><span class="o">));</span>
+</span></span><span class="line"><span class="cl">        <span class="c1">// 然后遍历Map，直到找到第一个路径匹配的FilterChain，返回封装后的SimpleFilterChain
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>        <span class="k">for</span> <span class="o">(</span><span class="kd">final</span> <span class="n">String</span> <span class="n">pathPattern</span> <span class="o">:</span> <span class="n">chains</span><span class="o">.</span><span class="na">keySet</span><span class="o">())</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">            <span class="k">if</span> <span class="o">(</span><span class="n">patternMatcher</span><span class="o">.</span><span class="na">matches</span><span class="o">(</span><span class="n">pathPattern</span><span class="o">,</span> <span class="n">path</span><span class="o">))</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">                <span class="kd">final</span> <span class="n">Iterator</span><span class="o">&lt;</span><span class="n">Key</span><span class="o">&lt;?</span> <span class="kd">extends</span> <span class="n">Filter</span><span class="o">&gt;&gt;</span> <span class="n">chain</span> <span class="o">=</span> <span class="n">Arrays</span><span class="o">.</span><span class="na">asList</span><span class="o">(</span><span class="n">chains</span><span class="o">.</span><span class="na">get</span><span class="o">(</span><span class="n">pathPattern</span><span class="o">)).</span><span class="na">iterator</span><span class="o">();</span>
+</span></span><span class="line"><span class="cl">                <span class="k">return</span> <span class="k">new</span> <span class="n">SimpleFilterChain</span><span class="o">(</span><span class="n">originalChain</span><span class="o">,</span> <span class="k">new</span> <span class="n">Iterator</span><span class="o">&lt;</span><span class="n">Filter</span><span class="o">&gt;();</span>
+</span></span><span class="line"><span class="cl">                                             <span class="o">}</span>
+</span></span><span class="line"><span class="cl">                                             <span class="o">}</span>
+</span></span></code></pre></td></tr></table></div>
 </div>
 </div><p><code>SimpleFilterChain</code>包含了两部分的<code>Filter</code>，原始的 <code>Serlvet FilterChain</code>，和上述<code>Filter</code>列表。它被调用时，会先执行<code>Filter</code>列表，然后再执行<code>Serlvet FilterChain</code>。</p>
 <div class="highlight"><div class="chroma">
@@ -434,14 +434,14 @@
 </span><span class="lnt">7
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="kd">class</span> <span class="nc">SimpleFilterChain</span> <span class="kd">implements</span> <span class="n">FilterChain</span> <span class="o">{</span>
-    <span class="c1">// Serlvet 的 FilterChain 
-</span><span class="c1"></span>    <span class="kd">private</span> <span class="kd">final</span> <span class="n">FilterChain</span> <span class="n">originalChain</span><span class="o">;</span>
-    
-    <span class="c1">// Filter 列表
-</span><span class="c1"></span>    <span class="kd">private</span> <span class="kd">final</span> <span class="n">Iterator</span><span class="o">&lt;?</span> <span class="kd">extends</span> <span class="n">Filter</span><span class="o">&gt;</span> <span class="n">chain</span><span class="o">;</span>   
-<span class="o">}</span>
-</code></pre></td></tr></table></div>
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="kd">class</span> <span class="nc">SimpleFilterChain</span> <span class="kd">implements</span> <span class="n">FilterChain</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// Serlvet 的 FilterChain 
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="kd">private</span> <span class="kd">final</span> <span class="n">FilterChain</span> <span class="n">originalChain</span><span class="o">;</span>
+</span></span><span class="line"><span class="cl">    
+</span></span><span class="line"><span class="cl">    <span class="c1">// Filter 列表
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="kd">private</span> <span class="kd">final</span> <span class="n">Iterator</span><span class="o">&lt;?</span> <span class="kd">extends</span> <span class="n">Filter</span><span class="o">&gt;</span> <span class="n">chain</span><span class="o">;</span>   
+</span></span><span class="line"><span class="cl"><span class="o">}</span>
+</span></span></code></pre></td></tr></table></div>
 </div>
 </div><h3 id="pathmatchingfilterchainresolver类"><a href="#pathmatchingfilterchainresolver类" class="anchor-link"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon anchor-icon"><path d="M326.612 185.391c59.747 59.809 58.927 155.698.36 214.59-.11.12-.24.25-.36.37l-67.2 67.2c-59.27 59.27-155.699 59.262-214.96 0-59.27-59.26-59.27-155.7 0-214.96l37.106-37.106c9.84-9.84 26.786-3.3 27.294 10.606.648 17.722 3.826 35.527 9.69 52.721 1.986 5.822.567 12.262-3.783 16.612l-13.087 13.087c-28.026 28.026-28.905 73.66-1.155 101.96 28.024 28.579 74.086 28.749 102.325.51l67.2-67.19c28.191-28.191 28.073-73.757 0-101.83-3.701-3.694-7.429-6.564-10.341-8.569a16.037 16.037 0 0 1-6.947-12.606c-.396-10.567 3.348-21.456 11.698-29.806l21.054-21.055c5.521-5.521 14.182-6.199 20.584-1.731a152.482 152.482 0 0 1 20.522 17.197zM467.547 44.449c-59.261-59.262-155.69-59.27-214.96 0l-67.2 67.2c-.12.12-.25.25-.36.37-58.566 58.892-59.387 154.781.36 214.59a152.454 152.454 0 0 0 20.521 17.196c6.402 4.468 15.064 3.789 20.584-1.731l21.054-21.055c8.35-8.35 12.094-19.239 11.698-29.806a16.037 16.037 0 0 0-6.947-12.606c-2.912-2.005-6.64-4.875-10.341-8.569-28.073-28.073-28.191-73.639 0-101.83l67.2-67.19c28.239-28.239 74.3-28.069 102.325.51 27.75 28.3 26.872 73.934-1.155 101.96l-13.087 13.087c-4.35 4.35-5.769 10.79-3.783 16.612 5.864 17.194 9.042 34.999 9.69 52.721.509 13.906 17.454 20.446 27.294 10.606l37.106-37.106c59.271-59.259 59.271-155.699.001-214.959z"/></svg></a>PathMatchingFilterChainResolver类</h3>
 <p><code>PathMatchingFilterChainResolver</code>是 shiro 默认的实现类，它只负责匹配的功能，管理<code>FilterChain</code>的功能被分离开来了，使得我们可以自由定义<code>FilterChain</code>。</p>
@@ -459,16 +459,16 @@
 </span><span class="lnt">9
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">DefaultFilterChainManager</span> <span class="kd">implements</span> <span class="n">FilterChainManager</span> <span class="o">{</span>
- 
-    <span class="c1">// 保存所有的Filter，key为filter的名称，value为filter实例
-</span><span class="c1"></span>    <span class="kd">private</span> <span class="n">Map</span><span class="o">&lt;</span><span class="n">String</span><span class="o">,</span> <span class="n">Filter</span><span class="o">&gt;</span> <span class="n">filters</span><span class="o">;</span>
-    
-    <span class="c1">// 保存FilterChain，key为匹配路径，value为NamedFilterList实例，保存了filter列表
-</span><span class="c1"></span>    <span class="kd">private</span> <span class="n">Map</span><span class="o">&lt;</span><span class="n">String</span><span class="o">,</span> <span class="n">NamedFilterList</span><span class="o">&gt;</span> <span class="n">filterChains</span><span class="o">;</span>
-    
-<span class="o">}</span>
-</code></pre></td></tr></table></div>
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">DefaultFilterChainManager</span> <span class="kd">implements</span> <span class="n">FilterChainManager</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl"> 
+</span></span><span class="line"><span class="cl">    <span class="c1">// 保存所有的Filter，key为filter的名称，value为filter实例
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="kd">private</span> <span class="n">Map</span><span class="o">&lt;</span><span class="n">String</span><span class="o">,</span> <span class="n">Filter</span><span class="o">&gt;</span> <span class="n">filters</span><span class="o">;</span>
+</span></span><span class="line"><span class="cl">    
+</span></span><span class="line"><span class="cl">    <span class="c1">// 保存FilterChain，key为匹配路径，value为NamedFilterList实例，保存了filter列表
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="kd">private</span> <span class="n">Map</span><span class="o">&lt;</span><span class="n">String</span><span class="o">,</span> <span class="n">NamedFilterList</span><span class="o">&gt;</span> <span class="n">filterChains</span><span class="o">;</span>
+</span></span><span class="line"><span class="cl">    
+</span></span><span class="line"><span class="cl"><span class="o">}</span>
+</span></span></code></pre></td></tr></table></div>
 </div>
 </div><h2 id="独立-filter"><a href="#独立-filter" class="anchor-link"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon anchor-icon"><path d="M326.612 185.391c59.747 59.809 58.927 155.698.36 214.59-.11.12-.24.25-.36.37l-67.2 67.2c-59.27 59.27-155.699 59.262-214.96 0-59.27-59.26-59.27-155.7 0-214.96l37.106-37.106c9.84-9.84 26.786-3.3 27.294 10.606.648 17.722 3.826 35.527 9.69 52.721 1.986 5.822.567 12.262-3.783 16.612l-13.087 13.087c-28.026 28.026-28.905 73.66-1.155 101.96 28.024 28.579 74.086 28.749 102.325.51l67.2-67.19c28.191-28.191 28.073-73.757 0-101.83-3.701-3.694-7.429-6.564-10.341-8.569a16.037 16.037 0 0 1-6.947-12.606c-.396-10.567 3.348-21.456 11.698-29.806l21.054-21.055c5.521-5.521 14.182-6.199 20.584-1.731a152.482 152.482 0 0 1 20.522 17.197zM467.547 44.449c-59.261-59.262-155.69-59.27-214.96 0l-67.2 67.2c-.12.12-.25.25-.36.37-58.566 58.892-59.387 154.781.36 214.59a152.454 152.454 0 0 0 20.521 17.196c6.402 4.468 15.064 3.789 20.584-1.731l21.054-21.055c8.35-8.35 12.094-19.239 11.698-29.806a16.037 16.037 0 0 0-6.947-12.606c-2.912-2.005-6.64-4.875-10.341-8.569-28.073-28.073-28.191-73.639 0-101.83l67.2-67.19c28.239-28.239 74.3-28.069 102.325.51 27.75 28.3 26.872 73.934-1.155 101.96l-13.087 13.087c-4.35 4.35-5.769 10.79-3.783 16.612 5.864 17.194 9.042 34.999 9.69 52.721.509 13.906 17.454 20.446 27.294 10.606l37.106-37.106c59.271-59.259 59.271-155.699.001-214.959z"/></svg></a>独立 Filter</h2>
 <p>我们再来看看独立Filter 的类图，依次从上到下看。</p>
@@ -521,15 +521,15 @@
 </span><span class="lnt">8
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">AnonymousFilter</span> <span class="kd">extends</span> <span class="n">PathMatchingFilter</span> <span class="o">{</span>
-
-    <span class="nd">@Override</span>
-    <span class="kd">protected</span> <span class="kt">boolean</span> <span class="nf">onPreHandle</span><span class="o">(</span><span class="n">ServletRequest</span> <span class="n">request</span><span class="o">,</span> <span class="n">ServletResponse</span> <span class="n">response</span><span class="o">,</span> <span class="n">Object</span> <span class="n">mappedValue</span><span class="o">)</span> <span class="o">{</span>
-        <span class="k">return</span> <span class="kc">true</span><span class="o">;</span>
-    <span class="o">}</span>
-
-<span class="o">}</span>
-</code></pre></td></tr></table></div>
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">AnonymousFilter</span> <span class="kd">extends</span> <span class="n">PathMatchingFilter</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="nd">@Override</span>
+</span></span><span class="line"><span class="cl">    <span class="kd">protected</span> <span class="kt">boolean</span> <span class="nf">onPreHandle</span><span class="o">(</span><span class="n">ServletRequest</span> <span class="n">request</span><span class="o">,</span> <span class="n">ServletResponse</span> <span class="n">response</span><span class="o">,</span> <span class="n">Object</span> <span class="n">mappedValue</span><span class="o">)</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">        <span class="k">return</span> <span class="kc">true</span><span class="o">;</span>
+</span></span><span class="line"><span class="cl">    <span class="o">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="o">}</span>
+</span></span></code></pre></td></tr></table></div>
 </div>
 </div><h3 id="accesscontrolfilter-类"><a href="#accesscontrolfilter-类" class="anchor-link"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon anchor-icon"><path d="M326.612 185.391c59.747 59.809 58.927 155.698.36 214.59-.11.12-.24.25-.36.37l-67.2 67.2c-59.27 59.27-155.699 59.262-214.96 0-59.27-59.26-59.27-155.7 0-214.96l37.106-37.106c9.84-9.84 26.786-3.3 27.294 10.606.648 17.722 3.826 35.527 9.69 52.721 1.986 5.822.567 12.262-3.783 16.612l-13.087 13.087c-28.026 28.026-28.905 73.66-1.155 101.96 28.024 28.579 74.086 28.749 102.325.51l67.2-67.19c28.191-28.191 28.073-73.757 0-101.83-3.701-3.694-7.429-6.564-10.341-8.569a16.037 16.037 0 0 1-6.947-12.606c-.396-10.567 3.348-21.456 11.698-29.806l21.054-21.055c5.521-5.521 14.182-6.199 20.584-1.731a152.482 152.482 0 0 1 20.522 17.197zM467.547 44.449c-59.261-59.262-155.69-59.27-214.96 0l-67.2 67.2c-.12.12-.25.25-.36.37-58.566 58.892-59.387 154.781.36 214.59a152.454 152.454 0 0 0 20.521 17.196c6.402 4.468 15.064 3.789 20.584-1.731l21.054-21.055c8.35-8.35 12.094-19.239 11.698-29.806a16.037 16.037 0 0 0-6.947-12.606c-2.912-2.005-6.64-4.875-10.341-8.569-28.073-28.073-28.191-73.639 0-101.83l67.2-67.19c28.239-28.239 74.3-28.069 102.325.51 27.75 28.3 26.872 73.934-1.155 101.96l-13.087 13.087c-4.35 4.35-5.769 10.79-3.783 16.612 5.864 17.194 9.042 34.999 9.69 52.721.509 13.906 17.454 20.446 27.294 10.606l37.106-37.106c59.271-59.259 59.271-155.699.001-214.959z"/></svg></a>AccessControlFilter 类</h3>
 <p><code>AccessControlFilter</code>实现了<code>onPreHandle</code>方法，并且还定义了<code>isAccessAllowed</code>和<code>onAccessDenied</code>的方法。子类需要实现<code>isAccessAllowed</code>来负责用户身份认证或者权限检查的逻辑。还需要实现<code>onAccessDenied</code>方法来执行失败后的处理逻辑。</p>
@@ -575,23 +575,23 @@
 </span><span class="lnt">16
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">RestfulFilter</span> <span class="kd">extends</span> <span class="n">AuthenticationFilter</span> <span class="o">{</span>
-    
-    <span class="kd">private</span> <span class="kd">final</span> <span class="n">String</span> <span class="n">LOGIN_REQUIRED_RESPONSE</span> <span class="o">=</span> <span class="s">&#34;{\&#34;status\&#34;: 1, \&#34;msg\&#34;: \&#34;login required\&#34;}&#34;</span><span class="o">;</span>
-    
-    <span class="nd">@Override</span>
-    <span class="kd">protected</span> <span class="kt">boolean</span> <span class="nf">onAccessDenied</span><span class="o">(</span><span class="n">ServletRequest</span> <span class="n">servletRequest</span><span class="o">,</span> <span class="n">ServletResponse</span> <span class="n">servletResponse</span><span class="o">)</span> <span class="kd">throws</span> <span class="n">Exception</span> <span class="o">{</span>
-        <span class="n">HttpServletResponse</span> <span class="n">httpServletResponse</span> <span class="o">=</span> <span class="o">(</span><span class="n">HttpServletResponse</span><span class="o">)</span> <span class="n">servletResponse</span><span class="o">;</span>
-        <span class="n">PrintWriter</span> <span class="n">out</span> <span class="o">=</span> <span class="n">servletResponse</span><span class="o">.</span><span class="na">getWriter</span><span class="o">();</span>
-        <span class="n">servletResponse</span><span class="o">.</span><span class="na">setContentType</span><span class="o">(</span><span class="s">&#34;application/json;charset=utf-8&#34;</span><span class="o">);</span>
-        <span class="n">servletResponse</span><span class="o">.</span><span class="na">setCharacterEncoding</span><span class="o">(</span><span class="s">&#34;UTF-8&#34;</span><span class="o">);</span>
-        <span class="n">out</span><span class="o">.</span><span class="na">print</span><span class="o">(</span><span class="n">LOGIN_REQUIRED_RESPONSE</span><span class="o">);</span>
-        <span class="n">out</span><span class="o">.</span><span class="na">flush</span><span class="o">();</span>
-
-        <span class="k">return</span> <span class="kc">false</span><span class="o">;</span>
-    <span class="o">}</span>
-<span class="o">}</span>
-</code></pre></td></tr></table></div>
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">RestfulFilter</span> <span class="kd">extends</span> <span class="n">AuthenticationFilter</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">    
+</span></span><span class="line"><span class="cl">    <span class="kd">private</span> <span class="kd">final</span> <span class="n">String</span> <span class="n">LOGIN_REQUIRED_RESPONSE</span> <span class="o">=</span> <span class="s">&#34;{\&#34;status\&#34;: 1, \&#34;msg\&#34;: \&#34;login required\&#34;}&#34;</span><span class="o">;</span>
+</span></span><span class="line"><span class="cl">    
+</span></span><span class="line"><span class="cl">    <span class="nd">@Override</span>
+</span></span><span class="line"><span class="cl">    <span class="kd">protected</span> <span class="kt">boolean</span> <span class="nf">onAccessDenied</span><span class="o">(</span><span class="n">ServletRequest</span> <span class="n">servletRequest</span><span class="o">,</span> <span class="n">ServletResponse</span> <span class="n">servletResponse</span><span class="o">)</span> <span class="kd">throws</span> <span class="n">Exception</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">        <span class="n">HttpServletResponse</span> <span class="n">httpServletResponse</span> <span class="o">=</span> <span class="o">(</span><span class="n">HttpServletResponse</span><span class="o">)</span> <span class="n">servletResponse</span><span class="o">;</span>
+</span></span><span class="line"><span class="cl">        <span class="n">PrintWriter</span> <span class="n">out</span> <span class="o">=</span> <span class="n">servletResponse</span><span class="o">.</span><span class="na">getWriter</span><span class="o">();</span>
+</span></span><span class="line"><span class="cl">        <span class="n">servletResponse</span><span class="o">.</span><span class="na">setContentType</span><span class="o">(</span><span class="s">&#34;application/json;charset=utf-8&#34;</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">        <span class="n">servletResponse</span><span class="o">.</span><span class="na">setCharacterEncoding</span><span class="o">(</span><span class="s">&#34;UTF-8&#34;</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">        <span class="n">out</span><span class="o">.</span><span class="na">print</span><span class="o">(</span><span class="n">LOGIN_REQUIRED_RESPONSE</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">        <span class="n">out</span><span class="o">.</span><span class="na">flush</span><span class="o">();</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">        <span class="k">return</span> <span class="kc">false</span><span class="o">;</span>
+</span></span><span class="line"><span class="cl">    <span class="o">}</span>
+</span></span><span class="line"><span class="cl"><span class="o">}</span>
+</span></span></code></pre></td></tr></table></div>
 </div>
 </div><h3 id="权限检查-filter"><a href="#权限检查-filter" class="anchor-link"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon anchor-icon"><path d="M326.612 185.391c59.747 59.809 58.927 155.698.36 214.59-.11.12-.24.25-.36.37l-67.2 67.2c-59.27 59.27-155.699 59.262-214.96 0-59.27-59.26-59.27-155.7 0-214.96l37.106-37.106c9.84-9.84 26.786-3.3 27.294 10.606.648 17.722 3.826 35.527 9.69 52.721 1.986 5.822.567 12.262-3.783 16.612l-13.087 13.087c-28.026 28.026-28.905 73.66-1.155 101.96 28.024 28.579 74.086 28.749 102.325.51l67.2-67.19c28.191-28.191 28.073-73.757 0-101.83-3.701-3.694-7.429-6.564-10.341-8.569a16.037 16.037 0 0 1-6.947-12.606c-.396-10.567 3.348-21.456 11.698-29.806l21.054-21.055c5.521-5.521 14.182-6.199 20.584-1.731a152.482 152.482 0 0 1 20.522 17.197zM467.547 44.449c-59.261-59.262-155.69-59.27-214.96 0l-67.2 67.2c-.12.12-.25.25-.36.37-58.566 58.892-59.387 154.781.36 214.59a152.454 152.454 0 0 0 20.521 17.196c6.402 4.468 15.064 3.789 20.584-1.731l21.054-21.055c8.35-8.35 12.094-19.239 11.698-29.806a16.037 16.037 0 0 0-6.947-12.606c-2.912-2.005-6.64-4.875-10.341-8.569-28.073-28.073-28.191-73.639 0-101.83l67.2-67.19c28.239-28.239 74.3-28.069 102.325.51 27.75 28.3 26.872 73.934-1.155 101.96l-13.087 13.087c-4.35 4.35-5.769 10.79-3.783 16.612 5.864 17.194 9.042 34.999 9.69 52.721.509 13.906 17.454 20.446 27.294 10.606l37.106-37.106c59.271-59.259 59.271-155.699.001-214.959z"/></svg></a>权限检查 Filter</h3>
 <p>权限认证的 Filter 类会相对简单一些，首先看看父类<code>AuthorizationFilter</code>。它实现了<code>onAccessDenied</code>方法，当权限检查没通过时，会被调用。如果用户没有认证通过的话，<code>AuthorizationFilter</code>会返回 302 响应，跳转到登录地址。如果是权限校检没通过，那么会返回 401 响应。</p>
@@ -649,20 +649,20 @@
 </span><span class="lnt">13
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">ShiroFilterFactoryBean</span> <span class="kd">implements</span> <span class="n">FactoryBean</span><span class="o">,</span> <span class="n">BeanPostProcessor</span> <span class="o">{</span>
-
-    <span class="kd">protected</span> <span class="n">AbstractShiroFilter</span> <span class="nf">createInstance</span><span class="o">()</span> <span class="kd">throws</span> <span class="n">Exception</span> <span class="o">{</span>
-        <span class="n">SecurityManager</span> <span class="n">securityManager</span> <span class="o">=</span> <span class="n">getSecurityManager</span><span class="o">();</span>
-        <span class="c1">// 创建并且初始化FilterChainManager
-</span><span class="c1"></span>        <span class="n">FilterChainManager</span> <span class="n">manager</span> <span class="o">=</span> <span class="n">createFilterChainManager</span><span class="o">();</span>
-        <span class="c1">// 创建PathMatchingFilterChainResolver，并且设置FilterChainManager
-</span><span class="c1"></span>        <span class="n">PathMatchingFilterChainResolver</span> <span class="n">chainResolver</span> <span class="o">=</span> <span class="k">new</span> <span class="n">PathMatchingFilterChainResolver</span><span class="o">();</span>
-        <span class="n">chainResolver</span><span class="o">.</span><span class="na">setFilterChainManager</span><span class="o">(</span><span class="n">manager</span><span class="o">);</span>
-        <span class="c1">// 返回 SpringShiroFilter 实例
-</span><span class="c1"></span>        <span class="k">return</span> <span class="k">new</span> <span class="n">SpringShiroFilter</span><span class="o">((</span><span class="n">WebSecurityManager</span><span class="o">)</span> <span class="n">securityManager</span><span class="o">,</span> <span class="n">chainResolver</span><span class="o">);</span>
-    <span class="o">}</span>
-<span class="o">}</span>
-</code></pre></td></tr></table></div>
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">ShiroFilterFactoryBean</span> <span class="kd">implements</span> <span class="n">FactoryBean</span><span class="o">,</span> <span class="n">BeanPostProcessor</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="kd">protected</span> <span class="n">AbstractShiroFilter</span> <span class="nf">createInstance</span><span class="o">()</span> <span class="kd">throws</span> <span class="n">Exception</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">        <span class="n">SecurityManager</span> <span class="n">securityManager</span> <span class="o">=</span> <span class="n">getSecurityManager</span><span class="o">();</span>
+</span></span><span class="line"><span class="cl">        <span class="c1">// 创建并且初始化FilterChainManager
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>        <span class="n">FilterChainManager</span> <span class="n">manager</span> <span class="o">=</span> <span class="n">createFilterChainManager</span><span class="o">();</span>
+</span></span><span class="line"><span class="cl">        <span class="c1">// 创建PathMatchingFilterChainResolver，并且设置FilterChainManager
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>        <span class="n">PathMatchingFilterChainResolver</span> <span class="n">chainResolver</span> <span class="o">=</span> <span class="k">new</span> <span class="n">PathMatchingFilterChainResolver</span><span class="o">();</span>
+</span></span><span class="line"><span class="cl">        <span class="n">chainResolver</span><span class="o">.</span><span class="na">setFilterChainManager</span><span class="o">(</span><span class="n">manager</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">        <span class="c1">// 返回 SpringShiroFilter 实例
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>        <span class="k">return</span> <span class="k">new</span> <span class="n">SpringShiroFilter</span><span class="o">((</span><span class="n">WebSecurityManager</span><span class="o">)</span> <span class="n">securityManager</span><span class="o">,</span> <span class="n">chainResolver</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">    <span class="o">}</span>
+</span></span><span class="line"><span class="cl"><span class="o">}</span>
+</span></span></code></pre></td></tr></table></div>
 </div>
 </div><p>上述返回了一个SpringShiroFilter，它非常简单，只是简单的继承了<code>AbstractShiroFilter</code>。创建过程中最为核心的部分是<code>FilterChainManager</code>的创建，通过设置<code>filters</code>和<code>filterChainDefinitionMap</code>哈希表，完成配置化。</p>
 <div class="highlight"><div class="chroma">
@@ -702,40 +702,40 @@
 </span><span class="lnt">33
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">ShiroFilterFactoryBean</span> <span class="kd">implements</span> <span class="n">FactoryBean</span><span class="o">,</span> <span class="n">BeanPostProcessor</span> <span class="o">{</span>
-    
-    <span class="c1">// 用户可以添加自定义的Filter，key为filter的名称，value为filter实例
-</span><span class="c1"></span>    <span class="kd">private</span> <span class="n">Map</span><span class="o">&lt;</span><span class="n">String</span><span class="o">,</span> <span class="n">Filter</span><span class="o">&gt;</span> <span class="n">filters</span><span class="o">;</span>
-    
-    <span class="c1">// 用户可以配置FilterChain，key为chain的名称，value为filter的名称列表，用逗号相连接
-</span><span class="c1"></span>    <span class="kd">private</span> <span class="n">Map</span><span class="o">&lt;</span><span class="n">String</span><span class="o">,</span> <span class="n">String</span><span class="o">&gt;</span> <span class="n">filterChainDefinitionMap</span><span class="o">;</span>
-    
-    <span class="kd">protected</span> <span class="n">FilterChainManager</span> <span class="nf">createFilterChainManager</span><span class="o">()</span> <span class="o">{</span>
-        <span class="n">DefaultFilterChainManager</span> <span class="n">manager</span> <span class="o">=</span> <span class="k">new</span> <span class="n">DefaultFilterChainManager</span><span class="o">();</span>
-        <span class="c1">// 将用户添加的Filter，保存到FilterChainManager里
-</span><span class="c1"></span>        <span class="n">Map</span><span class="o">&lt;</span><span class="n">String</span><span class="o">,</span> <span class="n">Filter</span><span class="o">&gt;</span> <span class="n">filters</span> <span class="o">=</span> <span class="n">getFilters</span><span class="o">();</span>
-        <span class="k">if</span> <span class="o">(!</span><span class="n">CollectionUtils</span><span class="o">.</span><span class="na">isEmpty</span><span class="o">(</span><span class="n">filters</span><span class="o">))</span> <span class="o">{</span>
-            <span class="k">for</span> <span class="o">(</span><span class="n">Map</span><span class="o">.</span><span class="na">Entry</span><span class="o">&lt;</span><span class="n">String</span><span class="o">,</span> <span class="n">Filter</span><span class="o">&gt;</span> <span class="n">entry</span> <span class="o">:</span> <span class="n">filters</span><span class="o">.</span><span class="na">entrySet</span><span class="o">())</span> <span class="o">{</span>
-                <span class="n">String</span> <span class="n">name</span> <span class="o">=</span> <span class="n">entry</span><span class="o">.</span><span class="na">getKey</span><span class="o">();</span>
-                <span class="n">Filter</span> <span class="n">filter</span> <span class="o">=</span> <span class="n">entry</span><span class="o">.</span><span class="na">getValue</span><span class="o">();</span>
-                <span class="n">manager</span><span class="o">.</span><span class="na">addFilter</span><span class="o">(</span><span class="n">name</span><span class="o">,</span> <span class="n">filter</span><span class="o">,</span> <span class="kc">false</span><span class="o">);</span>
-            <span class="o">}</span>
-        <span class="o">}</span>
-
-        <span class="c1">// 将用户添加的chain，保存到FilterChainManager里
-</span><span class="c1"></span>        <span class="n">Map</span><span class="o">&lt;</span><span class="n">String</span><span class="o">,</span> <span class="n">String</span><span class="o">&gt;</span> <span class="n">chains</span> <span class="o">=</span> <span class="n">getFilterChainDefinitionMap</span><span class="o">();</span>
-        <span class="k">if</span> <span class="o">(!</span><span class="n">CollectionUtils</span><span class="o">.</span><span class="na">isEmpty</span><span class="o">(</span><span class="n">chains</span><span class="o">))</span> <span class="o">{</span>
-            <span class="k">for</span> <span class="o">(</span><span class="n">Map</span><span class="o">.</span><span class="na">Entry</span><span class="o">&lt;</span><span class="n">String</span><span class="o">,</span> <span class="n">String</span><span class="o">&gt;</span> <span class="n">entry</span> <span class="o">:</span> <span class="n">chains</span><span class="o">.</span><span class="na">entrySet</span><span class="o">())</span> <span class="o">{</span>
-                <span class="n">String</span> <span class="n">url</span> <span class="o">=</span> <span class="n">entry</span><span class="o">.</span><span class="na">getKey</span><span class="o">();</span>
-                <span class="n">String</span> <span class="n">chainDefinition</span> <span class="o">=</span> <span class="n">entry</span><span class="o">.</span><span class="na">getValue</span><span class="o">();</span>
-                <span class="n">manager</span><span class="o">.</span><span class="na">createChain</span><span class="o">(</span><span class="n">url</span><span class="o">,</span> <span class="n">chainDefinition</span><span class="o">);</span>
-            <span class="o">}</span>
-        <span class="o">}</span>
-
-        <span class="k">return</span> <span class="n">manager</span><span class="o">;</span>
-    <span class="o">}</span>
-<span class="o">}</span>
-</code></pre></td></tr></table></div>
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">ShiroFilterFactoryBean</span> <span class="kd">implements</span> <span class="n">FactoryBean</span><span class="o">,</span> <span class="n">BeanPostProcessor</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">    
+</span></span><span class="line"><span class="cl">    <span class="c1">// 用户可以添加自定义的Filter，key为filter的名称，value为filter实例
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="kd">private</span> <span class="n">Map</span><span class="o">&lt;</span><span class="n">String</span><span class="o">,</span> <span class="n">Filter</span><span class="o">&gt;</span> <span class="n">filters</span><span class="o">;</span>
+</span></span><span class="line"><span class="cl">    
+</span></span><span class="line"><span class="cl">    <span class="c1">// 用户可以配置FilterChain，key为chain的名称，value为filter的名称列表，用逗号相连接
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="kd">private</span> <span class="n">Map</span><span class="o">&lt;</span><span class="n">String</span><span class="o">,</span> <span class="n">String</span><span class="o">&gt;</span> <span class="n">filterChainDefinitionMap</span><span class="o">;</span>
+</span></span><span class="line"><span class="cl">    
+</span></span><span class="line"><span class="cl">    <span class="kd">protected</span> <span class="n">FilterChainManager</span> <span class="nf">createFilterChainManager</span><span class="o">()</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">        <span class="n">DefaultFilterChainManager</span> <span class="n">manager</span> <span class="o">=</span> <span class="k">new</span> <span class="n">DefaultFilterChainManager</span><span class="o">();</span>
+</span></span><span class="line"><span class="cl">        <span class="c1">// 将用户添加的Filter，保存到FilterChainManager里
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>        <span class="n">Map</span><span class="o">&lt;</span><span class="n">String</span><span class="o">,</span> <span class="n">Filter</span><span class="o">&gt;</span> <span class="n">filters</span> <span class="o">=</span> <span class="n">getFilters</span><span class="o">();</span>
+</span></span><span class="line"><span class="cl">        <span class="k">if</span> <span class="o">(!</span><span class="n">CollectionUtils</span><span class="o">.</span><span class="na">isEmpty</span><span class="o">(</span><span class="n">filters</span><span class="o">))</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">            <span class="k">for</span> <span class="o">(</span><span class="n">Map</span><span class="o">.</span><span class="na">Entry</span><span class="o">&lt;</span><span class="n">String</span><span class="o">,</span> <span class="n">Filter</span><span class="o">&gt;</span> <span class="n">entry</span> <span class="o">:</span> <span class="n">filters</span><span class="o">.</span><span class="na">entrySet</span><span class="o">())</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">                <span class="n">String</span> <span class="n">name</span> <span class="o">=</span> <span class="n">entry</span><span class="o">.</span><span class="na">getKey</span><span class="o">();</span>
+</span></span><span class="line"><span class="cl">                <span class="n">Filter</span> <span class="n">filter</span> <span class="o">=</span> <span class="n">entry</span><span class="o">.</span><span class="na">getValue</span><span class="o">();</span>
+</span></span><span class="line"><span class="cl">                <span class="n">manager</span><span class="o">.</span><span class="na">addFilter</span><span class="o">(</span><span class="n">name</span><span class="o">,</span> <span class="n">filter</span><span class="o">,</span> <span class="kc">false</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">            <span class="o">}</span>
+</span></span><span class="line"><span class="cl">        <span class="o">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">        <span class="c1">// 将用户添加的chain，保存到FilterChainManager里
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>        <span class="n">Map</span><span class="o">&lt;</span><span class="n">String</span><span class="o">,</span> <span class="n">String</span><span class="o">&gt;</span> <span class="n">chains</span> <span class="o">=</span> <span class="n">getFilterChainDefinitionMap</span><span class="o">();</span>
+</span></span><span class="line"><span class="cl">        <span class="k">if</span> <span class="o">(!</span><span class="n">CollectionUtils</span><span class="o">.</span><span class="na">isEmpty</span><span class="o">(</span><span class="n">chains</span><span class="o">))</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">            <span class="k">for</span> <span class="o">(</span><span class="n">Map</span><span class="o">.</span><span class="na">Entry</span><span class="o">&lt;</span><span class="n">String</span><span class="o">,</span> <span class="n">String</span><span class="o">&gt;</span> <span class="n">entry</span> <span class="o">:</span> <span class="n">chains</span><span class="o">.</span><span class="na">entrySet</span><span class="o">())</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">                <span class="n">String</span> <span class="n">url</span> <span class="o">=</span> <span class="n">entry</span><span class="o">.</span><span class="na">getKey</span><span class="o">();</span>
+</span></span><span class="line"><span class="cl">                <span class="n">String</span> <span class="n">chainDefinition</span> <span class="o">=</span> <span class="n">entry</span><span class="o">.</span><span class="na">getValue</span><span class="o">();</span>
+</span></span><span class="line"><span class="cl">                <span class="n">manager</span><span class="o">.</span><span class="na">createChain</span><span class="o">(</span><span class="n">url</span><span class="o">,</span> <span class="n">chainDefinition</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">            <span class="o">}</span>
+</span></span><span class="line"><span class="cl">        <span class="o">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">        <span class="k">return</span> <span class="n">manager</span><span class="o">;</span>
+</span></span><span class="line"><span class="cl">    <span class="o">}</span>
+</span></span><span class="line"><span class="cl"><span class="o">}</span>
+</span></span></code></pre></td></tr></table></div>
 </div>
 </div>
             </div>
@@ -764,9 +764,9 @@
 
         
     <div class="updated-badge-container">
-        <span title="Updated @ 2021-10-22 14:44:34 CST" style="cursor:help">
+        <span title="Updated @ 2023-07-02 16:59:09 CST" style="cursor:help">
 
-<svg xmlns="http://www.w3.org/2000/svg" width="130" height="20" class="updated-badge"><linearGradient id="b" x2="0" y2="100%"><stop offset="0" stop-color="#bbb" stop-opacity=".1"/><stop offset="1" stop-opacity=".1"/></linearGradient><clipPath id="a"><rect width="130" height="20" rx="3" fill="#fff"/></clipPath><g clip-path="url(#a)"><path class="updated-badge-left" d="M0 0h55v20H0z"/><path class="updated-badge-right" d="M55 0h75v20H55z"/><path fill="url(#b)" d="M0 0h130v20H0z"/></g><g fill="#fff" text-anchor="middle" font-size="110"><text x="285" y="150" fill="#010101" fill-opacity=".3" textLength="450" transform="scale(.1)">updated</text><text x="285" y="140" textLength="450" transform="scale(.1)">updated</text><text x="915" y="150" fill="#010101" fill-opacity=".3" textLength="650" transform="scale(.1)">2021-10-22</text><text x="915" y="140" textLength="650" transform="scale(.1)">2021-10-22</text></g></svg>
+<svg xmlns="http://www.w3.org/2000/svg" width="130" height="20" class="updated-badge"><linearGradient id="b" x2="0" y2="100%"><stop offset="0" stop-color="#bbb" stop-opacity=".1"/><stop offset="1" stop-opacity=".1"/></linearGradient><clipPath id="a"><rect width="130" height="20" rx="3" fill="#fff"/></clipPath><g clip-path="url(#a)"><path class="updated-badge-left" d="M0 0h55v20H0z"/><path class="updated-badge-right" d="M55 0h75v20H55z"/><path fill="url(#b)" d="M0 0h130v20H0z"/></g><g fill="#fff" text-anchor="middle" font-size="110"><text x="285" y="150" fill="#010101" fill-opacity=".3" textLength="450" transform="scale(.1)">updated</text><text x="285" y="140" textLength="450" transform="scale(.1)">updated</text><text x="915" y="150" fill="#010101" fill-opacity=".3" textLength="650" transform="scale(.1)">2023-07-02</text><text x="915" y="140" textLength="650" transform="scale(.1)">2023-07-02</text></g></svg>
         </span></div>
 
 

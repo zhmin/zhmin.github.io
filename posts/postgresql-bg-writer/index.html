@@ -3,7 +3,7 @@
     <head prefix="og: http://ogp.me/ns# article: http://ogp.me/ns/article#">
     <meta charset="UTF-8" />
 
-    <meta name="generator" content="Hugo 0.88.1" /><meta name="theme-color" content="#fff" />
+    <meta name="generator" content="Hugo 0.115.0"><meta name="theme-color" content="#fff" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     
     <meta name="format-detection" content="telephone=no, date=no, address=no, email=no" />
@@ -14,11 +14,11 @@
 
     <title>Postgresql BgWriter 原理 | 学习笔记</title>
 
-    <link rel="stylesheet" href="/css/meme.min.2d3e1834af2bc8dda20c7d74aaa1d8134845094441b7a554a5206ccd4b472596.css"/>
+    <link rel="stylesheet" href="/css/meme.min.91e7f58f97e1c60563ef481c38d9684fa8099537801d6f17bbfc724121e7d8f1.css"/>
 
     
     
-        <script src="/js/meme.min.800f61672145711eb3e1f29fcfcc3dbe0139dd459259718b611a0390f74703d1.js"></script>
+        <script src="/js/meme.min.3210a00c2fdcf6f831170b681b8ee40f83f0224663661e986872616aec45407f.js"></script>
 
     
 
@@ -54,7 +54,7 @@
         "@context": "https://schema.org",
         "@type": "BlogPosting",
         "datePublished": "2019-11-27T21:18:08+00:00",
-        "dateModified": "2021-10-22T14:44:34+08:00",
+        "dateModified": "2023-07-02T16:59:09+08:00",
         "url": "https://zhmin.github.io/posts/postgresql-bg-writer/",
         "headline": "Postgresql BgWriter 原理",
         "description": "前言 postgresql 有一个后台进程 bgwriter，它会定时刷新缓存到文件系统中。这种机制提高了缓存的替换速度，因为在寻找空闲缓存时，有时需要将脏页刷新到文件中，而刷新操作是比较耗时的。同样它也提高了执行 checkpoint 的完成速……",
@@ -98,7 +98,7 @@
 <meta property="og:locale" content="zh" /><meta property="og:image" content="https://zhmin.github.io/icons/apple-touch-icon.png" />
     <meta property="og:type" content="article" />
     <meta property="article:published_time" content="2019-11-27T21:18:08&#43;00:00" />
-    <meta property="article:modified_time" content="2021-10-22T14:44:34&#43;08:00" />
+    <meta property="article:modified_time" content="2023-07-02T16:59:09&#43;08:00" />
     
     <meta property="article:section" content="posts" />
 
@@ -294,13 +294,13 @@
 </span><span class="lnt">6
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="k">if</span> <span class="p">(</span><span class="n">smoothed_alloc</span> <span class="o">&lt;=</span> <span class="p">(</span><span class="kt">float</span><span class="p">)</span> <span class="n">recent_alloc</span><span class="p">)</span>
-    <span class="c1">// 为了保证此次缓存替换数目大，没有使用平滑算法
-</span><span class="c1"></span>    <span class="n">smoothed_alloc</span> <span class="o">=</span> <span class="n">recent_alloc</span><span class="p">;</span>
-<span class="k">else</span>
-    <span class="c1">// 计算平滑之后的值
-</span><span class="c1"></span>    <span class="n">smoothed_alloc</span> <span class="o">+=</span> <span class="p">((</span><span class="kt">float</span><span class="p">)</span> <span class="n">recent_alloc</span> <span class="o">-</span> <span class="n">smoothed_alloc</span><span class="p">)</span> <span class="o">/</span> <span class="n">smoothing_samples</span><span class="p">;</span>
-</code></pre></td></tr></table></div>
+<pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="line"><span class="cl"><span class="k">if</span> <span class="p">(</span><span class="n">smoothed_alloc</span> <span class="o">&lt;=</span> <span class="p">(</span><span class="kt">float</span><span class="p">)</span> <span class="n">recent_alloc</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// 为了保证此次缓存替换数目大，没有使用平滑算法
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="n">smoothed_alloc</span> <span class="o">=</span> <span class="n">recent_alloc</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="k">else</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// 计算平滑之后的值
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="n">smoothed_alloc</span> <span class="o">+=</span> <span class="p">((</span><span class="kt">float</span><span class="p">)</span> <span class="n">recent_alloc</span> <span class="o">-</span> <span class="n">smoothed_alloc</span><span class="p">)</span> <span class="o">/</span> <span class="n">smoothing_samples</span><span class="p">;</span>
+</span></span></code></pre></td></tr></table></div>
 </div>
 </div><p>其实 <code>smoothed</code>已经可以作为此次 bgwriter 到下次期间的缓存需求预估值，但是为了应对请求突然增大的情况，这里会再乘以<code>bgwriter_lru_multiplier</code>因子（可以在<code>postgresql.conf</code>配置）</p>
 <div class="highlight"><div class="chroma">
@@ -309,9 +309,9 @@
 </span><span class="lnt">2
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="c1">// 计算预估值
-</span><span class="c1"></span><span class="n">upcoming_alloc_est</span> <span class="o">=</span> <span class="p">(</span><span class="kt">int</span><span class="p">)</span> <span class="p">(</span><span class="n">smoothed_alloc</span> <span class="o">*</span> <span class="n">bgwriter_lru_multiplier</span><span class="p">);</span>
-</code></pre></td></tr></table></div>
+<pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="line"><span class="cl"><span class="c1">// 计算预估值
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="n">upcoming_alloc_est</span> <span class="o">=</span> <span class="p">(</span><span class="kt">int</span><span class="p">)</span> <span class="p">(</span><span class="n">smoothed_alloc</span> <span class="o">*</span> <span class="n">bgwriter_lru_multiplier</span><span class="p">);</span>
+</span></span></code></pre></td></tr></table></div>
 </div>
 </div><p>因为缓存遍历是从<code>next_clean_id</code>开始向后遍历，直到遇到<code>strategy_id</code>为止。而从<code>strategy_id</code>到<code>next_clean_id</code>的这段距离，是有其他进程遍历的，我们需要估算出这部分的可用缓存数量。</p>
 <p>通过上次 bgwriter 到此次的统计数据来估算。这里先估算出来找到平均一个可用缓存需要遍历的缓存数目</p>
@@ -327,15 +327,15 @@
 </span><span class="lnt">8
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="c1">// clock sweep 遍历的缓存数目，缓存数组的长度为NBuffers
-</span><span class="c1"></span><span class="n">strategy_delta</span> <span class="o">=</span> <span class="n">strategy_buf_id</span> <span class="o">-</span> <span class="n">prev_strategy_buf_id</span><span class="p">;</span>
-<span class="n">strategy_delta</span> <span class="o">+=</span> <span class="p">(</span><span class="kt">long</span><span class="p">)</span> <span class="n">passes_delta</span> <span class="o">*</span> <span class="n">NBuffers</span><span class="p">;</span>
-
-<span class="c1">// 计算上次期间的平均遍历数目
-</span><span class="c1"></span><span class="n">scans_per_alloc</span> <span class="o">=</span> <span class="p">(</span><span class="kt">float</span><span class="p">)</span> <span class="n">strategy_delta</span> <span class="o">/</span> <span class="p">(</span><span class="kt">float</span><span class="p">)</span> <span class="n">recent_alloc</span><span class="p">;</span>
-<span class="c1">// 平滑操作
-</span><span class="c1"></span><span class="n">smoothed_density</span> <span class="o">+=</span> <span class="p">(</span><span class="n">scans_per_alloc</span> <span class="o">-</span> <span class="n">smoothed_density</span><span class="p">)</span> <span class="o">/</span> <span class="n">smoothing_samples</span><span class="p">;</span>
-</code></pre></td></tr></table></div>
+<pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="line"><span class="cl"><span class="c1">// clock sweep 遍历的缓存数目，缓存数组的长度为NBuffers
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="n">strategy_delta</span> <span class="o">=</span> <span class="n">strategy_buf_id</span> <span class="o">-</span> <span class="n">prev_strategy_buf_id</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="n">strategy_delta</span> <span class="o">+=</span> <span class="p">(</span><span class="kt">long</span><span class="p">)</span> <span class="n">passes_delta</span> <span class="o">*</span> <span class="n">NBuffers</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1">// 计算上次期间的平均遍历数目
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="n">scans_per_alloc</span> <span class="o">=</span> <span class="p">(</span><span class="kt">float</span><span class="p">)</span> <span class="n">strategy_delta</span> <span class="o">/</span> <span class="p">(</span><span class="kt">float</span><span class="p">)</span> <span class="n">recent_alloc</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="c1">// 平滑操作
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="n">smoothed_density</span> <span class="o">+=</span> <span class="p">(</span><span class="n">scans_per_alloc</span> <span class="o">-</span> <span class="n">smoothed_density</span><span class="p">)</span> <span class="o">/</span> <span class="n">smoothing_samples</span><span class="p">;</span>
+</span></span></code></pre></td></tr></table></div>
 </div>
 </div><p><code>strategy_id</code>到<code>next_to_clean_id</code>这段距离，预估的可用缓存数目</p>
 <div class="highlight"><div class="chroma">
@@ -343,8 +343,8 @@
 <pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="n">reusable_buffers_est</span> <span class="o">=</span> <span class="p">(</span><span class="kt">float</span><span class="p">)</span> <span class="p">(</span><span class="n">NBuffers</span> <span class="o">-</span> <span class="n">bufs_to_lap</span><span class="p">)</span> <span class="o">/</span> <span class="n">smoothed_density</span><span class="p">;</span>
-</code></pre></td></tr></table></div>
+<pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="line"><span class="cl"><span class="n">reusable_buffers_est</span> <span class="o">=</span> <span class="p">(</span><span class="kt">float</span><span class="p">)</span> <span class="p">(</span><span class="n">NBuffers</span> <span class="o">-</span> <span class="n">bufs_to_lap</span><span class="p">)</span> <span class="o">/</span> <span class="n">smoothed_density</span><span class="p">;</span>
+</span></span></code></pre></td></tr></table></div>
 </div>
 </div><h3 id="执行完成条件"><a href="#执行完成条件" class="anchor-link"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon anchor-icon"><path d="M326.612 185.391c59.747 59.809 58.927 155.698.36 214.59-.11.12-.24.25-.36.37l-67.2 67.2c-59.27 59.27-155.699 59.262-214.96 0-59.27-59.26-59.27-155.7 0-214.96l37.106-37.106c9.84-9.84 26.786-3.3 27.294 10.606.648 17.722 3.826 35.527 9.69 52.721 1.986 5.822.567 12.262-3.783 16.612l-13.087 13.087c-28.026 28.026-28.905 73.66-1.155 101.96 28.024 28.579 74.086 28.749 102.325.51l67.2-67.19c28.191-28.191 28.073-73.757 0-101.83-3.701-3.694-7.429-6.564-10.341-8.569a16.037 16.037 0 0 1-6.947-12.606c-.396-10.567 3.348-21.456 11.698-29.806l21.054-21.055c5.521-5.521 14.182-6.199 20.584-1.731a152.482 152.482 0 0 1 20.522 17.197zM467.547 44.449c-59.261-59.262-155.69-59.27-214.96 0l-67.2 67.2c-.12.12-.25.25-.36.37-58.566 58.892-59.387 154.781.36 214.59a152.454 152.454 0 0 0 20.521 17.196c6.402 4.468 15.064 3.789 20.584-1.731l21.054-21.055c8.35-8.35 12.094-19.239 11.698-29.806a16.037 16.037 0 0 0-6.947-12.606c-2.912-2.005-6.64-4.875-10.341-8.569-28.073-28.073-28.191-73.639 0-101.83l67.2-67.19c28.239-28.239 74.3-28.069 102.325.51 27.75 28.3 26.872 73.934-1.155 101.96l-13.087 13.087c-4.35 4.35-5.769 10.79-3.783 16.612 5.864 17.194 9.042 34.999 9.69 52.721.509 13.906 17.454 20.446 27.294 10.606l37.106-37.106c59.271-59.259 59.271-155.699.001-214.959z"/></svg></a>执行完成条件</h3>
 <p>bgwriter 会从第一步计算出的遍历起始位置，开始遍历。</p>
@@ -419,9 +419,9 @@
 
         
     <div class="updated-badge-container">
-        <span title="Updated @ 2021-10-22 14:44:34 CST" style="cursor:help">
+        <span title="Updated @ 2023-07-02 16:59:09 CST" style="cursor:help">
 
-<svg xmlns="http://www.w3.org/2000/svg" width="130" height="20" class="updated-badge"><linearGradient id="b" x2="0" y2="100%"><stop offset="0" stop-color="#bbb" stop-opacity=".1"/><stop offset="1" stop-opacity=".1"/></linearGradient><clipPath id="a"><rect width="130" height="20" rx="3" fill="#fff"/></clipPath><g clip-path="url(#a)"><path class="updated-badge-left" d="M0 0h55v20H0z"/><path class="updated-badge-right" d="M55 0h75v20H55z"/><path fill="url(#b)" d="M0 0h130v20H0z"/></g><g fill="#fff" text-anchor="middle" font-size="110"><text x="285" y="150" fill="#010101" fill-opacity=".3" textLength="450" transform="scale(.1)">updated</text><text x="285" y="140" textLength="450" transform="scale(.1)">updated</text><text x="915" y="150" fill="#010101" fill-opacity=".3" textLength="650" transform="scale(.1)">2021-10-22</text><text x="915" y="140" textLength="650" transform="scale(.1)">2021-10-22</text></g></svg>
+<svg xmlns="http://www.w3.org/2000/svg" width="130" height="20" class="updated-badge"><linearGradient id="b" x2="0" y2="100%"><stop offset="0" stop-color="#bbb" stop-opacity=".1"/><stop offset="1" stop-opacity=".1"/></linearGradient><clipPath id="a"><rect width="130" height="20" rx="3" fill="#fff"/></clipPath><g clip-path="url(#a)"><path class="updated-badge-left" d="M0 0h55v20H0z"/><path class="updated-badge-right" d="M55 0h75v20H55z"/><path fill="url(#b)" d="M0 0h130v20H0z"/></g><g fill="#fff" text-anchor="middle" font-size="110"><text x="285" y="150" fill="#010101" fill-opacity=".3" textLength="450" transform="scale(.1)">updated</text><text x="285" y="140" textLength="450" transform="scale(.1)">updated</text><text x="915" y="150" fill="#010101" fill-opacity=".3" textLength="650" transform="scale(.1)">2023-07-02</text><text x="915" y="140" textLength="650" transform="scale(.1)">2023-07-02</text></g></svg>
         </span></div>
 
 

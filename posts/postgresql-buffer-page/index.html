@@ -3,7 +3,7 @@
     <head prefix="og: http://ogp.me/ns# article: http://ogp.me/ns/article#">
     <meta charset="UTF-8" />
 
-    <meta name="generator" content="Hugo 0.88.1" /><meta name="theme-color" content="#fff" />
+    <meta name="generator" content="Hugo 0.115.0"><meta name="theme-color" content="#fff" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     
     <meta name="format-detection" content="telephone=no, date=no, address=no, email=no" />
@@ -14,11 +14,11 @@
 
     <title>Postgresql Page 结构 | 学习笔记</title>
 
-    <link rel="stylesheet" href="/css/meme.min.2d3e1834af2bc8dda20c7d74aaa1d8134845094441b7a554a5206ccd4b472596.css"/>
+    <link rel="stylesheet" href="/css/meme.min.91e7f58f97e1c60563ef481c38d9684fa8099537801d6f17bbfc724121e7d8f1.css"/>
 
     
     
-        <script src="/js/meme.min.800f61672145711eb3e1f29fcfcc3dbe0139dd459259718b611a0390f74703d1.js"></script>
+        <script src="/js/meme.min.3210a00c2fdcf6f831170b681b8ee40f83f0224663661e986872616aec45407f.js"></script>
 
     
 
@@ -54,7 +54,7 @@
         "@context": "https://schema.org",
         "@type": "BlogPosting",
         "datePublished": "2019-10-11T19:41:37+00:00",
-        "dateModified": "2021-10-22T14:44:34+08:00",
+        "dateModified": "2023-07-02T16:59:09+08:00",
         "url": "https://zhmin.github.io/posts/postgresql-buffer-page/",
         "headline": "Postgresql Page 结构",
         "description": "前言 postgresql 保存数据的基本单位是 page，一个 page 里包含多条数据。postgresql 同磁盘的读写单位也是 page，一个 page 对应于磁盘的一个 block。block 的格式和 page 是相同的，本篇文章详细得介绍了 page 的数据……",
@@ -98,7 +98,7 @@
 <meta property="og:locale" content="zh" /><meta property="og:image" content="https://zhmin.github.io/pg-buffer-page-1.svg" />
 <meta property="og:type" content="article" />
     <meta property="article:published_time" content="2019-10-11T19:41:37&#43;00:00" />
-    <meta property="article:modified_time" content="2021-10-22T14:44:34&#43;08:00" />
+    <meta property="article:modified_time" content="2023-07-02T16:59:09&#43;08:00" />
     
     <meta property="article:section" content="posts" />
 
@@ -267,19 +267,19 @@
 </span><span class="lnt">12
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="k">typedef</span> <span class="k">struct</span> <span class="n">PageHeaderData</span>
-<span class="p">{</span>
-	<span class="n">PageXLogRecPtr</span> <span class="n">pd_lsn</span><span class="p">;</span>	<span class="c1">// 该数据页最后一次被修改对应的wal日志的位置
-</span><span class="c1"></span>	<span class="n">uint16</span>		<span class="n">pd_checksum</span><span class="p">;</span>	<span class="c1">// 校检值
-</span><span class="c1"></span>	<span class="n">uint16</span>		<span class="n">pd_flags</span><span class="p">;</span>	<span class="c1">// 标记位
-</span><span class="c1"></span>	<span class="n">LocationIndex</span> <span class="n">pd_lower</span><span class="p">;</span>	<span class="c1">// 空闲空间的起始偏移量
-</span><span class="c1"></span>	<span class="n">LocationIndex</span> <span class="n">pd_upper</span><span class="p">;</span>	<span class="c1">// 空闲空间的结束偏移量
-</span><span class="c1"></span>	<span class="n">LocationIndex</span> <span class="n">pd_special</span><span class="p">;</span>	<span class="c1">// 特殊空间的结束偏移量
-</span><span class="c1"></span>	<span class="n">uint16</span>		<span class="n">pd_pagesize_version</span><span class="p">;</span>	<span class="c1">// page 格式版本号
-</span><span class="c1"></span>	<span class="n">TransactionId</span> <span class="n">pd_prune_xid</span><span class="p">;</span> <span class="cm">/* oldest prunable XID, or zero if none */</span>
-	<span class="n">ItemIdData</span>	<span class="n">pd_linp</span><span class="p">[</span><span class="n">FLEXIBLE_ARRAY_MEMBER</span><span class="p">];</span> <span class="c1">// 数据指针数组
-</span><span class="c1"></span><span class="p">}</span> <span class="n">PageHeaderData</span><span class="p">;</span>
-</code></pre></td></tr></table></div>
+<pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="line"><span class="cl"><span class="k">typedef</span> <span class="k">struct</span> <span class="n">PageHeaderData</span>
+</span></span><span class="line"><span class="cl"><span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="n">PageXLogRecPtr</span> <span class="n">pd_lsn</span><span class="p">;</span>	<span class="c1">// 该数据页最后一次被修改对应的wal日志的位置
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="n">uint16</span>		<span class="n">pd_checksum</span><span class="p">;</span>	<span class="c1">// 校检值
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="n">uint16</span>		<span class="n">pd_flags</span><span class="p">;</span>	<span class="c1">// 标记位
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="n">LocationIndex</span> <span class="n">pd_lower</span><span class="p">;</span>	<span class="c1">// 空闲空间的起始偏移量
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="n">LocationIndex</span> <span class="n">pd_upper</span><span class="p">;</span>	<span class="c1">// 空闲空间的结束偏移量
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="n">LocationIndex</span> <span class="n">pd_special</span><span class="p">;</span>	<span class="c1">// 特殊空间的结束偏移量
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="n">uint16</span>		<span class="n">pd_pagesize_version</span><span class="p">;</span>	<span class="c1">// page 格式版本号
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="n">TransactionId</span> <span class="n">pd_prune_xid</span><span class="p">;</span> <span class="cm">/* oldest prunable XID, or zero if none */</span>
+</span></span><span class="line"><span class="cl">	<span class="n">ItemIdData</span>	<span class="n">pd_linp</span><span class="p">[</span><span class="n">FLEXIBLE_ARRAY_MEMBER</span><span class="p">];</span> <span class="c1">// 数据指针数组
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="p">}</span> <span class="n">PageHeaderData</span><span class="p">;</span>
+</span></span></code></pre></td></tr></table></div>
 </div>
 </div><p>当新添加一条数据到 page 里，需要快速判断是否有空闲空间。page 的 pd_flags 记录了 page 是否有空闲空间，它的标记位如下：</p>
 <div class="highlight"><div class="chroma">
@@ -289,10 +289,10 @@
 </span><span class="lnt">3
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="cp">#define PD_HAS_FREE_LINES	0x0001	</span><span class="c1">// 是否有空闲的数据指针
-</span><span class="c1"></span><span class="cp">#define PD_PAGE_FULL		0x0002	</span><span class="c1">// 是否有空闲空间支持添加一条数据
-</span><span class="c1"></span><span class="cp">#define PD_ALL_VISIBLE		0x0004	</span><span class="cm">/* all tuples on page are visible to everyone */</span><span class="cp">
-</span></code></pre></td></tr></table></div>
+<pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="line"><span class="cl"><span class="cp">#define PD_HAS_FREE_LINES	0x0001	</span><span class="c1">// 是否有空闲的数据指针
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="cp">#define PD_PAGE_FULL		0x0002	</span><span class="c1">// 是否有空闲空间支持添加一条数据
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="cp">#define PD_ALL_VISIBLE		0x0004	</span><span class="cm">/* all tuples on page are visible to everyone */</span><span class="cp">
+</span></span></span></code></pre></td></tr></table></div>
 </div>
 </div><p>注意到 pd_linp 成员，它是一个 ItemIdData 数组，这里需要把它看成一个指针。它并不属于头部，从计算头部的长度就可以看出</p>
 <div class="highlight"><div class="chroma">
@@ -300,8 +300,8 @@
 <pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="cp">#define SizeOfPageHeaderData (offsetof(PageHeaderData, pd_linp))
-</span></code></pre></td></tr></table></div>
+<pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="line"><span class="cl"><span class="cp">#define SizeOfPageHeaderData (offsetof(PageHeaderData, pd_linp))
+</span></span></span></code></pre></td></tr></table></div>
 </div>
 </div><p>整个结构如下图所示：</p>
 <img src="pg-buffer-page-2.svg">
@@ -317,13 +317,13 @@
 </span><span class="lnt">6
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="k">typedef</span> <span class="k">struct</span> <span class="n">ItemIdData</span>
-<span class="p">{</span>
-	<span class="kt">unsigned</span>	<span class="nl">lp_off</span><span class="p">:</span><span class="mi">15</span><span class="p">,</span>		<span class="c1">// 数据在page的偏移量
-</span><span class="c1"></span>				<span class="nl">lp_flags</span><span class="p">:</span><span class="mi">2</span><span class="p">,</span>		<span class="c1">// 状态值，有unused,normal,redirect,dead
-</span><span class="c1"></span>				<span class="nl">lp_len</span><span class="p">:</span><span class="mi">15</span><span class="p">;</span>		<span class="c1">// 数据长度
-</span><span class="c1"></span><span class="p">}</span> <span class="n">ItemIdData</span><span class="p">;</span>
-</code></pre></td></tr></table></div>
+<pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="line"><span class="cl"><span class="k">typedef</span> <span class="k">struct</span> <span class="n">ItemIdData</span>
+</span></span><span class="line"><span class="cl"><span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="kt">unsigned</span>	<span class="nl">lp_off</span><span class="p">:</span><span class="mi">15</span><span class="p">,</span>		<span class="c1">// 数据在page的偏移量
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>				<span class="nl">lp_flags</span><span class="p">:</span><span class="mi">2</span><span class="p">,</span>		<span class="c1">// 状态值，有unused,normal,redirect,dead
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>				<span class="nl">lp_len</span><span class="p">:</span><span class="mi">15</span><span class="p">;</span>		<span class="c1">// 数据长度
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="p">}</span> <span class="n">ItemIdData</span><span class="p">;</span>
+</span></span></code></pre></td></tr></table></div>
 </div>
 </div><p>lp_flags 只有2位，它有四种状态值：</p>
 <div class="highlight"><div class="chroma">
@@ -334,11 +334,11 @@
 </span><span class="lnt">4
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="cp">#define LP_UNUSED		0		</span><span class="c1">// 表示此指针是空闲
-</span><span class="c1"></span><span class="cp">#define LP_NORMAL		1		</span><span class="c1">// 表示此指针正在被使用，且对应的数据已经存储
-</span><span class="c1"></span><span class="cp">#define LP_REDIRECT		2		</span><span class="c1">// HOT redirect (should have lp_len=0) */
-</span><span class="c1"></span><span class="cp">#define LP_DEAD			3		</span><span class="c1">// dead, may or may not have storage */
-</span></code></pre></td></tr></table></div>
+<pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="line"><span class="cl"><span class="cp">#define LP_UNUSED		0		</span><span class="c1">// 表示此指针是空闲
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="cp">#define LP_NORMAL		1		</span><span class="c1">// 表示此指针正在被使用，且对应的数据已经存储
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="cp">#define LP_REDIRECT		2		</span><span class="c1">// HOT redirect (should have lp_len=0) */
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="cp">#define LP_DEAD			3		</span><span class="c1">// dead, may or may not have storage */
+</span></span></span></code></pre></td></tr></table></div>
 </div>
 </div><h2 id="插入数据"><a href="#插入数据" class="anchor-link"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon anchor-icon"><path d="M326.612 185.391c59.747 59.809 58.927 155.698.36 214.59-.11.12-.24.25-.36.37l-67.2 67.2c-59.27 59.27-155.699 59.262-214.96 0-59.27-59.26-59.27-155.7 0-214.96l37.106-37.106c9.84-9.84 26.786-3.3 27.294 10.606.648 17.722 3.826 35.527 9.69 52.721 1.986 5.822.567 12.262-3.783 16.612l-13.087 13.087c-28.026 28.026-28.905 73.66-1.155 101.96 28.024 28.579 74.086 28.749 102.325.51l67.2-67.19c28.191-28.191 28.073-73.757 0-101.83-3.701-3.694-7.429-6.564-10.341-8.569a16.037 16.037 0 0 1-6.947-12.606c-.396-10.567 3.348-21.456 11.698-29.806l21.054-21.055c5.521-5.521 14.182-6.199 20.584-1.731a152.482 152.482 0 0 1 20.522 17.197zM467.547 44.449c-59.261-59.262-155.69-59.27-214.96 0l-67.2 67.2c-.12.12-.25.25-.36.37-58.566 58.892-59.387 154.781.36 214.59a152.454 152.454 0 0 0 20.521 17.196c6.402 4.468 15.064 3.789 20.584-1.731l21.054-21.055c8.35-8.35 12.094-19.239 11.698-29.806a16.037 16.037 0 0 0-6.947-12.606c-2.912-2.005-6.64-4.875-10.341-8.569-28.073-28.073-28.191-73.639 0-101.83l67.2-67.19c28.239-28.239 74.3-28.069 102.325.51 27.75 28.3 26.872 73.934-1.155 101.96l-13.087 13.087c-4.35 4.35-5.769 10.79-3.783 16.612 5.864 17.194 9.042 34.999 9.69 52.721.509 13.906 17.454 20.446 27.294 10.606l37.106-37.106c59.271-59.259 59.271-155.699.001-214.959z"/></svg></a>插入数据</h2>
 <p><code>PageAddItemExtended</code>函数负责插入数据，定义如下</p>
@@ -352,13 +352,13 @@
 </span><span class="lnt">6
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="cm">/*
-</span><span class="cm"> * 参数item是要写入的数据，参数size是数据的长度
-</span><span class="cm"> * 参数offsetNumber指定数据指针的位置，如果对于位置没有要求，值为InvalidOffsetNumber
-</span><span class="cm"> * 参数flags是标记位，可以指明数据类型是否是tuple类型，还可以指定是否覆盖已有数据
-</span><span class="cm"> */</span>
-<span class="n">OffsetNumber</span> <span class="nf">PageAddItemExtended</span><span class="p">(</span><span class="n">Page</span> <span class="n">page</span><span class="p">,</span> <span class="n">Item</span> <span class="n">item</span><span class="p">,</span> <span class="n">Size</span> <span class="n">size</span><span class="p">,</span> <span class="n">OffsetNumber</span> <span class="n">offsetNumber</span><span class="p">,</span> <span class="kt">int</span> <span class="n">flags</span><span class="p">);</span>
-</code></pre></td></tr></table></div>
+<pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="line"><span class="cl"><span class="cm">/*
+</span></span></span><span class="line"><span class="cl"><span class="cm"> * 参数item是要写入的数据，参数size是数据的长度
+</span></span></span><span class="line"><span class="cl"><span class="cm"> * 参数offsetNumber指定数据指针的位置，如果对于位置没有要求，值为InvalidOffsetNumber
+</span></span></span><span class="line"><span class="cl"><span class="cm"> * 参数flags是标记位，可以指明数据类型是否是tuple类型，还可以指定是否覆盖已有数据
+</span></span></span><span class="line"><span class="cl"><span class="cm"> */</span>
+</span></span><span class="line"><span class="cl"><span class="n">OffsetNumber</span> <span class="nf">PageAddItemExtended</span><span class="p">(</span><span class="n">Page</span> <span class="n">page</span><span class="p">,</span> <span class="n">Item</span> <span class="n">item</span><span class="p">,</span> <span class="n">Size</span> <span class="n">size</span><span class="p">,</span> <span class="n">OffsetNumber</span> <span class="n">offsetNumber</span><span class="p">,</span> <span class="kt">int</span> <span class="n">flags</span><span class="p">);</span>
+</span></span></code></pre></td></tr></table></div>
 </div>
 </div><p>如下图所示，原来的 page 有三条数据 data0、data2、data3，而 data 1 数据已经被删除，所以数据指针 ItemIdData 1 的位置是空闲的，现在要插入 data4 数据。</p>
 <p>中间的图片展示了两种插入情况，没有指定数据指针的位置，和指定了数据指针位置为第2个（也就是原有的 ItemData 1 空闲位置）并且指定了覆盖选项。</p>
@@ -377,8 +377,8 @@
 <pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="kt">void</span> <span class="nf">PageIndexTupleDelete</span><span class="p">(</span><span class="n">Page</span> <span class="n">page</span><span class="p">,</span> <span class="n">OffsetNumber</span> <span class="n">offnum</span><span class="p">);</span>
-</code></pre></td></tr></table></div>
+<pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="line"><span class="cl"><span class="kt">void</span> <span class="nf">PageIndexTupleDelete</span><span class="p">(</span><span class="n">Page</span> <span class="n">page</span><span class="p">,</span> <span class="n">OffsetNumber</span> <span class="n">offnum</span><span class="p">);</span>
+</span></span></code></pre></td></tr></table></div>
 </div>
 </div><p>下图展示了数据删除的过程，这里需要删除数据 data 2：</p>
 <img src="pg-buffer-page-delete.svg">
@@ -391,8 +391,8 @@
 <pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="kt">bool</span> <span class="nf">PageIndexTupleOverwrite</span><span class="p">(</span><span class="n">Page</span> <span class="n">page</span><span class="p">,</span> <span class="n">OffsetNumber</span> <span class="n">offnum</span><span class="p">,</span> <span class="n">Item</span> <span class="n">newtup</span><span class="p">,</span> <span class="n">Size</span> <span class="n">newsize</span><span class="p">);</span>
-</code></pre></td></tr></table></div>
+<pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="line"><span class="cl"><span class="kt">bool</span> <span class="nf">PageIndexTupleOverwrite</span><span class="p">(</span><span class="n">Page</span> <span class="n">page</span><span class="p">,</span> <span class="n">OffsetNumber</span> <span class="n">offnum</span><span class="p">,</span> <span class="n">Item</span> <span class="n">newtup</span><span class="p">,</span> <span class="n">Size</span> <span class="n">newsize</span><span class="p">);</span>
+</span></span></code></pre></td></tr></table></div>
 </div>
 </div><p>如果原有数据的大小和新数据相同，那么直接修改对应的数据指针和实际的数据。</p>
 <p>如果不一致，需要先将数据进行删除，然后将删除的空间进行压缩合并，并且更新所有数据指针的 offset 属性。最后才完成添加数据。</p>
@@ -423,9 +423,9 @@
 
         
     <div class="updated-badge-container">
-        <span title="Updated @ 2021-10-22 14:44:34 CST" style="cursor:help">
+        <span title="Updated @ 2023-07-02 16:59:09 CST" style="cursor:help">
 
-<svg xmlns="http://www.w3.org/2000/svg" width="130" height="20" class="updated-badge"><linearGradient id="b" x2="0" y2="100%"><stop offset="0" stop-color="#bbb" stop-opacity=".1"/><stop offset="1" stop-opacity=".1"/></linearGradient><clipPath id="a"><rect width="130" height="20" rx="3" fill="#fff"/></clipPath><g clip-path="url(#a)"><path class="updated-badge-left" d="M0 0h55v20H0z"/><path class="updated-badge-right" d="M55 0h75v20H55z"/><path fill="url(#b)" d="M0 0h130v20H0z"/></g><g fill="#fff" text-anchor="middle" font-size="110"><text x="285" y="150" fill="#010101" fill-opacity=".3" textLength="450" transform="scale(.1)">updated</text><text x="285" y="140" textLength="450" transform="scale(.1)">updated</text><text x="915" y="150" fill="#010101" fill-opacity=".3" textLength="650" transform="scale(.1)">2021-10-22</text><text x="915" y="140" textLength="650" transform="scale(.1)">2021-10-22</text></g></svg>
+<svg xmlns="http://www.w3.org/2000/svg" width="130" height="20" class="updated-badge"><linearGradient id="b" x2="0" y2="100%"><stop offset="0" stop-color="#bbb" stop-opacity=".1"/><stop offset="1" stop-opacity=".1"/></linearGradient><clipPath id="a"><rect width="130" height="20" rx="3" fill="#fff"/></clipPath><g clip-path="url(#a)"><path class="updated-badge-left" d="M0 0h55v20H0z"/><path class="updated-badge-right" d="M55 0h75v20H55z"/><path fill="url(#b)" d="M0 0h130v20H0z"/></g><g fill="#fff" text-anchor="middle" font-size="110"><text x="285" y="150" fill="#010101" fill-opacity=".3" textLength="450" transform="scale(.1)">updated</text><text x="285" y="140" textLength="450" transform="scale(.1)">updated</text><text x="915" y="150" fill="#010101" fill-opacity=".3" textLength="650" transform="scale(.1)">2023-07-02</text><text x="915" y="140" textLength="650" transform="scale(.1)">2023-07-02</text></g></svg>
         </span></div>
 
 

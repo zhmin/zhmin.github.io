@@ -3,7 +3,7 @@
     <head prefix="og: http://ogp.me/ns# article: http://ogp.me/ns/article#">
     <meta charset="UTF-8" />
 
-    <meta name="generator" content="Hugo 0.88.1" /><meta name="theme-color" content="#fff" />
+    <meta name="generator" content="Hugo 0.115.0"><meta name="theme-color" content="#fff" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     
     <meta name="format-detection" content="telephone=no, date=no, address=no, email=no" />
@@ -14,11 +14,11 @@
 
     <title>CDH 集群添加 Spark Sql 命令行 | 学习笔记</title>
 
-    <link rel="stylesheet" href="/css/meme.min.2d3e1834af2bc8dda20c7d74aaa1d8134845094441b7a554a5206ccd4b472596.css"/>
+    <link rel="stylesheet" href="/css/meme.min.91e7f58f97e1c60563ef481c38d9684fa8099537801d6f17bbfc724121e7d8f1.css"/>
 
     
     
-        <script src="/js/meme.min.800f61672145711eb3e1f29fcfcc3dbe0139dd459259718b611a0390f74703d1.js"></script>
+        <script src="/js/meme.min.3210a00c2fdcf6f831170b681b8ee40f83f0224663661e986872616aec45407f.js"></script>
 
     
 
@@ -54,7 +54,7 @@
         "@context": "https://schema.org",
         "@type": "BlogPosting",
         "datePublished": "2019-04-03T21:37:32+00:00",
-        "dateModified": "2021-10-22T14:44:34+08:00",
+        "dateModified": "2023-07-02T16:59:09+08:00",
         "url": "https://zhmin.github.io/posts/spark-sql-cdh/",
         "headline": "CDH 集群添加 Spark Sql 命令行",
         "description": "Cloudera 集群 添加 Spark Sql 命令行 目前需要从Hive Sql 迁移到 Spark Sql，但是CDH版本的集群，不支持Spark Sql命令行。这篇文章详细介绍了Cloudera的Spark命令是如何启动的，然后在此基础上添加Spark……",
@@ -98,7 +98,7 @@
 <meta property="og:locale" content="zh" /><meta property="og:image" content="https://zhmin.github.io/icons/apple-touch-icon.png" />
     <meta property="og:type" content="article" />
     <meta property="article:published_time" content="2019-04-03T21:37:32&#43;00:00" />
-    <meta property="article:modified_time" content="2021-10-22T14:44:34&#43;08:00" />
+    <meta property="article:modified_time" content="2023-07-02T16:59:09&#43;08:00" />
     
     <meta property="article:section" content="posts" />
 
@@ -254,15 +254,15 @@
 </span><span class="lnt">8
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="o">[</span>root@master01 ~<span class="o">]</span><span class="c1"># which spark2-submit</span>
-/bin/spark2-submit
-
-<span class="o">[</span>root@master01 ~<span class="o">]</span><span class="c1"># ll /bin/spark2-submit</span>
-lrwxrwxrwx <span class="m">1</span> root root <span class="m">31</span> Feb <span class="m">15</span> 10:44 /bin/spark2-submit -&gt; /etc/alternatives/spark2-submit
-
-<span class="o">[</span>root@master01 ~<span class="o">]</span><span class="c1"># ll /etc/alternatives/spark2-submit</span>
-lrwxrwxrwx <span class="m">1</span> root root <span class="m">84</span> Feb <span class="m">15</span> 10:44 /etc/alternatives/spark2-submit -&gt; /opt/cloudera/parcels/SPARK2-2.2.0.cloudera3-1.cdh5.13.3.p0.556753/bin/spark2-submit
-</code></pre></td></tr></table></div>
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl"><span class="o">[</span>root@master01 ~<span class="o">]</span><span class="c1"># which spark2-submit</span>
+</span></span><span class="line"><span class="cl">/bin/spark2-submit
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="o">[</span>root@master01 ~<span class="o">]</span><span class="c1"># ll /bin/spark2-submit</span>
+</span></span><span class="line"><span class="cl">lrwxrwxrwx <span class="m">1</span> root root <span class="m">31</span> Feb <span class="m">15</span> 10:44 /bin/spark2-submit -&gt; /etc/alternatives/spark2-submit
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="o">[</span>root@master01 ~<span class="o">]</span><span class="c1"># ll /etc/alternatives/spark2-submit</span>
+</span></span><span class="line"><span class="cl">lrwxrwxrwx <span class="m">1</span> root root <span class="m">84</span> Feb <span class="m">15</span> 10:44 /etc/alternatives/spark2-submit -&gt; /opt/cloudera/parcels/SPARK2-2.2.0.cloudera3-1.cdh5.13.3.p0.556753/bin/spark2-submit
+</span></span></code></pre></td></tr></table></div>
 </div>
 </div><p>接下来看看spark2-submit文件的内容</p>
 <div class="highlight"><div class="chroma">
@@ -289,27 +289,27 @@ lrwxrwxrwx <span class="m">1</span> root root <span class="m">84</span> Feb <spa
 </span><span class="lnt">20
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="cp">#!/bin/bash
-</span><span class="cp"></span>  <span class="c1"># Reference: http://stackoverflow.com/questions/59895/can-a-bash-script-tell-what-directory-its-stored-in</span>
-  <span class="nv">SOURCE</span><span class="o">=</span><span class="s2">&#34;</span><span class="si">${</span><span class="nv">BASH_SOURCE</span><span class="p">[0]</span><span class="si">}</span><span class="s2">&#34;</span> <span class="c1"># 获取shell文件路径</span>
-  <span class="nv">BIN_DIR</span><span class="o">=</span><span class="s2">&#34;</span><span class="k">$(</span> dirname <span class="s2">&#34;</span><span class="nv">$SOURCE</span><span class="s2">&#34;</span> <span class="k">)</span><span class="s2">&#34;</span> <span class="c1"># 获取该shell文件的所在文件夹</span>
-  <span class="c1"># 从上面的代码可以看到，这里都使用了链接的方法。 -h 选项 是测试该文件是否为链接</span>
-  <span class="k">while</span> <span class="o">[</span> -h <span class="s2">&#34;</span><span class="nv">$SOURCE</span><span class="s2">&#34;</span> <span class="o">]</span>
-  <span class="k">do</span>
-    <span class="nv">SOURCE</span><span class="o">=</span><span class="s2">&#34;</span><span class="k">$(</span>readlink <span class="s2">&#34;</span><span class="nv">$SOURCE</span><span class="s2">&#34;</span><span class="k">)</span><span class="s2">&#34;</span> <span class="c1"># 使用readlink方法，获取该文件的绝对路径</span>
-    <span class="o">[[</span> <span class="nv">$SOURCE</span> !<span class="o">=</span> /* <span class="o">]]</span> <span class="o">&amp;&amp;</span> <span class="nv">SOURCE</span><span class="o">=</span><span class="s2">&#34;</span><span class="nv">$DIR</span><span class="s2">/</span><span class="nv">$SOURCE</span><span class="s2">&#34;</span> <span class="c1"># 检查文件路径是否为根目录</span>
-    <span class="nv">BIN_DIR</span><span class="o">=</span><span class="s2">&#34;</span><span class="k">$(</span> <span class="nb">cd</span> -P <span class="s2">&#34;</span><span class="k">$(</span> dirname <span class="s2">&#34;</span><span class="nv">$SOURCE</span><span class="s2">&#34;</span>  <span class="k">)</span><span class="s2">&#34;</span> <span class="o">&amp;&amp;</span> <span class="nb">pwd</span> <span class="k">)</span><span class="s2">&#34;</span>  <span class="c1"># </span>
-  <span class="k">done</span>
-  <span class="nv">BIN_DIR</span><span class="o">=</span><span class="s2">&#34;</span><span class="k">$(</span> <span class="nb">cd</span> -P <span class="s2">&#34;</span><span class="k">$(</span> dirname <span class="s2">&#34;</span><span class="nv">$SOURCE</span><span class="s2">&#34;</span> <span class="k">)</span><span class="s2">&#34;</span> <span class="o">&amp;&amp;</span> <span class="nb">pwd</span> <span class="k">)</span><span class="s2">&#34;</span> <span class="c1"># 进入到文件的目录，这里的值为/opt/cloudera/parcels/SPARK2-2.2.0.cloudera3-1.cdh5.13.3.p0.556753/bin/</span>
-  <span class="nv">CDH_LIB_DIR</span><span class="o">=</span><span class="nv">$BIN_DIR</span>/../../CDH/lib <span class="c1"># 这里的值为/opt/cloudera/parcels/CDH/lib</span>
-  <span class="nv">LIB_DIR</span><span class="o">=</span><span class="nv">$BIN_DIR</span>/../lib <span class="c1"># 这里的值为/opt/cloudera/parcels/SPARK2-2.2.0.cloudera3-1.cdh5.13.3.p0.556753/lib</span>
-<span class="nb">export</span> <span class="nv">HADOOP_HOME</span><span class="o">=</span><span class="nv">$CDH_LIB_DIR</span>/hadoop <span class="c1"># 设置HADOOP_HOME环境变量为/opt/cloudera/parcels/CDH/lib/hadoop</span>
-
-<span class="c1"># 查看JAVA_HOME环境变量</span>
-. <span class="nv">$CDH_LIB_DIR</span>/bigtop-utils/bigtop-detect-javahome
-
-<span class="nb">exec</span> <span class="nv">$LIB_DIR</span>/spark2/bin/spark-submit <span class="s2">&#34;</span><span class="nv">$@</span><span class="s2">&#34;</span> <span class="c1"># 执行命令</span>
-</code></pre></td></tr></table></div>
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl"><span class="cp">#!/bin/bash
+</span></span></span><span class="line"><span class="cl"><span class="cp"></span>  <span class="c1"># Reference: http://stackoverflow.com/questions/59895/can-a-bash-script-tell-what-directory-its-stored-in</span>
+</span></span><span class="line"><span class="cl">  <span class="nv">SOURCE</span><span class="o">=</span><span class="s2">&#34;</span><span class="si">${</span><span class="nv">BASH_SOURCE</span><span class="p">[0]</span><span class="si">}</span><span class="s2">&#34;</span> <span class="c1"># 获取shell文件路径</span>
+</span></span><span class="line"><span class="cl">  <span class="nv">BIN_DIR</span><span class="o">=</span><span class="s2">&#34;</span><span class="k">$(</span> dirname <span class="s2">&#34;</span><span class="nv">$SOURCE</span><span class="s2">&#34;</span> <span class="k">)</span><span class="s2">&#34;</span> <span class="c1"># 获取该shell文件的所在文件夹</span>
+</span></span><span class="line"><span class="cl">  <span class="c1"># 从上面的代码可以看到，这里都使用了链接的方法。 -h 选项 是测试该文件是否为链接</span>
+</span></span><span class="line"><span class="cl">  <span class="k">while</span> <span class="o">[</span> -h <span class="s2">&#34;</span><span class="nv">$SOURCE</span><span class="s2">&#34;</span> <span class="o">]</span>
+</span></span><span class="line"><span class="cl">  <span class="k">do</span>
+</span></span><span class="line"><span class="cl">    <span class="nv">SOURCE</span><span class="o">=</span><span class="s2">&#34;</span><span class="k">$(</span>readlink <span class="s2">&#34;</span><span class="nv">$SOURCE</span><span class="s2">&#34;</span><span class="k">)</span><span class="s2">&#34;</span> <span class="c1"># 使用readlink方法，获取该文件的绝对路径</span>
+</span></span><span class="line"><span class="cl">    <span class="o">[[</span> <span class="nv">$SOURCE</span> !<span class="o">=</span> /* <span class="o">]]</span> <span class="o">&amp;&amp;</span> <span class="nv">SOURCE</span><span class="o">=</span><span class="s2">&#34;</span><span class="nv">$DIR</span><span class="s2">/</span><span class="nv">$SOURCE</span><span class="s2">&#34;</span> <span class="c1"># 检查文件路径是否为根目录</span>
+</span></span><span class="line"><span class="cl">    <span class="nv">BIN_DIR</span><span class="o">=</span><span class="s2">&#34;</span><span class="k">$(</span> <span class="nb">cd</span> -P <span class="s2">&#34;</span><span class="k">$(</span> dirname <span class="s2">&#34;</span><span class="nv">$SOURCE</span><span class="s2">&#34;</span>  <span class="k">)</span><span class="s2">&#34;</span> <span class="o">&amp;&amp;</span> <span class="nb">pwd</span> <span class="k">)</span><span class="s2">&#34;</span>  <span class="c1"># </span>
+</span></span><span class="line"><span class="cl">  <span class="k">done</span>
+</span></span><span class="line"><span class="cl">  <span class="nv">BIN_DIR</span><span class="o">=</span><span class="s2">&#34;</span><span class="k">$(</span> <span class="nb">cd</span> -P <span class="s2">&#34;</span><span class="k">$(</span> dirname <span class="s2">&#34;</span><span class="nv">$SOURCE</span><span class="s2">&#34;</span> <span class="k">)</span><span class="s2">&#34;</span> <span class="o">&amp;&amp;</span> <span class="nb">pwd</span> <span class="k">)</span><span class="s2">&#34;</span> <span class="c1"># 进入到文件的目录，这里的值为/opt/cloudera/parcels/SPARK2-2.2.0.cloudera3-1.cdh5.13.3.p0.556753/bin/</span>
+</span></span><span class="line"><span class="cl">  <span class="nv">CDH_LIB_DIR</span><span class="o">=</span><span class="nv">$BIN_DIR</span>/../../CDH/lib <span class="c1"># 这里的值为/opt/cloudera/parcels/CDH/lib</span>
+</span></span><span class="line"><span class="cl">  <span class="nv">LIB_DIR</span><span class="o">=</span><span class="nv">$BIN_DIR</span>/../lib <span class="c1"># 这里的值为/opt/cloudera/parcels/SPARK2-2.2.0.cloudera3-1.cdh5.13.3.p0.556753/lib</span>
+</span></span><span class="line"><span class="cl"><span class="nb">export</span> <span class="nv">HADOOP_HOME</span><span class="o">=</span><span class="nv">$CDH_LIB_DIR</span>/hadoop <span class="c1"># 设置HADOOP_HOME环境变量为/opt/cloudera/parcels/CDH/lib/hadoop</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># 查看JAVA_HOME环境变量</span>
+</span></span><span class="line"><span class="cl">. <span class="nv">$CDH_LIB_DIR</span>/bigtop-utils/bigtop-detect-javahome
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="nb">exec</span> <span class="nv">$LIB_DIR</span>/spark2/bin/spark-submit <span class="s2">&#34;</span><span class="nv">$@</span><span class="s2">&#34;</span> <span class="c1"># 执行命令</span>
+</span></span></code></pre></td></tr></table></div>
 </div>
 </div><p>spark2-submit命令会设置好环境变量，并且进入到对应的执行目录里。最后执行了/opt/cloudera/parcels/SPARK2-2.2.0.cloudera3-1.cdh5.13.3.p0.556753/lib/spark2/bin/spark-submit文件，下面看看这个文件的内容</p>
 <div class="highlight"><div class="chroma">
@@ -326,17 +326,17 @@ lrwxrwxrwx <span class="m">1</span> root root <span class="m">84</span> Feb <spa
 </span><span class="lnt">10
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="cp">#!/usr/bin/env bash
-</span><span class="cp"></span><span class="c1"># 寻找环境变量SPARK_HOME的值</span>
-<span class="k">if</span> <span class="o">[</span> -z <span class="s2">&#34;</span><span class="si">${</span><span class="nv">SPARK_HOME</span><span class="si">}</span><span class="s2">&#34;</span> <span class="o">]</span><span class="p">;</span> <span class="k">then</span>
-  <span class="nb">source</span> <span class="s2">&#34;</span><span class="k">$(</span>dirname <span class="s2">&#34;</span><span class="nv">$0</span><span class="s2">&#34;</span><span class="k">)</span><span class="s2">&#34;</span>/find-spark-home
-<span class="k">fi</span>
-
-<span class="c1"># disable randomized hash for string in Python 3.3+</span>
-<span class="nb">export</span> <span class="nv">PYTHONHASHSEED</span><span class="o">=</span><span class="m">0</span>
-<span class="c1"># 执行java命令，main类为org.apache.spark.deploy.SparkSubmit</span>
-<span class="nb">exec</span> <span class="s2">&#34;</span><span class="si">${</span><span class="nv">SPARK_HOME</span><span class="si">}</span><span class="s2">&#34;</span>/bin/spark-class org.apache.spark.deploy.SparkSubmit <span class="s2">&#34;</span><span class="nv">$@</span><span class="s2">&#34;</span>
-</code></pre></td></tr></table></div>
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl"><span class="cp">#!/usr/bin/env bash
+</span></span></span><span class="line"><span class="cl"><span class="cp"></span><span class="c1"># 寻找环境变量SPARK_HOME的值</span>
+</span></span><span class="line"><span class="cl"><span class="k">if</span> <span class="o">[</span> -z <span class="s2">&#34;</span><span class="si">${</span><span class="nv">SPARK_HOME</span><span class="si">}</span><span class="s2">&#34;</span> <span class="o">]</span><span class="p">;</span> <span class="k">then</span>
+</span></span><span class="line"><span class="cl">  <span class="nb">source</span> <span class="s2">&#34;</span><span class="k">$(</span>dirname <span class="s2">&#34;</span><span class="nv">$0</span><span class="s2">&#34;</span><span class="k">)</span><span class="s2">&#34;</span>/find-spark-home
+</span></span><span class="line"><span class="cl"><span class="k">fi</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># disable randomized hash for string in Python 3.3+</span>
+</span></span><span class="line"><span class="cl"><span class="nb">export</span> <span class="nv">PYTHONHASHSEED</span><span class="o">=</span><span class="m">0</span>
+</span></span><span class="line"><span class="cl"><span class="c1"># 执行java命令，main类为org.apache.spark.deploy.SparkSubmit</span>
+</span></span><span class="line"><span class="cl"><span class="nb">exec</span> <span class="s2">&#34;</span><span class="si">${</span><span class="nv">SPARK_HOME</span><span class="si">}</span><span class="s2">&#34;</span>/bin/spark-class org.apache.spark.deploy.SparkSubmit <span class="s2">&#34;</span><span class="nv">$@</span><span class="s2">&#34;</span>
+</span></span></code></pre></td></tr></table></div>
 </div>
 </div><p>上面使用了find-spark-home文件，查看SPARK_HOME的值。如果存在SPARK_HOME存在，则直接返回。如果不返回， 则查看当前目录下，是否有find_spark_home.py文件。如果存在find_spark_home.py文件，则调用python执行获取结果。如果不存在，则使用当前目录为SPARK_HOME。</p>
 <p>这里Cloudera的最后使用/opt/cloudera/parcels/SPARK2/lib/spark2目录，作为SPARK_HOME的值。</p>
@@ -348,9 +348,9 @@ lrwxrwxrwx <span class="m">1</span> root root <span class="m">84</span> Feb <spa
 </span><span class="lnt">2
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell">ln -s  /etc/alternatives/spark2-sql /bin/spark2-sql
-ln -s  /opt/cloudera/parcels/SPARK2/bin/spark2-sql  /etc/alternatives/spark2-sql
-</code></pre></td></tr></table></div>
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">ln -s  /etc/alternatives/spark2-sql /bin/spark2-sql
+</span></span><span class="line"><span class="cl">ln -s  /opt/cloudera/parcels/SPARK2/bin/spark2-sql  /etc/alternatives/spark2-sql
+</span></span></code></pre></td></tr></table></div>
 </div>
 </div><p>创建文件 /opt/cloudera/parcels/SPARK2/bin/spark2-sql，文件内容如下</p>
 <div class="highlight"><div class="chroma">
@@ -376,26 +376,26 @@ ln -s  /opt/cloudera/parcels/SPARK2/bin/spark2-sql  /etc/alternatives/spark2-sql
 </span><span class="lnt">19
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="cp">#!/bin/bash
-</span><span class="cp"></span>  <span class="c1"># Reference: http://stackoverflow.com/questions/59895/can-a-bash-script-tell-what-directory-its-stored-in</span>
-  <span class="nv">SOURCE</span><span class="o">=</span><span class="s2">&#34;</span><span class="si">${</span><span class="nv">BASH_SOURCE</span><span class="p">[0]</span><span class="si">}</span><span class="s2">&#34;</span>
-  <span class="nv">BIN_DIR</span><span class="o">=</span><span class="s2">&#34;</span><span class="k">$(</span> dirname <span class="s2">&#34;</span><span class="nv">$SOURCE</span><span class="s2">&#34;</span> <span class="k">)</span><span class="s2">&#34;</span>
-  <span class="k">while</span> <span class="o">[</span> -h <span class="s2">&#34;</span><span class="nv">$SOURCE</span><span class="s2">&#34;</span> <span class="o">]</span>
-  <span class="k">do</span>
-    <span class="nv">SOURCE</span><span class="o">=</span><span class="s2">&#34;</span><span class="k">$(</span>readlink <span class="s2">&#34;</span><span class="nv">$SOURCE</span><span class="s2">&#34;</span><span class="k">)</span><span class="s2">&#34;</span>
-    <span class="o">[[</span> <span class="nv">$SOURCE</span> !<span class="o">=</span> /* <span class="o">]]</span> <span class="o">&amp;&amp;</span> <span class="nv">SOURCE</span><span class="o">=</span><span class="s2">&#34;</span><span class="nv">$DIR</span><span class="s2">/</span><span class="nv">$SOURCE</span><span class="s2">&#34;</span>
-    <span class="nv">BIN_DIR</span><span class="o">=</span><span class="s2">&#34;</span><span class="k">$(</span> <span class="nb">cd</span> -P <span class="s2">&#34;</span><span class="k">$(</span> dirname <span class="s2">&#34;</span><span class="nv">$SOURCE</span><span class="s2">&#34;</span>  <span class="k">)</span><span class="s2">&#34;</span> <span class="o">&amp;&amp;</span> <span class="nb">pwd</span> <span class="k">)</span><span class="s2">&#34;</span>
-  <span class="k">done</span>
-  <span class="nv">BIN_DIR</span><span class="o">=</span><span class="s2">&#34;</span><span class="k">$(</span> <span class="nb">cd</span> -P <span class="s2">&#34;</span><span class="k">$(</span> dirname <span class="s2">&#34;</span><span class="nv">$SOURCE</span><span class="s2">&#34;</span> <span class="k">)</span><span class="s2">&#34;</span> <span class="o">&amp;&amp;</span> <span class="nb">pwd</span> <span class="k">)</span><span class="s2">&#34;</span>
-  <span class="nv">CDH_LIB_DIR</span><span class="o">=</span><span class="nv">$BIN_DIR</span>/../../CDH/lib
-  <span class="nv">LIB_DIR</span><span class="o">=</span><span class="nv">$BIN_DIR</span>/../lib
-<span class="nb">export</span> <span class="nv">HADOOP_HOME</span><span class="o">=</span><span class="nv">$CDH_LIB_DIR</span>/hadoop
-
-<span class="c1"># Autodetect JAVA_HOME if not defined</span>
-. <span class="nv">$CDH_LIB_DIR</span>/bigtop-utils/bigtop-detect-javahome
-
-<span class="nb">exec</span> <span class="nv">$LIB_DIR</span>/spark2/bin/spark-sql <span class="s2">&#34;</span><span class="nv">$@</span><span class="s2">&#34;</span>  
-</code></pre></td></tr></table></div>
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl"><span class="cp">#!/bin/bash
+</span></span></span><span class="line"><span class="cl"><span class="cp"></span>  <span class="c1"># Reference: http://stackoverflow.com/questions/59895/can-a-bash-script-tell-what-directory-its-stored-in</span>
+</span></span><span class="line"><span class="cl">  <span class="nv">SOURCE</span><span class="o">=</span><span class="s2">&#34;</span><span class="si">${</span><span class="nv">BASH_SOURCE</span><span class="p">[0]</span><span class="si">}</span><span class="s2">&#34;</span>
+</span></span><span class="line"><span class="cl">  <span class="nv">BIN_DIR</span><span class="o">=</span><span class="s2">&#34;</span><span class="k">$(</span> dirname <span class="s2">&#34;</span><span class="nv">$SOURCE</span><span class="s2">&#34;</span> <span class="k">)</span><span class="s2">&#34;</span>
+</span></span><span class="line"><span class="cl">  <span class="k">while</span> <span class="o">[</span> -h <span class="s2">&#34;</span><span class="nv">$SOURCE</span><span class="s2">&#34;</span> <span class="o">]</span>
+</span></span><span class="line"><span class="cl">  <span class="k">do</span>
+</span></span><span class="line"><span class="cl">    <span class="nv">SOURCE</span><span class="o">=</span><span class="s2">&#34;</span><span class="k">$(</span>readlink <span class="s2">&#34;</span><span class="nv">$SOURCE</span><span class="s2">&#34;</span><span class="k">)</span><span class="s2">&#34;</span>
+</span></span><span class="line"><span class="cl">    <span class="o">[[</span> <span class="nv">$SOURCE</span> !<span class="o">=</span> /* <span class="o">]]</span> <span class="o">&amp;&amp;</span> <span class="nv">SOURCE</span><span class="o">=</span><span class="s2">&#34;</span><span class="nv">$DIR</span><span class="s2">/</span><span class="nv">$SOURCE</span><span class="s2">&#34;</span>
+</span></span><span class="line"><span class="cl">    <span class="nv">BIN_DIR</span><span class="o">=</span><span class="s2">&#34;</span><span class="k">$(</span> <span class="nb">cd</span> -P <span class="s2">&#34;</span><span class="k">$(</span> dirname <span class="s2">&#34;</span><span class="nv">$SOURCE</span><span class="s2">&#34;</span>  <span class="k">)</span><span class="s2">&#34;</span> <span class="o">&amp;&amp;</span> <span class="nb">pwd</span> <span class="k">)</span><span class="s2">&#34;</span>
+</span></span><span class="line"><span class="cl">  <span class="k">done</span>
+</span></span><span class="line"><span class="cl">  <span class="nv">BIN_DIR</span><span class="o">=</span><span class="s2">&#34;</span><span class="k">$(</span> <span class="nb">cd</span> -P <span class="s2">&#34;</span><span class="k">$(</span> dirname <span class="s2">&#34;</span><span class="nv">$SOURCE</span><span class="s2">&#34;</span> <span class="k">)</span><span class="s2">&#34;</span> <span class="o">&amp;&amp;</span> <span class="nb">pwd</span> <span class="k">)</span><span class="s2">&#34;</span>
+</span></span><span class="line"><span class="cl">  <span class="nv">CDH_LIB_DIR</span><span class="o">=</span><span class="nv">$BIN_DIR</span>/../../CDH/lib
+</span></span><span class="line"><span class="cl">  <span class="nv">LIB_DIR</span><span class="o">=</span><span class="nv">$BIN_DIR</span>/../lib
+</span></span><span class="line"><span class="cl"><span class="nb">export</span> <span class="nv">HADOOP_HOME</span><span class="o">=</span><span class="nv">$CDH_LIB_DIR</span>/hadoop
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># Autodetect JAVA_HOME if not defined</span>
+</span></span><span class="line"><span class="cl">. <span class="nv">$CDH_LIB_DIR</span>/bigtop-utils/bigtop-detect-javahome
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="nb">exec</span> <span class="nv">$LIB_DIR</span>/spark2/bin/spark-sql <span class="s2">&#34;</span><span class="nv">$@</span><span class="s2">&#34;</span>  
+</span></span></code></pre></td></tr></table></div>
 </div>
 </div><p>并且给与这个文件可执行权限 <code>chmod a+x /opt/cloudera/parcels/SPARK2/bin/spark2-sql</code></p>
 <p>然后创建 /opt/cloudera/parcels/SPARK2-2.2.0.cloudera3-1.cdh5.13.3.p0.556753/lib/spark2/bin/spark-sql 文件，内容如下</p>
@@ -428,32 +428,32 @@ ln -s  /opt/cloudera/parcels/SPARK2/bin/spark2-sql  /etc/alternatives/spark2-sql
 </span><span class="lnt">25
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="cp">#!/usr/bin/env bash
-</span><span class="cp"></span>
-<span class="c1">#</span>
-<span class="c1"># Licensed to the Apache Software Foundation (ASF) under one or more</span>
-<span class="c1"># contributor license agreements.  See the NOTICE file distributed with</span>
-<span class="c1"># this work for additional information regarding copyright ownership.</span>
-<span class="c1"># The ASF licenses this file to You under the Apache License, Version 2.0</span>
-<span class="c1"># (the &#34;License&#34;); you may not use this file except in compliance with</span>
-<span class="c1"># the License.  You may obtain a copy of the License at</span>
-<span class="c1">#</span>
-<span class="c1">#    http://www.apache.org/licenses/LICENSE-2.0</span>
-<span class="c1">#</span>
-<span class="c1"># Unless required by applicable law or agreed to in writing, software</span>
-<span class="c1"># distributed under the License is distributed on an &#34;AS IS&#34; BASIS,</span>
-<span class="c1"># WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.</span>
-<span class="c1"># See the License for the specific language governing permissions and</span>
-<span class="c1"># limitations under the License.</span>
-<span class="c1">#</span>
-
-<span class="k">if</span> <span class="o">[</span> -z <span class="s2">&#34;</span><span class="si">${</span><span class="nv">SPARK_HOME</span><span class="si">}</span><span class="s2">&#34;</span> <span class="o">]</span><span class="p">;</span> <span class="k">then</span>
-  <span class="nb">source</span> <span class="s2">&#34;</span><span class="k">$(</span>dirname <span class="s2">&#34;</span><span class="nv">$0</span><span class="s2">&#34;</span><span class="k">)</span><span class="s2">&#34;</span>/find-spark-home
-<span class="k">fi</span>
-
-<span class="nb">export</span> <span class="nv">_SPARK_CMD_USAGE</span><span class="o">=</span><span class="s2">&#34;Usage: ./bin/spark-sql [options] [cli option]&#34;</span>
-<span class="nb">exec</span> <span class="s2">&#34;</span><span class="si">${</span><span class="nv">SPARK_HOME</span><span class="si">}</span><span class="s2">&#34;</span>/bin/spark-submit --class org.apache.spark.sql.hive.thriftserver.SparkSQLCLIDriver <span class="s2">&#34;</span><span class="nv">$@</span><span class="s2">&#34;</span>
-</code></pre></td></tr></table></div>
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl"><span class="cp">#!/usr/bin/env bash
+</span></span></span><span class="line"><span class="cl"><span class="cp"></span>
+</span></span><span class="line"><span class="cl"><span class="c1">#</span>
+</span></span><span class="line"><span class="cl"><span class="c1"># Licensed to the Apache Software Foundation (ASF) under one or more</span>
+</span></span><span class="line"><span class="cl"><span class="c1"># contributor license agreements.  See the NOTICE file distributed with</span>
+</span></span><span class="line"><span class="cl"><span class="c1"># this work for additional information regarding copyright ownership.</span>
+</span></span><span class="line"><span class="cl"><span class="c1"># The ASF licenses this file to You under the Apache License, Version 2.0</span>
+</span></span><span class="line"><span class="cl"><span class="c1"># (the &#34;License&#34;); you may not use this file except in compliance with</span>
+</span></span><span class="line"><span class="cl"><span class="c1"># the License.  You may obtain a copy of the License at</span>
+</span></span><span class="line"><span class="cl"><span class="c1">#</span>
+</span></span><span class="line"><span class="cl"><span class="c1">#    http://www.apache.org/licenses/LICENSE-2.0</span>
+</span></span><span class="line"><span class="cl"><span class="c1">#</span>
+</span></span><span class="line"><span class="cl"><span class="c1"># Unless required by applicable law or agreed to in writing, software</span>
+</span></span><span class="line"><span class="cl"><span class="c1"># distributed under the License is distributed on an &#34;AS IS&#34; BASIS,</span>
+</span></span><span class="line"><span class="cl"><span class="c1"># WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.</span>
+</span></span><span class="line"><span class="cl"><span class="c1"># See the License for the specific language governing permissions and</span>
+</span></span><span class="line"><span class="cl"><span class="c1"># limitations under the License.</span>
+</span></span><span class="line"><span class="cl"><span class="c1">#</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="k">if</span> <span class="o">[</span> -z <span class="s2">&#34;</span><span class="si">${</span><span class="nv">SPARK_HOME</span><span class="si">}</span><span class="s2">&#34;</span> <span class="o">]</span><span class="p">;</span> <span class="k">then</span>
+</span></span><span class="line"><span class="cl">  <span class="nb">source</span> <span class="s2">&#34;</span><span class="k">$(</span>dirname <span class="s2">&#34;</span><span class="nv">$0</span><span class="s2">&#34;</span><span class="k">)</span><span class="s2">&#34;</span>/find-spark-home
+</span></span><span class="line"><span class="cl"><span class="k">fi</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="nb">export</span> <span class="nv">_SPARK_CMD_USAGE</span><span class="o">=</span><span class="s2">&#34;Usage: ./bin/spark-sql [options] [cli option]&#34;</span>
+</span></span><span class="line"><span class="cl"><span class="nb">exec</span> <span class="s2">&#34;</span><span class="si">${</span><span class="nv">SPARK_HOME</span><span class="si">}</span><span class="s2">&#34;</span>/bin/spark-submit --class org.apache.spark.sql.hive.thriftserver.SparkSQLCLIDriver <span class="s2">&#34;</span><span class="nv">$@</span><span class="s2">&#34;</span>
+</span></span></code></pre></td></tr></table></div>
 </div>
 </div><p>同样给与这个文件可执行权限 <code>chmod a+x /opt/cloudera/parcels/SPARK2-2.2.0.cloudera3-1.cdh5.13.3.p0.556753/lib/spark2/bin/spark-sql </code></p>
 <p>这里将相关命令的文件，都已经配置好了。但是因为Cloudera内置的Spark库不全，需要将缺少的依赖包添加进来。我们可以直接下载编译完成的Spark库，下载网址为  http://archive.apache.org/dist/spark/ 。从里面选取的版本号，需要与Cloudera上安装的Spark版本一致。</p>
@@ -464,9 +464,9 @@ ln -s  /opt/cloudera/parcels/SPARK2/bin/spark2-sql  /etc/alternatives/spark2-sql
 </span><span class="lnt">2
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell">cp jars/spark-hive-thriftserver_2.11-2.2.0.jar /opt/cloudera/parcels/SPARK2/lib/spark2/jars/
-cp jars/hive-* /opt/cloudera/parcels/SPARK2/lib/spark2/jars/ <span class="c1"># 注意到这里不要覆盖原有文件</span>
-</code></pre></td></tr></table></div>
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">cp jars/spark-hive-thriftserver_2.11-2.2.0.jar /opt/cloudera/parcels/SPARK2/lib/spark2/jars/
+</span></span><span class="line"><span class="cl">cp jars/hive-* /opt/cloudera/parcels/SPARK2/lib/spark2/jars/ <span class="c1"># 注意到这里不要覆盖原有文件</span>
+</span></span></code></pre></td></tr></table></div>
 </div>
 </div><p>整个添加的过程就完成了，接下来就可以直接使用spark-sql命令，就可以进入客户端shell</p>
 <div class="highlight"><div class="chroma">
@@ -477,11 +477,11 @@ cp jars/hive-* /opt/cloudera/parcels/SPARK2/lib/spark2/jars/ <span class="c1"># 
 </span><span class="lnt">4
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell">sudo -u hive spark2-sql
-spark-sql&gt; use test<span class="p">;</span>
-spark-sql&gt; show tables<span class="p">;</span>
-.....
-</code></pre></td></tr></table></div>
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">sudo -u hive spark2-sql
+</span></span><span class="line"><span class="cl">spark-sql&gt; use test<span class="p">;</span>
+</span></span><span class="line"><span class="cl">spark-sql&gt; show tables<span class="p">;</span>
+</span></span><span class="line"><span class="cl">.....
+</span></span></code></pre></td></tr></table></div>
 </div>
 </div><p>下面简单介绍下spark-sql常用的命令选项</p>
 <div class="highlight"><div class="chroma">
@@ -493,12 +493,12 @@ spark-sql&gt; show tables<span class="p">;</span>
 </span><span class="lnt">5
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="c1"># 执行 sql 命令</span>
-sudo -u hive spark2-sql -e <span class="s2">&#34;select count(*) from test.my_table;&#34;</span>
-
-<span class="c1"># 执行 sql 文件</span>
-sudo -u hive spark2-sql -f my_sql.sql
-</code></pre></td></tr></table></div>
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl"><span class="c1"># 执行 sql 命令</span>
+</span></span><span class="line"><span class="cl">sudo -u hive spark2-sql -e <span class="s2">&#34;select count(*) from test.my_table;&#34;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># 执行 sql 文件</span>
+</span></span><span class="line"><span class="cl">sudo -u hive spark2-sql -f my_sql.sql
+</span></span></code></pre></td></tr></table></div>
 </div>
 </div>
             </div>
@@ -527,9 +527,9 @@ sudo -u hive spark2-sql -f my_sql.sql
 
         
     <div class="updated-badge-container">
-        <span title="Updated @ 2021-10-22 14:44:34 CST" style="cursor:help">
+        <span title="Updated @ 2023-07-02 16:59:09 CST" style="cursor:help">
 
-<svg xmlns="http://www.w3.org/2000/svg" width="130" height="20" class="updated-badge"><linearGradient id="b" x2="0" y2="100%"><stop offset="0" stop-color="#bbb" stop-opacity=".1"/><stop offset="1" stop-opacity=".1"/></linearGradient><clipPath id="a"><rect width="130" height="20" rx="3" fill="#fff"/></clipPath><g clip-path="url(#a)"><path class="updated-badge-left" d="M0 0h55v20H0z"/><path class="updated-badge-right" d="M55 0h75v20H55z"/><path fill="url(#b)" d="M0 0h130v20H0z"/></g><g fill="#fff" text-anchor="middle" font-size="110"><text x="285" y="150" fill="#010101" fill-opacity=".3" textLength="450" transform="scale(.1)">updated</text><text x="285" y="140" textLength="450" transform="scale(.1)">updated</text><text x="915" y="150" fill="#010101" fill-opacity=".3" textLength="650" transform="scale(.1)">2021-10-22</text><text x="915" y="140" textLength="650" transform="scale(.1)">2021-10-22</text></g></svg>
+<svg xmlns="http://www.w3.org/2000/svg" width="130" height="20" class="updated-badge"><linearGradient id="b" x2="0" y2="100%"><stop offset="0" stop-color="#bbb" stop-opacity=".1"/><stop offset="1" stop-opacity=".1"/></linearGradient><clipPath id="a"><rect width="130" height="20" rx="3" fill="#fff"/></clipPath><g clip-path="url(#a)"><path class="updated-badge-left" d="M0 0h55v20H0z"/><path class="updated-badge-right" d="M55 0h75v20H55z"/><path fill="url(#b)" d="M0 0h130v20H0z"/></g><g fill="#fff" text-anchor="middle" font-size="110"><text x="285" y="150" fill="#010101" fill-opacity=".3" textLength="450" transform="scale(.1)">updated</text><text x="285" y="140" textLength="450" transform="scale(.1)">updated</text><text x="915" y="150" fill="#010101" fill-opacity=".3" textLength="650" transform="scale(.1)">2023-07-02</text><text x="915" y="140" textLength="650" transform="scale(.1)">2023-07-02</text></g></svg>
         </span></div>
 
 

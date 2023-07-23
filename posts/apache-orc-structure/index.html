@@ -3,7 +3,7 @@
     <head prefix="og: http://ogp.me/ns# article: http://ogp.me/ns/article#">
     <meta charset="UTF-8" />
 
-    <meta name="generator" content="Hugo 0.88.1" /><meta name="theme-color" content="#fff" />
+    <meta name="generator" content="Hugo 0.115.0"><meta name="theme-color" content="#fff" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     
     <meta name="format-detection" content="telephone=no, date=no, address=no, email=no" />
@@ -14,11 +14,11 @@
 
     <title>Apache Orc 结构 | 学习笔记</title>
 
-    <link rel="stylesheet" href="/css/meme.min.2d3e1834af2bc8dda20c7d74aaa1d8134845094441b7a554a5206ccd4b472596.css"/>
+    <link rel="stylesheet" href="/css/meme.min.91e7f58f97e1c60563ef481c38d9684fa8099537801d6f17bbfc724121e7d8f1.css"/>
 
     
     
-        <script src="/js/meme.min.800f61672145711eb3e1f29fcfcc3dbe0139dd459259718b611a0390f74703d1.js"></script>
+        <script src="/js/meme.min.3210a00c2fdcf6f831170b681b8ee40f83f0224663661e986872616aec45407f.js"></script>
 
     
 
@@ -54,7 +54,7 @@
         "@context": "https://schema.org",
         "@type": "BlogPosting",
         "datePublished": "2020-10-18T22:44:06+00:00",
-        "dateModified": "2021-10-22T14:44:34+08:00",
+        "dateModified": "2023-07-02T16:59:09+08:00",
         "url": "https://zhmin.github.io/posts/apache-orc-structure/",
         "headline": "Apache Orc 结构",
         "description": "前言 最近看完了数据库的行式存储后，也想总结下列式存储。列式存储也有多种实现方式，这里挑选熟悉的存储格式 orc，它在hive里使用的比较多。本篇会先讲讲它的设计结构，然后结合源码来理解，中间还会讲述一些……",
@@ -98,7 +98,7 @@
 <meta property="og:locale" content="zh" /><meta property="og:image" content="https://orc.apache.org/img/OrcFileLayout.png" />
 <meta property="og:type" content="article" />
     <meta property="article:published_time" content="2020-10-18T22:44:06&#43;00:00" />
-    <meta property="article:modified_time" content="2021-10-22T14:44:34&#43;08:00" />
+    <meta property="article:modified_time" content="2023-07-02T16:59:09&#43;08:00" />
     
     <meta property="article:section" content="posts" />
 
@@ -256,12 +256,12 @@
 </span><span class="lnt">5
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">VectorizedRowBatch</span> <span class="o">{</span>
-    <span class="kd">public</span> <span class="kt">int</span> <span class="n">numCols</span><span class="o">;</span>           <span class="c1">// 多少列
-</span><span class="c1"></span>    <span class="kd">public</span> <span class="n">ColumnVector</span><span class="o">[]</span> <span class="n">cols</span><span class="o">;</span>   <span class="c1">// 每列的数据
-</span><span class="c1"></span>    <span class="kd">public</span> <span class="kt">int</span> <span class="n">size</span><span class="o">;</span>   <span class="c1">// 行数
-</span><span class="c1"></span><span class="o">}</span>
-</code></pre></td></tr></table></div>
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">VectorizedRowBatch</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">    <span class="kd">public</span> <span class="kt">int</span> <span class="n">numCols</span><span class="o">;</span>           <span class="c1">// 多少列
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="kd">public</span> <span class="n">ColumnVector</span><span class="o">[]</span> <span class="n">cols</span><span class="o">;</span>   <span class="c1">// 每列的数据
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="kd">public</span> <span class="kt">int</span> <span class="n">size</span><span class="o">;</span>   <span class="c1">// 行数
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="o">}</span>
+</span></span></code></pre></td></tr></table></div>
 </div>
 </div><p><code>ColumnVector</code>表示一列的数据，可以看作是一个数组。<code>ColumnVector</code>有多个子类，每个子类对应于一种数据类型。</p>
 <div class="highlight"><div class="chroma">
@@ -275,14 +275,14 @@
 </span><span class="lnt">7
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="c1">// 只包含一列的数据
-</span><span class="c1"></span><span class="kd">public</span> <span class="kd">abstract</span> <span class="kd">class</span> <span class="nc">ColumnVector</span> <span class="o">{</span>   
-    <span class="kd">public</span> <span class="kd">final</span> <span class="n">Type</span> <span class="n">type</span><span class="o">;</span>        <span class="c1">// 列类型
-</span><span class="c1"></span>    <span class="kd">public</span> <span class="kt">boolean</span><span class="o">[]</span> <span class="n">isNull</span><span class="o">;</span>       <span class="c1">// 第几行的列数据是否为空值
-</span><span class="c1"></span>    <span class="kd">public</span> <span class="kt">boolean</span> <span class="n">noNulls</span><span class="o">;</span>        <span class="c1">// 如果都没有空值，那么则为true
-</span><span class="c1"></span>    <span class="kd">public</span> <span class="kt">boolean</span> <span class="n">isRepeating</span><span class="o">;</span>    <span class="c1">// 为true表示该列的值都是相同的，该值为列表的第一个值
-</span><span class="c1"></span><span class="o">}</span>
-</code></pre></td></tr></table></div>
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="c1">// 只包含一列的数据
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="kd">public</span> <span class="kd">abstract</span> <span class="kd">class</span> <span class="nc">ColumnVector</span> <span class="o">{</span>   
+</span></span><span class="line"><span class="cl">    <span class="kd">public</span> <span class="kd">final</span> <span class="n">Type</span> <span class="n">type</span><span class="o">;</span>        <span class="c1">// 列类型
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="kd">public</span> <span class="kt">boolean</span><span class="o">[]</span> <span class="n">isNull</span><span class="o">;</span>       <span class="c1">// 第几行的列数据是否为空值
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="kd">public</span> <span class="kt">boolean</span> <span class="n">noNulls</span><span class="o">;</span>        <span class="c1">// 如果都没有空值，那么则为true
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="kd">public</span> <span class="kt">boolean</span> <span class="n">isRepeating</span><span class="o">;</span>    <span class="c1">// 为true表示该列的值都是相同的，该值为列表的第一个值
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="o">}</span>
+</span></span></code></pre></td></tr></table></div>
 </div>
 </div><h2 id="列统计信息"><a href="#列统计信息" class="anchor-link"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon anchor-icon"><path d="M326.612 185.391c59.747 59.809 58.927 155.698.36 214.59-.11.12-.24.25-.36.37l-67.2 67.2c-59.27 59.27-155.699 59.262-214.96 0-59.27-59.26-59.27-155.7 0-214.96l37.106-37.106c9.84-9.84 26.786-3.3 27.294 10.606.648 17.722 3.826 35.527 9.69 52.721 1.986 5.822.567 12.262-3.783 16.612l-13.087 13.087c-28.026 28.026-28.905 73.66-1.155 101.96 28.024 28.579 74.086 28.749 102.325.51l67.2-67.19c28.191-28.191 28.073-73.757 0-101.83-3.701-3.694-7.429-6.564-10.341-8.569a16.037 16.037 0 0 1-6.947-12.606c-.396-10.567 3.348-21.456 11.698-29.806l21.054-21.055c5.521-5.521 14.182-6.199 20.584-1.731a152.482 152.482 0 0 1 20.522 17.197zM467.547 44.449c-59.261-59.262-155.69-59.27-214.96 0l-67.2 67.2c-.12.12-.25.25-.36.37-58.566 58.892-59.387 154.781.36 214.59a152.454 152.454 0 0 0 20.521 17.196c6.402 4.468 15.064 3.789 20.584-1.731l21.054-21.055c8.35-8.35 12.094-19.239 11.698-29.806a16.037 16.037 0 0 0-6.947-12.606c-2.912-2.005-6.64-4.875-10.341-8.569-28.073-28.073-28.191-73.639 0-101.83l67.2-67.19c28.239-28.239 74.3-28.069 102.325.51 27.75 28.3 26.872 73.934-1.155 101.96l-13.087 13.087c-4.35 4.35-5.769 10.79-3.783 16.612 5.864 17.194 9.042 34.999 9.69 52.721.509 13.906 17.454 20.446 27.294 10.606l37.106-37.106c59.271-59.259 59.271-155.699.001-214.959z"/></svg></a>列统计信息</h2>
 <p>对于列的统计信息，orc 会有不同范围的统计。有基于整个文件的统计，有基于 stripe 的统计，还有基于 stripe 中的 row group 的统计。这些统计信息由<code>ColumnStatistics</code>表示，它还有多个子类，每个子类对应一种数据类型。</p>
@@ -296,12 +296,12 @@
 </span><span class="lnt">5
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">abstract</span> <span class="kd">class</span> <span class="nc">ColumnStatisticsImp</span> <span class="o">{</span>
-    <span class="kd">protected</span> <span class="kt">long</span> <span class="n">count</span> <span class="o">=</span> <span class="n">0</span><span class="o">;</span>   <span class="c1">// 非空值
-</span><span class="c1"></span>    <span class="kd">private</span> <span class="kt">boolean</span> <span class="n">hasNull</span> <span class="o">=</span> <span class="kc">false</span><span class="o">;</span>  <span class="c1">// 是否存在空值
-</span><span class="c1"></span>    <span class="kd">private</span> <span class="kt">long</span> <span class="n">bytesOnDisk</span> <span class="o">=</span> <span class="n">0</span><span class="o">;</span>  <span class="c1">// 该列存储在磁盘的空间大小
-</span><span class="c1"></span><span class="o">}</span>
-</code></pre></td></tr></table></div>
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="kd">public</span> <span class="kd">abstract</span> <span class="kd">class</span> <span class="nc">ColumnStatisticsImp</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">    <span class="kd">protected</span> <span class="kt">long</span> <span class="n">count</span> <span class="o">=</span> <span class="mi">0</span><span class="o">;</span>   <span class="c1">// 非空值
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="kd">private</span> <span class="kt">boolean</span> <span class="n">hasNull</span> <span class="o">=</span> <span class="kc">false</span><span class="o">;</span>  <span class="c1">// 是否存在空值
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="kd">private</span> <span class="kt">long</span> <span class="n">bytesOnDisk</span> <span class="o">=</span> <span class="mi">0</span><span class="o">;</span>  <span class="c1">// 该列存储在磁盘的空间大小
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="o">}</span>
+</span></span></code></pre></td></tr></table></div>
 </div>
 </div><p>下面以 int 类型为例，它还有独立的统计信息</p>
 <div class="highlight"><div class="chroma">
@@ -313,12 +313,12 @@
 </span><span class="lnt">5
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="n">message</span> <span class="n">IntegerStatistics</span>  <span class="o">{</span>
-  <span class="n">optional</span> <span class="n">sint64</span> <span class="n">minimum</span> <span class="o">=</span> <span class="n">1</span><span class="o">;</span>    <span class="c1">// 最小值
-</span><span class="c1"></span>  <span class="n">optional</span> <span class="n">sint64</span> <span class="n">maximum</span> <span class="o">=</span> <span class="n">2</span><span class="o">;</span>   <span class="c1">// 最大值
-</span><span class="c1"></span>  <span class="n">optional</span> <span class="n">sint64</span> <span class="n">sum</span> <span class="o">=</span> <span class="n">3</span><span class="o">;</span>       <span class="c1">// 总和
-</span><span class="c1"></span><span class="o">}</span>
-</code></pre></td></tr></table></div>
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="n">message</span> <span class="n">IntegerStatistics</span>  <span class="o">{</span>
+</span></span><span class="line"><span class="cl">  <span class="n">optional</span> <span class="n">sint64</span> <span class="n">minimum</span> <span class="o">=</span> <span class="mi">1</span><span class="o">;</span>    <span class="c1">// 最小值
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="n">optional</span> <span class="n">sint64</span> <span class="n">maximum</span> <span class="o">=</span> <span class="mi">2</span><span class="o">;</span>   <span class="c1">// 最大值
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="n">optional</span> <span class="n">sint64</span> <span class="n">sum</span> <span class="o">=</span> <span class="mi">3</span><span class="o">;</span>       <span class="c1">// 总和
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="o">}</span>
+</span></span></code></pre></td></tr></table></div>
 </div>
 </div><h2 id="数据写入"><a href="#数据写入" class="anchor-link"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon anchor-icon"><path d="M326.612 185.391c59.747 59.809 58.927 155.698.36 214.59-.11.12-.24.25-.36.37l-67.2 67.2c-59.27 59.27-155.699 59.262-214.96 0-59.27-59.26-59.27-155.7 0-214.96l37.106-37.106c9.84-9.84 26.786-3.3 27.294 10.606.648 17.722 3.826 35.527 9.69 52.721 1.986 5.822.567 12.262-3.783 16.612l-13.087 13.087c-28.026 28.026-28.905 73.66-1.155 101.96 28.024 28.579 74.086 28.749 102.325.51l67.2-67.19c28.191-28.191 28.073-73.757 0-101.83-3.701-3.694-7.429-6.564-10.341-8.569a16.037 16.037 0 0 1-6.947-12.606c-.396-10.567 3.348-21.456 11.698-29.806l21.054-21.055c5.521-5.521 14.182-6.199 20.584-1.731a152.482 152.482 0 0 1 20.522 17.197zM467.547 44.449c-59.261-59.262-155.69-59.27-214.96 0l-67.2 67.2c-.12.12-.25.25-.36.37-58.566 58.892-59.387 154.781.36 214.59a152.454 152.454 0 0 0 20.521 17.196c6.402 4.468 15.064 3.789 20.584-1.731l21.054-21.055c8.35-8.35 12.094-19.239 11.698-29.806a16.037 16.037 0 0 0-6.947-12.606c-2.912-2.005-6.64-4.875-10.341-8.569-28.073-28.073-28.191-73.639 0-101.83l67.2-67.19c28.239-28.239 74.3-28.069 102.325.51 27.75 28.3 26.872 73.934-1.155 101.96l-13.087 13.087c-4.35 4.35-5.769 10.79-3.783 16.612 5.864 17.194 9.042 34.999 9.69 52.721.509 13.906 17.454 20.446 27.294 10.606l37.106-37.106c59.271-59.259 59.271-155.699.001-214.959z"/></svg></a>数据写入</h2>
 <p>在了解了文件结构之后，接下来就继续了解它是如何写的，这样才能进行一些针对性的调优。</p>
@@ -356,35 +356,35 @@
 </span><span class="lnt">28
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="nd">@Override</span>
-<span class="kd">public</span> <span class="kt">void</span> <span class="nf">addRowBatch</span><span class="o">(</span><span class="n">VectorizedRowBatch</span> <span class="n">batch</span><span class="o">)</span> <span class="kd">throws</span> <span class="n">IOException</span> <span class="o">{</span>
-    <span class="k">if</span> <span class="o">(</span><span class="n">buildIndex</span><span class="o">)</span> <span class="o">{</span>
-        <span class="c1">// 如果创建索引，需要记录
-</span><span class="c1"></span>        <span class="kt">int</span> <span class="n">posn</span> <span class="o">=</span> <span class="n">0</span><span class="o">;</span>
-        <span class="k">while</span> <span class="o">(</span><span class="n">posn</span> <span class="o">&lt;</span> <span class="n">batch</span><span class="o">.</span><span class="na">size</span><span class="o">)</span> <span class="o">{</span>
-            <span class="c1">// 计算剩余的条数
-</span><span class="c1"></span>            <span class="kt">int</span> <span class="n">chunkSize</span> <span class="o">=</span> <span class="n">Math</span><span class="o">.</span><span class="na">min</span><span class="o">(</span><span class="n">batch</span><span class="o">.</span><span class="na">size</span> <span class="o">-</span> <span class="n">posn</span><span class="o">,</span> <span class="n">rowIndexStride</span> <span class="o">-</span> <span class="n">rowsInIndex</span><span class="o">);</span>
-            <span class="c1">// 调用treeWriter将数据写入到缓存中
-</span><span class="c1"></span>            <span class="n">treeWriter</span><span class="o">.</span><span class="na">writeRootBatch</span><span class="o">(</span><span class="n">batch</span><span class="o">,</span> <span class="n">posn</span><span class="o">,</span> <span class="n">chunkSize</span><span class="o">);</span>
-            <span class="c1">// 更新数据读取的位置
-</span><span class="c1"></span>            <span class="n">posn</span> <span class="o">+=</span> <span class="n">chunkSize</span><span class="o">;</span>
-            <span class="c1">// 记录写的行数
-</span><span class="c1"></span>            <span class="n">rowsInIndex</span> <span class="o">+=</span> <span class="n">chunkSize</span><span class="o">;</span>
-            <span class="n">rowsInStripe</span> <span class="o">+=</span> <span class="n">chunkSize</span><span class="o">;</span>
-            <span class="c1">// 每隔rowIndexStride条记录，就会创建一次索引创建
-</span><span class="c1"></span>            <span class="k">if</span> <span class="o">(</span><span class="n">rowsInIndex</span> <span class="o">&gt;=</span> <span class="n">rowIndexStride</span><span class="o">)</span> <span class="o">{</span>
-                <span class="n">createRowIndexEntry</span><span class="o">();</span>
-            <span class="o">}</span>
-        <span class="o">}</span>
-    <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
-        <span class="n">rowsInStripe</span> <span class="o">+=</span> <span class="n">batch</span><span class="o">.</span><span class="na">size</span><span class="o">;</span>
-        <span class="n">treeWriter</span><span class="o">.</span><span class="na">writeRootBatch</span><span class="o">(</span><span class="n">batch</span><span class="o">,</span> <span class="n">0</span><span class="o">,</span> <span class="n">batch</span><span class="o">.</span><span class="na">size</span><span class="o">);</span>
-    <span class="o">}</span>
-    <span class="c1">// 检查内存是否有超出限制
-</span><span class="c1"></span>    <span class="n">previousAllocation</span> <span class="o">=</span> <span class="n">memoryManager</span><span class="o">.</span><span class="na">checkMemory</span><span class="o">(</span><span class="n">previousAllocation</span><span class="o">,</span> <span class="k">this</span><span class="o">);</span>
-    <span class="n">checkMemory</span><span class="o">();</span>
-<span class="o">}</span>
-</code></pre></td></tr></table></div>
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="nd">@Override</span>
+</span></span><span class="line"><span class="cl"><span class="kd">public</span> <span class="kt">void</span> <span class="nf">addRowBatch</span><span class="o">(</span><span class="n">VectorizedRowBatch</span> <span class="n">batch</span><span class="o">)</span> <span class="kd">throws</span> <span class="n">IOException</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">    <span class="k">if</span> <span class="o">(</span><span class="n">buildIndex</span><span class="o">)</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">        <span class="c1">// 如果创建索引，需要记录
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>        <span class="kt">int</span> <span class="n">posn</span> <span class="o">=</span> <span class="mi">0</span><span class="o">;</span>
+</span></span><span class="line"><span class="cl">        <span class="k">while</span> <span class="o">(</span><span class="n">posn</span> <span class="o">&lt;</span> <span class="n">batch</span><span class="o">.</span><span class="na">size</span><span class="o">)</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">            <span class="c1">// 计算剩余的条数
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>            <span class="kt">int</span> <span class="n">chunkSize</span> <span class="o">=</span> <span class="n">Math</span><span class="o">.</span><span class="na">min</span><span class="o">(</span><span class="n">batch</span><span class="o">.</span><span class="na">size</span> <span class="o">-</span> <span class="n">posn</span><span class="o">,</span> <span class="n">rowIndexStride</span> <span class="o">-</span> <span class="n">rowsInIndex</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">            <span class="c1">// 调用treeWriter将数据写入到缓存中
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>            <span class="n">treeWriter</span><span class="o">.</span><span class="na">writeRootBatch</span><span class="o">(</span><span class="n">batch</span><span class="o">,</span> <span class="n">posn</span><span class="o">,</span> <span class="n">chunkSize</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">            <span class="c1">// 更新数据读取的位置
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>            <span class="n">posn</span> <span class="o">+=</span> <span class="n">chunkSize</span><span class="o">;</span>
+</span></span><span class="line"><span class="cl">            <span class="c1">// 记录写的行数
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>            <span class="n">rowsInIndex</span> <span class="o">+=</span> <span class="n">chunkSize</span><span class="o">;</span>
+</span></span><span class="line"><span class="cl">            <span class="n">rowsInStripe</span> <span class="o">+=</span> <span class="n">chunkSize</span><span class="o">;</span>
+</span></span><span class="line"><span class="cl">            <span class="c1">// 每隔rowIndexStride条记录，就会创建一次索引创建
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>            <span class="k">if</span> <span class="o">(</span><span class="n">rowsInIndex</span> <span class="o">&gt;=</span> <span class="n">rowIndexStride</span><span class="o">)</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">                <span class="n">createRowIndexEntry</span><span class="o">();</span>
+</span></span><span class="line"><span class="cl">            <span class="o">}</span>
+</span></span><span class="line"><span class="cl">        <span class="o">}</span>
+</span></span><span class="line"><span class="cl">    <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">        <span class="n">rowsInStripe</span> <span class="o">+=</span> <span class="n">batch</span><span class="o">.</span><span class="na">size</span><span class="o">;</span>
+</span></span><span class="line"><span class="cl">        <span class="n">treeWriter</span><span class="o">.</span><span class="na">writeRootBatch</span><span class="o">(</span><span class="n">batch</span><span class="o">,</span> <span class="mi">0</span><span class="o">,</span> <span class="n">batch</span><span class="o">.</span><span class="na">size</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">    <span class="o">}</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// 检查内存是否有超出限制
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="n">previousAllocation</span> <span class="o">=</span> <span class="n">memoryManager</span><span class="o">.</span><span class="na">checkMemory</span><span class="o">(</span><span class="n">previousAllocation</span><span class="o">,</span> <span class="k">this</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">    <span class="n">checkMemory</span><span class="o">();</span>
+</span></span><span class="line"><span class="cl"><span class="o">}</span>
+</span></span></code></pre></td></tr></table></div>
 </div>
 </div><p>是否需要创建索引由<code>orc.create.index</code>配置项指定，一般都是允许，这非常有利于优化读的优化。orc 创建的索引很明显是稀疏索引，它是每隔一定的行数，才会创建。这个阈值由<code>orc.row.index.stride</code>配置项指定，默认为 10000。如果我们需要更加稠密的索引，可以适当的将这个值调小。不过这会造成数据存储的一定程度增大。</p>
 <p>同样在添加完一个 batch 的数据之后，它每隔<code>orc.rows.between.memory.checks</code>条数据，就触发一次内存检查。查看该 stripe 的所占的内存是否超过了<code>orc.stripe.size</code>字节，超过了就会刷新该stripe，并且创建新的 stripe。不过这个触发是在每次添加完一个 batch 之后。所以如果我们想精确的控制 stripe 的大小，那么就需要控制每次 batch 的数据尽量小。</p>
@@ -435,9 +435,9 @@
 
         
     <div class="updated-badge-container">
-        <span title="Updated @ 2021-10-22 14:44:34 CST" style="cursor:help">
+        <span title="Updated @ 2023-07-02 16:59:09 CST" style="cursor:help">
 
-<svg xmlns="http://www.w3.org/2000/svg" width="130" height="20" class="updated-badge"><linearGradient id="b" x2="0" y2="100%"><stop offset="0" stop-color="#bbb" stop-opacity=".1"/><stop offset="1" stop-opacity=".1"/></linearGradient><clipPath id="a"><rect width="130" height="20" rx="3" fill="#fff"/></clipPath><g clip-path="url(#a)"><path class="updated-badge-left" d="M0 0h55v20H0z"/><path class="updated-badge-right" d="M55 0h75v20H55z"/><path fill="url(#b)" d="M0 0h130v20H0z"/></g><g fill="#fff" text-anchor="middle" font-size="110"><text x="285" y="150" fill="#010101" fill-opacity=".3" textLength="450" transform="scale(.1)">updated</text><text x="285" y="140" textLength="450" transform="scale(.1)">updated</text><text x="915" y="150" fill="#010101" fill-opacity=".3" textLength="650" transform="scale(.1)">2021-10-22</text><text x="915" y="140" textLength="650" transform="scale(.1)">2021-10-22</text></g></svg>
+<svg xmlns="http://www.w3.org/2000/svg" width="130" height="20" class="updated-badge"><linearGradient id="b" x2="0" y2="100%"><stop offset="0" stop-color="#bbb" stop-opacity=".1"/><stop offset="1" stop-opacity=".1"/></linearGradient><clipPath id="a"><rect width="130" height="20" rx="3" fill="#fff"/></clipPath><g clip-path="url(#a)"><path class="updated-badge-left" d="M0 0h55v20H0z"/><path class="updated-badge-right" d="M55 0h75v20H55z"/><path fill="url(#b)" d="M0 0h130v20H0z"/></g><g fill="#fff" text-anchor="middle" font-size="110"><text x="285" y="150" fill="#010101" fill-opacity=".3" textLength="450" transform="scale(.1)">updated</text><text x="285" y="140" textLength="450" transform="scale(.1)">updated</text><text x="915" y="150" fill="#010101" fill-opacity=".3" textLength="650" transform="scale(.1)">2023-07-02</text><text x="915" y="140" textLength="650" transform="scale(.1)">2023-07-02</text></g></svg>
         </span></div>
 
 

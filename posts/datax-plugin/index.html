@@ -3,7 +3,7 @@
     <head prefix="og: http://ogp.me/ns# article: http://ogp.me/ns/article#">
     <meta charset="UTF-8" />
 
-    <meta name="generator" content="Hugo 0.88.1" /><meta name="theme-color" content="#fff" />
+    <meta name="generator" content="Hugo 0.115.0"><meta name="theme-color" content="#fff" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     
     <meta name="format-detection" content="telephone=no, date=no, address=no, email=no" />
@@ -14,11 +14,11 @@
 
     <title>Datax 插件加载原理 | 学习笔记</title>
 
-    <link rel="stylesheet" href="/css/meme.min.2d3e1834af2bc8dda20c7d74aaa1d8134845094441b7a554a5206ccd4b472596.css"/>
+    <link rel="stylesheet" href="/css/meme.min.91e7f58f97e1c60563ef481c38d9684fa8099537801d6f17bbfc724121e7d8f1.css"/>
 
     
     
-        <script src="/js/meme.min.800f61672145711eb3e1f29fcfcc3dbe0139dd459259718b611a0390f74703d1.js"></script>
+        <script src="/js/meme.min.3210a00c2fdcf6f831170b681b8ee40f83f0224663661e986872616aec45407f.js"></script>
 
     
 
@@ -54,13 +54,13 @@
         "@context": "https://schema.org",
         "@type": "BlogPosting",
         "datePublished": "2018-12-27T22:30:47+00:00",
-        "dateModified": "2021-10-22T14:44:34+08:00",
+        "dateModified": "2023-07-02T16:59:09+08:00",
         "url": "https://zhmin.github.io/posts/datax-plugin/",
         "headline": "Datax 插件加载原理",
         "description": "Datax 插件加载原理 插件类型 Datax有好几种类型的插件，每个插件都有不同的作用。 reader， 读插件。Reader就是属于这种类型的 writer， 写插件。Writer就是属于这种类型的 transforme……",
         "inLanguage" : "zh-CN",
         "articleSection": "posts",
-        "wordCount":  3275 ,
+        "wordCount":  3272 ,
         "image": ["https://github.com/zhmin/blog/blob/datax/datax/images/plugin-uml.png?raw=true"],
         "author": {
             "@type": "Person",
@@ -98,7 +98,7 @@
 <meta property="og:locale" content="zh" /><meta property="og:image" content="https://github.com/zhmin/blog/blob/datax/datax/images/plugin-uml.png?raw=true" />
 <meta property="og:type" content="article" />
     <meta property="article:published_time" content="2018-12-27T22:30:47&#43;00:00" />
-    <meta property="article:modified_time" content="2021-10-22T14:44:34&#43;08:00" />
+    <meta property="article:modified_time" content="2023-07-02T16:59:09&#43;08:00" />
     
     <meta property="article:section" content="posts" />
 
@@ -223,7 +223,7 @@
     
     
         
-        <span class="post-meta-item wordcount"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon post-meta-icon"><path d="M497.9 142.1l-46.1 46.1c-4.7 4.7-12.3 4.7-17 0l-111-111c-4.7-4.7-4.7-12.3 0-17l46.1-46.1c18.7-18.7 49.1-18.7 67.9 0l60.1 60.1c18.8 18.7 18.8 49.1 0 67.9zM284.2 99.8L21.6 362.4.4 483.9c-2.9 16.4 11.4 30.6 27.8 27.8l121.5-21.3 262.6-262.6c4.7-4.7 4.7-12.3 0-17l-111-111c-4.8-4.7-12.4-4.7-17.1 0zM124.1 339.9c-5.5-5.5-5.5-14.3 0-19.8l154-154c5.5-5.5 14.3-5.5 19.8 0s5.5 14.3 0 19.8l-154 154c-5.5 5.5-14.3 5.5-19.8 0zM88 424h48v36.3l-64.5 11.3-31.1-31.1L51.7 376H88v48z"/></svg>&nbsp;3275</span>
+        <span class="post-meta-item wordcount"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon post-meta-icon"><path d="M497.9 142.1l-46.1 46.1c-4.7 4.7-12.3 4.7-17 0l-111-111c-4.7-4.7-4.7-12.3 0-17l46.1-46.1c18.7-18.7 49.1-18.7 67.9 0l60.1 60.1c18.8 18.7 18.8 49.1 0 67.9zM284.2 99.8L21.6 362.4.4 483.9c-2.9 16.4 11.4 30.6 27.8 27.8l121.5-21.3 262.6-262.6c4.7-4.7 4.7-12.3 0-17l-111-111c-4.8-4.7-12.4-4.7-17.1 0zM124.1 339.9c-5.5-5.5-5.5-14.3 0-19.8l154-154c5.5-5.5 14.3-5.5 19.8 0s5.5 14.3 0 19.8l-154 154c-5.5 5.5-14.3 5.5-19.8 0zM88 424h48v36.3l-64.5 11.3-31.1-31.1L51.7 376H88v48z"/></svg>&nbsp;3272</span>
     
     
         
@@ -253,10 +253,10 @@
 </span><span class="lnt">3
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">enum</span> <span class="n">PluginType</span> <span class="o">{</span>
-	<span class="n">READER</span><span class="o">(</span><span class="s">&#34;reader&#34;</span><span class="o">),</span> <span class="n">TRANSFORMER</span><span class="o">(</span><span class="s">&#34;transformer&#34;</span><span class="o">),</span> <span class="n">WRITER</span><span class="o">(</span><span class="s">&#34;writer&#34;</span><span class="o">),</span> <span class="n">HANDLER</span><span class="o">(</span><span class="s">&#34;handler&#34;</span><span class="o">);</span>
-<span class="o">}</span>
-</code></pre></td></tr></table></div>
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="kd">public</span> <span class="kd">enum</span> <span class="n">PluginType</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">	<span class="n">READER</span><span class="o">(</span><span class="s">&#34;reader&#34;</span><span class="o">),</span> <span class="n">TRANSFORMER</span><span class="o">(</span><span class="s">&#34;transformer&#34;</span><span class="o">),</span> <span class="n">WRITER</span><span class="o">(</span><span class="s">&#34;writer&#34;</span><span class="o">),</span> <span class="n">HANDLER</span><span class="o">(</span><span class="s">&#34;handler&#34;</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl"><span class="o">}</span>
+</span></span></code></pre></td></tr></table></div>
 </div>
 </div><p>根据运行类型，又可以分为Job级别的插件和Task级别的插件。uml如下图所示</p>
 <p><img src="https://github.com/zhmin/blog/blob/datax/datax/images/plugin-uml.png?raw=true" alt=""></p>
@@ -300,41 +300,41 @@
 </span><span class="lnt">34
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java">    <span class="kd">public</span> <span class="kd">static</span> <span class="n">Configuration</span> <span class="nf">parse</span><span class="o">(</span><span class="kd">final</span> <span class="n">String</span> <span class="n">jobPath</span><span class="o">)</span> <span class="o">{</span>
-        <span class="n">Configuration</span> <span class="n">configuration</span> <span class="o">=</span> <span class="n">ConfigParser</span><span class="o">.</span><span class="na">parseJobConfig</span><span class="o">(</span><span class="n">jobPath</span><span class="o">);</span>
-        <span class="c1">// 合并 conf/core.json文件的配置, false 表示不覆盖原有的配置
-</span><span class="c1"></span>        <span class="n">configuration</span><span class="o">.</span><span class="na">merge</span><span class="o">(</span>
-                <span class="c1">//CoreConstant.DATAX_CONF_PATH的值为conf/core.json
-</span><span class="c1"></span>                <span class="n">ConfigParser</span><span class="o">.</span><span class="na">parseCoreConfig</span>
-                <span class="o">(</span><span class="n">CoreConstant</span><span class="o">.</span><span class="na">DATAX_CONF_PATH</span><span class="o">),</span>
-                <span class="kc">false</span><span class="o">);</span>
-        <span class="c1">// 获取job.content列表的第一个reader
-</span><span class="c1"></span>        <span class="n">String</span> <span class="n">readerPluginName</span> <span class="o">=</span> <span class="n">configuration</span><span class="o">.</span><span class="na">getString</span><span class="o">(</span>
-                <span class="c1">//CoreConstant.DATAX_JOB_CONTENT_READER_NAME的值为job.content[0].reader.name
-</span><span class="c1"></span>                <span class="n">CoreConstant</span><span class="o">.</span><span class="na">DATAX_JOB_CONTENT_READER_NAME</span><span class="o">);</span>
-        <span class="c1">// 获取job.content列表的第一个writer
-</span><span class="c1"></span>        <span class="n">String</span> <span class="n">writerPluginName</span> <span class="o">=</span> <span class="n">configuration</span><span class="o">.</span><span class="na">getString</span><span class="o">(</span>
-                <span class="c1">//CoreConstant.DATAX_JOB_CONTENT_WRITER_NAME的值为job.content[0].writer.name
-</span><span class="c1"></span>                <span class="n">CoreConstant</span><span class="o">.</span><span class="na">DATAX_JOB_CONTENT_WRITER_NAME</span><span class="o">);</span>
-        <span class="c1">// 读取job.preHandler.pluginName
-</span><span class="c1"></span>        <span class="n">String</span> <span class="n">preHandlerName</span> <span class="o">=</span> <span class="n">configuration</span><span class="o">.</span><span class="na">getString</span><span class="o">(</span>
-                <span class="c1">//CoreConstant.DATAX_JOB_PREHANDLER_PLUGINNAME的值为job.preHandler.pluginName
-</span><span class="c1"></span>                <span class="n">CoreConstant</span><span class="o">.</span><span class="na">DATAX_JOB_PREHANDLER_PLUGINNAME</span><span class="o">);</span>
-        <span class="c1">// 读取job.postHandler.pluginName
-</span><span class="c1"></span>        <span class="n">String</span> <span class="n">postHandlerName</span> <span class="o">=</span> <span class="n">configuration</span><span class="o">.</span><span class="na">getString</span><span class="o">(</span>
-                <span class="c1">//CoreConstant.DATAX_JOB_POSTHANDLER_PLUGINNAME的值为job.postHandler.pluginName
-</span><span class="c1"></span>                <span class="n">CoreConstant</span><span class="o">.</span><span class="na">DATAX_JOB_POSTHANDLER_PLUGINNAME</span><span class="o">);</span>
-
-        <span class="n">Set</span><span class="o">&lt;</span><span class="n">String</span><span class="o">&gt;</span> <span class="n">pluginList</span> <span class="o">=</span> <span class="k">new</span> <span class="n">HashSet</span><span class="o">&lt;</span><span class="n">String</span><span class="o">&gt;();</span>
-        <span class="n">pluginList</span><span class="o">.</span><span class="na">add</span><span class="o">(</span><span class="n">readerPluginName</span><span class="o">);</span>
-        <span class="n">pluginList</span><span class="o">.</span><span class="na">add</span><span class="o">(</span><span class="n">writerPluginName</span><span class="o">);</span>
-        <span class="o">......</span>
-        <span class="c1">// 调用parsePluginConfig生成plugin的配置，然后合并
-</span><span class="c1"></span>        <span class="n">configuration</span><span class="o">.</span><span class="na">merge</span><span class="o">(</span><span class="n">parsePluginConfig</span><span class="o">(</span><span class="k">new</span> <span class="n">ArrayList</span><span class="o">&lt;</span><span class="n">String</span><span class="o">&gt;(</span><span class="n">pluginList</span><span class="o">)),</span> <span class="kc">false</span><span class="o">);</span>
-        <span class="o">......</span>
-        <span class="k">return</span> <span class="n">configuration</span><span class="o">;</span>
-    <span class="o">}</span>
-</code></pre></td></tr></table></div>
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl">    <span class="kd">public</span> <span class="kd">static</span> <span class="n">Configuration</span> <span class="nf">parse</span><span class="o">(</span><span class="kd">final</span> <span class="n">String</span> <span class="n">jobPath</span><span class="o">)</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">        <span class="n">Configuration</span> <span class="n">configuration</span> <span class="o">=</span> <span class="n">ConfigParser</span><span class="o">.</span><span class="na">parseJobConfig</span><span class="o">(</span><span class="n">jobPath</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">        <span class="c1">// 合并 conf/core.json文件的配置, false 表示不覆盖原有的配置
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>        <span class="n">configuration</span><span class="o">.</span><span class="na">merge</span><span class="o">(</span>
+</span></span><span class="line"><span class="cl">                <span class="c1">//CoreConstant.DATAX_CONF_PATH的值为conf/core.json
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>                <span class="n">ConfigParser</span><span class="o">.</span><span class="na">parseCoreConfig</span>
+</span></span><span class="line"><span class="cl">                <span class="o">(</span><span class="n">CoreConstant</span><span class="o">.</span><span class="na">DATAX_CONF_PATH</span><span class="o">),</span>
+</span></span><span class="line"><span class="cl">                <span class="kc">false</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">        <span class="c1">// 获取job.content列表的第一个reader
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>        <span class="n">String</span> <span class="n">readerPluginName</span> <span class="o">=</span> <span class="n">configuration</span><span class="o">.</span><span class="na">getString</span><span class="o">(</span>
+</span></span><span class="line"><span class="cl">                <span class="c1">//CoreConstant.DATAX_JOB_CONTENT_READER_NAME的值为job.content[0].reader.name
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>                <span class="n">CoreConstant</span><span class="o">.</span><span class="na">DATAX_JOB_CONTENT_READER_NAME</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">        <span class="c1">// 获取job.content列表的第一个writer
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>        <span class="n">String</span> <span class="n">writerPluginName</span> <span class="o">=</span> <span class="n">configuration</span><span class="o">.</span><span class="na">getString</span><span class="o">(</span>
+</span></span><span class="line"><span class="cl">                <span class="c1">//CoreConstant.DATAX_JOB_CONTENT_WRITER_NAME的值为job.content[0].writer.name
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>                <span class="n">CoreConstant</span><span class="o">.</span><span class="na">DATAX_JOB_CONTENT_WRITER_NAME</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">        <span class="c1">// 读取job.preHandler.pluginName
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>        <span class="n">String</span> <span class="n">preHandlerName</span> <span class="o">=</span> <span class="n">configuration</span><span class="o">.</span><span class="na">getString</span><span class="o">(</span>
+</span></span><span class="line"><span class="cl">                <span class="c1">//CoreConstant.DATAX_JOB_PREHANDLER_PLUGINNAME的值为job.preHandler.pluginName
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>                <span class="n">CoreConstant</span><span class="o">.</span><span class="na">DATAX_JOB_PREHANDLER_PLUGINNAME</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">        <span class="c1">// 读取job.postHandler.pluginName
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>        <span class="n">String</span> <span class="n">postHandlerName</span> <span class="o">=</span> <span class="n">configuration</span><span class="o">.</span><span class="na">getString</span><span class="o">(</span>
+</span></span><span class="line"><span class="cl">                <span class="c1">//CoreConstant.DATAX_JOB_POSTHANDLER_PLUGINNAME的值为job.postHandler.pluginName
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>                <span class="n">CoreConstant</span><span class="o">.</span><span class="na">DATAX_JOB_POSTHANDLER_PLUGINNAME</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">        <span class="n">Set</span><span class="o">&lt;</span><span class="n">String</span><span class="o">&gt;</span> <span class="n">pluginList</span> <span class="o">=</span> <span class="k">new</span> <span class="n">HashSet</span><span class="o">&lt;</span><span class="n">String</span><span class="o">&gt;();</span>
+</span></span><span class="line"><span class="cl">        <span class="n">pluginList</span><span class="o">.</span><span class="na">add</span><span class="o">(</span><span class="n">readerPluginName</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">        <span class="n">pluginList</span><span class="o">.</span><span class="na">add</span><span class="o">(</span><span class="n">writerPluginName</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">        <span class="o">......</span>
+</span></span><span class="line"><span class="cl">        <span class="c1">// 调用parsePluginConfig生成plugin的配置，然后合并
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>        <span class="n">configuration</span><span class="o">.</span><span class="na">merge</span><span class="o">(</span><span class="n">parsePluginConfig</span><span class="o">(</span><span class="k">new</span> <span class="n">ArrayList</span><span class="o">&lt;</span><span class="n">String</span><span class="o">&gt;(</span><span class="n">pluginList</span><span class="o">)),</span> <span class="kc">false</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">        <span class="o">......</span>
+</span></span><span class="line"><span class="cl">        <span class="k">return</span> <span class="n">configuration</span><span class="o">;</span>
+</span></span><span class="line"><span class="cl">    <span class="o">}</span>
+</span></span></code></pre></td></tr></table></div>
 </div>
 </div><p>提取完插件名称后，会去reader目录和writer目录，寻找插件的位置。目前Datax只支持reader和writer插件，因为它只从这两个目录中寻找。如果想自己扩展其他类型插件的话，比如handler类型的， 需要修改parsePluginConfig的代码。每个插件目录会有一个重要的配置文件 plugin.json ，它定义了插件的名称和对应的类，在LoadUtils类加载插件的时候会使用到。</p>
 <div class="highlight"><div class="chroma">
@@ -401,73 +401,71 @@
 </span><span class="lnt">60
 </span><span class="lnt">61
 </span><span class="lnt">62
-</span><span class="lnt">63
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java">    <span class="kd">public</span> <span class="kd">static</span> <span class="n">Configuration</span> <span class="nf">parsePluginConfig</span><span class="o">(</span><span class="n">List</span><span class="o">&lt;</span><span class="n">String</span><span class="o">&gt;</span> <span class="n">wantPluginNames</span><span class="o">)</span> <span class="o">{</span>
-        <span class="n">Configuration</span> <span class="n">configuration</span> <span class="o">=</span> <span class="n">Configuration</span><span class="o">.</span><span class="na">newDefault</span><span class="o">();</span>
-        <span class="o">......</span>
-        <span class="c1">// 遍历plugin.reader目录下的文件夹
-</span><span class="c1"></span>        <span class="k">for</span> <span class="o">(</span><span class="kd">final</span> <span class="n">String</span> <span class="n">each</span> <span class="o">:</span> <span class="n">ConfigParser</span>
-                <span class="o">.</span><span class="na">getDirAsList</span><span class="o">(</span><span class="n">CoreConstant</span><span class="o">.</span><span class="na">DATAX_PLUGIN_READER_HOME</span><span class="o">))</span> <span class="o">{</span>
-            <span class="c1">// 调用 parseOnePluginConfig解析单个plugin配置
-</span><span class="c1"></span>            <span class="n">Configuration</span> <span class="n">eachReaderConfig</span> <span class="o">=</span> <span class="n">ConfigParser</span><span class="o">.</span><span class="na">parseOnePluginConfig</span><span class="o">(</span><span class="n">each</span><span class="o">,</span> <span class="s">&#34;reader&#34;</span><span class="o">,</span> <span class="n">replicaCheckPluginSet</span><span class="o">,</span> <span class="n">wantPluginNames</span><span class="o">);</span>
-            <span class="k">if</span><span class="o">(</span><span class="n">eachReaderConfig</span><span class="o">!=</span><span class="kc">null</span><span class="o">)</span> <span class="o">{</span>
-                <span class="n">configuration</span><span class="o">.</span><span class="na">merge</span><span class="o">(</span><span class="n">eachReaderConfig</span><span class="o">,</span> <span class="kc">true</span><span class="o">);</span>
-                <span class="n">complete</span> <span class="o">+=</span> <span class="n">1</span><span class="o">;</span>
-            <span class="o">}</span>
-        <span class="o">}</span>
-
-        <span class="c1">// 遍历plugin.writer目录下的文件夹
-</span><span class="c1"></span>        <span class="k">for</span> <span class="o">(</span><span class="kd">final</span> <span class="n">String</span> <span class="n">each</span> <span class="o">:</span> <span class="n">ConfigParser</span>
-                <span class="o">.</span><span class="na">getDirAsList</span><span class="o">(</span><span class="n">CoreConstant</span><span class="o">.</span><span class="na">DATAX_PLUGIN_WRITER_HOME</span><span class="o">))</span> <span class="o">{</span>
-            <span class="c1">// 调用 parseOnePluginConfig解析单个plugin配置
-</span><span class="c1"></span>            <span class="n">Configuration</span> <span class="n">eachWriterConfig</span> <span class="o">=</span> <span class="n">ConfigParser</span><span class="o">.</span><span class="na">parseOnePluginConfig</span><span class="o">(</span><span class="n">each</span><span class="o">,</span> <span class="s">&#34;writer&#34;</span><span class="o">,</span> <span class="n">replicaCheckPluginSet</span><span class="o">,</span> <span class="n">wantPluginNames</span><span class="o">);</span>
-            <span class="k">if</span><span class="o">(</span><span class="n">eachWriterConfig</span><span class="o">!=</span><span class="kc">null</span><span class="o">)</span> <span class="o">{</span>
-                <span class="n">configuration</span><span class="o">.</span><span class="na">merge</span><span class="o">(</span><span class="n">eachWriterConfig</span><span class="o">,</span> <span class="kc">true</span><span class="o">);</span>
-                <span class="n">complete</span> <span class="o">+=</span> <span class="n">1</span><span class="o">;</span>
-            <span class="o">}</span>
-        <span class="o">}</span>
-        
-        <span class="o">......</span>
-
-        <span class="k">return</span> <span class="n">configuration</span><span class="o">;</span>
-    <span class="o">}</span>
-
-	<span class="c1">// 读取plugin目录下的plugin.json 文件
-</span><span class="c1"></span>	<span class="kd">public</span> <span class="kd">static</span> <span class="n">Configuration</span> <span class="nf">parseOnePluginConfig</span><span class="o">(</span><span class="kd">final</span> <span class="n">String</span> <span class="n">path</span><span class="o">,</span> <span class="kd">final</span> <span class="n">String</span> <span class="n">type</span><span class="o">,</span> <span class="n">Set</span><span class="o">&lt;</span><span class="n">String</span><span class="o">&gt;</span> <span class="n">pluginSet</span><span class="o">,</span> <span class="n">List</span><span class="o">&lt;</span><span class="n">String</span><span class="o">&gt;</span> <span class="n">wantPluginNames</span><span class="o">)</span> <span class="o">{</span>
-        <span class="n">String</span> <span class="n">filePath</span> <span class="o">=</span> <span class="n">path</span> <span class="o">+</span> <span class="n">File</span><span class="o">.</span><span class="na">separator</span> <span class="o">+</span> <span class="s">&#34;plugin.json&#34;</span><span class="o">;</span>
-        <span class="n">Configuration</span> <span class="n">configuration</span> <span class="o">=</span> <span class="n">Configuration</span><span class="o">.</span><span class="na">from</span><span class="o">(</span><span class="k">new</span> <span class="n">File</span><span class="o">(</span><span class="n">filePath</span><span class="o">));</span>
-
-        <span class="n">String</span> <span class="n">pluginPath</span> <span class="o">=</span> <span class="n">configuration</span><span class="o">.</span><span class="na">getString</span><span class="o">(</span><span class="s">&#34;path&#34;</span><span class="o">);</span>
-        <span class="n">String</span> <span class="n">pluginName</span> <span class="o">=</span> <span class="n">configuration</span><span class="o">.</span><span class="na">getString</span><span class="o">(</span><span class="s">&#34;name&#34;</span><span class="o">);</span>
-        <span class="k">if</span><span class="o">(!</span><span class="n">pluginSet</span><span class="o">.</span><span class="na">contains</span><span class="o">(</span><span class="n">pluginName</span><span class="o">))</span> <span class="o">{</span>
-            <span class="n">pluginSet</span><span class="o">.</span><span class="na">add</span><span class="o">(</span><span class="n">pluginName</span><span class="o">);</span>
-        <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
-            <span class="o">......</span>
-        <span class="o">}</span>
-
-        <span class="c1">//不是想要的插件，就不生成配置，直接返回
-</span><span class="c1"></span>        <span class="k">if</span> <span class="o">(</span><span class="n">wantPluginNames</span> <span class="o">!=</span> <span class="kc">null</span> <span class="o">&amp;&amp;</span> <span class="n">wantPluginNames</span><span class="o">.</span><span class="na">size</span><span class="o">()</span> <span class="o">&gt;</span> <span class="n">0</span> <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="n">wantPluginNames</span><span class="o">.</span><span class="na">contains</span><span class="o">(</span><span class="n">pluginName</span><span class="o">))</span> <span class="o">{</span>
-            <span class="k">return</span> <span class="kc">null</span><span class="o">;</span>
-        <span class="o">}</span>
-
-        <span class="c1">// plugin.json的path路径，是指插件的jar包。如果没有指定，则默认为和plugin.json文件在同一个目录下
-</span><span class="c1"></span>        <span class="kt">boolean</span> <span class="n">isDefaultPath</span> <span class="o">=</span> <span class="n">StringUtils</span><span class="o">.</span><span class="na">isBlank</span><span class="o">(</span><span class="n">pluginPath</span><span class="o">);</span>
-        <span class="k">if</span> <span class="o">(</span><span class="n">isDefaultPath</span><span class="o">)</span> <span class="o">{</span>
-            <span class="n">configuration</span><span class="o">.</span><span class="na">set</span><span class="o">(</span><span class="s">&#34;path&#34;</span><span class="o">,</span> <span class="n">path</span><span class="o">);</span>
-        <span class="o">}</span>
-
-        <span class="n">Configuration</span> <span class="n">result</span> <span class="o">=</span> <span class="n">Configuration</span><span class="o">.</span><span class="na">newDefault</span><span class="o">();</span>
-        <span class="c1">// 最后保存在puligin.{type}.{pluginName}路径下
-</span><span class="c1"></span>        <span class="n">result</span><span class="o">.</span><span class="na">set</span><span class="o">(</span>
-                <span class="n">String</span><span class="o">.</span><span class="na">format</span><span class="o">(</span><span class="s">&#34;plugin.%s.%s&#34;</span><span class="o">,</span> <span class="n">type</span><span class="o">,</span> <span class="n">pluginName</span><span class="o">),</span>
-                <span class="n">configuration</span><span class="o">.</span><span class="na">getInternal</span><span class="o">());</span>
-
-        <span class="k">return</span> <span class="n">result</span><span class="o">;</span>
-    <span class="o">}</span>
-
-</code></pre></td></tr></table></div>
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl">    <span class="kd">public</span> <span class="kd">static</span> <span class="n">Configuration</span> <span class="nf">parsePluginConfig</span><span class="o">(</span><span class="n">List</span><span class="o">&lt;</span><span class="n">String</span><span class="o">&gt;</span> <span class="n">wantPluginNames</span><span class="o">)</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">        <span class="n">Configuration</span> <span class="n">configuration</span> <span class="o">=</span> <span class="n">Configuration</span><span class="o">.</span><span class="na">newDefault</span><span class="o">();</span>
+</span></span><span class="line"><span class="cl">        <span class="o">......</span>
+</span></span><span class="line"><span class="cl">        <span class="c1">// 遍历plugin.reader目录下的文件夹
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>        <span class="k">for</span> <span class="o">(</span><span class="kd">final</span> <span class="n">String</span> <span class="n">each</span> <span class="o">:</span> <span class="n">ConfigParser</span>
+</span></span><span class="line"><span class="cl">                <span class="o">.</span><span class="na">getDirAsList</span><span class="o">(</span><span class="n">CoreConstant</span><span class="o">.</span><span class="na">DATAX_PLUGIN_READER_HOME</span><span class="o">))</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">            <span class="c1">// 调用 parseOnePluginConfig解析单个plugin配置
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>            <span class="n">Configuration</span> <span class="n">eachReaderConfig</span> <span class="o">=</span> <span class="n">ConfigParser</span><span class="o">.</span><span class="na">parseOnePluginConfig</span><span class="o">(</span><span class="n">each</span><span class="o">,</span> <span class="s">&#34;reader&#34;</span><span class="o">,</span> <span class="n">replicaCheckPluginSet</span><span class="o">,</span> <span class="n">wantPluginNames</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">            <span class="k">if</span><span class="o">(</span><span class="n">eachReaderConfig</span><span class="o">!=</span><span class="kc">null</span><span class="o">)</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">                <span class="n">configuration</span><span class="o">.</span><span class="na">merge</span><span class="o">(</span><span class="n">eachReaderConfig</span><span class="o">,</span> <span class="kc">true</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">                <span class="n">complete</span> <span class="o">+=</span> <span class="mi">1</span><span class="o">;</span>
+</span></span><span class="line"><span class="cl">            <span class="o">}</span>
+</span></span><span class="line"><span class="cl">        <span class="o">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">        <span class="c1">// 遍历plugin.writer目录下的文件夹
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>        <span class="k">for</span> <span class="o">(</span><span class="kd">final</span> <span class="n">String</span> <span class="n">each</span> <span class="o">:</span> <span class="n">ConfigParser</span>
+</span></span><span class="line"><span class="cl">                <span class="o">.</span><span class="na">getDirAsList</span><span class="o">(</span><span class="n">CoreConstant</span><span class="o">.</span><span class="na">DATAX_PLUGIN_WRITER_HOME</span><span class="o">))</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">            <span class="c1">// 调用 parseOnePluginConfig解析单个plugin配置
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>            <span class="n">Configuration</span> <span class="n">eachWriterConfig</span> <span class="o">=</span> <span class="n">ConfigParser</span><span class="o">.</span><span class="na">parseOnePluginConfig</span><span class="o">(</span><span class="n">each</span><span class="o">,</span> <span class="s">&#34;writer&#34;</span><span class="o">,</span> <span class="n">replicaCheckPluginSet</span><span class="o">,</span> <span class="n">wantPluginNames</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">            <span class="k">if</span><span class="o">(</span><span class="n">eachWriterConfig</span><span class="o">!=</span><span class="kc">null</span><span class="o">)</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">                <span class="n">configuration</span><span class="o">.</span><span class="na">merge</span><span class="o">(</span><span class="n">eachWriterConfig</span><span class="o">,</span> <span class="kc">true</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">                <span class="n">complete</span> <span class="o">+=</span> <span class="mi">1</span><span class="o">;</span>
+</span></span><span class="line"><span class="cl">            <span class="o">}</span>
+</span></span><span class="line"><span class="cl">        <span class="o">}</span>
+</span></span><span class="line"><span class="cl">        
+</span></span><span class="line"><span class="cl">        <span class="o">......</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">        <span class="k">return</span> <span class="n">configuration</span><span class="o">;</span>
+</span></span><span class="line"><span class="cl">    <span class="o">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">	<span class="c1">// 读取plugin目录下的plugin.json 文件
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="kd">public</span> <span class="kd">static</span> <span class="n">Configuration</span> <span class="nf">parseOnePluginConfig</span><span class="o">(</span><span class="kd">final</span> <span class="n">String</span> <span class="n">path</span><span class="o">,</span> <span class="kd">final</span> <span class="n">String</span> <span class="n">type</span><span class="o">,</span> <span class="n">Set</span><span class="o">&lt;</span><span class="n">String</span><span class="o">&gt;</span> <span class="n">pluginSet</span><span class="o">,</span> <span class="n">List</span><span class="o">&lt;</span><span class="n">String</span><span class="o">&gt;</span> <span class="n">wantPluginNames</span><span class="o">)</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">        <span class="n">String</span> <span class="n">filePath</span> <span class="o">=</span> <span class="n">path</span> <span class="o">+</span> <span class="n">File</span><span class="o">.</span><span class="na">separator</span> <span class="o">+</span> <span class="s">&#34;plugin.json&#34;</span><span class="o">;</span>
+</span></span><span class="line"><span class="cl">        <span class="n">Configuration</span> <span class="n">configuration</span> <span class="o">=</span> <span class="n">Configuration</span><span class="o">.</span><span class="na">from</span><span class="o">(</span><span class="k">new</span> <span class="n">File</span><span class="o">(</span><span class="n">filePath</span><span class="o">));</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">        <span class="n">String</span> <span class="n">pluginPath</span> <span class="o">=</span> <span class="n">configuration</span><span class="o">.</span><span class="na">getString</span><span class="o">(</span><span class="s">&#34;path&#34;</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">        <span class="n">String</span> <span class="n">pluginName</span> <span class="o">=</span> <span class="n">configuration</span><span class="o">.</span><span class="na">getString</span><span class="o">(</span><span class="s">&#34;name&#34;</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">        <span class="k">if</span><span class="o">(!</span><span class="n">pluginSet</span><span class="o">.</span><span class="na">contains</span><span class="o">(</span><span class="n">pluginName</span><span class="o">))</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">            <span class="n">pluginSet</span><span class="o">.</span><span class="na">add</span><span class="o">(</span><span class="n">pluginName</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">        <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">            <span class="o">......</span>
+</span></span><span class="line"><span class="cl">        <span class="o">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">        <span class="c1">//不是想要的插件，就不生成配置，直接返回
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>        <span class="k">if</span> <span class="o">(</span><span class="n">wantPluginNames</span> <span class="o">!=</span> <span class="kc">null</span> <span class="o">&amp;&amp;</span> <span class="n">wantPluginNames</span><span class="o">.</span><span class="na">size</span><span class="o">()</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="n">wantPluginNames</span><span class="o">.</span><span class="na">contains</span><span class="o">(</span><span class="n">pluginName</span><span class="o">))</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">            <span class="k">return</span> <span class="kc">null</span><span class="o">;</span>
+</span></span><span class="line"><span class="cl">        <span class="o">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">        <span class="c1">// plugin.json的path路径，是指插件的jar包。如果没有指定，则默认为和plugin.json文件在同一个目录下
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>        <span class="kt">boolean</span> <span class="n">isDefaultPath</span> <span class="o">=</span> <span class="n">StringUtils</span><span class="o">.</span><span class="na">isBlank</span><span class="o">(</span><span class="n">pluginPath</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">        <span class="k">if</span> <span class="o">(</span><span class="n">isDefaultPath</span><span class="o">)</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">            <span class="n">configuration</span><span class="o">.</span><span class="na">set</span><span class="o">(</span><span class="s">&#34;path&#34;</span><span class="o">,</span> <span class="n">path</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">        <span class="o">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">        <span class="n">Configuration</span> <span class="n">result</span> <span class="o">=</span> <span class="n">Configuration</span><span class="o">.</span><span class="na">newDefault</span><span class="o">();</span>
+</span></span><span class="line"><span class="cl">        <span class="c1">// 最后保存在puligin.{type}.{pluginName}路径下
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>        <span class="n">result</span><span class="o">.</span><span class="na">set</span><span class="o">(</span>
+</span></span><span class="line"><span class="cl">                <span class="n">String</span><span class="o">.</span><span class="na">format</span><span class="o">(</span><span class="s">&#34;plugin.%s.%s&#34;</span><span class="o">,</span> <span class="n">type</span><span class="o">,</span> <span class="n">pluginName</span><span class="o">),</span>
+</span></span><span class="line"><span class="cl">                <span class="n">configuration</span><span class="o">.</span><span class="na">getInternal</span><span class="o">());</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">        <span class="k">return</span> <span class="n">result</span><span class="o">;</span>
+</span></span><span class="line"><span class="cl">    <span class="o">}</span>
+</span></span></code></pre></td></tr></table></div>
 </div>
 </div><h2 id="动态加载插件"><a href="#动态加载插件" class="anchor-link"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon anchor-icon"><path d="M326.612 185.391c59.747 59.809 58.927 155.698.36 214.59-.11.12-.24.25-.36.37l-67.2 67.2c-59.27 59.27-155.699 59.262-214.96 0-59.27-59.26-59.27-155.7 0-214.96l37.106-37.106c9.84-9.84 26.786-3.3 27.294 10.606.648 17.722 3.826 35.527 9.69 52.721 1.986 5.822.567 12.262-3.783 16.612l-13.087 13.087c-28.026 28.026-28.905 73.66-1.155 101.96 28.024 28.579 74.086 28.749 102.325.51l67.2-67.19c28.191-28.191 28.073-73.757 0-101.83-3.701-3.694-7.429-6.564-10.341-8.569a16.037 16.037 0 0 1-6.947-12.606c-.396-10.567 3.348-21.456 11.698-29.806l21.054-21.055c5.521-5.521 14.182-6.199 20.584-1.731a152.482 152.482 0 0 1 20.522 17.197zM467.547 44.449c-59.261-59.262-155.69-59.27-214.96 0l-67.2 67.2c-.12.12-.25.25-.36.37-58.566 58.892-59.387 154.781.36 214.59a152.454 152.454 0 0 0 20.521 17.196c6.402 4.468 15.064 3.789 20.584-1.731l21.054-21.055c8.35-8.35 12.094-19.239 11.698-29.806a16.037 16.037 0 0 0-6.947-12.606c-2.912-2.005-6.64-4.875-10.341-8.569-28.073-28.073-28.191-73.639 0-101.83l67.2-67.19c28.239-28.239 74.3-28.069 102.325.51 27.75 28.3 26.872 73.934-1.155 101.96l-13.087 13.087c-4.35 4.35-5.769 10.79-3.783 16.612 5.864 17.194 9.042 34.999 9.69 52.721.509 13.906 17.454 20.446 27.294 10.606l37.106-37.106c59.271-59.259 59.271-155.699.001-214.959z"/></svg></a>动态加载插件</h2>
 <p>插件的加载都是使用ClassLoader动态加载。 为了避免类的冲突，对于每个插件的加载，对应着独立的加载器。加载器由JarLoader实现，插件的加载接口由LoadUtil类负责。当要加载一个插件时，需要实例化一个JarLoader，然后切换thread class loader之后，才加载插件。</p>
@@ -557,87 +555,87 @@
 </span><span class="lnt">80
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">JarLoader</span> <span class="kd">extends</span> <span class="n">URLClassLoader</span> <span class="o">{</span>
-    <span class="kd">public</span> <span class="nf">JarLoader</span><span class="o">(</span><span class="n">String</span><span class="o">[]</span> <span class="n">paths</span><span class="o">)</span> <span class="o">{</span>
-        <span class="k">this</span><span class="o">(</span><span class="n">paths</span><span class="o">,</span> <span class="n">JarLoader</span><span class="o">.</span><span class="na">class</span><span class="o">.</span><span class="na">getClassLoader</span><span class="o">());</span>
-    <span class="o">}</span>
-
-    <span class="kd">public</span> <span class="nf">JarLoader</span><span class="o">(</span><span class="n">String</span><span class="o">[]</span> <span class="n">paths</span><span class="o">,</span> <span class="n">ClassLoader</span> <span class="n">parent</span><span class="o">)</span> <span class="o">{</span>
-        <span class="c1">// 调用getURLS，获取所有的jar包路径
-</span><span class="c1"></span>        <span class="kd">super</span><span class="o">(</span><span class="n">getURLs</span><span class="o">(</span><span class="n">paths</span><span class="o">),</span> <span class="n">parent</span><span class="o">);</span>
-    <span class="o">}</span>
-
-    <span class="c1">// 获取所有的jar包
-</span><span class="c1"></span>    <span class="kd">private</span> <span class="kd">static</span> <span class="n">URL</span><span class="o">[]</span> <span class="nf">getURLs</span><span class="o">(</span><span class="n">String</span><span class="o">[]</span> <span class="n">paths</span><span class="o">)</span> <span class="o">{</span>
-        <span class="c1">// 获取包括子目录的所有目录路径
-</span><span class="c1"></span>        <span class="n">List</span><span class="o">&lt;</span><span class="n">String</span><span class="o">&gt;</span> <span class="n">dirs</span> <span class="o">=</span> <span class="k">new</span> <span class="n">ArrayList</span><span class="o">&lt;</span><span class="n">String</span><span class="o">&gt;();</span>
-        <span class="k">for</span> <span class="o">(</span><span class="n">String</span> <span class="n">path</span> <span class="o">:</span> <span class="n">paths</span><span class="o">)</span> <span class="o">{</span>
-            <span class="n">dirs</span><span class="o">.</span><span class="na">add</span><span class="o">(</span><span class="n">path</span><span class="o">);</span>
-            <span class="c1">// 获取path目录和其子目录的所有目录路径
-</span><span class="c1"></span>            <span class="n">JarLoader</span><span class="o">.</span><span class="na">collectDirs</span><span class="o">(</span><span class="n">path</span><span class="o">,</span> <span class="n">dirs</span><span class="o">);</span>
-        <span class="o">}</span>
-        <span class="c1">// 遍历目录，获取jar包的路径
-</span><span class="c1"></span>        <span class="n">List</span><span class="o">&lt;</span><span class="n">URL</span><span class="o">&gt;</span> <span class="n">urls</span> <span class="o">=</span> <span class="k">new</span> <span class="n">ArrayList</span><span class="o">&lt;</span><span class="n">URL</span><span class="o">&gt;();</span>
-        <span class="k">for</span> <span class="o">(</span><span class="n">String</span> <span class="n">path</span> <span class="o">:</span> <span class="n">dirs</span><span class="o">)</span> <span class="o">{</span>
-            <span class="n">urls</span><span class="o">.</span><span class="na">addAll</span><span class="o">(</span><span class="n">doGetURLs</span><span class="o">(</span><span class="n">path</span><span class="o">));</span>
-        <span class="o">}</span>
-
-        <span class="k">return</span> <span class="n">urls</span><span class="o">.</span><span class="na">toArray</span><span class="o">(</span><span class="k">new</span> <span class="n">URL</span><span class="o">[</span><span class="n">0</span><span class="o">]);</span>
-    <span class="o">}</span>
-
-    <span class="c1">// 递归的方式，获取所有目录
-</span><span class="c1"></span>    <span class="kd">private</span> <span class="kd">static</span> <span class="kt">void</span> <span class="nf">collectDirs</span><span class="o">(</span><span class="n">String</span> <span class="n">path</span><span class="o">,</span> <span class="n">List</span><span class="o">&lt;</span><span class="n">String</span><span class="o">&gt;</span> <span class="n">collector</span><span class="o">)</span> <span class="o">{</span>
-        <span class="c1">// path为空，终止
-</span><span class="c1"></span>        <span class="k">if</span> <span class="o">(</span><span class="kc">null</span> <span class="o">==</span> <span class="n">path</span> <span class="o">||</span> <span class="n">StringUtils</span><span class="o">.</span><span class="na">isBlank</span><span class="o">(</span><span class="n">path</span><span class="o">))</span> <span class="o">{</span>
-            <span class="k">return</span><span class="o">;</span>
-        <span class="o">}</span>
-
-        <span class="c1">// path不为目录，终止
-</span><span class="c1"></span>        <span class="n">File</span> <span class="n">current</span> <span class="o">=</span> <span class="k">new</span> <span class="n">File</span><span class="o">(</span><span class="n">path</span><span class="o">);</span>
-        <span class="k">if</span> <span class="o">(!</span><span class="n">current</span><span class="o">.</span><span class="na">exists</span><span class="o">()</span> <span class="o">||</span> <span class="o">!</span><span class="n">current</span><span class="o">.</span><span class="na">isDirectory</span><span class="o">())</span> <span class="o">{</span>
-            <span class="k">return</span><span class="o">;</span>
-        <span class="o">}</span>
-
-        <span class="c1">// 遍历完子文件，终止
-</span><span class="c1"></span>        <span class="k">for</span> <span class="o">(</span><span class="n">File</span> <span class="n">child</span> <span class="o">:</span> <span class="n">current</span><span class="o">.</span><span class="na">listFiles</span><span class="o">())</span> <span class="o">{</span>
-            <span class="k">if</span> <span class="o">(!</span><span class="n">child</span><span class="o">.</span><span class="na">isDirectory</span><span class="o">())</span> <span class="o">{</span>
-                <span class="k">continue</span><span class="o">;</span>
-            <span class="o">}</span>
-
-            <span class="n">collector</span><span class="o">.</span><span class="na">add</span><span class="o">(</span><span class="n">child</span><span class="o">.</span><span class="na">getAbsolutePath</span><span class="o">());</span>
-            <span class="n">collectDirs</span><span class="o">(</span><span class="n">child</span><span class="o">.</span><span class="na">getAbsolutePath</span><span class="o">(),</span> <span class="n">collector</span><span class="o">);</span>
-        <span class="o">}</span>
-    <span class="o">}</span>    
-
-    <span class="kd">private</span> <span class="kd">static</span> <span class="n">List</span><span class="o">&lt;</span><span class="n">URL</span><span class="o">&gt;</span> <span class="nf">doGetURLs</span><span class="o">(</span><span class="kd">final</span> <span class="n">String</span> <span class="n">path</span><span class="o">)</span> <span class="o">{</span>
-        
-        <span class="n">File</span> <span class="n">jarPath</span> <span class="o">=</span> <span class="k">new</span> <span class="n">File</span><span class="o">(</span><span class="n">path</span><span class="o">);</span>
-		<span class="c1">// 只寻找文件以.jar结尾的文件
-</span><span class="c1"></span>        <span class="n">FileFilter</span> <span class="n">jarFilter</span> <span class="o">=</span> <span class="k">new</span> <span class="n">FileFilter</span><span class="o">()</span> <span class="o">{</span>
-            <span class="nd">@Override</span>
-            <span class="kd">public</span> <span class="kt">boolean</span> <span class="nf">accept</span><span class="o">(</span><span class="n">File</span> <span class="n">pathname</span><span class="o">)</span> <span class="o">{</span>
-                <span class="k">return</span> <span class="n">pathname</span><span class="o">.</span><span class="na">getName</span><span class="o">().</span><span class="na">endsWith</span><span class="o">(</span><span class="s">&#34;.jar&#34;</span><span class="o">);</span>
-            <span class="o">}</span>
-        <span class="o">};</span>
-
-		
-        <span class="n">File</span><span class="o">[]</span> <span class="n">allJars</span> <span class="o">=</span> <span class="k">new</span> <span class="n">File</span><span class="o">(</span><span class="n">path</span><span class="o">).</span><span class="na">listFiles</span><span class="o">(</span><span class="n">jarFilter</span><span class="o">);</span>
-        <span class="n">List</span><span class="o">&lt;</span><span class="n">URL</span><span class="o">&gt;</span> <span class="n">jarURLs</span> <span class="o">=</span> <span class="k">new</span> <span class="n">ArrayList</span><span class="o">&lt;</span><span class="n">URL</span><span class="o">&gt;(</span><span class="n">allJars</span><span class="o">.</span><span class="na">length</span><span class="o">);</span>
-
-        <span class="k">for</span> <span class="o">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="n">0</span><span class="o">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">allJars</span><span class="o">.</span><span class="na">length</span><span class="o">;</span> <span class="n">i</span><span class="o">++)</span> <span class="o">{</span>
-            <span class="k">try</span> <span class="o">{</span>
-                <span class="n">jarURLs</span><span class="o">.</span><span class="na">add</span><span class="o">(</span><span class="n">allJars</span><span class="o">[</span><span class="n">i</span><span class="o">].</span><span class="na">toURI</span><span class="o">().</span><span class="na">toURL</span><span class="o">());</span>
-            <span class="o">}</span> <span class="k">catch</span> <span class="o">(</span><span class="n">Exception</span> <span class="n">e</span><span class="o">)</span> <span class="o">{</span>
-                <span class="k">throw</span> <span class="n">DataXException</span><span class="o">.</span><span class="na">asDataXException</span><span class="o">(</span>
-                        <span class="n">FrameworkErrorCode</span><span class="o">.</span><span class="na">PLUGIN_INIT_ERROR</span><span class="o">,</span>
-                        <span class="s">&#34;系统加载jar包出错&#34;</span><span class="o">,</span> <span class="n">e</span><span class="o">);</span>
-            <span class="o">}</span>
-        <span class="o">}</span>
-
-        <span class="k">return</span> <span class="n">jarURLs</span><span class="o">;</span>
-    <span class="o">}</span>
-<span class="o">}</span>
-</code></pre></td></tr></table></div>
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">JarLoader</span> <span class="kd">extends</span> <span class="n">URLClassLoader</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">    <span class="kd">public</span> <span class="nf">JarLoader</span><span class="o">(</span><span class="n">String</span><span class="o">[]</span> <span class="n">paths</span><span class="o">)</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">        <span class="k">this</span><span class="o">(</span><span class="n">paths</span><span class="o">,</span> <span class="n">JarLoader</span><span class="o">.</span><span class="na">class</span><span class="o">.</span><span class="na">getClassLoader</span><span class="o">());</span>
+</span></span><span class="line"><span class="cl">    <span class="o">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="kd">public</span> <span class="nf">JarLoader</span><span class="o">(</span><span class="n">String</span><span class="o">[]</span> <span class="n">paths</span><span class="o">,</span> <span class="n">ClassLoader</span> <span class="n">parent</span><span class="o">)</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">        <span class="c1">// 调用getURLS，获取所有的jar包路径
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>        <span class="kd">super</span><span class="o">(</span><span class="n">getURLs</span><span class="o">(</span><span class="n">paths</span><span class="o">),</span> <span class="n">parent</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">    <span class="o">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="c1">// 获取所有的jar包
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="kd">private</span> <span class="kd">static</span> <span class="n">URL</span><span class="o">[]</span> <span class="nf">getURLs</span><span class="o">(</span><span class="n">String</span><span class="o">[]</span> <span class="n">paths</span><span class="o">)</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">        <span class="c1">// 获取包括子目录的所有目录路径
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>        <span class="n">List</span><span class="o">&lt;</span><span class="n">String</span><span class="o">&gt;</span> <span class="n">dirs</span> <span class="o">=</span> <span class="k">new</span> <span class="n">ArrayList</span><span class="o">&lt;</span><span class="n">String</span><span class="o">&gt;();</span>
+</span></span><span class="line"><span class="cl">        <span class="k">for</span> <span class="o">(</span><span class="n">String</span> <span class="n">path</span> <span class="o">:</span> <span class="n">paths</span><span class="o">)</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">            <span class="n">dirs</span><span class="o">.</span><span class="na">add</span><span class="o">(</span><span class="n">path</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">            <span class="c1">// 获取path目录和其子目录的所有目录路径
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>            <span class="n">JarLoader</span><span class="o">.</span><span class="na">collectDirs</span><span class="o">(</span><span class="n">path</span><span class="o">,</span> <span class="n">dirs</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">        <span class="o">}</span>
+</span></span><span class="line"><span class="cl">        <span class="c1">// 遍历目录，获取jar包的路径
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>        <span class="n">List</span><span class="o">&lt;</span><span class="n">URL</span><span class="o">&gt;</span> <span class="n">urls</span> <span class="o">=</span> <span class="k">new</span> <span class="n">ArrayList</span><span class="o">&lt;</span><span class="n">URL</span><span class="o">&gt;();</span>
+</span></span><span class="line"><span class="cl">        <span class="k">for</span> <span class="o">(</span><span class="n">String</span> <span class="n">path</span> <span class="o">:</span> <span class="n">dirs</span><span class="o">)</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">            <span class="n">urls</span><span class="o">.</span><span class="na">addAll</span><span class="o">(</span><span class="n">doGetURLs</span><span class="o">(</span><span class="n">path</span><span class="o">));</span>
+</span></span><span class="line"><span class="cl">        <span class="o">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">        <span class="k">return</span> <span class="n">urls</span><span class="o">.</span><span class="na">toArray</span><span class="o">(</span><span class="k">new</span> <span class="n">URL</span><span class="o">[</span><span class="mi">0</span><span class="o">]);</span>
+</span></span><span class="line"><span class="cl">    <span class="o">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="c1">// 递归的方式，获取所有目录
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="kd">private</span> <span class="kd">static</span> <span class="kt">void</span> <span class="nf">collectDirs</span><span class="o">(</span><span class="n">String</span> <span class="n">path</span><span class="o">,</span> <span class="n">List</span><span class="o">&lt;</span><span class="n">String</span><span class="o">&gt;</span> <span class="n">collector</span><span class="o">)</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">        <span class="c1">// path为空，终止
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>        <span class="k">if</span> <span class="o">(</span><span class="kc">null</span> <span class="o">==</span> <span class="n">path</span> <span class="o">||</span> <span class="n">StringUtils</span><span class="o">.</span><span class="na">isBlank</span><span class="o">(</span><span class="n">path</span><span class="o">))</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">            <span class="k">return</span><span class="o">;</span>
+</span></span><span class="line"><span class="cl">        <span class="o">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">        <span class="c1">// path不为目录，终止
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>        <span class="n">File</span> <span class="n">current</span> <span class="o">=</span> <span class="k">new</span> <span class="n">File</span><span class="o">(</span><span class="n">path</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">        <span class="k">if</span> <span class="o">(!</span><span class="n">current</span><span class="o">.</span><span class="na">exists</span><span class="o">()</span> <span class="o">||</span> <span class="o">!</span><span class="n">current</span><span class="o">.</span><span class="na">isDirectory</span><span class="o">())</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">            <span class="k">return</span><span class="o">;</span>
+</span></span><span class="line"><span class="cl">        <span class="o">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">        <span class="c1">// 遍历完子文件，终止
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>        <span class="k">for</span> <span class="o">(</span><span class="n">File</span> <span class="n">child</span> <span class="o">:</span> <span class="n">current</span><span class="o">.</span><span class="na">listFiles</span><span class="o">())</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">            <span class="k">if</span> <span class="o">(!</span><span class="n">child</span><span class="o">.</span><span class="na">isDirectory</span><span class="o">())</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">                <span class="k">continue</span><span class="o">;</span>
+</span></span><span class="line"><span class="cl">            <span class="o">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">            <span class="n">collector</span><span class="o">.</span><span class="na">add</span><span class="o">(</span><span class="n">child</span><span class="o">.</span><span class="na">getAbsolutePath</span><span class="o">());</span>
+</span></span><span class="line"><span class="cl">            <span class="n">collectDirs</span><span class="o">(</span><span class="n">child</span><span class="o">.</span><span class="na">getAbsolutePath</span><span class="o">(),</span> <span class="n">collector</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">        <span class="o">}</span>
+</span></span><span class="line"><span class="cl">    <span class="o">}</span>    
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="kd">private</span> <span class="kd">static</span> <span class="n">List</span><span class="o">&lt;</span><span class="n">URL</span><span class="o">&gt;</span> <span class="nf">doGetURLs</span><span class="o">(</span><span class="kd">final</span> <span class="n">String</span> <span class="n">path</span><span class="o">)</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">        
+</span></span><span class="line"><span class="cl">        <span class="n">File</span> <span class="n">jarPath</span> <span class="o">=</span> <span class="k">new</span> <span class="n">File</span><span class="o">(</span><span class="n">path</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">		<span class="c1">// 只寻找文件以.jar结尾的文件
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>        <span class="n">FileFilter</span> <span class="n">jarFilter</span> <span class="o">=</span> <span class="k">new</span> <span class="n">FileFilter</span><span class="o">()</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">            <span class="nd">@Override</span>
+</span></span><span class="line"><span class="cl">            <span class="kd">public</span> <span class="kt">boolean</span> <span class="nf">accept</span><span class="o">(</span><span class="n">File</span> <span class="n">pathname</span><span class="o">)</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">                <span class="k">return</span> <span class="n">pathname</span><span class="o">.</span><span class="na">getName</span><span class="o">().</span><span class="na">endsWith</span><span class="o">(</span><span class="s">&#34;.jar&#34;</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">            <span class="o">}</span>
+</span></span><span class="line"><span class="cl">        <span class="o">};</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">		
+</span></span><span class="line"><span class="cl">        <span class="n">File</span><span class="o">[]</span> <span class="n">allJars</span> <span class="o">=</span> <span class="k">new</span> <span class="n">File</span><span class="o">(</span><span class="n">path</span><span class="o">).</span><span class="na">listFiles</span><span class="o">(</span><span class="n">jarFilter</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">        <span class="n">List</span><span class="o">&lt;</span><span class="n">URL</span><span class="o">&gt;</span> <span class="n">jarURLs</span> <span class="o">=</span> <span class="k">new</span> <span class="n">ArrayList</span><span class="o">&lt;</span><span class="n">URL</span><span class="o">&gt;(</span><span class="n">allJars</span><span class="o">.</span><span class="na">length</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">        <span class="k">for</span> <span class="o">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="o">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">allJars</span><span class="o">.</span><span class="na">length</span><span class="o">;</span> <span class="n">i</span><span class="o">++)</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">            <span class="k">try</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">                <span class="n">jarURLs</span><span class="o">.</span><span class="na">add</span><span class="o">(</span><span class="n">allJars</span><span class="o">[</span><span class="n">i</span><span class="o">].</span><span class="na">toURI</span><span class="o">().</span><span class="na">toURL</span><span class="o">());</span>
+</span></span><span class="line"><span class="cl">            <span class="o">}</span> <span class="k">catch</span> <span class="o">(</span><span class="n">Exception</span> <span class="n">e</span><span class="o">)</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">                <span class="k">throw</span> <span class="n">DataXException</span><span class="o">.</span><span class="na">asDataXException</span><span class="o">(</span>
+</span></span><span class="line"><span class="cl">                        <span class="n">FrameworkErrorCode</span><span class="o">.</span><span class="na">PLUGIN_INIT_ERROR</span><span class="o">,</span>
+</span></span><span class="line"><span class="cl">                        <span class="s">&#34;系统加载jar包出错&#34;</span><span class="o">,</span> <span class="n">e</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">            <span class="o">}</span>
+</span></span><span class="line"><span class="cl">        <span class="o">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">        <span class="k">return</span> <span class="n">jarURLs</span><span class="o">;</span>
+</span></span><span class="line"><span class="cl">    <span class="o">}</span>
+</span></span><span class="line"><span class="cl"><span class="o">}</span>
+</span></span></code></pre></td></tr></table></div>
 </div>
 </div><h3 id="loadutil-类"><a href="#loadutil-类" class="anchor-link"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon anchor-icon"><path d="M326.612 185.391c59.747 59.809 58.927 155.698.36 214.59-.11.12-.24.25-.36.37l-67.2 67.2c-59.27 59.27-155.699 59.262-214.96 0-59.27-59.26-59.27-155.7 0-214.96l37.106-37.106c9.84-9.84 26.786-3.3 27.294 10.606.648 17.722 3.826 35.527 9.69 52.721 1.986 5.822.567 12.262-3.783 16.612l-13.087 13.087c-28.026 28.026-28.905 73.66-1.155 101.96 28.024 28.579 74.086 28.749 102.325.51l67.2-67.19c28.191-28.191 28.073-73.757 0-101.83-3.701-3.694-7.429-6.564-10.341-8.569a16.037 16.037 0 0 1-6.947-12.606c-.396-10.567 3.348-21.456 11.698-29.806l21.054-21.055c5.521-5.521 14.182-6.199 20.584-1.731a152.482 152.482 0 0 1 20.522 17.197zM467.547 44.449c-59.261-59.262-155.69-59.27-214.96 0l-67.2 67.2c-.12.12-.25.25-.36.37-58.566 58.892-59.387 154.781.36 214.59a152.454 152.454 0 0 0 20.521 17.196c6.402 4.468 15.064 3.789 20.584-1.731l21.054-21.055c8.35-8.35 12.094-19.239 11.698-29.806a16.037 16.037 0 0 0-6.947-12.606c-2.912-2.005-6.64-4.875-10.341-8.569-28.073-28.073-28.191-73.639 0-101.83l67.2-67.19c28.239-28.239 74.3-28.069 102.325.51 27.75 28.3 26.872 73.934-1.155 101.96l-13.087 13.087c-4.35 4.35-5.769 10.79-3.783 16.612 5.864 17.194 9.042 34.999 9.69 52.721.509 13.906 17.454 20.446 27.294 10.606l37.106-37.106c59.271-59.259 59.271-155.699.001-214.959z"/></svg></a>LoadUtil 类</h3>
 <p>LoadUtil管理着插件的加载器，调用getJarLoader返回插件对应的加载器。</p>
@@ -676,38 +674,38 @@
 </span><span class="lnt">31
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">LoadUtil</span> <span class="o">{</span>
-    
-    <span class="c1">// 加载器的HashMap, Key由插件类型和名称决定, 格式为plugin.{pulginType}.{pluginName}
-</span><span class="c1"></span>    <span class="kd">private</span> <span class="kd">static</span> <span class="n">Map</span><span class="o">&lt;</span><span class="n">String</span><span class="o">,</span> <span class="n">JarLoader</span><span class="o">&gt;</span> <span class="n">jarLoaderCenter</span> <span class="o">=</span> <span class="k">new</span> <span class="n">HashMap</span><span class="o">&lt;</span><span class="n">String</span><span class="o">,</span> <span class="n">JarLoader</span><span class="o">&gt;();</span>
-
-	<span class="kd">public</span> <span class="kd">static</span> <span class="kd">synchronized</span> <span class="n">JarLoader</span> <span class="nf">getJarLoader</span><span class="o">(</span><span class="n">PluginType</span> <span class="n">pluginType</span><span class="o">,</span> <span class="n">String</span> <span class="n">pluginName</span><span class="o">)</span> <span class="o">{</span>
-        <span class="n">Configuration</span> <span class="n">pluginConf</span> <span class="o">=</span> <span class="n">getPluginConf</span><span class="o">(</span><span class="n">pluginType</span><span class="o">,</span> <span class="n">pluginName</span><span class="o">);</span>
-
-        <span class="n">JarLoader</span> <span class="n">jarLoader</span> <span class="o">=</span> <span class="n">jarLoaderCenter</span><span class="o">.</span><span class="na">get</span><span class="o">(</span><span class="n">generatePluginKey</span><span class="o">(</span><span class="n">pluginType</span><span class="o">,</span>
-                <span class="n">pluginName</span><span class="o">));</span>
-        <span class="k">if</span> <span class="o">(</span><span class="kc">null</span> <span class="o">==</span> <span class="n">jarLoader</span><span class="o">)</span> <span class="o">{</span>
-            <span class="c1">// 构建加载器JarLoader
-</span><span class="c1"></span>            <span class="c1">// 获取jar所在的目录
-</span><span class="c1"></span>            <span class="n">String</span> <span class="n">pluginPath</span> <span class="o">=</span> <span class="n">pluginConf</span><span class="o">.</span><span class="na">getString</span><span class="o">(</span><span class="s">&#34;path&#34;</span><span class="o">);</span>
-            <span class="n">jarLoader</span> <span class="o">=</span> <span class="k">new</span> <span class="n">JarLoader</span><span class="o">(</span><span class="k">new</span> <span class="n">String</span><span class="o">[]{</span><span class="n">pluginPath</span><span class="o">});</span>
-            <span class="c1">//添加到HashMap中
-</span><span class="c1"></span>            <span class="n">jarLoaderCenter</span><span class="o">.</span><span class="na">put</span><span class="o">(</span><span class="n">generatePluginKey</span><span class="o">(</span><span class="n">pluginType</span><span class="o">,</span> <span class="n">pluginName</span><span class="o">),</span>
-                    <span class="n">jarLoader</span><span class="o">);</span>
-        <span class="o">}</span>
-
-        <span class="k">return</span> <span class="n">jarLoader</span><span class="o">;</span>
-    <span class="o">}</span>
-
-    <span class="kd">private</span> <span class="kd">static</span> <span class="kd">final</span> <span class="n">String</span> <span class="n">pluginTypeNameFormat</span> <span class="o">=</span> <span class="s">&#34;plugin.%s.%s&#34;</span><span class="o">;</span>
-	
-    <span class="c1">// 生成HashMpa的key值
-</span><span class="c1"></span>    <span class="kd">private</span> <span class="kd">static</span> <span class="n">String</span> <span class="nf">generatePluginKey</span><span class="o">(</span><span class="n">PluginType</span> <span class="n">pluginType</span><span class="o">,</span>
-                                            <span class="n">String</span> <span class="n">pluginName</span><span class="o">)</span> <span class="o">{</span>
-        <span class="k">return</span> <span class="n">String</span><span class="o">.</span><span class="na">format</span><span class="o">(</span><span class="n">pluginTypeNameFormat</span><span class="o">,</span> <span class="n">pluginType</span><span class="o">.</span><span class="na">toString</span><span class="o">(),</span>
-                <span class="n">pluginName</span><span class="o">);</span>
-    <span class="o">}</span>
-</code></pre></td></tr></table></div>
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">LoadUtil</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">    
+</span></span><span class="line"><span class="cl">    <span class="c1">// 加载器的HashMap, Key由插件类型和名称决定, 格式为plugin.{pulginType}.{pluginName}
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="kd">private</span> <span class="kd">static</span> <span class="n">Map</span><span class="o">&lt;</span><span class="n">String</span><span class="o">,</span> <span class="n">JarLoader</span><span class="o">&gt;</span> <span class="n">jarLoaderCenter</span> <span class="o">=</span> <span class="k">new</span> <span class="n">HashMap</span><span class="o">&lt;</span><span class="n">String</span><span class="o">,</span> <span class="n">JarLoader</span><span class="o">&gt;();</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">	<span class="kd">public</span> <span class="kd">static</span> <span class="kd">synchronized</span> <span class="n">JarLoader</span> <span class="nf">getJarLoader</span><span class="o">(</span><span class="n">PluginType</span> <span class="n">pluginType</span><span class="o">,</span> <span class="n">String</span> <span class="n">pluginName</span><span class="o">)</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">        <span class="n">Configuration</span> <span class="n">pluginConf</span> <span class="o">=</span> <span class="n">getPluginConf</span><span class="o">(</span><span class="n">pluginType</span><span class="o">,</span> <span class="n">pluginName</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">        <span class="n">JarLoader</span> <span class="n">jarLoader</span> <span class="o">=</span> <span class="n">jarLoaderCenter</span><span class="o">.</span><span class="na">get</span><span class="o">(</span><span class="n">generatePluginKey</span><span class="o">(</span><span class="n">pluginType</span><span class="o">,</span>
+</span></span><span class="line"><span class="cl">                <span class="n">pluginName</span><span class="o">));</span>
+</span></span><span class="line"><span class="cl">        <span class="k">if</span> <span class="o">(</span><span class="kc">null</span> <span class="o">==</span> <span class="n">jarLoader</span><span class="o">)</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">            <span class="c1">// 构建加载器JarLoader
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>            <span class="c1">// 获取jar所在的目录
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>            <span class="n">String</span> <span class="n">pluginPath</span> <span class="o">=</span> <span class="n">pluginConf</span><span class="o">.</span><span class="na">getString</span><span class="o">(</span><span class="s">&#34;path&#34;</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">            <span class="n">jarLoader</span> <span class="o">=</span> <span class="k">new</span> <span class="n">JarLoader</span><span class="o">(</span><span class="k">new</span> <span class="n">String</span><span class="o">[]{</span><span class="n">pluginPath</span><span class="o">});</span>
+</span></span><span class="line"><span class="cl">            <span class="c1">//添加到HashMap中
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>            <span class="n">jarLoaderCenter</span><span class="o">.</span><span class="na">put</span><span class="o">(</span><span class="n">generatePluginKey</span><span class="o">(</span><span class="n">pluginType</span><span class="o">,</span> <span class="n">pluginName</span><span class="o">),</span>
+</span></span><span class="line"><span class="cl">                    <span class="n">jarLoader</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">        <span class="o">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">        <span class="k">return</span> <span class="n">jarLoader</span><span class="o">;</span>
+</span></span><span class="line"><span class="cl">    <span class="o">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="kd">private</span> <span class="kd">static</span> <span class="kd">final</span> <span class="n">String</span> <span class="n">pluginTypeNameFormat</span> <span class="o">=</span> <span class="s">&#34;plugin.%s.%s&#34;</span><span class="o">;</span>
+</span></span><span class="line"><span class="cl">	
+</span></span><span class="line"><span class="cl">    <span class="c1">// 生成HashMpa的key值
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="kd">private</span> <span class="kd">static</span> <span class="n">String</span> <span class="nf">generatePluginKey</span><span class="o">(</span><span class="n">PluginType</span> <span class="n">pluginType</span><span class="o">,</span>
+</span></span><span class="line"><span class="cl">                                            <span class="n">String</span> <span class="n">pluginName</span><span class="o">)</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">        <span class="k">return</span> <span class="n">String</span><span class="o">.</span><span class="na">format</span><span class="o">(</span><span class="n">pluginTypeNameFormat</span><span class="o">,</span> <span class="n">pluginType</span><span class="o">.</span><span class="na">toString</span><span class="o">(),</span>
+</span></span><span class="line"><span class="cl">                <span class="n">pluginName</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">    <span class="o">}</span>
+</span></span></code></pre></td></tr></table></div>
 </div>
 </div><p>当获取类加载器，就可以调用LoadUtil来加载插件。LoadUtil提供了 loadJobPlugin 和  loadTaskPlugin 两个接口，加载Job  和 Task 的两种插件。</p>
 <div class="highlight"><div class="chroma">
@@ -757,78 +755,76 @@
 </span><span class="lnt">43
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="c1">// 加载Job类型的Plugin
-</span><span class="c1"></span><span class="kd">public</span> <span class="kd">static</span> <span class="n">AbstractJobPlugin</span> <span class="nf">loadJobPlugin</span><span class="o">(</span><span class="n">PluginType</span> <span class="n">pluginType</span><span class="o">,</span> <span class="n">String</span> <span class="n">pluginName</span><span class="o">)</span> <span class="o">{</span>
-        <span class="c1">// 调用loadPluginClass方法，加载插件对应的class
-</span><span class="c1"></span>        <span class="n">Class</span><span class="o">&lt;?</span> <span class="kd">extends</span> <span class="n">AbstractPlugin</span><span class="o">&gt;</span> <span class="n">clazz</span> <span class="o">=</span> <span class="n">LoadUtil</span><span class="o">.</span><span class="na">loadPluginClass</span><span class="o">(</span><span class="n">pluginType</span><span class="o">,</span> <span class="n">pluginName</span><span class="o">,</span> <span class="n">ContainerType</span><span class="o">.</span><span class="na">Job</span><span class="o">);</span>
-
-        <span class="c1">// 实例化Plugin，转换为AbstractJobPlugin
-</span><span class="c1"></span>        <span class="n">AbstractJobPlugin</span> <span class="n">jobPlugin</span> <span class="o">=</span> <span class="o">(</span><span class="n">AbstractJobPlugin</span><span class="o">)</span> <span class="n">clazz</span><span class="o">.</span><span class="na">newInstance</span><span class="o">();</span>
-        <span class="c1">// 设置Job的配置,路径为plugin.{pluginType}.{pluginName}
-</span><span class="c1"></span>        <span class="n">jobPlugin</span><span class="o">.</span><span class="na">setPluginConf</span><span class="o">(</span><span class="n">getPluginConf</span><span class="o">(</span><span class="n">pluginType</span><span class="o">,</span> <span class="n">pluginName</span><span class="o">));</span>
-        <span class="k">return</span> <span class="n">jobPlugin</span><span class="o">;</span>
-
-    <span class="o">}</span>
-
-<span class="c1">// 加载Task类型的Plugin
-</span><span class="c1"></span><span class="kd">public</span> <span class="kd">static</span> <span class="n">AbstractTaskPlugin</span> <span class="nf">loadTaskPlugin</span><span class="o">(</span><span class="n">PluginType</span> <span class="n">pluginType</span><span class="o">,</span> <span class="n">String</span> <span class="n">pluginName</span><span class="o">)</span> <span class="o">{</span>
-        <span class="c1">// 调用loadPluginClass方法，加载插件对应的class
-</span><span class="c1"></span>        <span class="n">Class</span><span class="o">&lt;?</span> <span class="kd">extends</span> <span class="n">AbstractPlugin</span><span class="o">&gt;</span> <span class="n">clazz</span> <span class="o">=</span> <span class="n">LoadUtil</span><span class="o">.</span><span class="na">loadPluginClass</span><span class="o">(</span><span class="n">pluginType</span><span class="o">,</span> <span class="n">pluginName</span><span class="o">,</span> <span class="n">ContainerType</span><span class="o">.</span><span class="na">Task</span><span class="o">);</span>
-        <span class="c1">// 实例化Plugin，转换为AbstractTaskPlugin
-</span><span class="c1"></span>        <span class="n">AbstractTaskPlugin</span> <span class="n">taskPlugin</span> <span class="o">=</span> <span class="o">(</span><span class="n">AbstracTasktTaskPlugin</span><span class="o">)</span> <span class="n">clazz</span><span class="o">.</span><span class="na">newInstance</span><span class="o">();</span>
-        <span class="c1">// 设置Task的配置,路径为plugin.{pluginType}.{pluginName}
-</span><span class="c1"></span>        <span class="n">taskPlugin</span><span class="o">.</span><span class="na">setPluginConf</span><span class="o">(</span><span class="n">getPluginConf</span><span class="o">(</span><span class="n">pluginType</span><span class="o">,</span> <span class="n">pluginName</span><span class="o">));</span>
-    <span class="o">}</span>
-
-<span class="c1">// 加载插件类
-</span><span class="c1">// pluginType 代表插件类型
-</span><span class="c1">// pluginName 代表插件名称
-</span><span class="c1">// pluginRunType 代表着运行类型，Job或者Task
-</span><span class="c1"></span><span class="kd">private</span> <span class="kd">static</span> <span class="kd">synchronized</span> <span class="n">Class</span><span class="o">&lt;?</span> <span class="kd">extends</span> <span class="n">AbstractPlugin</span><span class="o">&gt;</span> <span class="nf">loadPluginClass</span><span class="o">(</span>
-    <span class="n">PluginType</span> <span class="n">pluginType</span><span class="o">,</span> <span class="n">String</span> <span class="n">pluginName</span><span class="o">,</span>
-    <span class="n">ContainerType</span> <span class="n">pluginRunType</span><span class="o">)</span> <span class="o">{</span>
-    <span class="c1">// 获取插件配置
-</span><span class="c1"></span>    <span class="n">Configuration</span> <span class="n">pluginConf</span> <span class="o">=</span> <span class="n">getPluginConf</span><span class="o">(</span><span class="n">pluginType</span><span class="o">,</span> <span class="n">pluginName</span><span class="o">);</span>
-    <span class="c1">// 获取插件对应的ClassLoader
-</span><span class="c1"></span>    <span class="n">JarLoader</span> <span class="n">jarLoader</span> <span class="o">=</span> <span class="n">LoadUtil</span><span class="o">.</span><span class="na">getJarLoader</span><span class="o">(</span><span class="n">pluginType</span><span class="o">,</span> <span class="n">pluginName</span><span class="o">);</span>
-    <span class="k">try</span> <span class="o">{</span>
-        <span class="c1">// 加载插件的class
-</span><span class="c1"></span>        <span class="k">return</span> <span class="o">(</span><span class="n">Class</span><span class="o">&lt;?</span> <span class="kd">extends</span> <span class="n">AbstractPlugin</span><span class="o">&gt;)</span> <span class="n">jarLoader</span>
-            <span class="o">.</span><span class="na">loadClass</span><span class="o">(</span><span class="n">pluginConf</span><span class="o">.</span><span class="na">getString</span><span class="o">(</span><span class="s">&#34;class&#34;</span><span class="o">)</span> <span class="o">+</span> <span class="s">&#34;$&#34;</span>
-                       <span class="o">+</span> <span class="n">pluginRunType</span><span class="o">.</span><span class="na">value</span><span class="o">());</span>
-    <span class="o">}</span> <span class="k">catch</span> <span class="o">(</span><span class="n">Exception</span> <span class="n">e</span><span class="o">)</span> <span class="o">{</span>
-        <span class="k">throw</span> <span class="n">DataXException</span><span class="o">.</span><span class="na">asDataXException</span><span class="o">(</span><span class="n">FrameworkErrorCode</span><span class="o">.</span><span class="na">RUNTIME_ERROR</span><span class="o">,</span> <span class="n">e</span><span class="o">);</span>
-    <span class="o">}</span>
-<span class="o">}</span>
-</code></pre></td></tr></table></div>
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="c1">// 加载Job类型的Plugin
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="kd">public</span> <span class="kd">static</span> <span class="n">AbstractJobPlugin</span> <span class="nf">loadJobPlugin</span><span class="o">(</span><span class="n">PluginType</span> <span class="n">pluginType</span><span class="o">,</span> <span class="n">String</span> <span class="n">pluginName</span><span class="o">)</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">        <span class="c1">// 调用loadPluginClass方法，加载插件对应的class
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>        <span class="n">Class</span><span class="o">&lt;?</span> <span class="kd">extends</span> <span class="n">AbstractPlugin</span><span class="o">&gt;</span> <span class="n">clazz</span> <span class="o">=</span> <span class="n">LoadUtil</span><span class="o">.</span><span class="na">loadPluginClass</span><span class="o">(</span><span class="n">pluginType</span><span class="o">,</span> <span class="n">pluginName</span><span class="o">,</span> <span class="n">ContainerType</span><span class="o">.</span><span class="na">Job</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">        <span class="c1">// 实例化Plugin，转换为AbstractJobPlugin
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>        <span class="n">AbstractJobPlugin</span> <span class="n">jobPlugin</span> <span class="o">=</span> <span class="o">(</span><span class="n">AbstractJobPlugin</span><span class="o">)</span> <span class="n">clazz</span><span class="o">.</span><span class="na">newInstance</span><span class="o">();</span>
+</span></span><span class="line"><span class="cl">        <span class="c1">// 设置Job的配置,路径为plugin.{pluginType}.{pluginName}
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>        <span class="n">jobPlugin</span><span class="o">.</span><span class="na">setPluginConf</span><span class="o">(</span><span class="n">getPluginConf</span><span class="o">(</span><span class="n">pluginType</span><span class="o">,</span> <span class="n">pluginName</span><span class="o">));</span>
+</span></span><span class="line"><span class="cl">        <span class="k">return</span> <span class="n">jobPlugin</span><span class="o">;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="o">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1">// 加载Task类型的Plugin
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="kd">public</span> <span class="kd">static</span> <span class="n">AbstractTaskPlugin</span> <span class="nf">loadTaskPlugin</span><span class="o">(</span><span class="n">PluginType</span> <span class="n">pluginType</span><span class="o">,</span> <span class="n">String</span> <span class="n">pluginName</span><span class="o">)</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">        <span class="c1">// 调用loadPluginClass方法，加载插件对应的class
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>        <span class="n">Class</span><span class="o">&lt;?</span> <span class="kd">extends</span> <span class="n">AbstractPlugin</span><span class="o">&gt;</span> <span class="n">clazz</span> <span class="o">=</span> <span class="n">LoadUtil</span><span class="o">.</span><span class="na">loadPluginClass</span><span class="o">(</span><span class="n">pluginType</span><span class="o">,</span> <span class="n">pluginName</span><span class="o">,</span> <span class="n">ContainerType</span><span class="o">.</span><span class="na">Task</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">        <span class="c1">// 实例化Plugin，转换为AbstractTaskPlugin
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>        <span class="n">AbstractTaskPlugin</span> <span class="n">taskPlugin</span> <span class="o">=</span> <span class="o">(</span><span class="n">AbstracTasktTaskPlugin</span><span class="o">)</span> <span class="n">clazz</span><span class="o">.</span><span class="na">newInstance</span><span class="o">();</span>
+</span></span><span class="line"><span class="cl">        <span class="c1">// 设置Task的配置,路径为plugin.{pluginType}.{pluginName}
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>        <span class="n">taskPlugin</span><span class="o">.</span><span class="na">setPluginConf</span><span class="o">(</span><span class="n">getPluginConf</span><span class="o">(</span><span class="n">pluginType</span><span class="o">,</span> <span class="n">pluginName</span><span class="o">));</span>
+</span></span><span class="line"><span class="cl">    <span class="o">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1">// 加载插件类
+</span></span></span><span class="line"><span class="cl"><span class="c1">// pluginType 代表插件类型
+</span></span></span><span class="line"><span class="cl"><span class="c1">// pluginName 代表插件名称
+</span></span></span><span class="line"><span class="cl"><span class="c1">// pluginRunType 代表着运行类型，Job或者Task
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="kd">private</span> <span class="kd">static</span> <span class="kd">synchronized</span> <span class="n">Class</span><span class="o">&lt;?</span> <span class="kd">extends</span> <span class="n">AbstractPlugin</span><span class="o">&gt;</span> <span class="nf">loadPluginClass</span><span class="o">(</span>
+</span></span><span class="line"><span class="cl">    <span class="n">PluginType</span> <span class="n">pluginType</span><span class="o">,</span> <span class="n">String</span> <span class="n">pluginName</span><span class="o">,</span>
+</span></span><span class="line"><span class="cl">    <span class="n">ContainerType</span> <span class="n">pluginRunType</span><span class="o">)</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// 获取插件配置
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="n">Configuration</span> <span class="n">pluginConf</span> <span class="o">=</span> <span class="n">getPluginConf</span><span class="o">(</span><span class="n">pluginType</span><span class="o">,</span> <span class="n">pluginName</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// 获取插件对应的ClassLoader
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="n">JarLoader</span> <span class="n">jarLoader</span> <span class="o">=</span> <span class="n">LoadUtil</span><span class="o">.</span><span class="na">getJarLoader</span><span class="o">(</span><span class="n">pluginType</span><span class="o">,</span> <span class="n">pluginName</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">    <span class="k">try</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">        <span class="c1">// 加载插件的class
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>        <span class="k">return</span> <span class="o">(</span><span class="n">Class</span><span class="o">&lt;?</span> <span class="kd">extends</span> <span class="n">AbstractPlugin</span><span class="o">&gt;)</span> <span class="n">jarLoader</span>
+</span></span><span class="line"><span class="cl">            <span class="o">.</span><span class="na">loadClass</span><span class="o">(</span><span class="n">pluginConf</span><span class="o">.</span><span class="na">getString</span><span class="o">(</span><span class="s">&#34;class&#34;</span><span class="o">)</span> <span class="o">+</span> <span class="s">&#34;$&#34;</span>
+</span></span><span class="line"><span class="cl">                       <span class="o">+</span> <span class="n">pluginRunType</span><span class="o">.</span><span class="na">value</span><span class="o">());</span>
+</span></span><span class="line"><span class="cl">    <span class="o">}</span> <span class="k">catch</span> <span class="o">(</span><span class="n">Exception</span> <span class="n">e</span><span class="o">)</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">        <span class="k">throw</span> <span class="n">DataXException</span><span class="o">.</span><span class="na">asDataXException</span><span class="o">(</span><span class="n">FrameworkErrorCode</span><span class="o">.</span><span class="na">RUNTIME_ERROR</span><span class="o">,</span> <span class="n">e</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">    <span class="o">}</span>
+</span></span><span class="line"><span class="cl"><span class="o">}</span>
+</span></span></code></pre></td></tr></table></div>
 </div>
 </div><h2 id="切换类加载器"><a href="#切换类加载器" class="anchor-link"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon anchor-icon"><path d="M326.612 185.391c59.747 59.809 58.927 155.698.36 214.59-.11.12-.24.25-.36.37l-67.2 67.2c-59.27 59.27-155.699 59.262-214.96 0-59.27-59.26-59.27-155.7 0-214.96l37.106-37.106c9.84-9.84 26.786-3.3 27.294 10.606.648 17.722 3.826 35.527 9.69 52.721 1.986 5.822.567 12.262-3.783 16.612l-13.087 13.087c-28.026 28.026-28.905 73.66-1.155 101.96 28.024 28.579 74.086 28.749 102.325.51l67.2-67.19c28.191-28.191 28.073-73.757 0-101.83-3.701-3.694-7.429-6.564-10.341-8.569a16.037 16.037 0 0 1-6.947-12.606c-.396-10.567 3.348-21.456 11.698-29.806l21.054-21.055c5.521-5.521 14.182-6.199 20.584-1.731a152.482 152.482 0 0 1 20.522 17.197zM467.547 44.449c-59.261-59.262-155.69-59.27-214.96 0l-67.2 67.2c-.12.12-.25.25-.36.37-58.566 58.892-59.387 154.781.36 214.59a152.454 152.454 0 0 0 20.521 17.196c6.402 4.468 15.064 3.789 20.584-1.731l21.054-21.055c8.35-8.35 12.094-19.239 11.698-29.806a16.037 16.037 0 0 0-6.947-12.606c-2.912-2.005-6.64-4.875-10.341-8.569-28.073-28.073-28.191-73.639 0-101.83l67.2-67.19c28.239-28.239 74.3-28.069 102.325.51 27.75 28.3 26.872 73.934-1.155 101.96l-13.087 13.087c-4.35 4.35-5.769 10.79-3.783 16.612 5.864 17.194 9.042 34.999 9.69 52.721.509 13.906 17.454 20.446 27.294 10.606l37.106-37.106c59.271-59.259 59.271-155.699.001-214.959z"/></svg></a>切换类加载器</h2>
 <p>ClassLoaderSwapper类，提供了比较方便的切换接口。</p>
 <div class="highlight"><div class="chroma">
 <div class="table-container"><table class="lntable"><tr><td class="lntd">
-<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
-</span><span class="lnt"> 2
-</span><span class="lnt"> 3
-</span><span class="lnt"> 4
-</span><span class="lnt"> 5
-</span><span class="lnt"> 6
-</span><span class="lnt"> 7
-</span><span class="lnt"> 8
-</span><span class="lnt"> 9
-</span><span class="lnt">10
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span><span class="lnt">9
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="c1">// 实例化
-</span><span class="c1"></span><span class="n">ClassLoaderSwapper</span> <span class="n">classLoaderSwapper</span> <span class="o">=</span> <span class="n">ClassLoaderSwapper</span><span class="o">.</span><span class="na">newCurrentThreadClassLoaderSwapper</span><span class="o">();</span>
-
-<span class="n">ClassLoader</span> <span class="n">classLoader1</span> <span class="o">=</span> <span class="k">new</span> <span class="n">URLClassLoader</span><span class="o">();</span>
-<span class="c1">// 切换加载器classLoader1
-</span><span class="c1"></span><span class="n">classLoaderSwapper</span><span class="o">.</span><span class="na">setCurrentThreadClassLoader</span><span class="o">(</span><span class="n">classLoader1</span><span class="o">);</span>
-<span class="n">Class</span><span class="o">&lt;?</span> <span class="kd">extends</span> <span class="n">MyClass</span><span class="o">&gt;</span> <span class="n">myClass</span> <span class="o">=</span> <span class="n">classLoader1</span><span class="o">.</span><span class="na">loadClass</span><span class="o">(</span><span class="s">&#34;MyClass&#34;</span><span class="o">);</span>
-<span class="c1">// 切回加载器
-</span><span class="c1"></span><span class="n">classLoaderSwapper</span><span class="o">.</span><span class="na">restoreCurrentThreadClassLoader</span><span class="o">();</span>
-
-</code></pre></td></tr></table></div>
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="c1">// 实例化
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="n">ClassLoaderSwapper</span> <span class="n">classLoaderSwapper</span> <span class="o">=</span> <span class="n">ClassLoaderSwapper</span><span class="o">.</span><span class="na">newCurrentThreadClassLoaderSwapper</span><span class="o">();</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">ClassLoader</span> <span class="n">classLoader1</span> <span class="o">=</span> <span class="k">new</span> <span class="n">URLClassLoader</span><span class="o">();</span>
+</span></span><span class="line"><span class="cl"><span class="c1">// 切换加载器classLoader1
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="n">classLoaderSwapper</span><span class="o">.</span><span class="na">setCurrentThreadClassLoader</span><span class="o">(</span><span class="n">classLoader1</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl"><span class="n">Class</span><span class="o">&lt;?</span> <span class="kd">extends</span> <span class="n">MyClass</span><span class="o">&gt;</span> <span class="n">myClass</span> <span class="o">=</span> <span class="n">classLoader1</span><span class="o">.</span><span class="na">loadClass</span><span class="o">(</span><span class="s">&#34;MyClass&#34;</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl"><span class="c1">// 切回加载器
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="n">classLoaderSwapper</span><span class="o">.</span><span class="na">restoreCurrentThreadClassLoader</span><span class="o">();</span>
+</span></span></code></pre></td></tr></table></div>
 </div>
 </div><p>ClassLoaderSwapper的源码比较简单， 它有一个属性storeClassLoader， 用于保存着切换之前的ClassLoader。</p>
 <div class="highlight"><div class="chroma">
@@ -857,35 +853,33 @@
 </span><span class="lnt">22
 </span><span class="lnt">23
 </span><span class="lnt">24
-</span><span class="lnt">25
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">final</span> <span class="kd">class</span> <span class="nc">ClassLoaderSwapper</span> <span class="o">{</span>
-    
-    <span class="c1">// 保存切换之前的加载器
-</span><span class="c1"></span>    <span class="kd">private</span> <span class="n">ClassLoader</span> <span class="n">storeClassLoader</span> <span class="o">=</span> <span class="kc">null</span><span class="o">;</span>
-
-    <span class="kd">public</span> <span class="n">ClassLoader</span> <span class="nf">setCurrentThreadClassLoader</span><span class="o">(</span><span class="n">ClassLoader</span> <span class="n">classLoader</span><span class="o">)</span> <span class="o">{</span>
-        <span class="c1">// 保存切换前的加载器
-</span><span class="c1"></span>        <span class="k">this</span><span class="o">.</span><span class="na">storeClassLoader</span> <span class="o">=</span> <span class="n">Thread</span><span class="o">.</span><span class="na">currentThread</span><span class="o">().</span><span class="na">getContextClassLoader</span><span class="o">();</span>
-        <span class="c1">// 切换加载器到classLoader
-</span><span class="c1"></span>        <span class="n">Thread</span><span class="o">.</span><span class="na">currentThread</span><span class="o">().</span><span class="na">setContextClassLoader</span><span class="o">(</span><span class="n">classLoader</span><span class="o">);</span>
-        <span class="k">return</span> <span class="k">this</span><span class="o">.</span><span class="na">storeClassLoader</span><span class="o">;</span>
-    <span class="o">}</span>
-
-
-    <span class="kd">public</span> <span class="n">ClassLoader</span> <span class="nf">restoreCurrentThreadClassLoader</span><span class="o">()</span> <span class="o">{</span>
-        
-        <span class="n">ClassLoader</span> <span class="n">classLoader</span> <span class="o">=</span> <span class="n">Thread</span><span class="o">.</span><span class="na">currentThread</span><span class="o">()</span>
-                <span class="o">.</span><span class="na">getContextClassLoader</span><span class="o">();</span>
-        <span class="c1">// 切换到原来的加载器
-</span><span class="c1"></span>        <span class="n">Thread</span><span class="o">.</span><span class="na">currentThread</span><span class="o">().</span><span class="na">setContextClassLoader</span><span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="na">storeClassLoader</span><span class="o">);</span>
-        <span class="c1">// 返回切换之前的类加载器
-</span><span class="c1"></span>        <span class="k">return</span> <span class="n">classLoader</span><span class="o">;</span>
-    <span class="o">}</span>
-<span class="o">}</span>
-
-</code></pre></td></tr></table></div>
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="kd">public</span> <span class="kd">final</span> <span class="kd">class</span> <span class="nc">ClassLoaderSwapper</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">    
+</span></span><span class="line"><span class="cl">    <span class="c1">// 保存切换之前的加载器
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="kd">private</span> <span class="n">ClassLoader</span> <span class="n">storeClassLoader</span> <span class="o">=</span> <span class="kc">null</span><span class="o">;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="kd">public</span> <span class="n">ClassLoader</span> <span class="nf">setCurrentThreadClassLoader</span><span class="o">(</span><span class="n">ClassLoader</span> <span class="n">classLoader</span><span class="o">)</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">        <span class="c1">// 保存切换前的加载器
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>        <span class="k">this</span><span class="o">.</span><span class="na">storeClassLoader</span> <span class="o">=</span> <span class="n">Thread</span><span class="o">.</span><span class="na">currentThread</span><span class="o">().</span><span class="na">getContextClassLoader</span><span class="o">();</span>
+</span></span><span class="line"><span class="cl">        <span class="c1">// 切换加载器到classLoader
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>        <span class="n">Thread</span><span class="o">.</span><span class="na">currentThread</span><span class="o">().</span><span class="na">setContextClassLoader</span><span class="o">(</span><span class="n">classLoader</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">        <span class="k">return</span> <span class="k">this</span><span class="o">.</span><span class="na">storeClassLoader</span><span class="o">;</span>
+</span></span><span class="line"><span class="cl">    <span class="o">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="kd">public</span> <span class="n">ClassLoader</span> <span class="nf">restoreCurrentThreadClassLoader</span><span class="o">()</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">        
+</span></span><span class="line"><span class="cl">        <span class="n">ClassLoader</span> <span class="n">classLoader</span> <span class="o">=</span> <span class="n">Thread</span><span class="o">.</span><span class="na">currentThread</span><span class="o">()</span>
+</span></span><span class="line"><span class="cl">                <span class="o">.</span><span class="na">getContextClassLoader</span><span class="o">();</span>
+</span></span><span class="line"><span class="cl">        <span class="c1">// 切换到原来的加载器
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>        <span class="n">Thread</span><span class="o">.</span><span class="na">currentThread</span><span class="o">().</span><span class="na">setContextClassLoader</span><span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="na">storeClassLoader</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">        <span class="c1">// 返回切换之前的类加载器
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>        <span class="k">return</span> <span class="n">classLoader</span><span class="o">;</span>
+</span></span><span class="line"><span class="cl">    <span class="o">}</span>
+</span></span><span class="line"><span class="cl"><span class="o">}</span>
+</span></span></code></pre></td></tr></table></div>
 </div>
 </div>
             </div>
@@ -914,9 +908,9 @@
 
         
     <div class="updated-badge-container">
-        <span title="Updated @ 2021-10-22 14:44:34 CST" style="cursor:help">
+        <span title="Updated @ 2023-07-02 16:59:09 CST" style="cursor:help">
 
-<svg xmlns="http://www.w3.org/2000/svg" width="130" height="20" class="updated-badge"><linearGradient id="b" x2="0" y2="100%"><stop offset="0" stop-color="#bbb" stop-opacity=".1"/><stop offset="1" stop-opacity=".1"/></linearGradient><clipPath id="a"><rect width="130" height="20" rx="3" fill="#fff"/></clipPath><g clip-path="url(#a)"><path class="updated-badge-left" d="M0 0h55v20H0z"/><path class="updated-badge-right" d="M55 0h75v20H55z"/><path fill="url(#b)" d="M0 0h130v20H0z"/></g><g fill="#fff" text-anchor="middle" font-size="110"><text x="285" y="150" fill="#010101" fill-opacity=".3" textLength="450" transform="scale(.1)">updated</text><text x="285" y="140" textLength="450" transform="scale(.1)">updated</text><text x="915" y="150" fill="#010101" fill-opacity=".3" textLength="650" transform="scale(.1)">2021-10-22</text><text x="915" y="140" textLength="650" transform="scale(.1)">2021-10-22</text></g></svg>
+<svg xmlns="http://www.w3.org/2000/svg" width="130" height="20" class="updated-badge"><linearGradient id="b" x2="0" y2="100%"><stop offset="0" stop-color="#bbb" stop-opacity=".1"/><stop offset="1" stop-opacity=".1"/></linearGradient><clipPath id="a"><rect width="130" height="20" rx="3" fill="#fff"/></clipPath><g clip-path="url(#a)"><path class="updated-badge-left" d="M0 0h55v20H0z"/><path class="updated-badge-right" d="M55 0h75v20H55z"/><path fill="url(#b)" d="M0 0h130v20H0z"/></g><g fill="#fff" text-anchor="middle" font-size="110"><text x="285" y="150" fill="#010101" fill-opacity=".3" textLength="450" transform="scale(.1)">updated</text><text x="285" y="140" textLength="450" transform="scale(.1)">updated</text><text x="915" y="150" fill="#010101" fill-opacity=".3" textLength="650" transform="scale(.1)">2023-07-02</text><text x="915" y="140" textLength="650" transform="scale(.1)">2023-07-02</text></g></svg>
         </span></div>
 
 

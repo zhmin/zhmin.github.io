@@ -3,7 +3,7 @@
     <head prefix="og: http://ogp.me/ns# article: http://ogp.me/ns/article#">
     <meta charset="UTF-8" />
 
-    <meta name="generator" content="Hugo 0.88.1" /><meta name="theme-color" content="#fff" />
+    <meta name="generator" content="Hugo 0.115.0"><meta name="theme-color" content="#fff" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     
     <meta name="format-detection" content="telephone=no, date=no, address=no, email=no" />
@@ -14,11 +14,11 @@
 
     <title>Levedb 设计感想 | 学习笔记</title>
 
-    <link rel="stylesheet" href="/css/meme.min.2d3e1834af2bc8dda20c7d74aaa1d8134845094441b7a554a5206ccd4b472596.css"/>
+    <link rel="stylesheet" href="/css/meme.min.91e7f58f97e1c60563ef481c38d9684fa8099537801d6f17bbfc724121e7d8f1.css"/>
 
     
     
-        <script src="/js/meme.min.800f61672145711eb3e1f29fcfcc3dbe0139dd459259718b611a0390f74703d1.js"></script>
+        <script src="/js/meme.min.3210a00c2fdcf6f831170b681b8ee40f83f0224663661e986872616aec45407f.js"></script>
 
     
 
@@ -54,7 +54,7 @@
         "@context": "https://schema.org",
         "@type": "BlogPosting",
         "datePublished": "2019-08-19T20:39:39+00:00",
-        "dateModified": "2021-10-22T14:44:34+08:00",
+        "dateModified": "2023-07-02T16:59:09+08:00",
         "url": "https://zhmin.github.io/posts/leveldb-thought/",
         "headline": "Levedb 设计感想",
         "description": "前言 Leveldb 是一个出色的 key-value 存储引擎，它的特点是支持高效的写，同时兼顾一定的读性能。本篇的内容比较零散，都是我在看 leveldb 源码时，觉得一些比较出彩的设计思想，值得学习参考，所以就总结一下。 队列方式处理请求 leveldb 支持多线……",
@@ -98,7 +98,7 @@
 <meta property="og:locale" content="zh" /><meta property="og:image" content="https://zhmin.github.io/leveldb-sst-example.svg" />
 <meta property="og:type" content="article" />
     <meta property="article:published_time" content="2019-08-19T20:39:39&#43;00:00" />
-    <meta property="article:modified_time" content="2021-10-22T14:44:34&#43;08:00" />
+    <meta property="article:modified_time" content="2023-07-02T16:59:09&#43;08:00" />
     
     <meta property="article:section" content="posts" />
 
@@ -283,46 +283,46 @@
 </span><span class="lnt">39
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-c++" data-lang="c++"><span class="n">port</span><span class="o">::</span><span class="n">Mutex</span> <span class="n">mutex_</span><span class="p">;</span>  <span class="c1">// 锁
-</span><span class="c1"></span><span class="n">std</span><span class="o">::</span><span class="n">deque</span><span class="o">&lt;</span><span class="n">Writer</span><span class="o">*&gt;</span> <span class="n">writers_</span> <span class="n">GUARDED_BY</span><span class="p">(</span><span class="n">mutex_</span><span class="p">);</span>    <span class="c1">// 队列
-</span><span class="c1"></span>
-<span class="n">Status</span> <span class="nf">Write</span><span class="p">(</span><span class="k">const</span> <span class="n">WriteOptions</span><span class="o">&amp;</span> <span class="n">options</span><span class="p">,</span> <span class="n">WriteBatch</span><span class="o">*</span> <span class="n">updates</span><span class="p">)</span> <span class="p">{</span>
-    <span class="c1">// 构建锁，用于通知
-</span><span class="c1"></span>    <span class="n">Writer</span> <span class="n">w</span><span class="p">(</span><span class="o">&amp;</span><span class="n">mutex_</span><span class="p">);</span>
-    <span class="n">MutexLock</span> <span class="n">l</span><span class="p">(</span><span class="o">&amp;</span><span class="n">mutex_</span><span class="p">);</span>
-    <span class="c1">// 将请求存储到队列尾部
-</span><span class="c1"></span>    <span class="n">writers_</span><span class="p">.</span><span class="n">push_back</span><span class="p">(</span><span class="o">&amp;</span><span class="n">w</span><span class="p">);</span>
-    <span class="c1">// 查看此次请求是否完成，或者队列排到自己了
-</span><span class="c1"></span>    <span class="c1">// 不满足的话，则等待通知
-</span><span class="c1"></span>    <span class="k">while</span> <span class="p">(</span><span class="o">!</span><span class="n">w</span><span class="p">.</span><span class="n">done</span> <span class="o">&amp;&amp;</span> <span class="o">&amp;</span><span class="n">w</span> <span class="o">!=</span> <span class="n">writers_</span><span class="p">.</span><span class="n">front</span><span class="p">())</span> <span class="p">{</span>
-         <span class="n">w</span><span class="p">.</span><span class="n">cv</span><span class="p">.</span><span class="n">Wait</span><span class="p">();</span>
-    <span class="p">}</span>
-    <span class="c1">// 此次请求有可能被先前的线程合并了，并且一起处理完成了
-</span><span class="c1"></span>    <span class="k">if</span> <span class="p">(</span><span class="n">w</span><span class="p">.</span><span class="n">done</span><span class="p">)</span> <span class="p">{</span>
-        <span class="k">return</span> <span class="n">w</span><span class="p">.</span><span class="n">status</span><span class="p">;</span>
-    <span class="p">}</span>
-    
-    <span class="c1">// 合并队列的请求（并不会合并所有的请求，比如没有sync属性的请求是和不能合并有sync属性的请求），并且处理
-</span><span class="c1"></span>    <span class="p">........</span>
-    
-    <span class="c1">// 对合并的请求，依次通知它的线程
-</span><span class="c1"></span>    <span class="k">while</span> <span class="p">(</span><span class="nb">true</span><span class="p">)</span> <span class="p">{</span>
-        <span class="c1">// 从队列头部取出请求，直到取出自己的请求
-</span><span class="c1"></span>        <span class="n">Writer</span><span class="o">*</span> <span class="n">ready</span> <span class="o">=</span> <span class="n">writers_</span><span class="p">.</span><span class="n">front</span><span class="p">();</span>
-        <span class="n">writers_</span><span class="p">.</span><span class="n">pop_front</span><span class="p">();</span>
-        <span class="k">if</span> <span class="p">(</span><span class="n">ready</span> <span class="o">!=</span> <span class="o">&amp;</span><span class="n">w</span><span class="p">)</span> <span class="p">{</span>
-            <span class="n">ready</span><span class="o">-&gt;</span><span class="n">status</span> <span class="o">=</span> <span class="n">status</span><span class="p">;</span>
-            <span class="n">ready</span><span class="o">-&gt;</span><span class="n">done</span> <span class="o">=</span> <span class="nb">true</span><span class="p">;</span>
-            <span class="n">ready</span><span class="o">-&gt;</span><span class="n">cv</span><span class="p">.</span><span class="n">Signal</span><span class="p">();</span>
-        <span class="p">}</span>
-        <span class="k">if</span> <span class="p">(</span><span class="n">ready</span> <span class="o">==</span> <span class="n">last_writer</span><span class="p">)</span> <span class="k">break</span><span class="p">;</span>
-    <span class="p">}</span>
-    <span class="c1">// 队列中可能还会有新增的请求或者没有合并的请求，需要通知这些等待的线程
-</span><span class="c1"></span>    <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="n">writers_</span><span class="p">.</span><span class="n">empty</span><span class="p">())</span> <span class="p">{</span>
-        <span class="n">writers_</span><span class="p">.</span><span class="n">front</span><span class="p">()</span><span class="o">-&gt;</span><span class="n">cv</span><span class="p">.</span><span class="n">Signal</span><span class="p">();</span>
-    <span class="p">}</span>   
-<span class="p">}</span>
-</code></pre></td></tr></table></div>
+<pre tabindex="0" class="chroma"><code class="language-c++" data-lang="c++"><span class="line"><span class="cl"><span class="n">port</span><span class="o">::</span><span class="n">Mutex</span> <span class="n">mutex_</span><span class="p">;</span>  <span class="c1">// 锁
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="n">std</span><span class="o">::</span><span class="n">deque</span><span class="o">&lt;</span><span class="n">Writer</span><span class="o">*&gt;</span> <span class="n">writers_</span> <span class="n">GUARDED_BY</span><span class="p">(</span><span class="n">mutex_</span><span class="p">);</span>    <span class="c1">// 队列
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>
+</span></span><span class="line"><span class="cl"><span class="n">Status</span> <span class="nf">Write</span><span class="p">(</span><span class="k">const</span> <span class="n">WriteOptions</span><span class="o">&amp;</span> <span class="n">options</span><span class="p">,</span> <span class="n">WriteBatch</span><span class="o">*</span> <span class="n">updates</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// 构建锁，用于通知
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="n">Writer</span> <span class="n">w</span><span class="p">(</span><span class="o">&amp;</span><span class="n">mutex_</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">    <span class="n">MutexLock</span> <span class="n">l</span><span class="p">(</span><span class="o">&amp;</span><span class="n">mutex_</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// 将请求存储到队列尾部
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="n">writers_</span><span class="p">.</span><span class="n">push_back</span><span class="p">(</span><span class="o">&amp;</span><span class="n">w</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// 查看此次请求是否完成，或者队列排到自己了
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="c1">// 不满足的话，则等待通知
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="k">while</span> <span class="p">(</span><span class="o">!</span><span class="n">w</span><span class="p">.</span><span class="n">done</span> <span class="o">&amp;&amp;</span> <span class="o">&amp;</span><span class="n">w</span> <span class="o">!=</span> <span class="n">writers_</span><span class="p">.</span><span class="n">front</span><span class="p">())</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">         <span class="n">w</span><span class="p">.</span><span class="n">cv</span><span class="p">.</span><span class="n">Wait</span><span class="p">();</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// 此次请求有可能被先前的线程合并了，并且一起处理完成了
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="k">if</span> <span class="p">(</span><span class="n">w</span><span class="p">.</span><span class="n">done</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="k">return</span> <span class="n">w</span><span class="p">.</span><span class="n">status</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl">    
+</span></span><span class="line"><span class="cl">    <span class="c1">// 合并队列的请求（并不会合并所有的请求，比如没有sync属性的请求是和不能合并有sync属性的请求），并且处理
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="p">........</span>
+</span></span><span class="line"><span class="cl">    
+</span></span><span class="line"><span class="cl">    <span class="c1">// 对合并的请求，依次通知它的线程
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="k">while</span> <span class="p">(</span><span class="nb">true</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="c1">// 从队列头部取出请求，直到取出自己的请求
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>        <span class="n">Writer</span><span class="o">*</span> <span class="n">ready</span> <span class="o">=</span> <span class="n">writers_</span><span class="p">.</span><span class="n">front</span><span class="p">();</span>
+</span></span><span class="line"><span class="cl">        <span class="n">writers_</span><span class="p">.</span><span class="n">pop_front</span><span class="p">();</span>
+</span></span><span class="line"><span class="cl">        <span class="k">if</span> <span class="p">(</span><span class="n">ready</span> <span class="o">!=</span> <span class="o">&amp;</span><span class="n">w</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">            <span class="n">ready</span><span class="o">-&gt;</span><span class="n">status</span> <span class="o">=</span> <span class="n">status</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">            <span class="n">ready</span><span class="o">-&gt;</span><span class="n">done</span> <span class="o">=</span> <span class="nb">true</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">            <span class="n">ready</span><span class="o">-&gt;</span><span class="n">cv</span><span class="p">.</span><span class="n">Signal</span><span class="p">();</span>
+</span></span><span class="line"><span class="cl">        <span class="p">}</span>
+</span></span><span class="line"><span class="cl">        <span class="k">if</span> <span class="p">(</span><span class="n">ready</span> <span class="o">==</span> <span class="n">last_writer</span><span class="p">)</span> <span class="k">break</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// 队列中可能还会有新增的请求或者没有合并的请求，需要通知这些等待的线程
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="n">writers_</span><span class="p">.</span><span class="n">empty</span><span class="p">())</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="n">writers_</span><span class="p">.</span><span class="n">front</span><span class="p">()</span><span class="o">-&gt;</span><span class="n">cv</span><span class="p">.</span><span class="n">Signal</span><span class="p">();</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>   
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table></div>
 </div>
 </div><p>通过锁限制了同时只有一个线程处理请求，每个线程在处理请求时，都会努力的合并请求，请求完成后，使用条件变量通知其它线程。而且还需要观察到队列的有序性，线程的条件判断都是依据队列头部的元素是否是自己的请求。</p>
 <h2 id="数据传递方式"><a href="#数据传递方式" class="anchor-link"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon anchor-icon"><path d="M326.612 185.391c59.747 59.809 58.927 155.698.36 214.59-.11.12-.24.25-.36.37l-67.2 67.2c-59.27 59.27-155.699 59.262-214.96 0-59.27-59.26-59.27-155.7 0-214.96l37.106-37.106c9.84-9.84 26.786-3.3 27.294 10.606.648 17.722 3.826 35.527 9.69 52.721 1.986 5.822.567 12.262-3.783 16.612l-13.087 13.087c-28.026 28.026-28.905 73.66-1.155 101.96 28.024 28.579 74.086 28.749 102.325.51l67.2-67.19c28.191-28.191 28.073-73.757 0-101.83-3.701-3.694-7.429-6.564-10.341-8.569a16.037 16.037 0 0 1-6.947-12.606c-.396-10.567 3.348-21.456 11.698-29.806l21.054-21.055c5.521-5.521 14.182-6.199 20.584-1.731a152.482 152.482 0 0 1 20.522 17.197zM467.547 44.449c-59.261-59.262-155.69-59.27-214.96 0l-67.2 67.2c-.12.12-.25.25-.36.37-58.566 58.892-59.387 154.781.36 214.59a152.454 152.454 0 0 0 20.521 17.196c6.402 4.468 15.064 3.789 20.584-1.731l21.054-21.055c8.35-8.35 12.094-19.239 11.698-29.806a16.037 16.037 0 0 0-6.947-12.606c-2.912-2.005-6.64-4.875-10.341-8.569-28.073-28.073-28.191-73.639 0-101.83l67.2-67.19c28.239-28.239 74.3-28.069 102.325.51 27.75 28.3 26.872 73.934-1.155 101.96l-13.087 13.087c-4.35 4.35-5.769 10.79-3.783 16.612 5.864 17.194 9.042 34.999 9.69 52.721.509 13.906 17.454 20.446 27.294 10.606l37.106-37.106c59.271-59.259 59.271-155.699.001-214.959z"/></svg></a>数据传递方式</h2>
@@ -337,13 +337,13 @@
 </span><span class="lnt">6
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-c++" data-lang="c++"><span class="k">class</span> <span class="nc">Slice</span> <span class="p">{</span>
- 
- <span class="k">private</span><span class="o">:</span>
-  <span class="k">const</span> <span class="kt">char</span><span class="o">*</span> <span class="n">data_</span><span class="p">;</span>  <span class="c1">// 数据起始指针
-</span><span class="c1"></span>  <span class="n">size_t</span> <span class="n">size_</span><span class="p">;</span>       <span class="c1">// 数据长度
-</span><span class="c1"></span><span class="p">}</span>
-</code></pre></td></tr></table></div>
+<pre tabindex="0" class="chroma"><code class="language-c++" data-lang="c++"><span class="line"><span class="cl"><span class="k">class</span> <span class="nc">Slice</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl"> 
+</span></span><span class="line"><span class="cl"> <span class="k">private</span><span class="o">:</span>
+</span></span><span class="line"><span class="cl">  <span class="k">const</span> <span class="kt">char</span><span class="o">*</span> <span class="n">data_</span><span class="p">;</span>  <span class="c1">// 数据起始指针
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="n">size_t</span> <span class="n">size_</span><span class="p">;</span>       <span class="c1">// 数据长度
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="p">}</span>
+</span></span></code></pre></td></tr></table></div>
 </div>
 </div><p>这样无论数据有多大，只需要传递一个指针和长度值就可以了。</p>
 <h2 id="文件缓冲区"><a href="#文件缓冲区" class="anchor-link"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon anchor-icon"><path d="M326.612 185.391c59.747 59.809 58.927 155.698.36 214.59-.11.12-.24.25-.36.37l-67.2 67.2c-59.27 59.27-155.699 59.262-214.96 0-59.27-59.26-59.27-155.7 0-214.96l37.106-37.106c9.84-9.84 26.786-3.3 27.294 10.606.648 17.722 3.826 35.527 9.69 52.721 1.986 5.822.567 12.262-3.783 16.612l-13.087 13.087c-28.026 28.026-28.905 73.66-1.155 101.96 28.024 28.579 74.086 28.749 102.325.51l67.2-67.19c28.191-28.191 28.073-73.757 0-101.83-3.701-3.694-7.429-6.564-10.341-8.569a16.037 16.037 0 0 1-6.947-12.606c-.396-10.567 3.348-21.456 11.698-29.806l21.054-21.055c5.521-5.521 14.182-6.199 20.584-1.731a152.482 152.482 0 0 1 20.522 17.197zM467.547 44.449c-59.261-59.262-155.69-59.27-214.96 0l-67.2 67.2c-.12.12-.25.25-.36.37-58.566 58.892-59.387 154.781.36 214.59a152.454 152.454 0 0 0 20.521 17.196c6.402 4.468 15.064 3.789 20.584-1.731l21.054-21.055c8.35-8.35 12.094-19.239 11.698-29.806a16.037 16.037 0 0 0-6.947-12.606c-2.912-2.005-6.64-4.875-10.341-8.569-28.073-28.073-28.191-73.639 0-101.83l67.2-67.19c28.239-28.239 74.3-28.069 102.325.51 27.75 28.3 26.872 73.934-1.155 101.96l-13.087 13.087c-4.35 4.35-5.769 10.79-3.783 16.612 5.864 17.194 9.042 34.999 9.69 52.721.509 13.906 17.454 20.446 27.294 10.606l37.106-37.106c59.271-59.259 59.271-155.699.001-214.959z"/></svg></a>文件缓冲区</h2>
@@ -392,47 +392,47 @@
 </span><span class="lnt">40
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-c++" data-lang="c++"><span class="k">class</span> <span class="nc">PosixWritableFile</span> <span class="k">final</span> <span class="o">:</span> <span class="k">public</span> <span class="n">WritableFile</span> <span class="p">{</span>
-  <span class="k">public</span><span class="o">:</span>
-    <span class="n">Status</span> <span class="n">Append</span><span class="p">(</span><span class="k">const</span> <span class="n">Slice</span><span class="o">&amp;</span> <span class="n">data</span><span class="p">)</span> <span class="k">override</span> <span class="p">{</span>
-        <span class="n">size_t</span> <span class="n">write_size</span> <span class="o">=</span> <span class="n">data</span><span class="p">.</span><span class="n">size</span><span class="p">();</span>
-        <span class="k">const</span> <span class="kt">char</span><span class="o">*</span> <span class="n">write_data</span> <span class="o">=</span> <span class="n">data</span><span class="p">.</span><span class="n">data</span><span class="p">();</span>
-        <span class="c1">// 根据数据的大小和缓冲区的剩余空间，计算出写入缓冲区的数据长度
-</span><span class="c1"></span>        <span class="n">size_t</span> <span class="n">copy_size</span> <span class="o">=</span> <span class="n">std</span><span class="o">::</span><span class="n">min</span><span class="p">(</span><span class="n">write_size</span><span class="p">,</span> <span class="n">kWritableFileBufferSize</span> <span class="o">-</span> <span class="n">pos_</span><span class="p">);</span>
-        <span class="c1">// 拷贝数据到缓冲区中
-</span><span class="c1"></span>        <span class="n">std</span><span class="o">::</span><span class="n">memcpy</span><span class="p">(</span><span class="n">buf_</span> <span class="o">+</span> <span class="n">pos_</span><span class="p">,</span> <span class="n">write_data</span><span class="p">,</span> <span class="n">copy_size</span><span class="p">);</span>
-        <span class="c1">// 更新源数据的位置和剩余大小
-</span><span class="c1"></span>        <span class="n">write_data</span> <span class="o">+=</span> <span class="n">copy_size</span><span class="p">;</span>
-        <span class="n">write_size</span> <span class="o">-=</span> <span class="n">copy_size</span><span class="p">;</span>
-        <span class="c1">// 更新缓冲区的位置
-</span><span class="c1"></span>        <span class="n">pos_</span> <span class="o">+=</span> <span class="n">copy_size</span><span class="p">;</span>
-        
-        <span class="c1">// 如果数据都已经拷贝完，则直接返回
-</span><span class="c1"></span>        <span class="k">if</span> <span class="p">(</span><span class="n">write_size</span> <span class="o">==</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
-            <span class="k">return</span> <span class="n">Status</span><span class="o">::</span><span class="n">OK</span><span class="p">();</span>
-        <span class="p">}</span>
-        
-        <span class="c1">// 如果还有数据没有拷贝完，则说明缓冲区已经满了，需要刷新到内核
-</span><span class="c1"></span>        <span class="n">Status</span> <span class="n">status</span> <span class="o">=</span> <span class="n">FlushBuffer</span><span class="p">();</span>
-        <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="n">status</span><span class="p">.</span><span class="n">ok</span><span class="p">())</span> <span class="p">{</span>
-            <span class="k">return</span> <span class="n">status</span><span class="p">;</span>
-        <span class="p">}</span>
-        <span class="c1">// 缓冲区刷新后，它的空闲大小等于 kWritableFileBufferSize
-</span><span class="c1"></span>        <span class="c1">// 如果剩余的数据小于缓存区的空闲空间，则继续拷贝
-</span><span class="c1"></span>        <span class="k">if</span> <span class="p">(</span><span class="n">write_size</span> <span class="o">&lt;</span> <span class="n">kWritableFileBufferSize</span><span class="p">)</span> <span class="p">{</span>
-            <span class="n">std</span><span class="o">::</span><span class="n">memcpy</span><span class="p">(</span><span class="n">buf_</span><span class="p">,</span> <span class="n">write_data</span><span class="p">,</span> <span class="n">write_size</span><span class="p">);</span>
-            <span class="n">pos_</span> <span class="o">=</span> <span class="n">write_size</span><span class="p">;</span>
-            <span class="k">return</span> <span class="n">Status</span><span class="o">::</span><span class="n">OK</span><span class="p">();</span>
-        <span class="p">}</span>
-        <span class="c1">// 否则直接写入内核
-</span><span class="c1"></span>        <span class="k">return</span> <span class="nf">WriteUnbuffered</span><span class="p">(</span><span class="n">write_data</span><span class="p">,</span> <span class="n">write_size</span><span class="p">);</span>
-        
-    
-  <span class="k">private</span><span class="o">:</span>
-    <span class="kt">char</span> <span class="n">buf_</span><span class="p">[</span><span class="n">kWritableFileBufferSize</span><span class="p">];</span>  <span class="c1">// 默认为64KB
-</span><span class="c1"></span>    <span class="n">size_t</span> <span class="n">pos_</span><span class="p">;</span>    <span class="c1">// 数据末尾在缓冲区的位置
-</span><span class="c1"></span><span class="p">}</span>   
-</code></pre></td></tr></table></div>
+<pre tabindex="0" class="chroma"><code class="language-c++" data-lang="c++"><span class="line"><span class="cl"><span class="k">class</span> <span class="nc">PosixWritableFile</span> <span class="k">final</span> <span class="o">:</span> <span class="k">public</span> <span class="n">WritableFile</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="k">public</span><span class="o">:</span>
+</span></span><span class="line"><span class="cl">    <span class="n">Status</span> <span class="n">Append</span><span class="p">(</span><span class="k">const</span> <span class="n">Slice</span><span class="o">&amp;</span> <span class="n">data</span><span class="p">)</span> <span class="k">override</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="n">size_t</span> <span class="n">write_size</span> <span class="o">=</span> <span class="n">data</span><span class="p">.</span><span class="n">size</span><span class="p">();</span>
+</span></span><span class="line"><span class="cl">        <span class="k">const</span> <span class="kt">char</span><span class="o">*</span> <span class="n">write_data</span> <span class="o">=</span> <span class="n">data</span><span class="p">.</span><span class="n">data</span><span class="p">();</span>
+</span></span><span class="line"><span class="cl">        <span class="c1">// 根据数据的大小和缓冲区的剩余空间，计算出写入缓冲区的数据长度
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>        <span class="n">size_t</span> <span class="n">copy_size</span> <span class="o">=</span> <span class="n">std</span><span class="o">::</span><span class="n">min</span><span class="p">(</span><span class="n">write_size</span><span class="p">,</span> <span class="n">kWritableFileBufferSize</span> <span class="o">-</span> <span class="n">pos_</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">        <span class="c1">// 拷贝数据到缓冲区中
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>        <span class="n">std</span><span class="o">::</span><span class="n">memcpy</span><span class="p">(</span><span class="n">buf_</span> <span class="o">+</span> <span class="n">pos_</span><span class="p">,</span> <span class="n">write_data</span><span class="p">,</span> <span class="n">copy_size</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">        <span class="c1">// 更新源数据的位置和剩余大小
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>        <span class="n">write_data</span> <span class="o">+=</span> <span class="n">copy_size</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">        <span class="n">write_size</span> <span class="o">-=</span> <span class="n">copy_size</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">        <span class="c1">// 更新缓冲区的位置
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>        <span class="n">pos_</span> <span class="o">+=</span> <span class="n">copy_size</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">        
+</span></span><span class="line"><span class="cl">        <span class="c1">// 如果数据都已经拷贝完，则直接返回
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>        <span class="k">if</span> <span class="p">(</span><span class="n">write_size</span> <span class="o">==</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">            <span class="k">return</span> <span class="n">Status</span><span class="o">::</span><span class="n">OK</span><span class="p">();</span>
+</span></span><span class="line"><span class="cl">        <span class="p">}</span>
+</span></span><span class="line"><span class="cl">        
+</span></span><span class="line"><span class="cl">        <span class="c1">// 如果还有数据没有拷贝完，则说明缓冲区已经满了，需要刷新到内核
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>        <span class="n">Status</span> <span class="n">status</span> <span class="o">=</span> <span class="n">FlushBuffer</span><span class="p">();</span>
+</span></span><span class="line"><span class="cl">        <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="n">status</span><span class="p">.</span><span class="n">ok</span><span class="p">())</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">            <span class="k">return</span> <span class="n">status</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">        <span class="p">}</span>
+</span></span><span class="line"><span class="cl">        <span class="c1">// 缓冲区刷新后，它的空闲大小等于 kWritableFileBufferSize
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>        <span class="c1">// 如果剩余的数据小于缓存区的空闲空间，则继续拷贝
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>        <span class="k">if</span> <span class="p">(</span><span class="n">write_size</span> <span class="o">&lt;</span> <span class="n">kWritableFileBufferSize</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">            <span class="n">std</span><span class="o">::</span><span class="n">memcpy</span><span class="p">(</span><span class="n">buf_</span><span class="p">,</span> <span class="n">write_data</span><span class="p">,</span> <span class="n">write_size</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">            <span class="n">pos_</span> <span class="o">=</span> <span class="n">write_size</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">            <span class="k">return</span> <span class="n">Status</span><span class="o">::</span><span class="n">OK</span><span class="p">();</span>
+</span></span><span class="line"><span class="cl">        <span class="p">}</span>
+</span></span><span class="line"><span class="cl">        <span class="c1">// 否则直接写入内核
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>        <span class="k">return</span> <span class="nf">WriteUnbuffered</span><span class="p">(</span><span class="n">write_data</span><span class="p">,</span> <span class="n">write_size</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">        
+</span></span><span class="line"><span class="cl">    
+</span></span><span class="line"><span class="cl">  <span class="k">private</span><span class="o">:</span>
+</span></span><span class="line"><span class="cl">    <span class="kt">char</span> <span class="n">buf_</span><span class="p">[</span><span class="n">kWritableFileBufferSize</span><span class="p">];</span>  <span class="c1">// 默认为64KB
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="n">size_t</span> <span class="n">pos_</span><span class="p">;</span>    <span class="c1">// 数据末尾在缓冲区的位置
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="p">}</span>   
+</span></span></code></pre></td></tr></table></div>
 </div>
 </div><h2 id="数据校检"><a href="#数据校检" class="anchor-link"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon anchor-icon"><path d="M326.612 185.391c59.747 59.809 58.927 155.698.36 214.59-.11.12-.24.25-.36.37l-67.2 67.2c-59.27 59.27-155.699 59.262-214.96 0-59.27-59.26-59.27-155.7 0-214.96l37.106-37.106c9.84-9.84 26.786-3.3 27.294 10.606.648 17.722 3.826 35.527 9.69 52.721 1.986 5.822.567 12.262-3.783 16.612l-13.087 13.087c-28.026 28.026-28.905 73.66-1.155 101.96 28.024 28.579 74.086 28.749 102.325.51l67.2-67.19c28.191-28.191 28.073-73.757 0-101.83-3.701-3.694-7.429-6.564-10.341-8.569a16.037 16.037 0 0 1-6.947-12.606c-.396-10.567 3.348-21.456 11.698-29.806l21.054-21.055c5.521-5.521 14.182-6.199 20.584-1.731a152.482 152.482 0 0 1 20.522 17.197zM467.547 44.449c-59.261-59.262-155.69-59.27-214.96 0l-67.2 67.2c-.12.12-.25.25-.36.37-58.566 58.892-59.387 154.781.36 214.59a152.454 152.454 0 0 0 20.521 17.196c6.402 4.468 15.064 3.789 20.584-1.731l21.054-21.055c8.35-8.35 12.094-19.239 11.698-29.806a16.037 16.037 0 0 0-6.947-12.606c-2.912-2.005-6.64-4.875-10.341-8.569-28.073-28.073-28.191-73.639 0-101.83l67.2-67.19c28.239-28.239 74.3-28.069 102.325.51 27.75 28.3 26.872 73.934-1.155 101.96l-13.087 13.087c-4.35 4.35-5.769 10.79-3.783 16.612 5.864 17.194 9.042 34.999 9.69 52.721.509 13.906 17.454 20.446 27.294 10.606l37.106-37.106c59.271-59.259 59.271-155.699.001-214.959z"/></svg></a>数据校检</h2>
 <p>当数据被持久化到磁盘里，我们不能保证数据永远是安全的，因为磁盘是由磁盘块组成的，而这些块是有几率被损坏的。所以在磁盘存储数据，一定要有校检的功能来帮助我们及时发现数据被损坏了。一般的校检方式有计算整个文件的 md5 或其它哈希值，这种方法非常简单方便。但是如果只要文件中的一小块发生问题，我们就无法找到具体哪一块损坏了。如果我们将数据切片，计算每个分片的哈希值，然后再存储到文件里，那么我们就可以发现损坏的切片。leveldb 也是采用后面一种方式，采用 crc32 算法计算每个分片的哈希值。crc32 的计算效率相比 md5 高很多。</p>
@@ -479,9 +479,9 @@
 
         
     <div class="updated-badge-container">
-        <span title="Updated @ 2021-10-22 14:44:34 CST" style="cursor:help">
+        <span title="Updated @ 2023-07-02 16:59:09 CST" style="cursor:help">
 
-<svg xmlns="http://www.w3.org/2000/svg" width="130" height="20" class="updated-badge"><linearGradient id="b" x2="0" y2="100%"><stop offset="0" stop-color="#bbb" stop-opacity=".1"/><stop offset="1" stop-opacity=".1"/></linearGradient><clipPath id="a"><rect width="130" height="20" rx="3" fill="#fff"/></clipPath><g clip-path="url(#a)"><path class="updated-badge-left" d="M0 0h55v20H0z"/><path class="updated-badge-right" d="M55 0h75v20H55z"/><path fill="url(#b)" d="M0 0h130v20H0z"/></g><g fill="#fff" text-anchor="middle" font-size="110"><text x="285" y="150" fill="#010101" fill-opacity=".3" textLength="450" transform="scale(.1)">updated</text><text x="285" y="140" textLength="450" transform="scale(.1)">updated</text><text x="915" y="150" fill="#010101" fill-opacity=".3" textLength="650" transform="scale(.1)">2021-10-22</text><text x="915" y="140" textLength="650" transform="scale(.1)">2021-10-22</text></g></svg>
+<svg xmlns="http://www.w3.org/2000/svg" width="130" height="20" class="updated-badge"><linearGradient id="b" x2="0" y2="100%"><stop offset="0" stop-color="#bbb" stop-opacity=".1"/><stop offset="1" stop-opacity=".1"/></linearGradient><clipPath id="a"><rect width="130" height="20" rx="3" fill="#fff"/></clipPath><g clip-path="url(#a)"><path class="updated-badge-left" d="M0 0h55v20H0z"/><path class="updated-badge-right" d="M55 0h75v20H55z"/><path fill="url(#b)" d="M0 0h130v20H0z"/></g><g fill="#fff" text-anchor="middle" font-size="110"><text x="285" y="150" fill="#010101" fill-opacity=".3" textLength="450" transform="scale(.1)">updated</text><text x="285" y="140" textLength="450" transform="scale(.1)">updated</text><text x="915" y="150" fill="#010101" fill-opacity=".3" textLength="650" transform="scale(.1)">2023-07-02</text><text x="915" y="140" textLength="650" transform="scale(.1)">2023-07-02</text></g></svg>
         </span></div>
 
 

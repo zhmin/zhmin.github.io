@@ -3,7 +3,7 @@
     <head prefix="og: http://ogp.me/ns# article: http://ogp.me/ns/article#">
     <meta charset="UTF-8" />
 
-    <meta name="generator" content="Hugo 0.88.1" /><meta name="theme-color" content="#fff" />
+    <meta name="generator" content="Hugo 0.115.0"><meta name="theme-color" content="#fff" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     
     <meta name="format-detection" content="telephone=no, date=no, address=no, email=no" />
@@ -14,11 +14,11 @@
 
     <title>Postgresql 缓存池原理 | 学习笔记</title>
 
-    <link rel="stylesheet" href="/css/meme.min.2d3e1834af2bc8dda20c7d74aaa1d8134845094441b7a554a5206ccd4b472596.css"/>
+    <link rel="stylesheet" href="/css/meme.min.91e7f58f97e1c60563ef481c38d9684fa8099537801d6f17bbfc724121e7d8f1.css"/>
 
     
     
-        <script src="/js/meme.min.800f61672145711eb3e1f29fcfcc3dbe0139dd459259718b611a0390f74703d1.js"></script>
+        <script src="/js/meme.min.3210a00c2fdcf6f831170b681b8ee40f83f0224663661e986872616aec45407f.js"></script>
 
     
 
@@ -54,13 +54,13 @@
         "@context": "https://schema.org",
         "@type": "BlogPosting",
         "datePublished": "2019-10-17T21:02:16+00:00",
-        "dateModified": "2021-10-22T14:44:34+08:00",
+        "dateModified": "2023-07-02T16:59:09+08:00",
         "url": "https://zhmin.github.io/posts/postgresql-buffer-pool/",
         "headline": "Postgresql 缓存池原理",
         "description": "前言 postgresql 为了提高响应速度，在存储层上面添加了一层缓存，这样对于数据的查询和修改，都会先在缓存中操作，后面才会同步到磁盘。这样对于一些热点数据，性能提高非常明显。缓存的基本单位对应文件的一个 block，本……",
         "inLanguage" : "zh-CN",
         "articleSection": "posts",
-        "wordCount":  3971 ,
+        "wordCount":  3969 ,
         "image": "https://zhmin.github.io/icons/apple-touch-icon.png",
         "author": {
             "@type": "Person",
@@ -98,7 +98,7 @@
 <meta property="og:locale" content="zh" /><meta property="og:image" content="https://zhmin.github.io/icons/apple-touch-icon.png" />
     <meta property="og:type" content="article" />
     <meta property="article:published_time" content="2019-10-17T21:02:16&#43;00:00" />
-    <meta property="article:modified_time" content="2021-10-22T14:44:34&#43;08:00" />
+    <meta property="article:modified_time" content="2023-07-02T16:59:09&#43;08:00" />
     
     <meta property="article:section" content="posts" />
 
@@ -223,7 +223,7 @@
     
     
         
-        <span class="post-meta-item wordcount"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon post-meta-icon"><path d="M497.9 142.1l-46.1 46.1c-4.7 4.7-12.3 4.7-17 0l-111-111c-4.7-4.7-4.7-12.3 0-17l46.1-46.1c18.7-18.7 49.1-18.7 67.9 0l60.1 60.1c18.8 18.7 18.8 49.1 0 67.9zM284.2 99.8L21.6 362.4.4 483.9c-2.9 16.4 11.4 30.6 27.8 27.8l121.5-21.3 262.6-262.6c4.7-4.7 4.7-12.3 0-17l-111-111c-4.8-4.7-12.4-4.7-17.1 0zM124.1 339.9c-5.5-5.5-5.5-14.3 0-19.8l154-154c5.5-5.5 14.3-5.5 19.8 0s5.5 14.3 0 19.8l-154 154c-5.5 5.5-14.3 5.5-19.8 0zM88 424h48v36.3l-64.5 11.3-31.1-31.1L51.7 376H88v48z"/></svg>&nbsp;3971</span>
+        <span class="post-meta-item wordcount"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon post-meta-icon"><path d="M497.9 142.1l-46.1 46.1c-4.7 4.7-12.3 4.7-17 0l-111-111c-4.7-4.7-4.7-12.3 0-17l46.1-46.1c18.7-18.7 49.1-18.7 67.9 0l60.1 60.1c18.8 18.7 18.8 49.1 0 67.9zM284.2 99.8L21.6 362.4.4 483.9c-2.9 16.4 11.4 30.6 27.8 27.8l121.5-21.3 262.6-262.6c4.7-4.7 4.7-12.3 0-17l-111-111c-4.8-4.7-12.4-4.7-17.1 0zM124.1 339.9c-5.5-5.5-5.5-14.3 0-19.8l154-154c5.5-5.5 14.3-5.5 19.8 0s5.5 14.3 0 19.8l-154 154c-5.5 5.5-14.3 5.5-19.8 0zM88 424h48v36.3l-64.5 11.3-31.1-31.1L51.7 376H88v48z"/></svg>&nbsp;3969</span>
     
     
         
@@ -253,13 +253,13 @@
 </span><span class="lnt">6
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="k">typedef</span> <span class="k">struct</span> <span class="n">buftag</span>
-<span class="p">{</span>
-	<span class="n">RelFileNode</span> <span class="n">rnode</span><span class="p">;</span>			<span class="c1">// 用来标识哪个表
-</span><span class="c1"></span>	<span class="n">ForkNumber</span>	<span class="n">forkNum</span><span class="p">;</span>        <span class="c1">// 表下面的文件类型
-</span><span class="c1"></span>	<span class="n">BlockNumber</span> <span class="n">blockNum</span><span class="p">;</span>		<span class="c1">// 对应的block编号
-</span><span class="c1"></span><span class="p">}</span> <span class="n">BufferTag</span><span class="p">;</span>
-</code></pre></td></tr></table></div>
+<pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="line"><span class="cl"><span class="k">typedef</span> <span class="k">struct</span> <span class="n">buftag</span>
+</span></span><span class="line"><span class="cl"><span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="n">RelFileNode</span> <span class="n">rnode</span><span class="p">;</span>			<span class="c1">// 用来标识哪个表
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="n">ForkNumber</span>	<span class="n">forkNum</span><span class="p">;</span>        <span class="c1">// 表下面的文件类型
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="n">BlockNumber</span> <span class="n">blockNum</span><span class="p">;</span>		<span class="c1">// 对应的block编号
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="p">}</span> <span class="n">BufferTag</span><span class="p">;</span>
+</span></span></code></pre></td></tr></table></div>
 </div>
 </div><p><code>BufferDesc</code> 包含了<code>buffer</code>的头部信息</p>
 <div class="highlight"><div class="chroma">
@@ -277,18 +277,18 @@
 </span><span class="lnt">11
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="k">typedef</span> <span class="k">struct</span> <span class="n">BufferDesc</span>
-<span class="p">{</span>
-	<span class="n">BufferTag</span>	<span class="n">tag</span><span class="p">;</span>			<span class="c1">// 缓存哪个文件的block
-</span><span class="c1"></span>	<span class="kt">int</span>			<span class="n">buf_id</span><span class="p">;</span>			<span class="c1">// buffer id
-</span><span class="c1"></span>	<span class="n">pg_atomic_uint32</span> <span class="n">state</span><span class="p">;</span>		<span class="c1">// 状态值
-</span><span class="c1"></span>
-	<span class="kt">int</span>			<span class="n">wait_backend_pid</span><span class="p">;</span>	<span class="cm">/* backend PID of pin-count waiter */</span>
-	<span class="kt">int</span>			<span class="n">freeNext</span><span class="p">;</span>		<span class="c1">// 指向下个空闲位置
-</span><span class="c1"></span>
-	<span class="n">LWLock</span>		<span class="n">content_lock</span><span class="p">;</span>	<span class="c1">// 读写锁，用来控制内容的访问
-</span><span class="c1"></span><span class="p">}</span> <span class="n">BufferDesc</span><span class="p">;</span>
-</code></pre></td></tr></table></div>
+<pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="line"><span class="cl"><span class="k">typedef</span> <span class="k">struct</span> <span class="n">BufferDesc</span>
+</span></span><span class="line"><span class="cl"><span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="n">BufferTag</span>	<span class="n">tag</span><span class="p">;</span>			<span class="c1">// 缓存哪个文件的block
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="kt">int</span>			<span class="n">buf_id</span><span class="p">;</span>			<span class="c1">// buffer id
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="n">pg_atomic_uint32</span> <span class="n">state</span><span class="p">;</span>		<span class="c1">// 状态值
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>
+</span></span><span class="line"><span class="cl">	<span class="kt">int</span>			<span class="n">wait_backend_pid</span><span class="p">;</span>	<span class="cm">/* backend PID of pin-count waiter */</span>
+</span></span><span class="line"><span class="cl">	<span class="kt">int</span>			<span class="n">freeNext</span><span class="p">;</span>		<span class="c1">// 指向下个空闲位置
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>
+</span></span><span class="line"><span class="cl">	<span class="n">LWLock</span>		<span class="n">content_lock</span><span class="p">;</span>	<span class="c1">// 读写锁，用来控制内容的访问
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="p">}</span> <span class="n">BufferDesc</span><span class="p">;</span>
+</span></span></code></pre></td></tr></table></div>
 </div>
 </div><p>这里说一下 <code>buf_id</code>，小于0表示本地缓存，大于0表示全局缓存。通过它可以计算出它在数组的位置。</p>
 <p><code>state</code> 字段是一个32位的数值，它的格式如下：</p>
@@ -301,12 +301,12 @@
 </span><span class="lnt">5
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell">--------------------+------------------+-------------------
-     <span class="m">10</span> bit         <span class="p">|</span>     <span class="m">4</span> bit        <span class="p">|</span>      <span class="m">18</span> bit      <span class="p">|</span>
---------------------+------------------+-------------------
-      标记位         <span class="p">|</span>    累积访问次数   <span class="p">|</span>     引用次数      <span class="p">|</span>
---------------------+------------------+-------------------
-</code></pre></td></tr></table></div>
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">--------------------+------------------+-------------------
+</span></span><span class="line"><span class="cl">     <span class="m">10</span> bit         <span class="p">|</span>     <span class="m">4</span> bit        <span class="p">|</span>      <span class="m">18</span> bit      <span class="p">|</span>
+</span></span><span class="line"><span class="cl">--------------------+------------------+-------------------
+</span></span><span class="line"><span class="cl">      标记位         <span class="p">|</span>    累积访问次数   <span class="p">|</span>     引用次数      <span class="p">|</span>
+</span></span><span class="line"><span class="cl">--------------------+------------------+-------------------
+</span></span></code></pre></td></tr></table></div>
 </div>
 </div><p>它的高位是一个 10 位的标记位，其中每个标记位都有着不同的含义</p>
 <div class="highlight"><div class="chroma">
@@ -323,17 +323,17 @@
 </span><span class="lnt">10
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="cp">#define BM_LOCKED				(1U &lt;&lt; 22)	</span><span class="c1">// 锁标记位，用来保护state字段
-</span><span class="c1"></span><span class="cp">#define BM_DIRTY				(1U &lt;&lt; 23)	</span><span class="c1">// 是否为脏页，也就是缓存被修改了，但对应的磁盘数据没被修改
-</span><span class="c1"></span><span class="cp">#define BM_VALID				(1U &lt;&lt; 24)	</span><span class="c1">// 数据是否有效
-</span><span class="c1"></span><span class="cp">#define BM_TAG_VALID			(1U &lt;&lt; 25)	</span><span class="c1">// tag 是否有效
-</span><span class="c1"></span><span class="cp">#define BM_IO_IN_PROGRESS		(1U &lt;&lt; 26)	</span><span class="c1">// 是否正在进行磁盘io
-</span><span class="c1"></span><span class="cp">#define BM_IO_ERROR				(1U &lt;&lt; 27)	</span><span class="c1">// 是否磁盘io发送错误
-</span><span class="c1"></span><span class="cp">#define BM_JUST_DIRTIED			(1U &lt;&lt; 28)	</span><span class="cm">/* dirtied since write started */</span><span class="cp">
-</span><span class="cp">#define BM_PIN_COUNT_WAITER		(1U &lt;&lt; 29)	</span><span class="cm">/* have waiter for sole pin */</span><span class="cp">
-</span><span class="cp">#define BM_CHECKPOINT_NEEDED	(1U &lt;&lt; 30)	</span><span class="cm">/* must write for checkpoint */</span><span class="cp">
-</span><span class="cp">#define BM_PERMANENT			(1U &lt;&lt; 31)	</span><span class="cm">/* permanent buffer (not unlogged, or init fork) */</span><span class="cp">
-</span></code></pre></td></tr></table></div>
+<pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="line"><span class="cl"><span class="cp">#define BM_LOCKED				(1U &lt;&lt; 22)	</span><span class="c1">// 锁标记位，用来保护state字段
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="cp">#define BM_DIRTY				(1U &lt;&lt; 23)	</span><span class="c1">// 是否为脏页，也就是缓存被修改了，但对应的磁盘数据没被修改
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="cp">#define BM_VALID				(1U &lt;&lt; 24)	</span><span class="c1">// 数据是否有效
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="cp">#define BM_TAG_VALID			(1U &lt;&lt; 25)	</span><span class="c1">// tag 是否有效
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="cp">#define BM_IO_IN_PROGRESS		(1U &lt;&lt; 26)	</span><span class="c1">// 是否正在进行磁盘io
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="cp">#define BM_IO_ERROR				(1U &lt;&lt; 27)	</span><span class="c1">// 是否磁盘io发送错误
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="cp">#define BM_JUST_DIRTIED			(1U &lt;&lt; 28)	</span><span class="cm">/* dirtied since write started */</span><span class="cp">
+</span></span></span><span class="line"><span class="cl"><span class="cp">#define BM_PIN_COUNT_WAITER		(1U &lt;&lt; 29)	</span><span class="cm">/* have waiter for sole pin */</span><span class="cp">
+</span></span></span><span class="line"><span class="cl"><span class="cp">#define BM_CHECKPOINT_NEEDED	(1U &lt;&lt; 30)	</span><span class="cm">/* must write for checkpoint */</span><span class="cp">
+</span></span></span><span class="line"><span class="cl"><span class="cp">#define BM_PERMANENT			(1U &lt;&lt; 31)	</span><span class="cm">/* permanent buffer (not unlogged, or init fork) */</span><span class="cp">
+</span></span></span></code></pre></td></tr></table></div>
 </div>
 </div><h2 id="全局缓存"><a href="#全局缓存" class="anchor-link"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon anchor-icon"><path d="M326.612 185.391c59.747 59.809 58.927 155.698.36 214.59-.11.12-.24.25-.36.37l-67.2 67.2c-59.27 59.27-155.699 59.262-214.96 0-59.27-59.26-59.27-155.7 0-214.96l37.106-37.106c9.84-9.84 26.786-3.3 27.294 10.606.648 17.722 3.826 35.527 9.69 52.721 1.986 5.822.567 12.262-3.783 16.612l-13.087 13.087c-28.026 28.026-28.905 73.66-1.155 101.96 28.024 28.579 74.086 28.749 102.325.51l67.2-67.19c28.191-28.191 28.073-73.757 0-101.83-3.701-3.694-7.429-6.564-10.341-8.569a16.037 16.037 0 0 1-6.947-12.606c-.396-10.567 3.348-21.456 11.698-29.806l21.054-21.055c5.521-5.521 14.182-6.199 20.584-1.731a152.482 152.482 0 0 1 20.522 17.197zM467.547 44.449c-59.261-59.262-155.69-59.27-214.96 0l-67.2 67.2c-.12.12-.25.25-.36.37-58.566 58.892-59.387 154.781.36 214.59a152.454 152.454 0 0 0 20.521 17.196c6.402 4.468 15.064 3.789 20.584-1.731l21.054-21.055c8.35-8.35 12.094-19.239 11.698-29.806a16.037 16.037 0 0 0-6.947-12.606c-2.912-2.005-6.64-4.875-10.341-8.569-28.073-28.073-28.191-73.639 0-101.83l67.2-67.19c28.239-28.239 74.3-28.069 102.325.51 27.75 28.3 26.872 73.934-1.155 101.96l-13.087 13.087c-4.35 4.35-5.769 10.79-3.783 16.612 5.864 17.194 9.042 34.999 9.69 52.721.509 13.906 17.454 20.446 27.294 10.606l37.106-37.106c59.271-59.259 59.271-155.699.001-214.959z"/></svg></a>全局缓存</h2>
 <h3 id="缓存数组"><a href="#缓存数组" class="anchor-link"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon anchor-icon"><path d="M326.612 185.391c59.747 59.809 58.927 155.698.36 214.59-.11.12-.24.25-.36.37l-67.2 67.2c-59.27 59.27-155.699 59.262-214.96 0-59.27-59.26-59.27-155.7 0-214.96l37.106-37.106c9.84-9.84 26.786-3.3 27.294 10.606.648 17.722 3.826 35.527 9.69 52.721 1.986 5.822.567 12.262-3.783 16.612l-13.087 13.087c-28.026 28.026-28.905 73.66-1.155 101.96 28.024 28.579 74.086 28.749 102.325.51l67.2-67.19c28.191-28.191 28.073-73.757 0-101.83-3.701-3.694-7.429-6.564-10.341-8.569a16.037 16.037 0 0 1-6.947-12.606c-.396-10.567 3.348-21.456 11.698-29.806l21.054-21.055c5.521-5.521 14.182-6.199 20.584-1.731a152.482 152.482 0 0 1 20.522 17.197zM467.547 44.449c-59.261-59.262-155.69-59.27-214.96 0l-67.2 67.2c-.12.12-.25.25-.36.37-58.566 58.892-59.387 154.781.36 214.59a152.454 152.454 0 0 0 20.521 17.196c6.402 4.468 15.064 3.789 20.584-1.731l21.054-21.055c8.35-8.35 12.094-19.239 11.698-29.806a16.037 16.037 0 0 0-6.947-12.606c-2.912-2.005-6.64-4.875-10.341-8.569-28.073-28.073-28.191-73.639 0-101.83l67.2-67.19c28.239-28.239 74.3-28.069 102.325.51 27.75 28.3 26.872 73.934-1.155 101.96l-13.087 13.087c-4.35 4.35-5.769 10.79-3.783 16.612 5.864 17.194 9.042 34.999 9.69 52.721.509 13.906 17.454 20.446 27.294 10.606l37.106-37.106c59.271-59.259 59.271-155.699.001-214.959z"/></svg></a>缓存数组</h3>
@@ -344,9 +344,9 @@
 </span><span class="lnt">2
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="n">BufferDescPadded</span> <span class="o">*</span><span class="n">BufferDescriptors</span><span class="p">;</span>  <span class="c1">// buffer头部数组
-</span><span class="c1"></span><span class="kt">char</span>	   <span class="o">*</span><span class="n">BufferBlocks</span><span class="p">;</span>    <span class="c1">// buffer数据数组
-</span></code></pre></td></tr></table></div>
+<pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="line"><span class="cl"><span class="n">BufferDescPadded</span> <span class="o">*</span><span class="n">BufferDescriptors</span><span class="p">;</span>  <span class="c1">// buffer头部数组
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="kt">char</span>	   <span class="o">*</span><span class="n">BufferBlocks</span><span class="p">;</span>    <span class="c1">// buffer数据数组
+</span></span></span></code></pre></td></tr></table></div>
 </div>
 </div><p>当我们知道 buffer id 后，就可以在数组中找到对应的 buffer，索引号等于 buffer id。</p>
 <h3 id="缓存数组初始化"><a href="#缓存数组初始化" class="anchor-link"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon anchor-icon"><path d="M326.612 185.391c59.747 59.809 58.927 155.698.36 214.59-.11.12-.24.25-.36.37l-67.2 67.2c-59.27 59.27-155.699 59.262-214.96 0-59.27-59.26-59.27-155.7 0-214.96l37.106-37.106c9.84-9.84 26.786-3.3 27.294 10.606.648 17.722 3.826 35.527 9.69 52.721 1.986 5.822.567 12.262-3.783 16.612l-13.087 13.087c-28.026 28.026-28.905 73.66-1.155 101.96 28.024 28.579 74.086 28.749 102.325.51l67.2-67.19c28.191-28.191 28.073-73.757 0-101.83-3.701-3.694-7.429-6.564-10.341-8.569a16.037 16.037 0 0 1-6.947-12.606c-.396-10.567 3.348-21.456 11.698-29.806l21.054-21.055c5.521-5.521 14.182-6.199 20.584-1.731a152.482 152.482 0 0 1 20.522 17.197zM467.547 44.449c-59.261-59.262-155.69-59.27-214.96 0l-67.2 67.2c-.12.12-.25.25-.36.37-58.566 58.892-59.387 154.781.36 214.59a152.454 152.454 0 0 0 20.521 17.196c6.402 4.468 15.064 3.789 20.584-1.731l21.054-21.055c8.35-8.35 12.094-19.239 11.698-29.806a16.037 16.037 0 0 0-6.947-12.606c-2.912-2.005-6.64-4.875-10.341-8.569-28.073-28.073-28.191-73.639 0-101.83l67.2-67.19c28.239-28.239 74.3-28.069 102.325.51 27.75 28.3 26.872 73.934-1.155 101.96l-13.087 13.087c-4.35 4.35-5.769 10.79-3.783 16.612 5.864 17.194 9.042 34.999 9.69 52.721.509 13.906 17.454 20.446 27.294 10.606l37.106-37.106c59.271-59.259 59.271-155.699.001-214.959z"/></svg></a>缓存数组初始化</h3>
@@ -370,22 +370,22 @@
 </span><span class="lnt">15
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="kt">void</span> <span class="nf">InitBufferPool</span><span class="p">(</span><span class="kt">void</span><span class="p">)</span>
-<span class="p">{</span>
-	<span class="cm">/* Align descriptors to a cacheline boundary. */</span>
-	<span class="n">BufferDescriptors</span> <span class="o">=</span> <span class="p">(</span><span class="n">BufferDescPadded</span> <span class="o">*</span><span class="p">)</span> <span class="n">ShmemInitStruct</span><span class="p">(</span><span class="s">&#34;Buffer Descriptors&#34;</span><span class="p">,</span>
-						<span class="n">NBuffers</span> <span class="o">*</span> <span class="k">sizeof</span><span class="p">(</span><span class="n">BufferDescPadded</span><span class="p">),</span>
-						<span class="o">&amp;</span><span class="n">foundDescs</span><span class="p">);</span>
-
-	<span class="n">BufferBlocks</span> <span class="o">=</span> <span class="p">(</span><span class="kt">char</span> <span class="o">*</span><span class="p">)</span>	<span class="n">ShmemInitStruct</span><span class="p">(</span><span class="s">&#34;Buffer Blocks&#34;</span><span class="p">,</span>
-						<span class="n">NBuffers</span> <span class="o">*</span> <span class="p">(</span><span class="n">Size</span><span class="p">)</span> <span class="n">BLCKSZ</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">foundBufs</span><span class="p">);</span>
-
-	<span class="cm">/* Align lwlocks to cacheline boundary */</span>
-	<span class="n">BufferIOLWLockArray</span> <span class="o">=</span> <span class="p">(</span><span class="n">LWLockMinimallyPadded</span> <span class="o">*</span><span class="p">)</span>	<span class="n">ShmemInitStruct</span><span class="p">(</span><span class="s">&#34;Buffer IO Locks&#34;</span><span class="p">,</span>
-						<span class="n">NBuffers</span> <span class="o">*</span> <span class="p">(</span><span class="n">Size</span><span class="p">)</span> <span class="k">sizeof</span><span class="p">(</span><span class="n">LWLockMinimallyPadded</span><span class="p">),</span>
-						<span class="o">&amp;</span><span class="n">foundIOLocks</span><span class="p">);</span>
-<span class="p">}</span>
-</code></pre></td></tr></table></div>
+<pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="line"><span class="cl"><span class="kt">void</span> <span class="nf">InitBufferPool</span><span class="p">(</span><span class="kt">void</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="cm">/* Align descriptors to a cacheline boundary. */</span>
+</span></span><span class="line"><span class="cl">	<span class="n">BufferDescriptors</span> <span class="o">=</span> <span class="p">(</span><span class="n">BufferDescPadded</span> <span class="o">*</span><span class="p">)</span> <span class="nf">ShmemInitStruct</span><span class="p">(</span><span class="s">&#34;Buffer Descriptors&#34;</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">						<span class="n">NBuffers</span> <span class="o">*</span> <span class="k">sizeof</span><span class="p">(</span><span class="n">BufferDescPadded</span><span class="p">),</span>
+</span></span><span class="line"><span class="cl">						<span class="o">&amp;</span><span class="n">foundDescs</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">	<span class="n">BufferBlocks</span> <span class="o">=</span> <span class="p">(</span><span class="kt">char</span> <span class="o">*</span><span class="p">)</span>	<span class="nf">ShmemInitStruct</span><span class="p">(</span><span class="s">&#34;Buffer Blocks&#34;</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">						<span class="n">NBuffers</span> <span class="o">*</span> <span class="p">(</span><span class="n">Size</span><span class="p">)</span> <span class="n">BLCKSZ</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">foundBufs</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">	<span class="cm">/* Align lwlocks to cacheline boundary */</span>
+</span></span><span class="line"><span class="cl">	<span class="n">BufferIOLWLockArray</span> <span class="o">=</span> <span class="p">(</span><span class="n">LWLockMinimallyPadded</span> <span class="o">*</span><span class="p">)</span>	<span class="nf">ShmemInitStruct</span><span class="p">(</span><span class="s">&#34;Buffer IO Locks&#34;</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">						<span class="n">NBuffers</span> <span class="o">*</span> <span class="p">(</span><span class="n">Size</span><span class="p">)</span> <span class="k">sizeof</span><span class="p">(</span><span class="n">LWLockMinimallyPadded</span><span class="p">),</span>
+</span></span><span class="line"><span class="cl">						<span class="o">&amp;</span><span class="n">foundIOLocks</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table></div>
 </div>
 </div><h3 id="缓存哈希表"><a href="#缓存哈希表" class="anchor-link"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon anchor-icon"><path d="M326.612 185.391c59.747 59.809 58.927 155.698.36 214.59-.11.12-.24.25-.36.37l-67.2 67.2c-59.27 59.27-155.699 59.262-214.96 0-59.27-59.26-59.27-155.7 0-214.96l37.106-37.106c9.84-9.84 26.786-3.3 27.294 10.606.648 17.722 3.826 35.527 9.69 52.721 1.986 5.822.567 12.262-3.783 16.612l-13.087 13.087c-28.026 28.026-28.905 73.66-1.155 101.96 28.024 28.579 74.086 28.749 102.325.51l67.2-67.19c28.191-28.191 28.073-73.757 0-101.83-3.701-3.694-7.429-6.564-10.341-8.569a16.037 16.037 0 0 1-6.947-12.606c-.396-10.567 3.348-21.456 11.698-29.806l21.054-21.055c5.521-5.521 14.182-6.199 20.584-1.731a152.482 152.482 0 0 1 20.522 17.197zM467.547 44.449c-59.261-59.262-155.69-59.27-214.96 0l-67.2 67.2c-.12.12-.25.25-.36.37-58.566 58.892-59.387 154.781.36 214.59a152.454 152.454 0 0 0 20.521 17.196c6.402 4.468 15.064 3.789 20.584-1.731l21.054-21.055c8.35-8.35 12.094-19.239 11.698-29.806a16.037 16.037 0 0 0-6.947-12.606c-2.912-2.005-6.64-4.875-10.341-8.569-28.073-28.073-28.191-73.639 0-101.83l67.2-67.19c28.239-28.239 74.3-28.069 102.325.51 27.75 28.3 26.872 73.934-1.155 101.96l-13.087 13.087c-4.35 4.35-5.769 10.79-3.783 16.612 5.864 17.194 9.042 34.999 9.69 52.721.509 13.906 17.454 20.446 27.294 10.606l37.106-37.106c59.271-59.259 59.271-155.699.001-214.959z"/></svg></a>缓存哈希表</h3>
 <p>postgresql 会经常根据文件的 block 来查找对应的缓存，为了提高查找查找速度，这里使用了动态哈希表存储，如下所示：</p>
@@ -401,15 +401,15 @@
 </span><span class="lnt">8
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="c1">// 哈希表，key为BufferTag，value为buffer_id
-</span><span class="c1"></span><span class="k">static</span> <span class="n">HTAB</span> <span class="o">*</span><span class="n">SharedBufHash</span><span class="p">;</span>
-
-<span class="k">typedef</span> <span class="k">struct</span>
-<span class="p">{</span>
-    <span class="n">BufferTag</span>	<span class="n">key</span><span class="p">;</span>			<span class="c1">// 表示文件的哪个block
-</span><span class="c1"></span>    <span class="kt">int</span>			<span class="n">id</span><span class="p">;</span>				<span class="c1">// buffer id
-</span><span class="c1"></span><span class="p">}</span> <span class="n">BufferLookupEnt</span><span class="p">;</span>
-</code></pre></td></tr></table></div>
+<pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="line"><span class="cl"><span class="c1">// 哈希表，key为BufferTag，value为buffer_id
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="k">static</span> <span class="n">HTAB</span> <span class="o">*</span><span class="n">SharedBufHash</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="k">typedef</span> <span class="k">struct</span>
+</span></span><span class="line"><span class="cl"><span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="n">BufferTag</span>	<span class="n">key</span><span class="p">;</span>			<span class="c1">// 表示文件的哪个block
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="kt">int</span>			<span class="n">id</span><span class="p">;</span>				<span class="c1">// buffer id
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="p">}</span> <span class="n">BufferLookupEnt</span><span class="p">;</span>
+</span></span></code></pre></td></tr></table></div>
 </div>
 </div><p>用户首先根据指定文件的哪个block，由 BufferTag 参数指定。然后在<code>SharedBufHash</code>哈希表中，找到对应的 buffer id。再根据 buffer id 计算出数组的索引，然后从数组中取出 buffer 头部和数据。</p>
 <h2 id="本地缓存"><a href="#本地缓存" class="anchor-link"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon anchor-icon"><path d="M326.612 185.391c59.747 59.809 58.927 155.698.36 214.59-.11.12-.24.25-.36.37l-67.2 67.2c-59.27 59.27-155.699 59.262-214.96 0-59.27-59.26-59.27-155.7 0-214.96l37.106-37.106c9.84-9.84 26.786-3.3 27.294 10.606.648 17.722 3.826 35.527 9.69 52.721 1.986 5.822.567 12.262-3.783 16.612l-13.087 13.087c-28.026 28.026-28.905 73.66-1.155 101.96 28.024 28.579 74.086 28.749 102.325.51l67.2-67.19c28.191-28.191 28.073-73.757 0-101.83-3.701-3.694-7.429-6.564-10.341-8.569a16.037 16.037 0 0 1-6.947-12.606c-.396-10.567 3.348-21.456 11.698-29.806l21.054-21.055c5.521-5.521 14.182-6.199 20.584-1.731a152.482 152.482 0 0 1 20.522 17.197zM467.547 44.449c-59.261-59.262-155.69-59.27-214.96 0l-67.2 67.2c-.12.12-.25.25-.36.37-58.566 58.892-59.387 154.781.36 214.59a152.454 152.454 0 0 0 20.521 17.196c6.402 4.468 15.064 3.789 20.584-1.731l21.054-21.055c8.35-8.35 12.094-19.239 11.698-29.806a16.037 16.037 0 0 0-6.947-12.606c-2.912-2.005-6.64-4.875-10.341-8.569-28.073-28.073-28.191-73.639 0-101.83l67.2-67.19c28.239-28.239 74.3-28.069 102.325.51 27.75 28.3 26.872 73.934-1.155 101.96l-13.087 13.087c-4.35 4.35-5.769 10.79-3.783 16.612 5.864 17.194 9.042 34.999 9.69 52.721.509 13.906 17.454 20.446 27.294 10.606l37.106-37.106c59.271-59.259 59.271-155.699.001-214.959z"/></svg></a>本地缓存</h2>
@@ -421,10 +421,10 @@
 </span><span class="lnt">3
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="n">BufferDesc</span> <span class="o">*</span><span class="n">LocalBufferDescriptors</span> <span class="o">=</span> <span class="nb">NULL</span><span class="p">;</span>
-<span class="n">Block</span>	   <span class="o">*</span><span class="n">LocalBufferBlockPointers</span> <span class="o">=</span> <span class="nb">NULL</span><span class="p">;</span>
-<span class="n">int32</span>	   <span class="o">*</span><span class="n">LocalRefCount</span> <span class="o">=</span> <span class="nb">NULL</span><span class="p">;</span>
-</code></pre></td></tr></table></div>
+<pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="line"><span class="cl"><span class="n">BufferDesc</span> <span class="o">*</span><span class="n">LocalBufferDescriptors</span> <span class="o">=</span> <span class="nb">NULL</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="n">Block</span>	   <span class="o">*</span><span class="n">LocalBufferBlockPointers</span> <span class="o">=</span> <span class="nb">NULL</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="n">int32</span>	   <span class="o">*</span><span class="n">LocalRefCount</span> <span class="o">=</span> <span class="nb">NULL</span><span class="p">;</span>
+</span></span></code></pre></td></tr></table></div>
 </div>
 </div><p>buffer id 和 数组索引的对应关系为<code>index = -(buffer_id + 2)</code>。</p>
 <h3 id="缓存数组初始化-1"><a href="#缓存数组初始化-1" class="anchor-link"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon anchor-icon"><path d="M326.612 185.391c59.747 59.809 58.927 155.698.36 214.59-.11.12-.24.25-.36.37l-67.2 67.2c-59.27 59.27-155.699 59.262-214.96 0-59.27-59.26-59.27-155.7 0-214.96l37.106-37.106c9.84-9.84 26.786-3.3 27.294 10.606.648 17.722 3.826 35.527 9.69 52.721 1.986 5.822.567 12.262-3.783 16.612l-13.087 13.087c-28.026 28.026-28.905 73.66-1.155 101.96 28.024 28.579 74.086 28.749 102.325.51l67.2-67.19c28.191-28.191 28.073-73.757 0-101.83-3.701-3.694-7.429-6.564-10.341-8.569a16.037 16.037 0 0 1-6.947-12.606c-.396-10.567 3.348-21.456 11.698-29.806l21.054-21.055c5.521-5.521 14.182-6.199 20.584-1.731a152.482 152.482 0 0 1 20.522 17.197zM467.547 44.449c-59.261-59.262-155.69-59.27-214.96 0l-67.2 67.2c-.12.12-.25.25-.36.37-58.566 58.892-59.387 154.781.36 214.59a152.454 152.454 0 0 0 20.521 17.196c6.402 4.468 15.064 3.789 20.584-1.731l21.054-21.055c8.35-8.35 12.094-19.239 11.698-29.806a16.037 16.037 0 0 0-6.947-12.606c-2.912-2.005-6.64-4.875-10.341-8.569-28.073-28.073-28.191-73.639 0-101.83l67.2-67.19c28.239-28.239 74.3-28.069 102.325.51 27.75 28.3 26.872 73.934-1.155 101.96l-13.087 13.087c-4.35 4.35-5.769 10.79-3.783 16.612 5.864 17.194 9.042 34.999 9.69 52.721.509 13.906 17.454 20.446 27.294 10.606l37.106-37.106c59.271-59.259 59.271-155.699.001-214.959z"/></svg></a>缓存数组初始化</h3>
@@ -436,10 +436,10 @@
 </span><span class="lnt">3
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="n">LocalBufferDescriptors</span> <span class="o">=</span> <span class="p">(</span><span class="n">BufferDesc</span> <span class="o">*</span><span class="p">)</span> <span class="n">calloc</span><span class="p">(</span><span class="n">nbufs</span><span class="p">,</span> <span class="k">sizeof</span><span class="p">(</span><span class="n">BufferDesc</span><span class="p">));</span>
-<span class="n">LocalBufferBlockPointers</span> <span class="o">=</span> <span class="p">(</span><span class="n">Block</span> <span class="o">*</span><span class="p">)</span> <span class="n">calloc</span><span class="p">(</span><span class="n">nbufs</span><span class="p">,</span> <span class="k">sizeof</span><span class="p">(</span><span class="n">Block</span><span class="p">));</span>
-<span class="n">LocalRefCount</span> <span class="o">=</span> <span class="p">(</span><span class="n">int32</span> <span class="o">*</span><span class="p">)</span> <span class="n">calloc</span><span class="p">(</span><span class="n">nbufs</span><span class="p">,</span> <span class="k">sizeof</span><span class="p">(</span><span class="n">int32</span><span class="p">));</span>
-</code></pre></td></tr></table></div>
+<pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="line"><span class="cl"><span class="n">LocalBufferDescriptors</span> <span class="o">=</span> <span class="p">(</span><span class="n">BufferDesc</span> <span class="o">*</span><span class="p">)</span> <span class="nf">calloc</span><span class="p">(</span><span class="n">nbufs</span><span class="p">,</span> <span class="k">sizeof</span><span class="p">(</span><span class="n">BufferDesc</span><span class="p">));</span>
+</span></span><span class="line"><span class="cl"><span class="n">LocalBufferBlockPointers</span> <span class="o">=</span> <span class="p">(</span><span class="n">Block</span> <span class="o">*</span><span class="p">)</span> <span class="nf">calloc</span><span class="p">(</span><span class="n">nbufs</span><span class="p">,</span> <span class="k">sizeof</span><span class="p">(</span><span class="n">Block</span><span class="p">));</span>
+</span></span><span class="line"><span class="cl"><span class="n">LocalRefCount</span> <span class="o">=</span> <span class="p">(</span><span class="n">int32</span> <span class="o">*</span><span class="p">)</span> <span class="nf">calloc</span><span class="p">(</span><span class="n">nbufs</span><span class="p">,</span> <span class="k">sizeof</span><span class="p">(</span><span class="n">int32</span><span class="p">));</span>
+</span></span></code></pre></td></tr></table></div>
 </div>
 </div><h3 id="缓存哈希表-1"><a href="#缓存哈希表-1" class="anchor-link"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon anchor-icon"><path d="M326.612 185.391c59.747 59.809 58.927 155.698.36 214.59-.11.12-.24.25-.36.37l-67.2 67.2c-59.27 59.27-155.699 59.262-214.96 0-59.27-59.26-59.27-155.7 0-214.96l37.106-37.106c9.84-9.84 26.786-3.3 27.294 10.606.648 17.722 3.826 35.527 9.69 52.721 1.986 5.822.567 12.262-3.783 16.612l-13.087 13.087c-28.026 28.026-28.905 73.66-1.155 101.96 28.024 28.579 74.086 28.749 102.325.51l67.2-67.19c28.191-28.191 28.073-73.757 0-101.83-3.701-3.694-7.429-6.564-10.341-8.569a16.037 16.037 0 0 1-6.947-12.606c-.396-10.567 3.348-21.456 11.698-29.806l21.054-21.055c5.521-5.521 14.182-6.199 20.584-1.731a152.482 152.482 0 0 1 20.522 17.197zM467.547 44.449c-59.261-59.262-155.69-59.27-214.96 0l-67.2 67.2c-.12.12-.25.25-.36.37-58.566 58.892-59.387 154.781.36 214.59a152.454 152.454 0 0 0 20.521 17.196c6.402 4.468 15.064 3.789 20.584-1.731l21.054-21.055c8.35-8.35 12.094-19.239 11.698-29.806a16.037 16.037 0 0 0-6.947-12.606c-2.912-2.005-6.64-4.875-10.341-8.569-28.073-28.073-28.191-73.639 0-101.83l67.2-67.19c28.239-28.239 74.3-28.069 102.325.51 27.75 28.3 26.872 73.934-1.155 101.96l-13.087 13.087c-4.35 4.35-5.769 10.79-3.783 16.612 5.864 17.194 9.042 34.999 9.69 52.721.509 13.906 17.454 20.446 27.294 10.606l37.106-37.106c59.271-59.259 59.271-155.699.001-214.959z"/></svg></a>缓存哈希表</h3>
 <p>本地缓存同样提供了哈希表，来提高查找速度，原理同全局缓存一样。</p>
@@ -460,15 +460,15 @@
 </span><span class="lnt">8
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="k">typedef</span> <span class="k">enum</span>
-<span class="p">{</span>
-	<span class="n">RBM_NORMAL</span><span class="p">,</span>					<span class="cm">/* 一般情况的读 */</span>
-	<span class="n">RBM_ZERO_AND_LOCK</span><span class="p">,</span>			<span class="cm">/* 分配一个buffer并且获取写锁返回，不需要从磁盘读取数据初始化 */</span>
-	<span class="n">RBM_ZERO_AND_CLEANUP_LOCK</span><span class="p">,</span>	<span class="cm">/* Like RBM_ZERO_AND_LOCK, but locks the page in &#34;cleanup&#34; mode */</span>
-	<span class="n">RBM_ZERO_ON_ERROR</span><span class="p">,</span>			<span class="cm">/* Read, but return an all-zeros page on error */</span>
-	<span class="n">RBM_NORMAL_NO_LOG</span>			<span class="cm">/* Don&#39;t log page as invalid during WAL replay; otherwise same as RBM_NORMAL */</span>
-<span class="p">}</span> <span class="n">ReadBufferMode</span><span class="p">;</span>
-</code></pre></td></tr></table></div>
+<pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="line"><span class="cl"><span class="k">typedef</span> <span class="k">enum</span>
+</span></span><span class="line"><span class="cl"><span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="n">RBM_NORMAL</span><span class="p">,</span>					<span class="cm">/* 一般情况的读 */</span>
+</span></span><span class="line"><span class="cl">	<span class="n">RBM_ZERO_AND_LOCK</span><span class="p">,</span>			<span class="cm">/* 分配一个buffer并且获取写锁返回，不需要从磁盘读取数据初始化 */</span>
+</span></span><span class="line"><span class="cl">	<span class="n">RBM_ZERO_AND_CLEANUP_LOCK</span><span class="p">,</span>	<span class="cm">/* Like RBM_ZERO_AND_LOCK, but locks the page in &#34;cleanup&#34; mode */</span>
+</span></span><span class="line"><span class="cl">	<span class="n">RBM_ZERO_ON_ERROR</span><span class="p">,</span>			<span class="cm">/* Read, but return an all-zeros page on error */</span>
+</span></span><span class="line"><span class="cl">	<span class="n">RBM_NORMAL_NO_LOG</span>			<span class="cm">/* Don&#39;t log page as invalid during WAL replay; otherwise same as RBM_NORMAL */</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span> <span class="n">ReadBufferMode</span><span class="p">;</span>
+</span></span></code></pre></td></tr></table></div>
 </div>
 </div><p><code>ReadBuffer</code>函数负责读取表的数据，定义如下：</p>
 <div class="highlight"><div class="chroma">
@@ -479,11 +479,11 @@
 </span><span class="lnt">4
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="n">Buffer</span> <span class="nf">ReadBuffer</span><span class="p">(</span><span class="n">Relation</span> <span class="n">reln</span><span class="p">,</span> <span class="n">BlockNumber</span> <span class="n">blockNum</span><span class="p">)</span>
-<span class="p">{</span>
-	<span class="k">return</span> <span class="n">ReadBufferExtended</span><span class="p">(</span><span class="n">reln</span><span class="p">,</span> <span class="n">MAIN_FORKNUM</span><span class="p">,</span> <span class="n">blockNum</span><span class="p">,</span> <span class="n">RBM_NORMAL</span><span class="p">,</span> <span class="nb">NULL</span><span class="p">);</span>
-<span class="p">}</span>
-</code></pre></td></tr></table></div>
+<pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="line"><span class="cl"><span class="n">Buffer</span> <span class="nf">ReadBuffer</span><span class="p">(</span><span class="n">Relation</span> <span class="n">reln</span><span class="p">,</span> <span class="n">BlockNumber</span> <span class="n">blockNum</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="k">return</span> <span class="nf">ReadBufferExtended</span><span class="p">(</span><span class="n">reln</span><span class="p">,</span> <span class="n">MAIN_FORKNUM</span><span class="p">,</span> <span class="n">blockNum</span><span class="p">,</span> <span class="n">RBM_NORMAL</span><span class="p">,</span> <span class="nb">NULL</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table></div>
 </div>
 </div><p>在介绍表的文件结构中，我们知道数据是存储在 main 类型文件里，所以传递的参数是<code>MAIN_FORKNUM</code>。它的读取方式为<code>RBM_NORMAL</code>表示正常读取，<code>BufferAccessStrategy</code>参数为 null 表示如果缓存满了，采用默认时钟清除算法来替换掉旧的缓存。</p>
 <h3 id="读取流程"><a href="#读取流程" class="anchor-link"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon anchor-icon"><path d="M326.612 185.391c59.747 59.809 58.927 155.698.36 214.59-.11.12-.24.25-.36.37l-67.2 67.2c-59.27 59.27-155.699 59.262-214.96 0-59.27-59.26-59.27-155.7 0-214.96l37.106-37.106c9.84-9.84 26.786-3.3 27.294 10.606.648 17.722 3.826 35.527 9.69 52.721 1.986 5.822.567 12.262-3.783 16.612l-13.087 13.087c-28.026 28.026-28.905 73.66-1.155 101.96 28.024 28.579 74.086 28.749 102.325.51l67.2-67.19c28.191-28.191 28.073-73.757 0-101.83-3.701-3.694-7.429-6.564-10.341-8.569a16.037 16.037 0 0 1-6.947-12.606c-.396-10.567 3.348-21.456 11.698-29.806l21.054-21.055c5.521-5.521 14.182-6.199 20.584-1.731a152.482 152.482 0 0 1 20.522 17.197zM467.547 44.449c-59.261-59.262-155.69-59.27-214.96 0l-67.2 67.2c-.12.12-.25.25-.36.37-58.566 58.892-59.387 154.781.36 214.59a152.454 152.454 0 0 0 20.521 17.196c6.402 4.468 15.064 3.789 20.584-1.731l21.054-21.055c8.35-8.35 12.094-19.239 11.698-29.806a16.037 16.037 0 0 0-6.947-12.606c-2.912-2.005-6.64-4.875-10.341-8.569-28.073-28.073-28.191-73.639 0-101.83l67.2-67.19c28.239-28.239 74.3-28.069 102.325.51 27.75 28.3 26.872 73.934-1.155 101.96l-13.087 13.087c-4.35 4.35-5.769 10.79-3.783 16.612 5.864 17.194 9.042 34.999 9.69 52.721.509 13.906 17.454 20.446 27.294 10.606l37.106-37.106c59.271-59.259 59.271-155.699.001-214.959z"/></svg></a>读取流程</h3>
@@ -521,27 +521,27 @@
 </span><span class="lnt">20
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="n">uint32</span> <span class="nf">LockBufHdr</span><span class="p">(</span><span class="n">BufferDesc</span> <span class="o">*</span><span class="n">desc</span><span class="p">)</span>
-<span class="p">{</span>
-	<span class="n">SpinDelayStatus</span> <span class="n">delayStatus</span><span class="p">;</span>
-	<span class="n">uint32</span>		<span class="n">old_buf_state</span><span class="p">;</span>
-    <span class="c1">// 初始化自旋锁
-</span><span class="c1"></span>	<span class="n">init_local_spin_delay</span><span class="p">(</span><span class="o">&amp;</span><span class="n">delayStatus</span><span class="p">);</span>
-	<span class="k">while</span> <span class="p">(</span><span class="nb">true</span><span class="p">)</span>
-	<span class="p">{</span>
-		<span class="c1">// 原子性的修改BM_LOCKED标记位，并且返回修改前的值
-</span><span class="c1"></span>		<span class="n">old_buf_state</span> <span class="o">=</span> <span class="n">pg_atomic_fetch_or_u32</span><span class="p">(</span><span class="o">&amp;</span><span class="n">desc</span><span class="o">-&gt;</span><span class="n">state</span><span class="p">,</span> <span class="n">BM_LOCKED</span><span class="p">);</span>
-		<span class="c1">// 如果之前的BM_LOCKED标记位为0，被此次修改为1，认为获取锁成功
-</span><span class="c1"></span>		<span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="p">(</span><span class="n">old_buf_state</span> <span class="o">&amp;</span> <span class="n">BM_LOCKED</span><span class="p">))</span>
-			<span class="k">break</span><span class="p">;</span>
-        <span class="c1">// 可能进行一小段时间的睡眠
-</span><span class="c1"></span>		<span class="n">perform_spin_delay</span><span class="p">(</span><span class="o">&amp;</span><span class="n">delayStatus</span><span class="p">);</span>
-	<span class="p">}</span>
-	<span class="n">finish_spin_delay</span><span class="p">(</span><span class="o">&amp;</span><span class="n">delayStatus</span><span class="p">);</span>
-    <span class="c1">// 返回状态值
-</span><span class="c1"></span>	<span class="k">return</span> <span class="n">old_buf_state</span> <span class="o">|</span> <span class="n">BM_LOCKED</span><span class="p">;</span>
-<span class="p">}</span>
-</code></pre></td></tr></table></div>
+<pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="line"><span class="cl"><span class="n">uint32</span> <span class="nf">LockBufHdr</span><span class="p">(</span><span class="n">BufferDesc</span> <span class="o">*</span><span class="n">desc</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="n">SpinDelayStatus</span> <span class="n">delayStatus</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">	<span class="n">uint32</span>		<span class="n">old_buf_state</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// 初始化自旋锁
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="nf">init_local_spin_delay</span><span class="p">(</span><span class="o">&amp;</span><span class="n">delayStatus</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">	<span class="k">while</span> <span class="p">(</span><span class="nb">true</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">	<span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="c1">// 原子性的修改BM_LOCKED标记位，并且返回修改前的值
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>		<span class="n">old_buf_state</span> <span class="o">=</span> <span class="nf">pg_atomic_fetch_or_u32</span><span class="p">(</span><span class="o">&amp;</span><span class="n">desc</span><span class="o">-&gt;</span><span class="n">state</span><span class="p">,</span> <span class="n">BM_LOCKED</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">		<span class="c1">// 如果之前的BM_LOCKED标记位为0，被此次修改为1，认为获取锁成功
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>		<span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="p">(</span><span class="n">old_buf_state</span> <span class="o">&amp;</span> <span class="n">BM_LOCKED</span><span class="p">))</span>
+</span></span><span class="line"><span class="cl">			<span class="k">break</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">        <span class="c1">// 可能进行一小段时间的睡眠
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>		<span class="nf">perform_spin_delay</span><span class="p">(</span><span class="o">&amp;</span><span class="n">delayStatus</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">	<span class="p">}</span>
+</span></span><span class="line"><span class="cl">	<span class="nf">finish_spin_delay</span><span class="p">(</span><span class="o">&amp;</span><span class="n">delayStatus</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// 返回状态值
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="k">return</span> <span class="n">old_buf_state</span> <span class="o">|</span> <span class="n">BM_LOCKED</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table></div>
 </div>
 </div><p>使用方法如下：</p>
 <div class="highlight"><div class="chroma">
@@ -552,11 +552,11 @@
 </span><span class="lnt">4
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="n">BufferDesc</span> <span class="o">*</span> <span class="n">buf</span><span class="p">;</span> <span class="c1">// 缓存头部
-</span><span class="c1"></span><span class="n">uint32</span> <span class="n">buf_state</span> <span class="o">=</span> <span class="n">LockBufHdr</span><span class="p">(</span><span class="n">buf</span><span class="p">);</span> <span class="c1">// 加锁
-</span><span class="c1"></span><span class="n">buf_state</span> <span class="o">&amp;=</span> <span class="n">BM_TAG_VALID</span> <span class="c1">// 修改头部
-</span><span class="c1"></span><span class="n">UnlockBufHdr</span><span class="p">(</span><span class="n">buf</span><span class="p">,</span> <span class="n">buf_state</span><span class="p">);</span> <span class="c1">// 设置状态，并且释放锁
-</span></code></pre></td></tr></table></div>
+<pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="line"><span class="cl"><span class="n">BufferDesc</span> <span class="o">*</span> <span class="n">buf</span><span class="p">;</span> <span class="c1">// 缓存头部
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="n">uint32</span> <span class="n">buf_state</span> <span class="o">=</span> <span class="nf">LockBufHdr</span><span class="p">(</span><span class="n">buf</span><span class="p">);</span> <span class="c1">// 加锁
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="n">buf_state</span> <span class="o">&amp;=</span> <span class="n">BM_TAG_VALID</span> <span class="c1">// 修改头部
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="nf">UnlockBufHdr</span><span class="p">(</span><span class="n">buf</span><span class="p">,</span> <span class="n">buf_state</span><span class="p">);</span> <span class="c1">// 设置状态，并且释放锁
+</span></span></span></code></pre></td></tr></table></div>
 </div>
 </div><p>还有一种是调用<code>WaitBufHdrUnlocked</code>函数自旋等待，然后使用 CAS 操作获取锁。下面的以设置<code>DIRTY</code>为例</p>
 <div class="highlight"><div class="chroma">
@@ -583,27 +583,27 @@
 </span><span class="lnt">20
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="kt">void</span> <span class="nf">MarkBufferDirty</span><span class="p">(</span><span class="n">Buffer</span> <span class="n">buffer</span><span class="p">)</span>
-<span class="p">{</span>
-    <span class="c1">// 获取对应的buffer头部
-</span><span class="c1"></span>    <span class="n">bufHdr</span> <span class="o">=</span> <span class="n">GetBufferDescriptor</span><span class="p">(</span><span class="n">buffer</span> <span class="o">-</span> <span class="mi">1</span><span class="p">);</span>
-    <span class="c1">// 获取state属性
-</span><span class="c1"></span>    <span class="n">old_buf_state</span> <span class="o">=</span> <span class="n">pg_atomic_read_u32</span><span class="p">(</span><span class="o">&amp;</span><span class="n">bufHdr</span><span class="o">-&gt;</span><span class="n">state</span><span class="p">);</span>
-    <span class="c1">// 循环等待锁释放，在获取锁成功后，会设置dirty位
-</span><span class="c1"></span>    <span class="k">for</span> <span class="p">(;;)</span>
-	<span class="p">{</span>
-        <span class="c1">// 如果锁被别人占用，那么等待锁的释放
-</span><span class="c1"></span>        <span class="k">if</span> <span class="p">(</span><span class="n">old_buf_state</span> <span class="o">&amp;</span> <span class="n">BM_LOCKED</span><span class="p">)</span>
-            <span class="n">old_buf_state</span> <span class="o">=</span> <span class="n">WaitBufHdrUnlocked</span><span class="p">(</span><span class="n">bufHdr</span><span class="p">);</span>
-        <span class="c1">// 设置标记位
-</span><span class="c1"></span>        <span class="n">buf_state</span> <span class="o">=</span> <span class="n">old_buf_state</span><span class="p">;</span>
-        <span class="n">buf_state</span> <span class="o">|=</span> <span class="n">BM_DIRTY</span> <span class="o">|</span> <span class="n">BM_JUST_DIRTIED</span><span class="p">;</span>
-        <span class="c1">// 使用cas操作来原子性的设置标记位，如果成功则退出，如果失败则重试
-</span><span class="c1"></span>        <span class="k">if</span> <span class="p">(</span><span class="n">pg_atomic_compare_exchange_u32</span><span class="p">(</span><span class="o">&amp;</span><span class="n">bufHdr</span><span class="o">-&gt;</span><span class="n">state</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">old_buf_state</span><span class="p">,</span> <span class="n">buf_state</span><span class="p">))</span>
-            <span class="k">break</span><span class="p">;</span>
-    <span class="p">}</span>
-<span class="p">}</span>
-</code></pre></td></tr></table></div>
+<pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="line"><span class="cl"><span class="kt">void</span> <span class="nf">MarkBufferDirty</span><span class="p">(</span><span class="n">Buffer</span> <span class="n">buffer</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// 获取对应的buffer头部
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="n">bufHdr</span> <span class="o">=</span> <span class="nf">GetBufferDescriptor</span><span class="p">(</span><span class="n">buffer</span> <span class="o">-</span> <span class="mi">1</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// 获取state属性
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="n">old_buf_state</span> <span class="o">=</span> <span class="nf">pg_atomic_read_u32</span><span class="p">(</span><span class="o">&amp;</span><span class="n">bufHdr</span><span class="o">-&gt;</span><span class="n">state</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// 循环等待锁释放，在获取锁成功后，会设置dirty位
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="k">for</span> <span class="p">(;;)</span>
+</span></span><span class="line"><span class="cl">	<span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="c1">// 如果锁被别人占用，那么等待锁的释放
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>        <span class="k">if</span> <span class="p">(</span><span class="n">old_buf_state</span> <span class="o">&amp;</span> <span class="n">BM_LOCKED</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">            <span class="n">old_buf_state</span> <span class="o">=</span> <span class="nf">WaitBufHdrUnlocked</span><span class="p">(</span><span class="n">bufHdr</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">        <span class="c1">// 设置标记位
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>        <span class="n">buf_state</span> <span class="o">=</span> <span class="n">old_buf_state</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">        <span class="n">buf_state</span> <span class="o">|=</span> <span class="n">BM_DIRTY</span> <span class="o">|</span> <span class="n">BM_JUST_DIRTIED</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">        <span class="c1">// 使用cas操作来原子性的设置标记位，如果成功则退出，如果失败则重试
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>        <span class="k">if</span> <span class="p">(</span><span class="nf">pg_atomic_compare_exchange_u32</span><span class="p">(</span><span class="o">&amp;</span><span class="n">bufHdr</span><span class="o">-&gt;</span><span class="n">state</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">old_buf_state</span><span class="p">,</span> <span class="n">buf_state</span><span class="p">))</span>
+</span></span><span class="line"><span class="cl">            <span class="k">break</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table></div>
 </div>
 </div><h3 id="缓存读写锁"><a href="#缓存读写锁" class="anchor-link"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon anchor-icon"><path d="M326.612 185.391c59.747 59.809 58.927 155.698.36 214.59-.11.12-.24.25-.36.37l-67.2 67.2c-59.27 59.27-155.699 59.262-214.96 0-59.27-59.26-59.27-155.7 0-214.96l37.106-37.106c9.84-9.84 26.786-3.3 27.294 10.606.648 17.722 3.826 35.527 9.69 52.721 1.986 5.822.567 12.262-3.783 16.612l-13.087 13.087c-28.026 28.026-28.905 73.66-1.155 101.96 28.024 28.579 74.086 28.749 102.325.51l67.2-67.19c28.191-28.191 28.073-73.757 0-101.83-3.701-3.694-7.429-6.564-10.341-8.569a16.037 16.037 0 0 1-6.947-12.606c-.396-10.567 3.348-21.456 11.698-29.806l21.054-21.055c5.521-5.521 14.182-6.199 20.584-1.731a152.482 152.482 0 0 1 20.522 17.197zM467.547 44.449c-59.261-59.262-155.69-59.27-214.96 0l-67.2 67.2c-.12.12-.25.25-.36.37-58.566 58.892-59.387 154.781.36 214.59a152.454 152.454 0 0 0 20.521 17.196c6.402 4.468 15.064 3.789 20.584-1.731l21.054-21.055c8.35-8.35 12.094-19.239 11.698-29.806a16.037 16.037 0 0 0-6.947-12.606c-2.912-2.005-6.64-4.875-10.341-8.569-28.073-28.073-28.191-73.639 0-101.83l67.2-67.19c28.239-28.239 74.3-28.069 102.325.51 27.75 28.3 26.872 73.934-1.155 101.96l-13.087 13.087c-4.35 4.35-5.769 10.79-3.783 16.612 5.864 17.194 9.042 34.999 9.69 52.721.509 13.906 17.454 20.446 27.294 10.606l37.106-37.106c59.271-59.259 59.271-155.699.001-214.959z"/></svg></a>缓存读写锁</h3>
 <p>每个缓存都有一个读写锁在保护，通过 buffer id 就可以获取。使用方法如下：</p>
@@ -616,12 +616,12 @@
 </span><span class="lnt">5
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="cp">#define BufferDescriptorGetContentLock(bdesc)   ((LWLock*) (&amp;(bdesc)-&gt;content_lock))
-</span><span class="cp"></span><span class="n">BufferDesc</span> <span class="n">buffer</span> <span class="o">=</span> <span class="n">aaa</span><span class="p">;</span>
-<span class="n">LWLockAcquire</span><span class="p">(</span><span class="n">LWLock</span> <span class="o">*</span><span class="n">lock</span><span class="p">,</span> <span class="n">LWLockMode</span> <span class="n">mode</span><span class="p">);</span>
-
-<span class="n">LWLockRelease</span><span class="p">(</span><span class="n">LWLock</span> <span class="o">*</span><span class="n">lock</span><span class="p">);</span>
-</code></pre></td></tr></table></div>
+<pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="line"><span class="cl"><span class="cp">#define BufferDescriptorGetContentLock(bdesc)   ((LWLock*) (&amp;(bdesc)-&gt;content_lock))
+</span></span></span><span class="line"><span class="cl"><span class="cp"></span><span class="n">BufferDesc</span> <span class="n">buffer</span> <span class="o">=</span> <span class="n">aaa</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="nf">LWLockAcquire</span><span class="p">(</span><span class="n">LWLock</span> <span class="o">*</span><span class="n">lock</span><span class="p">,</span> <span class="n">LWLockMode</span> <span class="n">mode</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="nf">LWLockRelease</span><span class="p">(</span><span class="n">LWLock</span> <span class="o">*</span><span class="n">lock</span><span class="p">);</span>
+</span></span></code></pre></td></tr></table></div>
 </div>
 </div><h3 id="缓存-io-锁"><a href="#缓存-io-锁" class="anchor-link"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon anchor-icon"><path d="M326.612 185.391c59.747 59.809 58.927 155.698.36 214.59-.11.12-.24.25-.36.37l-67.2 67.2c-59.27 59.27-155.699 59.262-214.96 0-59.27-59.26-59.27-155.7 0-214.96l37.106-37.106c9.84-9.84 26.786-3.3 27.294 10.606.648 17.722 3.826 35.527 9.69 52.721 1.986 5.822.567 12.262-3.783 16.612l-13.087 13.087c-28.026 28.026-28.905 73.66-1.155 101.96 28.024 28.579 74.086 28.749 102.325.51l67.2-67.19c28.191-28.191 28.073-73.757 0-101.83-3.701-3.694-7.429-6.564-10.341-8.569a16.037 16.037 0 0 1-6.947-12.606c-.396-10.567 3.348-21.456 11.698-29.806l21.054-21.055c5.521-5.521 14.182-6.199 20.584-1.731a152.482 152.482 0 0 1 20.522 17.197zM467.547 44.449c-59.261-59.262-155.69-59.27-214.96 0l-67.2 67.2c-.12.12-.25.25-.36.37-58.566 58.892-59.387 154.781.36 214.59a152.454 152.454 0 0 0 20.521 17.196c6.402 4.468 15.064 3.789 20.584-1.731l21.054-21.055c8.35-8.35 12.094-19.239 11.698-29.806a16.037 16.037 0 0 0-6.947-12.606c-2.912-2.005-6.64-4.875-10.341-8.569-28.073-28.073-28.191-73.639 0-101.83l67.2-67.19c28.239-28.239 74.3-28.069 102.325.51 27.75 28.3 26.872 73.934-1.155 101.96l-13.087 13.087c-4.35 4.35-5.769 10.79-3.783 16.612 5.864 17.194 9.042 34.999 9.69 52.721.509 13.906 17.454 20.446 27.294 10.606l37.106-37.106c59.271-59.259 59.271-155.699.001-214.959z"/></svg></a>缓存 IO 锁</h3>
 <p>下面展示了与缓存io操作相关的全局变量</p>
@@ -632,10 +632,10 @@
 </span><span class="lnt">3
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="n">LWLockMinimallyPadded</span> <span class="o">*</span><span class="n">BufferIOLWLockArray</span><span class="p">;</span> <span class="c1">// LWLock 数组，索引同buffer数组一致
-</span><span class="c1"></span><span class="k">static</span> <span class="n">BufferDesc</span> <span class="o">*</span><span class="n">InProgressBuf</span> <span class="o">=</span> <span class="nb">NULL</span><span class="p">;</span>  <span class="c1">// 正在进行io的buffer，postgresql同时只能操作一个buffer进行io操作
-</span><span class="c1"></span><span class="k">static</span> <span class="kt">bool</span> <span class="n">IsForInput</span><span class="p">;</span> <span class="c1">// 正在进行io操作的类型，表示是从磁盘读取数据到缓存，还是从缓存写入数据到磁盘
-</span></code></pre></td></tr></table></div>
+<pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="line"><span class="cl"><span class="n">LWLockMinimallyPadded</span> <span class="o">*</span><span class="n">BufferIOLWLockArray</span><span class="p">;</span> <span class="c1">// LWLock 数组，索引同buffer数组一致
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="k">static</span> <span class="n">BufferDesc</span> <span class="o">*</span><span class="n">InProgressBuf</span> <span class="o">=</span> <span class="nb">NULL</span><span class="p">;</span>  <span class="c1">// 正在进行io的buffer，postgresql同时只能操作一个buffer进行io操作
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="k">static</span> <span class="kt">bool</span> <span class="n">IsForInput</span><span class="p">;</span> <span class="c1">// 正在进行io操作的类型，表示是从磁盘读取数据到缓存，还是从缓存写入数据到磁盘
+</span></span></span></code></pre></td></tr></table></div>
 </div>
 </div><p>下面展示了缓存io锁的相关操作</p>
 <div class="highlight"><div class="chroma">
@@ -654,25 +654,23 @@
 </span><span class="lnt">12
 </span><span class="lnt">13
 </span><span class="lnt">14
-</span><span class="lnt">15
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="c1">// 阻塞等待 IO_IN_PROGRESS 标记位清除
-</span><span class="c1"></span><span class="k">static</span> <span class="kt">void</span> <span class="nf">WaitIO</span><span class="p">(</span><span class="n">BufferDesc</span> <span class="o">*</span><span class="n">buf</span><span class="p">);</span>
-
-<span class="c1">// 执行io操作，参数forInput为true，表示从磁盘读取到缓存。参数为false，表示将缓存写入到磁盘
-</span><span class="c1">// 返回值为false表示其他进程已经完成io操作，返回true表示成功设置了io标记位，需要自己完成io操作
-</span><span class="c1"></span><span class="k">static</span> <span class="kt">bool</span> <span class="nf">StartBufferIO</span><span class="p">(</span><span class="n">BufferDesc</span> <span class="o">*</span><span class="n">buf</span><span class="p">,</span> <span class="kt">bool</span> <span class="n">forInput</span><span class="p">);</span>
-
-<span class="c1">// 清除IO_IN_PROGRESS和IO_ERROR标记位，并且设置InProgressBuf为null
-</span><span class="c1">// 参数 clear_dirty 如果为true，它会清除DIRTY标记位（前提是没有设置JUST_DIRTIED标记位）
-</span><span class="c1">// 并且设置全局变量InProgressBuf为null，并且释放lw锁
-</span><span class="c1"></span><span class="k">static</span> <span class="kt">void</span> <span class="nf">TerminateBufferIO</span><span class="p">(</span><span class="n">BufferDesc</span> <span class="o">*</span><span class="n">buf</span><span class="p">,</span> <span class="kt">bool</span> <span class="n">clear_dirty</span><span class="p">,</span> <span class="n">uint32</span> <span class="n">set_flag_bits</span><span class="p">);</span>
-
-<span class="c1">// 中断io操作，这里会设置IO_ERROR标记位
-</span><span class="c1"></span><span class="kt">void</span> <span class="nf">AbortBufferIO</span><span class="p">(</span><span class="kt">void</span><span class="p">);</span>
-
-</code></pre></td></tr></table></div>
+<pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="line"><span class="cl"><span class="c1">// 阻塞等待 IO_IN_PROGRESS 标记位清除
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="k">static</span> <span class="kt">void</span> <span class="nf">WaitIO</span><span class="p">(</span><span class="n">BufferDesc</span> <span class="o">*</span><span class="n">buf</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1">// 执行io操作，参数forInput为true，表示从磁盘读取到缓存。参数为false，表示将缓存写入到磁盘
+</span></span></span><span class="line"><span class="cl"><span class="c1">// 返回值为false表示其他进程已经完成io操作，返回true表示成功设置了io标记位，需要自己完成io操作
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="k">static</span> <span class="kt">bool</span> <span class="nf">StartBufferIO</span><span class="p">(</span><span class="n">BufferDesc</span> <span class="o">*</span><span class="n">buf</span><span class="p">,</span> <span class="kt">bool</span> <span class="n">forInput</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1">// 清除IO_IN_PROGRESS和IO_ERROR标记位，并且设置InProgressBuf为null
+</span></span></span><span class="line"><span class="cl"><span class="c1">// 参数 clear_dirty 如果为true，它会清除DIRTY标记位（前提是没有设置JUST_DIRTIED标记位）
+</span></span></span><span class="line"><span class="cl"><span class="c1">// 并且设置全局变量InProgressBuf为null，并且释放lw锁
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="k">static</span> <span class="kt">void</span> <span class="nf">TerminateBufferIO</span><span class="p">(</span><span class="n">BufferDesc</span> <span class="o">*</span><span class="n">buf</span><span class="p">,</span> <span class="kt">bool</span> <span class="n">clear_dirty</span><span class="p">,</span> <span class="n">uint32</span> <span class="n">set_flag_bits</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1">// 中断io操作，这里会设置IO_ERROR标记位
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="kt">void</span> <span class="nf">AbortBufferIO</span><span class="p">(</span><span class="kt">void</span><span class="p">);</span>
+</span></span></code></pre></td></tr></table></div>
 </div>
 </div><p>下面以将缓存写到磁盘为例，展示了io锁的用法</p>
 <div class="highlight"><div class="chroma">
@@ -697,31 +695,29 @@
 </span><span class="lnt">18
 </span><span class="lnt">19
 </span><span class="lnt">20
-</span><span class="lnt">21
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="k">static</span> <span class="kt">void</span> <span class="nf">FlushBuffer</span><span class="p">(</span><span class="n">BufferDesc</span> <span class="o">*</span><span class="n">buf</span><span class="p">,</span> <span class="n">SMgrRelation</span> <span class="n">reln</span><span class="p">)</span>
-<span class="p">{</span>
-    <span class="c1">// 获取io对应的lw锁
-</span><span class="c1"></span>    <span class="n">StartBufferIO</span><span class="p">(</span><span class="n">buf</span><span class="p">,</span> <span class="nb">false</span><span class="p">);</span>
-    <span class="c1">// 清除JUST_DIRTIED标记位
-</span><span class="c1"></span>    <span class="n">buf_state</span> <span class="o">=</span> <span class="n">LockBufHdr</span><span class="p">(</span><span class="n">buf</span><span class="p">);</span>
-    <span class="n">buf_state</span> <span class="o">&amp;=</span> <span class="o">~</span><span class="n">BM_JUST_DIRTIED</span><span class="p">;</span>
-	<span class="n">UnlockBufHdr</span><span class="p">(</span><span class="n">buf</span><span class="p">,</span> <span class="n">buf_state</span><span class="p">);</span>
-    
-    <span class="c1">// 如果设置了PERMANENT标记位，那么需要写入xlog文件
-</span><span class="c1"></span>    <span class="k">if</span> <span class="p">(</span><span class="n">buf_state</span> <span class="o">&amp;</span> <span class="n">BM_PERMANENT</span><span class="p">)</span>
-		<span class="n">XLogFlush</span><span class="p">(</span><span class="n">recptr</span><span class="p">);</span>
-    <span class="c1">// 从buffer block数组中找到数据，并且拷贝数据
-</span><span class="c1"></span>    <span class="n">bufBlock</span> <span class="o">=</span> <span class="n">BufHdrGetBlock</span><span class="p">(</span><span class="n">buf</span><span class="p">);</span>
-    <span class="n">bufToWrite</span> <span class="o">=</span> <span class="n">PageSetChecksumCopy</span><span class="p">((</span><span class="n">Page</span><span class="p">)</span> <span class="n">bufBlock</span><span class="p">,</span> <span class="n">buf</span><span class="o">-&gt;</span><span class="n">tag</span><span class="p">.</span><span class="n">blockNum</span><span class="p">);</span>
-    <span class="c1">// 写入磁盘
-</span><span class="c1"></span>    <span class="n">smgrwrite</span><span class="p">(</span><span class="n">reln</span><span class="p">,</span> <span class="n">buf</span><span class="o">-&gt;</span><span class="n">tag</span><span class="p">.</span><span class="n">forkNum</span><span class="p">,</span> <span class="n">buf</span><span class="o">-&gt;</span><span class="n">tag</span><span class="p">.</span><span class="n">blockNum</span><span class="p">,</span> <span class="n">bufToWrite</span><span class="p">,</span> <span class="nb">false</span><span class="p">);</span>
-    <span class="c1">// 清除io标记位和dirty标记位
-</span><span class="c1"></span>    <span class="n">TerminateBufferIO</span><span class="p">(</span><span class="n">buf</span><span class="p">,</span> <span class="nb">true</span><span class="p">,</span> <span class="mi">0</span><span class="p">);</span>
-<span class="p">}</span>
-
-</code></pre></td></tr></table></div>
+<pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="line"><span class="cl"><span class="k">static</span> <span class="kt">void</span> <span class="nf">FlushBuffer</span><span class="p">(</span><span class="n">BufferDesc</span> <span class="o">*</span><span class="n">buf</span><span class="p">,</span> <span class="n">SMgrRelation</span> <span class="n">reln</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// 获取io对应的lw锁
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="nf">StartBufferIO</span><span class="p">(</span><span class="n">buf</span><span class="p">,</span> <span class="nb">false</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// 清除JUST_DIRTIED标记位
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="n">buf_state</span> <span class="o">=</span> <span class="nf">LockBufHdr</span><span class="p">(</span><span class="n">buf</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">    <span class="n">buf_state</span> <span class="o">&amp;=</span> <span class="o">~</span><span class="n">BM_JUST_DIRTIED</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">	<span class="nf">UnlockBufHdr</span><span class="p">(</span><span class="n">buf</span><span class="p">,</span> <span class="n">buf_state</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">    
+</span></span><span class="line"><span class="cl">    <span class="c1">// 如果设置了PERMANENT标记位，那么需要写入xlog文件
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="k">if</span> <span class="p">(</span><span class="n">buf_state</span> <span class="o">&amp;</span> <span class="n">BM_PERMANENT</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">		<span class="nf">XLogFlush</span><span class="p">(</span><span class="n">recptr</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// 从buffer block数组中找到数据，并且拷贝数据
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="n">bufBlock</span> <span class="o">=</span> <span class="nf">BufHdrGetBlock</span><span class="p">(</span><span class="n">buf</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">    <span class="n">bufToWrite</span> <span class="o">=</span> <span class="nf">PageSetChecksumCopy</span><span class="p">((</span><span class="n">Page</span><span class="p">)</span> <span class="n">bufBlock</span><span class="p">,</span> <span class="n">buf</span><span class="o">-&gt;</span><span class="n">tag</span><span class="p">.</span><span class="n">blockNum</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// 写入磁盘
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="nf">smgrwrite</span><span class="p">(</span><span class="n">reln</span><span class="p">,</span> <span class="n">buf</span><span class="o">-&gt;</span><span class="n">tag</span><span class="p">.</span><span class="n">forkNum</span><span class="p">,</span> <span class="n">buf</span><span class="o">-&gt;</span><span class="n">tag</span><span class="p">.</span><span class="n">blockNum</span><span class="p">,</span> <span class="n">bufToWrite</span><span class="p">,</span> <span class="nb">false</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// 清除io标记位和dirty标记位
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="nf">TerminateBufferIO</span><span class="p">(</span><span class="n">buf</span><span class="p">,</span> <span class="nb">true</span><span class="p">,</span> <span class="mi">0</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table></div>
 </div>
 </div><h2 id="全部缓存读取"><a href="#全部缓存读取" class="anchor-link"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon anchor-icon"><path d="M326.612 185.391c59.747 59.809 58.927 155.698.36 214.59-.11.12-.24.25-.36.37l-67.2 67.2c-59.27 59.27-155.699 59.262-214.96 0-59.27-59.26-59.27-155.7 0-214.96l37.106-37.106c9.84-9.84 26.786-3.3 27.294 10.606.648 17.722 3.826 35.527 9.69 52.721 1.986 5.822.567 12.262-3.783 16.612l-13.087 13.087c-28.026 28.026-28.905 73.66-1.155 101.96 28.024 28.579 74.086 28.749 102.325.51l67.2-67.19c28.191-28.191 28.073-73.757 0-101.83-3.701-3.694-7.429-6.564-10.341-8.569a16.037 16.037 0 0 1-6.947-12.606c-.396-10.567 3.348-21.456 11.698-29.806l21.054-21.055c5.521-5.521 14.182-6.199 20.584-1.731a152.482 152.482 0 0 1 20.522 17.197zM467.547 44.449c-59.261-59.262-155.69-59.27-214.96 0l-67.2 67.2c-.12.12-.25.25-.36.37-58.566 58.892-59.387 154.781.36 214.59a152.454 152.454 0 0 0 20.521 17.196c6.402 4.468 15.064 3.789 20.584-1.731l21.054-21.055c8.35-8.35 12.094-19.239 11.698-29.806a16.037 16.037 0 0 0-6.947-12.606c-2.912-2.005-6.64-4.875-10.341-8.569-28.073-28.073-28.191-73.639 0-101.83l67.2-67.19c28.239-28.239 74.3-28.069 102.325.51 27.75 28.3 26.872 73.934-1.155 101.96l-13.087 13.087c-4.35 4.35-5.769 10.79-3.783 16.612 5.864 17.194 9.042 34.999 9.69 52.721.509 13.906 17.454 20.446 27.294 10.606l37.106-37.106c59.271-59.259 59.271-155.699.001-214.959z"/></svg></a>全部缓存读取</h2>
 <p><code>ReadBuffer_common</code>函数负责处理全局缓存和本地缓存，</p>
@@ -730,14 +726,12 @@
 <pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
-</span><span class="lnt">4
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="k">static</span> <span class="n">Buffer</span> <span class="nf">ReadBuffer_common</span><span class="p">(</span><span class="n">SMgrRelation</span> <span class="n">smgr</span><span class="p">,</span> <span class="kt">char</span> <span class="n">relpersistence</span><span class="p">,</span> <span class="n">ForkNumber</span> <span class="n">forkNum</span><span class="p">,</span>
-				  <span class="n">BlockNumber</span> <span class="n">blockNum</span><span class="p">,</span> <span class="n">ReadBufferMode</span> <span class="n">mode</span><span class="p">,</span>
-				  <span class="n">BufferAccessStrategy</span> <span class="n">strategy</span><span class="p">,</span> <span class="kt">bool</span> <span class="o">*</span><span class="n">hit</span><span class="p">);</span>
-
-</code></pre></td></tr></table></div>
+<pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="line"><span class="cl"><span class="k">static</span> <span class="n">Buffer</span> <span class="nf">ReadBuffer_common</span><span class="p">(</span><span class="n">SMgrRelation</span> <span class="n">smgr</span><span class="p">,</span> <span class="kt">char</span> <span class="n">relpersistence</span><span class="p">,</span> <span class="n">ForkNumber</span> <span class="n">forkNum</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">				  <span class="n">BlockNumber</span> <span class="n">blockNum</span><span class="p">,</span> <span class="n">ReadBufferMode</span> <span class="n">mode</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">				  <span class="n">BufferAccessStrategy</span> <span class="n">strategy</span><span class="p">,</span> <span class="kt">bool</span> <span class="o">*</span><span class="n">hit</span><span class="p">);</span>
+</span></span></code></pre></td></tr></table></div>
 </div>
 </div><p>下面将它的代码做简化，只负责出路全局缓存，并且省略了异常处理。</p>
 <div class="highlight"><div class="chroma">
@@ -800,69 +794,67 @@
 </span><span class="lnt">56
 </span><span class="lnt">57
 </span><span class="lnt">58
-</span><span class="lnt">59
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="c1">// 如果参数blockNum等于特殊值P_NEW，表示需要新增数据块
-</span><span class="c1"></span><span class="n">isExtend</span> <span class="o">=</span> <span class="p">(</span><span class="n">blockNum</span> <span class="o">==</span> <span class="n">P_NEW</span><span class="p">);</span>
-<span class="k">if</span> <span class="p">(</span><span class="n">isExtend</span><span class="p">)</span>
-    <span class="c1">// 获取新的blockNum
-</span><span class="c1"></span>    <span class="n">blockNum</span> <span class="o">=</span> <span class="n">smgrnblocks</span><span class="p">(</span><span class="n">smgr</span><span class="p">,</span> <span class="n">forkNum</span><span class="p">);</span>
-<span class="c1">// 在缓存中查找是否有对应的数据
-</span><span class="c1"></span><span class="kt">bool</span> <span class="n">found</span><span class="p">;</span>
-<span class="n">bufHdr</span> <span class="o">=</span> <span class="n">BufferAlloc</span><span class="p">(</span><span class="n">smgr</span><span class="p">,</span> <span class="n">relpersistence</span><span class="p">,</span> <span class="n">forkNum</span><span class="p">,</span> <span class="n">blockNum</span><span class="p">,</span> <span class="n">strategy</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">found</span><span class="p">);</span>
-<span class="k">if</span> <span class="p">(</span><span class="n">found</span><span class="p">)</span>
-<span class="p">{</span>
-    <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="n">isExtend</span><span class="p">)</span>
-    <span class="p">{</span>
-        <span class="c1">// 在缓存中找到了，根据ReadBufferMode参数，执行不同操作
-</span><span class="c1"></span>        <span class="k">if</span> <span class="p">(</span><span class="n">mode</span> <span class="o">==</span> <span class="n">RBM_ZERO_AND_LOCK</span><span class="p">)</span>
-            <span class="c1">// 获取写锁
-</span><span class="c1"></span>            <span class="n">LWLockAcquire</span><span class="p">(</span><span class="n">BufferDescriptorGetContentLock</span><span class="p">(</span><span class="n">bufHdr</span><span class="p">),</span> <span class="n">LW_EXCLUSIVE</span><span class="p">);</span>
-        <span class="k">if</span> <span class="p">(</span><span class="n">mode</span> <span class="o">==</span> <span class="n">RBM_ZERO_AND_CLEANUP_LOCK</span><span class="p">)</span>
-            <span class="c1">// 获取写锁，准备删除
-</span><span class="c1"></span>            <span class="n">LockBufferForCleanup</span><span class="p">(</span><span class="n">BufferDescriptorGetBuffer</span><span class="p">(</span><span class="n">bufHdr</span><span class="p">));</span>
-        <span class="k">return</span> <span class="nf">BufferDescriptorGetBuffer</span><span class="p">(</span><span class="n">bufHdr</span><span class="p">);</span>
-    <span class="p">}</span>
-    <span class="c1">// 这种情况表示我们本来创建新的数据块，但是已经存在缓存中，并且valid标记位为1。
-</span><span class="c1"></span>    <span class="c1">// 这种情况属于异常情况，需要清除valid标记位，并且执行io操作。
-</span><span class="c1"></span>    <span class="k">do</span>
-    <span class="p">{</span>
-        <span class="n">uint32</span> <span class="n">buf_state</span> <span class="o">=</span> <span class="n">LockBufHdr</span><span class="p">(</span><span class="n">bufHdr</span><span class="p">);</span>
-        <span class="n">Assert</span><span class="p">(</span><span class="n">buf_state</span> <span class="o">&amp;</span> <span class="n">BM_VALID</span><span class="p">);</span>
-        <span class="n">buf_state</span> <span class="o">&amp;=</span> <span class="o">~</span><span class="n">BM_VALID</span><span class="p">;</span>
-        <span class="n">UnlockBufHdr</span><span class="p">(</span><span class="n">bufHdr</span><span class="p">,</span> <span class="n">buf_state</span><span class="p">);</span>
-    <span class="p">}</span> <span class="k">while</span> <span class="p">(</span><span class="o">!</span><span class="n">StartBufferIO</span><span class="p">(</span><span class="n">bufHdr</span><span class="p">,</span> <span class="nb">true</span><span class="p">));</span>
-<span class="p">}</span>
-
-<span class="c1">// 找到缓存数据位置
-</span><span class="c1"></span><span class="n">bufBlock</span> <span class="o">=</span> <span class="n">BufHdrGetBlock</span><span class="p">(</span><span class="n">bufHdr</span><span class="p">);</span>
-<span class="k">if</span> <span class="p">(</span><span class="n">isExtend</span><span class="p">)</span>
-<span class="p">{</span>
-    <span class="c1">// 将缓存置零，并且写入底层文件的新增数据块
-</span><span class="c1"></span>    <span class="n">MemSet</span><span class="p">((</span><span class="kt">char</span> <span class="o">*</span><span class="p">)</span> <span class="n">bufBlock</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">BLCKSZ</span><span class="p">);</span>
-    <span class="n">smgrextend</span><span class="p">(</span><span class="n">smgr</span><span class="p">,</span> <span class="n">forkNum</span><span class="p">,</span> <span class="n">blockNum</span><span class="p">,</span> <span class="p">(</span><span class="kt">char</span> <span class="o">*</span><span class="p">)</span> <span class="n">bufBlock</span><span class="p">,</span> <span class="nb">false</span><span class="p">);</span>
-<span class="p">}</span>
-<span class="k">else</span>
-<span class="p">{</span>
-    <span class="k">if</span> <span class="p">(</span><span class="n">mode</span> <span class="o">==</span> <span class="n">RBM_ZERO_AND_LOCK</span> <span class="o">||</span> <span class="n">mode</span> <span class="o">==</span> <span class="n">RBM_ZERO_AND_CLEANUP_LOCK</span><span class="p">)</span>
-        <span class="c1">// 将缓存置零
-</span><span class="c1"></span>        <span class="n">MemSet</span><span class="p">((</span><span class="kt">char</span> <span class="o">*</span><span class="p">)</span> <span class="n">bufBlock</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">BLCKSZ</span><span class="p">);</span>
-    <span class="k">else</span>
-        <span class="c1">// 从文件中读取数据到缓存
-</span><span class="c1"></span>    	<span class="n">smgrread</span><span class="p">(</span><span class="n">smgr</span><span class="p">,</span> <span class="n">forkNum</span><span class="p">,</span> <span class="n">blockNum</span><span class="p">,</span> <span class="p">(</span><span class="kt">char</span> <span class="o">*</span><span class="p">)</span> <span class="n">bufBlock</span><span class="p">);</span>
-<span class="p">}</span>
-<span class="k">if</span> <span class="p">((</span><span class="n">mode</span> <span class="o">==</span> <span class="n">RBM_ZERO_AND_LOCK</span> <span class="o">||</span> <span class="n">mode</span> <span class="o">==</span> <span class="n">RBM_ZERO_AND_CLEANUP_LOCK</span><span class="p">))</span>
-<span class="p">{</span>
-    <span class="c1">// 获取写锁
-</span><span class="c1"></span>    <span class="n">LWLockAcquire</span><span class="p">(</span><span class="n">BufferDescriptorGetContentLock</span><span class="p">(</span><span class="n">bufHdr</span><span class="p">),</span> <span class="n">LW_EXCLUSIVE</span><span class="p">);</span>
-<span class="p">}</span>
-<span class="c1">// 结束io操作，这里会设置valid标记位
-</span><span class="c1"></span><span class="n">TerminateBufferIO</span><span class="p">(</span><span class="n">bufHdr</span><span class="p">,</span> <span class="nb">false</span><span class="p">,</span> <span class="n">BM_VALID</span><span class="p">);</span>
-<span class="c1">// 返回buffer
-</span><span class="c1"></span><span class="k">return</span> <span class="nf">BufferDescriptorGetBuffer</span><span class="p">(</span><span class="n">bufHdr</span><span class="p">);</span>
-
-</code></pre></td></tr></table></div>
+<pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="line"><span class="cl"><span class="c1">// 如果参数blockNum等于特殊值P_NEW，表示需要新增数据块
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="n">isExtend</span> <span class="o">=</span> <span class="p">(</span><span class="n">blockNum</span> <span class="o">==</span> <span class="n">P_NEW</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl"><span class="k">if</span> <span class="p">(</span><span class="n">isExtend</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// 获取新的blockNum
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="n">blockNum</span> <span class="o">=</span> <span class="nf">smgrnblocks</span><span class="p">(</span><span class="n">smgr</span><span class="p">,</span> <span class="n">forkNum</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl"><span class="c1">// 在缓存中查找是否有对应的数据
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="kt">bool</span> <span class="n">found</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="n">bufHdr</span> <span class="o">=</span> <span class="nf">BufferAlloc</span><span class="p">(</span><span class="n">smgr</span><span class="p">,</span> <span class="n">relpersistence</span><span class="p">,</span> <span class="n">forkNum</span><span class="p">,</span> <span class="n">blockNum</span><span class="p">,</span> <span class="n">strategy</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">found</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl"><span class="k">if</span> <span class="p">(</span><span class="n">found</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="n">isExtend</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="c1">// 在缓存中找到了，根据ReadBufferMode参数，执行不同操作
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>        <span class="k">if</span> <span class="p">(</span><span class="n">mode</span> <span class="o">==</span> <span class="n">RBM_ZERO_AND_LOCK</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">            <span class="c1">// 获取写锁
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>            <span class="nf">LWLockAcquire</span><span class="p">(</span><span class="nf">BufferDescriptorGetContentLock</span><span class="p">(</span><span class="n">bufHdr</span><span class="p">),</span> <span class="n">LW_EXCLUSIVE</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">        <span class="k">if</span> <span class="p">(</span><span class="n">mode</span> <span class="o">==</span> <span class="n">RBM_ZERO_AND_CLEANUP_LOCK</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">            <span class="c1">// 获取写锁，准备删除
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>            <span class="nf">LockBufferForCleanup</span><span class="p">(</span><span class="nf">BufferDescriptorGetBuffer</span><span class="p">(</span><span class="n">bufHdr</span><span class="p">));</span>
+</span></span><span class="line"><span class="cl">        <span class="k">return</span> <span class="nf">BufferDescriptorGetBuffer</span><span class="p">(</span><span class="n">bufHdr</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// 这种情况表示我们本来创建新的数据块，但是已经存在缓存中，并且valid标记位为1。
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="c1">// 这种情况属于异常情况，需要清除valid标记位，并且执行io操作。
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="k">do</span>
+</span></span><span class="line"><span class="cl">    <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="n">uint32</span> <span class="n">buf_state</span> <span class="o">=</span> <span class="nf">LockBufHdr</span><span class="p">(</span><span class="n">bufHdr</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">        <span class="nf">Assert</span><span class="p">(</span><span class="n">buf_state</span> <span class="o">&amp;</span> <span class="n">BM_VALID</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">        <span class="n">buf_state</span> <span class="o">&amp;=</span> <span class="o">~</span><span class="n">BM_VALID</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">        <span class="nf">UnlockBufHdr</span><span class="p">(</span><span class="n">bufHdr</span><span class="p">,</span> <span class="n">buf_state</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span> <span class="k">while</span> <span class="p">(</span><span class="o">!</span><span class="nf">StartBufferIO</span><span class="p">(</span><span class="n">bufHdr</span><span class="p">,</span> <span class="nb">true</span><span class="p">));</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1">// 找到缓存数据位置
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="n">bufBlock</span> <span class="o">=</span> <span class="nf">BufHdrGetBlock</span><span class="p">(</span><span class="n">bufHdr</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl"><span class="k">if</span> <span class="p">(</span><span class="n">isExtend</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// 将缓存置零，并且写入底层文件的新增数据块
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="nf">MemSet</span><span class="p">((</span><span class="kt">char</span> <span class="o">*</span><span class="p">)</span> <span class="n">bufBlock</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">BLCKSZ</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">    <span class="nf">smgrextend</span><span class="p">(</span><span class="n">smgr</span><span class="p">,</span> <span class="n">forkNum</span><span class="p">,</span> <span class="n">blockNum</span><span class="p">,</span> <span class="p">(</span><span class="kt">char</span> <span class="o">*</span><span class="p">)</span> <span class="n">bufBlock</span><span class="p">,</span> <span class="nb">false</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="k">else</span>
+</span></span><span class="line"><span class="cl"><span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="k">if</span> <span class="p">(</span><span class="n">mode</span> <span class="o">==</span> <span class="n">RBM_ZERO_AND_LOCK</span> <span class="o">||</span> <span class="n">mode</span> <span class="o">==</span> <span class="n">RBM_ZERO_AND_CLEANUP_LOCK</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">        <span class="c1">// 将缓存置零
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>        <span class="nf">MemSet</span><span class="p">((</span><span class="kt">char</span> <span class="o">*</span><span class="p">)</span> <span class="n">bufBlock</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">BLCKSZ</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">    <span class="k">else</span>
+</span></span><span class="line"><span class="cl">        <span class="c1">// 从文件中读取数据到缓存
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    	<span class="nf">smgrread</span><span class="p">(</span><span class="n">smgr</span><span class="p">,</span> <span class="n">forkNum</span><span class="p">,</span> <span class="n">blockNum</span><span class="p">,</span> <span class="p">(</span><span class="kt">char</span> <span class="o">*</span><span class="p">)</span> <span class="n">bufBlock</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="k">if</span> <span class="p">((</span><span class="n">mode</span> <span class="o">==</span> <span class="n">RBM_ZERO_AND_LOCK</span> <span class="o">||</span> <span class="n">mode</span> <span class="o">==</span> <span class="n">RBM_ZERO_AND_CLEANUP_LOCK</span><span class="p">))</span>
+</span></span><span class="line"><span class="cl"><span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// 获取写锁
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="nf">LWLockAcquire</span><span class="p">(</span><span class="nf">BufferDescriptorGetContentLock</span><span class="p">(</span><span class="n">bufHdr</span><span class="p">),</span> <span class="n">LW_EXCLUSIVE</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="c1">// 结束io操作，这里会设置valid标记位
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="nf">TerminateBufferIO</span><span class="p">(</span><span class="n">bufHdr</span><span class="p">,</span> <span class="nb">false</span><span class="p">,</span> <span class="n">BM_VALID</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl"><span class="c1">// 返回buffer
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="k">return</span> <span class="nf">BufferDescriptorGetBuffer</span><span class="p">(</span><span class="n">bufHdr</span><span class="p">);</span>
+</span></span></code></pre></td></tr></table></div>
 </div>
 </div><h2 id="本地缓存读取"><a href="#本地缓存读取" class="anchor-link"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon anchor-icon"><path d="M326.612 185.391c59.747 59.809 58.927 155.698.36 214.59-.11.12-.24.25-.36.37l-67.2 67.2c-59.27 59.27-155.699 59.262-214.96 0-59.27-59.26-59.27-155.7 0-214.96l37.106-37.106c9.84-9.84 26.786-3.3 27.294 10.606.648 17.722 3.826 35.527 9.69 52.721 1.986 5.822.567 12.262-3.783 16.612l-13.087 13.087c-28.026 28.026-28.905 73.66-1.155 101.96 28.024 28.579 74.086 28.749 102.325.51l67.2-67.19c28.191-28.191 28.073-73.757 0-101.83-3.701-3.694-7.429-6.564-10.341-8.569a16.037 16.037 0 0 1-6.947-12.606c-.396-10.567 3.348-21.456 11.698-29.806l21.054-21.055c5.521-5.521 14.182-6.199 20.584-1.731a152.482 152.482 0 0 1 20.522 17.197zM467.547 44.449c-59.261-59.262-155.69-59.27-214.96 0l-67.2 67.2c-.12.12-.25.25-.36.37-58.566 58.892-59.387 154.781.36 214.59a152.454 152.454 0 0 0 20.521 17.196c6.402 4.468 15.064 3.789 20.584-1.731l21.054-21.055c8.35-8.35 12.094-19.239 11.698-29.806a16.037 16.037 0 0 0-6.947-12.606c-2.912-2.005-6.64-4.875-10.341-8.569-28.073-28.073-28.191-73.639 0-101.83l67.2-67.19c28.239-28.239 74.3-28.069 102.325.51 27.75 28.3 26.872 73.934-1.155 101.96l-13.087 13.087c-4.35 4.35-5.769 10.79-3.783 16.612 5.864 17.194 9.042 34.999 9.69 52.721.509 13.906 17.454 20.446 27.294 10.606l37.106-37.106c59.271-59.259 59.271-155.699.001-214.959z"/></svg></a>本地缓存读取</h2>
 <p>本地缓存的读取非常简单，因为不涉及到任何的锁。下面同样将<code>ReadBuffer_common</code>函数代码进行简化</p>
@@ -903,46 +895,44 @@
 </span><span class="lnt">33
 </span><span class="lnt">34
 </span><span class="lnt">35
-</span><span class="lnt">36
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="n">isExtend</span> <span class="o">=</span> <span class="p">(</span><span class="n">blockNum</span> <span class="o">==</span> <span class="n">P_NEW</span><span class="p">);</span>
-<span class="k">if</span> <span class="p">(</span><span class="n">isExtend</span><span class="p">)</span>
-    <span class="n">blockNum</span> <span class="o">=</span> <span class="n">smgrnblocks</span><span class="p">(</span><span class="n">smgr</span><span class="p">,</span> <span class="n">forkNum</span><span class="p">);</span>
-<span class="n">bufHdr</span> <span class="o">=</span> <span class="n">LocalBufferAlloc</span><span class="p">(</span><span class="n">smgr</span><span class="p">,</span> <span class="n">forkNum</span><span class="p">,</span> <span class="n">blockNum</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">found</span><span class="p">);</span>
-<span class="k">if</span> <span class="p">(</span><span class="n">found</span><span class="p">)</span>
-<span class="p">{</span>
-    <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="n">isExtend</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">BufferDescriptorGetBuffer</span><span class="p">(</span><span class="n">bufHdr</span><span class="p">);</span>
-    <span class="c1">// 清除valid标记位    
-</span><span class="c1"></span>    <span class="n">uint32</span>		<span class="n">buf_state</span> <span class="o">=</span> <span class="n">pg_atomic_read_u32</span><span class="p">(</span><span class="o">&amp;</span><span class="n">bufHdr</span><span class="o">-&gt;</span><span class="n">state</span><span class="p">);</span>
-    <span class="n">buf_state</span> <span class="o">&amp;=</span> <span class="o">~</span><span class="n">BM_VALID</span><span class="p">;</span>
-    <span class="n">pg_atomic_unlocked_write_u32</span><span class="p">(</span><span class="o">&amp;</span><span class="n">bufHdr</span><span class="o">-&gt;</span><span class="n">state</span><span class="p">,</span> <span class="n">buf_state</span><span class="p">);</span>
-<span class="p">}</span>
-<span class="n">bufBlock</span> <span class="o">=</span> <span class="n">LocalBufHdrGetBlock</span><span class="p">(</span><span class="n">bufHdr</span><span class="p">)</span>
-<span class="k">if</span> <span class="p">(</span><span class="n">isExtend</span><span class="p">)</span>
-<span class="p">{</span>
-    <span class="c1">// 将缓存置零，并且写入底层文件的新增数据块
-</span><span class="c1"></span>    <span class="n">MemSet</span><span class="p">((</span><span class="kt">char</span> <span class="o">*</span><span class="p">)</span> <span class="n">bufBlock</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">BLCKSZ</span><span class="p">);</span>
-    <span class="n">smgrextend</span><span class="p">(</span><span class="n">smgr</span><span class="p">,</span> <span class="n">forkNum</span><span class="p">,</span> <span class="n">blockNum</span><span class="p">,</span> <span class="p">(</span><span class="kt">char</span> <span class="o">*</span><span class="p">)</span> <span class="n">bufBlock</span><span class="p">,</span> <span class="nb">false</span><span class="p">);</span>
-<span class="p">}</span>
-<span class="k">else</span>
-<span class="p">{</span>
-    <span class="k">if</span> <span class="p">(</span><span class="n">mode</span> <span class="o">==</span> <span class="n">RBM_ZERO_AND_LOCK</span> <span class="o">||</span> <span class="n">mode</span> <span class="o">==</span> <span class="n">RBM_ZERO_AND_CLEANUP_LOCK</span><span class="p">)</span>
-        <span class="c1">// 将缓存置零
-</span><span class="c1"></span>        <span class="n">MemSet</span><span class="p">((</span><span class="kt">char</span> <span class="o">*</span><span class="p">)</span> <span class="n">bufBlock</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">BLCKSZ</span><span class="p">);</span>
-    <span class="k">else</span>
-        <span class="c1">// 从文件中读取数据到缓存
-</span><span class="c1"></span>    	<span class="n">smgrread</span><span class="p">(</span><span class="n">smgr</span><span class="p">,</span> <span class="n">forkNum</span><span class="p">,</span> <span class="n">blockNum</span><span class="p">,</span> <span class="p">(</span><span class="kt">char</span> <span class="o">*</span><span class="p">)</span> <span class="n">bufBlock</span><span class="p">);</span>
-<span class="p">}</span>
-<span class="c1">// 设置valid标记位
-</span><span class="c1"></span><span class="n">uint32</span>		<span class="n">buf_state</span> <span class="o">=</span> <span class="n">pg_atomic_read_u32</span><span class="p">(</span><span class="o">&amp;</span><span class="n">bufHdr</span><span class="o">-&gt;</span><span class="n">state</span><span class="p">);</span>
-<span class="n">buf_state</span> <span class="o">|=</span> <span class="n">BM_VALID</span><span class="p">;</span>
-<span class="n">pg_atomic_unlocked_write_u32</span><span class="p">(</span><span class="o">&amp;</span><span class="n">bufHdr</span><span class="o">-&gt;</span><span class="n">state</span><span class="p">,</span> <span class="n">buf_state</span><span class="p">);</span>
-<span class="c1">// 返回buffer
-</span><span class="c1"></span><span class="k">return</span> <span class="nf">BufferDescriptorGetBuffer</span><span class="p">(</span><span class="n">bufHdr</span><span class="p">);</span>
-
-</code></pre></td></tr></table></div>
+<pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="line"><span class="cl"><span class="n">isExtend</span> <span class="o">=</span> <span class="p">(</span><span class="n">blockNum</span> <span class="o">==</span> <span class="n">P_NEW</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl"><span class="k">if</span> <span class="p">(</span><span class="n">isExtend</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="n">blockNum</span> <span class="o">=</span> <span class="nf">smgrnblocks</span><span class="p">(</span><span class="n">smgr</span><span class="p">,</span> <span class="n">forkNum</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl"><span class="n">bufHdr</span> <span class="o">=</span> <span class="nf">LocalBufferAlloc</span><span class="p">(</span><span class="n">smgr</span><span class="p">,</span> <span class="n">forkNum</span><span class="p">,</span> <span class="n">blockNum</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">found</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl"><span class="k">if</span> <span class="p">(</span><span class="n">found</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="n">isExtend</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">        <span class="k">return</span> <span class="nf">BufferDescriptorGetBuffer</span><span class="p">(</span><span class="n">bufHdr</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// 清除valid标记位    
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="n">uint32</span>		<span class="n">buf_state</span> <span class="o">=</span> <span class="nf">pg_atomic_read_u32</span><span class="p">(</span><span class="o">&amp;</span><span class="n">bufHdr</span><span class="o">-&gt;</span><span class="n">state</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">    <span class="n">buf_state</span> <span class="o">&amp;=</span> <span class="o">~</span><span class="n">BM_VALID</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="nf">pg_atomic_unlocked_write_u32</span><span class="p">(</span><span class="o">&amp;</span><span class="n">bufHdr</span><span class="o">-&gt;</span><span class="n">state</span><span class="p">,</span> <span class="n">buf_state</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="n">bufBlock</span> <span class="o">=</span> <span class="nf">LocalBufHdrGetBlock</span><span class="p">(</span><span class="n">bufHdr</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="k">if</span> <span class="p">(</span><span class="n">isExtend</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// 将缓存置零，并且写入底层文件的新增数据块
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="nf">MemSet</span><span class="p">((</span><span class="kt">char</span> <span class="o">*</span><span class="p">)</span> <span class="n">bufBlock</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">BLCKSZ</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">    <span class="nf">smgrextend</span><span class="p">(</span><span class="n">smgr</span><span class="p">,</span> <span class="n">forkNum</span><span class="p">,</span> <span class="n">blockNum</span><span class="p">,</span> <span class="p">(</span><span class="kt">char</span> <span class="o">*</span><span class="p">)</span> <span class="n">bufBlock</span><span class="p">,</span> <span class="nb">false</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="k">else</span>
+</span></span><span class="line"><span class="cl"><span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="k">if</span> <span class="p">(</span><span class="n">mode</span> <span class="o">==</span> <span class="n">RBM_ZERO_AND_LOCK</span> <span class="o">||</span> <span class="n">mode</span> <span class="o">==</span> <span class="n">RBM_ZERO_AND_CLEANUP_LOCK</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">        <span class="c1">// 将缓存置零
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>        <span class="nf">MemSet</span><span class="p">((</span><span class="kt">char</span> <span class="o">*</span><span class="p">)</span> <span class="n">bufBlock</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">BLCKSZ</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">    <span class="k">else</span>
+</span></span><span class="line"><span class="cl">        <span class="c1">// 从文件中读取数据到缓存
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    	<span class="nf">smgrread</span><span class="p">(</span><span class="n">smgr</span><span class="p">,</span> <span class="n">forkNum</span><span class="p">,</span> <span class="n">blockNum</span><span class="p">,</span> <span class="p">(</span><span class="kt">char</span> <span class="o">*</span><span class="p">)</span> <span class="n">bufBlock</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="c1">// 设置valid标记位
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="n">uint32</span>		<span class="n">buf_state</span> <span class="o">=</span> <span class="nf">pg_atomic_read_u32</span><span class="p">(</span><span class="o">&amp;</span><span class="n">bufHdr</span><span class="o">-&gt;</span><span class="n">state</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl"><span class="n">buf_state</span> <span class="o">|=</span> <span class="n">BM_VALID</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="nf">pg_atomic_unlocked_write_u32</span><span class="p">(</span><span class="o">&amp;</span><span class="n">bufHdr</span><span class="o">-&gt;</span><span class="n">state</span><span class="p">,</span> <span class="n">buf_state</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl"><span class="c1">// 返回buffer
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="k">return</span> <span class="nf">BufferDescriptorGetBuffer</span><span class="p">(</span><span class="n">bufHdr</span><span class="p">);</span>
+</span></span></code></pre></td></tr></table></div>
 </div>
 </div>
             </div>
@@ -971,9 +961,9 @@
 
         
     <div class="updated-badge-container">
-        <span title="Updated @ 2021-10-22 14:44:34 CST" style="cursor:help">
+        <span title="Updated @ 2023-07-02 16:59:09 CST" style="cursor:help">
 
-<svg xmlns="http://www.w3.org/2000/svg" width="130" height="20" class="updated-badge"><linearGradient id="b" x2="0" y2="100%"><stop offset="0" stop-color="#bbb" stop-opacity=".1"/><stop offset="1" stop-opacity=".1"/></linearGradient><clipPath id="a"><rect width="130" height="20" rx="3" fill="#fff"/></clipPath><g clip-path="url(#a)"><path class="updated-badge-left" d="M0 0h55v20H0z"/><path class="updated-badge-right" d="M55 0h75v20H55z"/><path fill="url(#b)" d="M0 0h130v20H0z"/></g><g fill="#fff" text-anchor="middle" font-size="110"><text x="285" y="150" fill="#010101" fill-opacity=".3" textLength="450" transform="scale(.1)">updated</text><text x="285" y="140" textLength="450" transform="scale(.1)">updated</text><text x="915" y="150" fill="#010101" fill-opacity=".3" textLength="650" transform="scale(.1)">2021-10-22</text><text x="915" y="140" textLength="650" transform="scale(.1)">2021-10-22</text></g></svg>
+<svg xmlns="http://www.w3.org/2000/svg" width="130" height="20" class="updated-badge"><linearGradient id="b" x2="0" y2="100%"><stop offset="0" stop-color="#bbb" stop-opacity=".1"/><stop offset="1" stop-opacity=".1"/></linearGradient><clipPath id="a"><rect width="130" height="20" rx="3" fill="#fff"/></clipPath><g clip-path="url(#a)"><path class="updated-badge-left" d="M0 0h55v20H0z"/><path class="updated-badge-right" d="M55 0h75v20H55z"/><path fill="url(#b)" d="M0 0h130v20H0z"/></g><g fill="#fff" text-anchor="middle" font-size="110"><text x="285" y="150" fill="#010101" fill-opacity=".3" textLength="450" transform="scale(.1)">updated</text><text x="285" y="140" textLength="450" transform="scale(.1)">updated</text><text x="915" y="150" fill="#010101" fill-opacity=".3" textLength="650" transform="scale(.1)">2023-07-02</text><text x="915" y="140" textLength="650" transform="scale(.1)">2023-07-02</text></g></svg>
         </span></div>
 
 

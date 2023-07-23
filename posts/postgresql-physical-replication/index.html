@@ -3,7 +3,7 @@
     <head prefix="og: http://ogp.me/ns# article: http://ogp.me/ns/article#">
     <meta charset="UTF-8" />
 
-    <meta name="generator" content="Hugo 0.88.1" /><meta name="theme-color" content="#fff" />
+    <meta name="generator" content="Hugo 0.115.0"><meta name="theme-color" content="#fff" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     
     <meta name="format-detection" content="telephone=no, date=no, address=no, email=no" />
@@ -14,11 +14,11 @@
 
     <title>Postgresql 物理流复制 | 学习笔记</title>
 
-    <link rel="stylesheet" href="/css/meme.min.2d3e1834af2bc8dda20c7d74aaa1d8134845094441b7a554a5206ccd4b472596.css"/>
+    <link rel="stylesheet" href="/css/meme.min.91e7f58f97e1c60563ef481c38d9684fa8099537801d6f17bbfc724121e7d8f1.css"/>
 
     
     
-        <script src="/js/meme.min.800f61672145711eb3e1f29fcfcc3dbe0139dd459259718b611a0390f74703d1.js"></script>
+        <script src="/js/meme.min.3210a00c2fdcf6f831170b681b8ee40f83f0224663661e986872616aec45407f.js"></script>
 
     
 
@@ -54,13 +54,13 @@
         "@context": "https://schema.org",
         "@type": "BlogPosting",
         "datePublished": "2020-05-06T22:19:53+00:00",
-        "dateModified": "2021-10-22T14:44:34+08:00",
+        "dateModified": "2023-07-02T16:59:09+08:00",
         "url": "https://zhmin.github.io/posts/postgresql-physical-replication/",
         "headline": "Postgresql 物理流复制",
         "description": "postgresql 提供了主从复制功能，有基于文件的拷贝和基于 tcp 流的数据传输两种方式。两种方式都是传输 wal 数据，前者是等待生成一个完整的wal文件后，才会触发传输，后者是实时传输的。可以看出来基于文件方式的延迟会比较高，……",
         "inLanguage" : "zh-CN",
         "articleSection": "posts",
-        "wordCount":  2880 ,
+        "wordCount":  2878 ,
         "image": ["https://zhmin.github.io/pg-timeline.svg"],
         "author": {
             "@type": "Person",
@@ -98,7 +98,7 @@
 <meta property="og:locale" content="zh" /><meta property="og:image" content="https://zhmin.github.io/pg-timeline.svg" />
 <meta property="og:type" content="article" />
     <meta property="article:published_time" content="2020-05-06T22:19:53&#43;00:00" />
-    <meta property="article:modified_time" content="2021-10-22T14:44:34&#43;08:00" />
+    <meta property="article:modified_time" content="2023-07-02T16:59:09&#43;08:00" />
     
     <meta property="article:section" content="posts" />
 
@@ -223,7 +223,7 @@
     
     
         
-        <span class="post-meta-item wordcount"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon post-meta-icon"><path d="M497.9 142.1l-46.1 46.1c-4.7 4.7-12.3 4.7-17 0l-111-111c-4.7-4.7-4.7-12.3 0-17l46.1-46.1c18.7-18.7 49.1-18.7 67.9 0l60.1 60.1c18.8 18.7 18.8 49.1 0 67.9zM284.2 99.8L21.6 362.4.4 483.9c-2.9 16.4 11.4 30.6 27.8 27.8l121.5-21.3 262.6-262.6c4.7-4.7 4.7-12.3 0-17l-111-111c-4.8-4.7-12.4-4.7-17.1 0zM124.1 339.9c-5.5-5.5-5.5-14.3 0-19.8l154-154c5.5-5.5 14.3-5.5 19.8 0s5.5 14.3 0 19.8l-154 154c-5.5 5.5-14.3 5.5-19.8 0zM88 424h48v36.3l-64.5 11.3-31.1-31.1L51.7 376H88v48z"/></svg>&nbsp;2880</span>
+        <span class="post-meta-item wordcount"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon post-meta-icon"><path d="M497.9 142.1l-46.1 46.1c-4.7 4.7-12.3 4.7-17 0l-111-111c-4.7-4.7-4.7-12.3 0-17l46.1-46.1c18.7-18.7 49.1-18.7 67.9 0l60.1 60.1c18.8 18.7 18.8 49.1 0 67.9zM284.2 99.8L21.6 362.4.4 483.9c-2.9 16.4 11.4 30.6 27.8 27.8l121.5-21.3 262.6-262.6c4.7-4.7 4.7-12.3 0-17l-111-111c-4.8-4.7-12.4-4.7-17.1 0zM124.1 339.9c-5.5-5.5-5.5-14.3 0-19.8l154-154c5.5-5.5 14.3-5.5 19.8 0s5.5 14.3 0 19.8l-154 154c-5.5 5.5-14.3 5.5-19.8 0zM88 424h48v36.3l-64.5 11.3-31.1-31.1L51.7 376H88v48z"/></svg>&nbsp;2878</span>
     
     
         
@@ -254,8 +254,6 @@
 	walreceiver -&gt;&gt; walsender: IDENTIFY_SYSTEM 请求
 	walreceiver -&gt;&gt; walsender: START_REPLICATION 请求
 	walsender -&gt;&gt; walreceiver: 发送wal数据
-
-
 </code></pre><p>首先从库会发送<code>IDENTIFY_SYSTEM</code>请求，用来确认主库的身份。每个 postgresql 数据库在第一次初始化时，都会分配一个唯一的<code>systemid</code>。当配置主从复制时，从库需要将主库的数据备份过来，这时候也会拷贝<code>systemid</code>，所以从库和主库的<code>systemid</code>是一样的。主库处理<code>IDENTIFY_SYSTEM</code>请求时，会返回自身的<code>systemid</code>。从库通过匹配它，可以判断出来主库的有效性。比如当用户在配置时错写了主库的地址，就可以检查出来。</p>
 <p>从库在确认主库的身份后，就会发送<code>START_REPLICATION</code>请求，其中包含了从库想要获取的 wal 数据位置。主库收到请求后，会去检查该 wal 数据是否存在。如果不存在，主库会返回错误信息。从库收到错误信息后，会直接退出。如果发生了这种情况，那么我们则需要重新备份了，重新配置主从复制了。</p>
 <p>在确认 wal 数据存在后，主库会传输数据给从库。</p>
@@ -274,7 +272,6 @@
 	walreceiver -&gt;&gt; walsender: START_REPLICATION 请求
 	walreceiver -&gt;&gt; walsender: TIMELINE_HISTORY 请求
 	walsender -&gt;&gt; walreceiver: 发送wal数据
-
 </code></pre><p>从库开始会发送<code>IDENTIFY_SYSTEM</code>请求，主库会返回响应，包含了<code>systemid</code>和此时的<code>timeline</code>。从库会检查自身的<code>timeline</code>是否等于主库，如果不等于说明从库缺少中间 timeline 的数据。因为 timeline 都是自增的，所以从库只需要依次遍历就行了。从库会发送<code>TIMELINE_HISTORY</code>请求，请求获取指定 timeline 的信息。主库会返回这个 timeline 的起始位置。</p>
 <h3 id="心跳"><a href="#心跳" class="anchor-link"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon anchor-icon"><path d="M326.612 185.391c59.747 59.809 58.927 155.698.36 214.59-.11.12-.24.25-.36.37l-67.2 67.2c-59.27 59.27-155.699 59.262-214.96 0-59.27-59.26-59.27-155.7 0-214.96l37.106-37.106c9.84-9.84 26.786-3.3 27.294 10.606.648 17.722 3.826 35.527 9.69 52.721 1.986 5.822.567 12.262-3.783 16.612l-13.087 13.087c-28.026 28.026-28.905 73.66-1.155 101.96 28.024 28.579 74.086 28.749 102.325.51l67.2-67.19c28.191-28.191 28.073-73.757 0-101.83-3.701-3.694-7.429-6.564-10.341-8.569a16.037 16.037 0 0 1-6.947-12.606c-.396-10.567 3.348-21.456 11.698-29.806l21.054-21.055c5.521-5.521 14.182-6.199 20.584-1.731a152.482 152.482 0 0 1 20.522 17.197zM467.547 44.449c-59.261-59.262-155.69-59.27-214.96 0l-67.2 67.2c-.12.12-.25.25-.36.37-58.566 58.892-59.387 154.781.36 214.59a152.454 152.454 0 0 0 20.521 17.196c6.402 4.468 15.064 3.789 20.584-1.731l21.054-21.055c8.35-8.35 12.094-19.239 11.698-29.806a16.037 16.037 0 0 0-6.947-12.606c-2.912-2.005-6.64-4.875-10.341-8.569-28.073-28.073-28.191-73.639 0-101.83l67.2-67.19c28.239-28.239 74.3-28.069 102.325.51 27.75 28.3 26.872 73.934-1.155 101.96l-13.087 13.087c-4.35 4.35-5.769 10.79-3.783 16.612 5.864 17.194 9.042 34.999 9.69 52.721.509 13.906 17.454 20.446 27.294 10.606l37.106-37.106c59.271-59.259 59.271-155.699.001-214.959z"/></svg></a>心跳</h3>
 <p>从库会定期向主库汇报自身的同步进度，比如已经刷新wal数据的位置，已经应用wal数据的位置等，这样主库就可以了解到每个从库的情况。</p>
@@ -337,29 +334,29 @@
 </span><span class="lnt">22
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="nv">postgres</span><span class="o">=</span><span class="c1"># select * from pg_stat_replication;</span>
--<span class="o">[</span> RECORD <span class="m">1</span> <span class="o">]</span>----+------------------------------
-pid              <span class="p">|</span> <span class="m">22219</span>
-usesysid         <span class="p">|</span> <span class="m">25411</span>
-usename          <span class="p">|</span> repl
-application_name <span class="p">|</span> walreceiver
-client_addr      <span class="p">|</span> 192.168.1.2
-client_hostname  <span class="p">|</span> 
-client_port      <span class="p">|</span> <span class="m">35442</span>
-backend_start    <span class="p">|</span> 2020-05-06 14:40:58.271771+08
-backend_xmin     <span class="p">|</span> 
-state            <span class="p">|</span> streaming
-sent_lsn         <span class="p">|</span> 0/70209B0
-write_lsn        <span class="p">|</span> 0/70209B0
-flush_lsn        <span class="p">|</span> 0/70209B0
-replay_lsn       <span class="p">|</span> 0/70209B0
-write_lag        <span class="p">|</span> 
-flush_lag        <span class="p">|</span> 
-replay_lag       <span class="p">|</span> 
-sync_priority    <span class="p">|</span> <span class="m">0</span>
-sync_state       <span class="p">|</span> async
-reply_time       <span class="p">|</span> 2020-05-06 14:41:08.308271+08
-</code></pre></td></tr></table></div>
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl"><span class="nv">postgres</span><span class="o">=</span><span class="c1"># select * from pg_stat_replication;</span>
+</span></span><span class="line"><span class="cl">-<span class="o">[</span> RECORD <span class="m">1</span> <span class="o">]</span>----+------------------------------
+</span></span><span class="line"><span class="cl">pid              <span class="p">|</span> <span class="m">22219</span>
+</span></span><span class="line"><span class="cl">usesysid         <span class="p">|</span> <span class="m">25411</span>
+</span></span><span class="line"><span class="cl">usename          <span class="p">|</span> repl
+</span></span><span class="line"><span class="cl">application_name <span class="p">|</span> walreceiver
+</span></span><span class="line"><span class="cl">client_addr      <span class="p">|</span> 192.168.1.2
+</span></span><span class="line"><span class="cl">client_hostname  <span class="p">|</span> 
+</span></span><span class="line"><span class="cl">client_port      <span class="p">|</span> <span class="m">35442</span>
+</span></span><span class="line"><span class="cl">backend_start    <span class="p">|</span> 2020-05-06 14:40:58.271771+08
+</span></span><span class="line"><span class="cl">backend_xmin     <span class="p">|</span> 
+</span></span><span class="line"><span class="cl">state            <span class="p">|</span> streaming
+</span></span><span class="line"><span class="cl">sent_lsn         <span class="p">|</span> 0/70209B0
+</span></span><span class="line"><span class="cl">write_lsn        <span class="p">|</span> 0/70209B0
+</span></span><span class="line"><span class="cl">flush_lsn        <span class="p">|</span> 0/70209B0
+</span></span><span class="line"><span class="cl">replay_lsn       <span class="p">|</span> 0/70209B0
+</span></span><span class="line"><span class="cl">write_lag        <span class="p">|</span> 
+</span></span><span class="line"><span class="cl">flush_lag        <span class="p">|</span> 
+</span></span><span class="line"><span class="cl">replay_lag       <span class="p">|</span> 
+</span></span><span class="line"><span class="cl">sync_priority    <span class="p">|</span> <span class="m">0</span>
+</span></span><span class="line"><span class="cl">sync_state       <span class="p">|</span> async
+</span></span><span class="line"><span class="cl">reply_time       <span class="p">|</span> 2020-05-06 14:41:08.308271+08
+</span></span></code></pre></td></tr></table></div>
 </div>
 </div><h3 id="从库监控"><a href="#从库监控" class="anchor-link"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon anchor-icon"><path d="M326.612 185.391c59.747 59.809 58.927 155.698.36 214.59-.11.12-.24.25-.36.37l-67.2 67.2c-59.27 59.27-155.699 59.262-214.96 0-59.27-59.26-59.27-155.7 0-214.96l37.106-37.106c9.84-9.84 26.786-3.3 27.294 10.606.648 17.722 3.826 35.527 9.69 52.721 1.986 5.822.567 12.262-3.783 16.612l-13.087 13.087c-28.026 28.026-28.905 73.66-1.155 101.96 28.024 28.579 74.086 28.749 102.325.51l67.2-67.19c28.191-28.191 28.073-73.757 0-101.83-3.701-3.694-7.429-6.564-10.341-8.569a16.037 16.037 0 0 1-6.947-12.606c-.396-10.567 3.348-21.456 11.698-29.806l21.054-21.055c5.521-5.521 14.182-6.199 20.584-1.731a152.482 152.482 0 0 1 20.522 17.197zM467.547 44.449c-59.261-59.262-155.69-59.27-214.96 0l-67.2 67.2c-.12.12-.25.25-.36.37-58.566 58.892-59.387 154.781.36 214.59a152.454 152.454 0 0 0 20.521 17.196c6.402 4.468 15.064 3.789 20.584-1.731l21.054-21.055c8.35-8.35 12.094-19.239 11.698-29.806a16.037 16.037 0 0 0-6.947-12.606c-2.912-2.005-6.64-4.875-10.341-8.569-28.073-28.073-28.191-73.639 0-101.83l67.2-67.19c28.239-28.239 74.3-28.069 102.325.51 27.75 28.3 26.872 73.934-1.155 101.96l-13.087 13.087c-4.35 4.35-5.769 10.79-3.783 16.612 5.864 17.194 9.042 34.999 9.69 52.721.509 13.906 17.454 20.446 27.294 10.606l37.106-37.106c59.271-59.259 59.271-155.699.001-214.959z"/></svg></a>从库监控</h3>
 <div class="highlight"><div class="chroma">
@@ -380,27 +377,25 @@ reply_time       <span class="p">|</span> 2020-05-06 14:41:08.308271+08
 </span><span class="lnt">14
 </span><span class="lnt">15
 </span><span class="lnt">16
-</span><span class="lnt">17
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="nv">postgres</span><span class="o">=</span><span class="c1"># select * from pg_stat_wal_receiver;</span>
--<span class="o">[</span> RECORD <span class="m">1</span> <span class="o">]</span>---------+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-pid                   <span class="p">|</span> <span class="m">852</span>
-status                <span class="p">|</span> streaming
-receive_start_lsn     <span class="p">|</span> 0/7000000
-receive_start_tli     <span class="p">|</span> <span class="m">1</span>
-received_lsn          <span class="p">|</span> 0/7000000
-received_tli          <span class="p">|</span> <span class="m">1</span>
-last_msg_send_time    <span class="p">|</span> 2020-05-06 14:53:59.640178+08
-last_msg_receipt_time <span class="p">|</span> 2020-05-06 14:53:59.640012+08
-latest_end_lsn        <span class="p">|</span> 0/70209B0
-latest_end_time       <span class="p">|</span> 2020-05-06 14:40:58.293124+08
-slot_name             <span class="p">|</span> 
-sender_host           <span class="p">|</span> 192.168.1.1
-sender_port           <span class="p">|</span> <span class="m">15432</span>
-conninfo              <span class="p">|</span> ...
-
-</code></pre></td></tr></table></div>
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl"><span class="nv">postgres</span><span class="o">=</span><span class="c1"># select * from pg_stat_wal_receiver;</span>
+</span></span><span class="line"><span class="cl">-<span class="o">[</span> RECORD <span class="m">1</span> <span class="o">]</span>---------+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+</span></span><span class="line"><span class="cl">pid                   <span class="p">|</span> <span class="m">852</span>
+</span></span><span class="line"><span class="cl">status                <span class="p">|</span> streaming
+</span></span><span class="line"><span class="cl">receive_start_lsn     <span class="p">|</span> 0/7000000
+</span></span><span class="line"><span class="cl">receive_start_tli     <span class="p">|</span> <span class="m">1</span>
+</span></span><span class="line"><span class="cl">received_lsn          <span class="p">|</span> 0/7000000
+</span></span><span class="line"><span class="cl">received_tli          <span class="p">|</span> <span class="m">1</span>
+</span></span><span class="line"><span class="cl">last_msg_send_time    <span class="p">|</span> 2020-05-06 14:53:59.640178+08
+</span></span><span class="line"><span class="cl">last_msg_receipt_time <span class="p">|</span> 2020-05-06 14:53:59.640012+08
+</span></span><span class="line"><span class="cl">latest_end_lsn        <span class="p">|</span> 0/70209B0
+</span></span><span class="line"><span class="cl">latest_end_time       <span class="p">|</span> 2020-05-06 14:40:58.293124+08
+</span></span><span class="line"><span class="cl">slot_name             <span class="p">|</span> 
+</span></span><span class="line"><span class="cl">sender_host           <span class="p">|</span> 192.168.1.1
+</span></span><span class="line"><span class="cl">sender_port           <span class="p">|</span> <span class="m">15432</span>
+</span></span><span class="line"><span class="cl">conninfo              <span class="p">|</span> ...
+</span></span></code></pre></td></tr></table></div>
 </div>
 </div><p>关于上面主控监控中，从库的关于 wal 的恢复信息获取会存在延迟。不过我们可以直接在从库上实时获取，</p>
 <div class="highlight"><div class="chroma">
@@ -410,16 +405,14 @@ conninfo              <span class="p">|</span> ...
 </span><span class="lnt">3
 </span><span class="lnt">4
 </span><span class="lnt">5
-</span><span class="lnt">6
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="nv">postgres</span><span class="o">=</span><span class="c1"># select pg_last_wal_receive_lsn(), pg_last_wal_replay_lsn(), pg_last_xact_replay_timestamp();</span>
- pg_last_wal_receive_lsn <span class="p">|</span> pg_last_wal_replay_lsn <span class="p">|</span> pg_last_xact_replay_timestamp 
--------------------------+------------------------+-------------------------------
- 0/70209B0               <span class="p">|</span> 0/70209B0              <span class="p">|</span> 2020-04-30 17:15:24.425998+08
-<span class="o">(</span><span class="m">1</span> row<span class="o">)</span>
-
-</code></pre></td></tr></table></div>
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl"><span class="nv">postgres</span><span class="o">=</span><span class="c1"># select pg_last_wal_receive_lsn(), pg_last_wal_replay_lsn(), pg_last_xact_replay_timestamp();</span>
+</span></span><span class="line"><span class="cl"> pg_last_wal_receive_lsn <span class="p">|</span> pg_last_wal_replay_lsn <span class="p">|</span> pg_last_xact_replay_timestamp 
+</span></span><span class="line"><span class="cl">-------------------------+------------------------+-------------------------------
+</span></span><span class="line"><span class="cl"> 0/70209B0               <span class="p">|</span> 0/70209B0              <span class="p">|</span> 2020-04-30 17:15:24.425998+08
+</span></span><span class="line"><span class="cl"><span class="o">(</span><span class="m">1</span> row<span class="o">)</span>
+</span></span></code></pre></td></tr></table></div>
 </div>
 </div>
             </div>
@@ -448,9 +441,9 @@ conninfo              <span class="p">|</span> ...
 
         
     <div class="updated-badge-container">
-        <span title="Updated @ 2021-10-22 14:44:34 CST" style="cursor:help">
+        <span title="Updated @ 2023-07-02 16:59:09 CST" style="cursor:help">
 
-<svg xmlns="http://www.w3.org/2000/svg" width="130" height="20" class="updated-badge"><linearGradient id="b" x2="0" y2="100%"><stop offset="0" stop-color="#bbb" stop-opacity=".1"/><stop offset="1" stop-opacity=".1"/></linearGradient><clipPath id="a"><rect width="130" height="20" rx="3" fill="#fff"/></clipPath><g clip-path="url(#a)"><path class="updated-badge-left" d="M0 0h55v20H0z"/><path class="updated-badge-right" d="M55 0h75v20H55z"/><path fill="url(#b)" d="M0 0h130v20H0z"/></g><g fill="#fff" text-anchor="middle" font-size="110"><text x="285" y="150" fill="#010101" fill-opacity=".3" textLength="450" transform="scale(.1)">updated</text><text x="285" y="140" textLength="450" transform="scale(.1)">updated</text><text x="915" y="150" fill="#010101" fill-opacity=".3" textLength="650" transform="scale(.1)">2021-10-22</text><text x="915" y="140" textLength="650" transform="scale(.1)">2021-10-22</text></g></svg>
+<svg xmlns="http://www.w3.org/2000/svg" width="130" height="20" class="updated-badge"><linearGradient id="b" x2="0" y2="100%"><stop offset="0" stop-color="#bbb" stop-opacity=".1"/><stop offset="1" stop-opacity=".1"/></linearGradient><clipPath id="a"><rect width="130" height="20" rx="3" fill="#fff"/></clipPath><g clip-path="url(#a)"><path class="updated-badge-left" d="M0 0h55v20H0z"/><path class="updated-badge-right" d="M55 0h75v20H55z"/><path fill="url(#b)" d="M0 0h130v20H0z"/></g><g fill="#fff" text-anchor="middle" font-size="110"><text x="285" y="150" fill="#010101" fill-opacity=".3" textLength="450" transform="scale(.1)">updated</text><text x="285" y="140" textLength="450" transform="scale(.1)">updated</text><text x="915" y="150" fill="#010101" fill-opacity=".3" textLength="650" transform="scale(.1)">2023-07-02</text><text x="915" y="140" textLength="650" transform="scale(.1)">2023-07-02</text></g></svg>
         </span></div>
 
 

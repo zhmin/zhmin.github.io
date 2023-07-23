@@ -3,7 +3,7 @@
     <head prefix="og: http://ogp.me/ns# article: http://ogp.me/ns/article#">
     <meta charset="UTF-8" />
 
-    <meta name="generator" content="Hugo 0.88.1" /><meta name="theme-color" content="#fff" />
+    <meta name="generator" content="Hugo 0.115.0"><meta name="theme-color" content="#fff" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     
     <meta name="format-detection" content="telephone=no, date=no, address=no, email=no" />
@@ -14,11 +14,11 @@
 
     <title>Zookeeper Zab 协议 | 学习笔记</title>
 
-    <link rel="stylesheet" href="/css/meme.min.2d3e1834af2bc8dda20c7d74aaa1d8134845094441b7a554a5206ccd4b472596.css"/>
+    <link rel="stylesheet" href="/css/meme.min.91e7f58f97e1c60563ef481c38d9684fa8099537801d6f17bbfc724121e7d8f1.css"/>
 
     
     
-        <script src="/js/meme.min.800f61672145711eb3e1f29fcfcc3dbe0139dd459259718b611a0390f74703d1.js"></script>
+        <script src="/js/meme.min.3210a00c2fdcf6f831170b681b8ee40f83f0224663661e986872616aec45407f.js"></script>
 
     
 
@@ -54,13 +54,13 @@
         "@context": "https://schema.org",
         "@type": "BlogPosting",
         "datePublished": "2019-09-15T13:25:39+00:00",
-        "dateModified": "2021-10-22T14:44:34+08:00",
+        "dateModified": "2023-07-02T16:59:09+08:00",
         "url": "https://zhmin.github.io/posts/zookeeper-zab/",
         "headline": "Zookeeper Zab 协议",
         "description": "前言 Zookeeper 作为分布式的一致框架，提供了原子性的写，而且好保证了高可用（集群有过半节点正常运行）。这些特点被广泛应用，比如 Hbase 用来存储配置信息，还用来保证主从切换。本篇文章介绍了 zookeeper 的核心算法 zab 协议，zab 协议……",
         "inLanguage" : "zh-CN",
         "articleSection": "posts",
-        "wordCount":  3537 ,
+        "wordCount":  3536 ,
         "image": ["https://zhmin.github.io/zookeeper-startup.svg","https://zhmin.github.io/zookeeper-network.svg","https://zhmin.github.io/zookeeper-vote-flow.svg","https://zhmin.github.io/zookeeper-sync.svg"],
         "author": {
             "@type": "Person",
@@ -98,7 +98,7 @@
 <meta property="og:locale" content="zh" /><meta property="og:image" content="https://zhmin.github.io/zookeeper-startup.svg" />
 <meta property="og:type" content="article" />
     <meta property="article:published_time" content="2019-09-15T13:25:39&#43;00:00" />
-    <meta property="article:modified_time" content="2021-10-22T14:44:34&#43;08:00" />
+    <meta property="article:modified_time" content="2023-07-02T16:59:09&#43;08:00" />
     
     <meta property="article:section" content="posts" />
 
@@ -223,7 +223,7 @@
     
     
         
-        <span class="post-meta-item wordcount"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon post-meta-icon"><path d="M497.9 142.1l-46.1 46.1c-4.7 4.7-12.3 4.7-17 0l-111-111c-4.7-4.7-4.7-12.3 0-17l46.1-46.1c18.7-18.7 49.1-18.7 67.9 0l60.1 60.1c18.8 18.7 18.8 49.1 0 67.9zM284.2 99.8L21.6 362.4.4 483.9c-2.9 16.4 11.4 30.6 27.8 27.8l121.5-21.3 262.6-262.6c4.7-4.7 4.7-12.3 0-17l-111-111c-4.8-4.7-12.4-4.7-17.1 0zM124.1 339.9c-5.5-5.5-5.5-14.3 0-19.8l154-154c5.5-5.5 14.3-5.5 19.8 0s5.5 14.3 0 19.8l-154 154c-5.5 5.5-14.3 5.5-19.8 0zM88 424h48v36.3l-64.5 11.3-31.1-31.1L51.7 376H88v48z"/></svg>&nbsp;3537</span>
+        <span class="post-meta-item wordcount"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon post-meta-icon"><path d="M497.9 142.1l-46.1 46.1c-4.7 4.7-12.3 4.7-17 0l-111-111c-4.7-4.7-4.7-12.3 0-17l46.1-46.1c18.7-18.7 49.1-18.7 67.9 0l60.1 60.1c18.8 18.7 18.8 49.1 0 67.9zM284.2 99.8L21.6 362.4.4 483.9c-2.9 16.4 11.4 30.6 27.8 27.8l121.5-21.3 262.6-262.6c4.7-4.7 4.7-12.3 0-17l-111-111c-4.8-4.7-12.4-4.7-17.1 0zM124.1 339.9c-5.5-5.5-5.5-14.3 0-19.8l154-154c5.5-5.5 14.3-5.5 19.8 0s5.5 14.3 0 19.8l-154 154c-5.5 5.5-14.3 5.5-19.8 0zM88 424h48v36.3l-64.5 11.3-31.1-31.1L51.7 376H88v48z"/></svg>&nbsp;3536</span>
     
     
         
@@ -297,45 +297,45 @@
 </span><span class="lnt">38
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">QuorumPeer</span> <span class="kd">extends</span> <span class="n">ZooKeeperThread</span> <span class="kd">implements</span> <span class="n">QuorumStats</span><span class="o">.</span><span class="na">Provider</span> <span class="o">{</span>
-    
-    <span class="nd">@Override</span>
-    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">run</span><span class="o">()</span> <span class="o">{</span>
-        <span class="k">while</span> <span class="o">(</span><span class="n">running</span><span class="o">)</span> <span class="o">{</span>
-            <span class="k">switch</span> <span class="o">(</span><span class="n">getPeerState</span><span class="o">())</span> <span class="o">{</span>
-            <span class="k">case</span> <span class="n">LOOKING</span><span class="o">:</span>
-                 <span class="c1">// 执行选举，根据返回leader地址，设置自身为follower还是leader
-</span><span class="c1"></span>                 <span class="n">setCurrentVote</span><span class="o">(</span><span class="n">makeLEStrategy</span><span class="o">().</span><span class="na">lookForLeader</span><span class="o">());</span>
-                 <span class="k">break</span><span class="o">;</span>
-            <span class="k">case</span> <span class="n">FOLLOWING</span><span class="o">:</span>
-                 <span class="k">try</span> <span class="o">{</span>
-                     <span class="c1">// 执行follower程序
-</span><span class="c1"></span>                     <span class="n">setFollower</span><span class="o">(</span><span class="n">makeFollower</span><span class="o">(</span><span class="n">logFactory</span><span class="o">));</span>
-                     <span class="n">follower</span><span class="o">.</span><span class="na">followLeader</span><span class="o">();</span>
-                 <span class="o">}</span> <span class="k">finally</span> <span class="o">{</span>
-                     <span class="c1">// 如果follower程序发生异常或退出
-</span><span class="c1"></span>                     <span class="n">follower</span><span class="o">.</span><span class="na">shutdown</span><span class="o">();</span>
-                     <span class="n">setFollower</span><span class="o">(</span><span class="kc">null</span><span class="o">);</span>
-                     <span class="c1">// 设置状态为LOOKING
-</span><span class="c1"></span>                     <span class="n">updateServerState</span><span class="o">();</span>
-                 <span class="o">}</span>
-                 <span class="k">break</span><span class="o">;</span>
-            <span class="k">case</span> <span class="n">LEADING</span><span class="o">:</span>
-                 <span class="k">try</span> <span class="o">{</span>
-                     <span class="c1">// 执行leader程序
-</span><span class="c1"></span>                     <span class="n">setLeader</span><span class="o">(</span><span class="n">makeLeader</span><span class="o">(</span><span class="n">logFactory</span><span class="o">));</span>
-                     <span class="n">leader</span><span class="o">.</span><span class="na">lead</span><span class="o">();</span>
-                     <span class="n">setLeader</span><span class="o">(</span><span class="kc">null</span><span class="o">);</span>
-                 <span class="o">}</span> <span class="k">finally</span> <span class="o">{</span>
-                     <span class="c1">// 如果leader程序发生异常或退出，设置状态为LOOKING
-</span><span class="c1"></span>                     <span class="n">setLeader</span><span class="o">(</span><span class="kc">null</span><span class="o">);</span>
-                     <span class="n">updateServerState</span><span class="o">();</span>
-                 <span class="o">}</span>
-            <span class="o">}</span>
-        <span class="o">}</span>
-    <span class="o">}</span>
-<span class="o">}</span>   
-</code></pre></td></tr></table></div>
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">QuorumPeer</span> <span class="kd">extends</span> <span class="n">ZooKeeperThread</span> <span class="kd">implements</span> <span class="n">QuorumStats</span><span class="o">.</span><span class="na">Provider</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">    
+</span></span><span class="line"><span class="cl">    <span class="nd">@Override</span>
+</span></span><span class="line"><span class="cl">    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">run</span><span class="o">()</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">        <span class="k">while</span> <span class="o">(</span><span class="n">running</span><span class="o">)</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">            <span class="k">switch</span> <span class="o">(</span><span class="n">getPeerState</span><span class="o">())</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">            <span class="k">case</span> <span class="n">LOOKING</span><span class="o">:</span>
+</span></span><span class="line"><span class="cl">                 <span class="c1">// 执行选举，根据返回leader地址，设置自身为follower还是leader
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>                 <span class="n">setCurrentVote</span><span class="o">(</span><span class="n">makeLEStrategy</span><span class="o">().</span><span class="na">lookForLeader</span><span class="o">());</span>
+</span></span><span class="line"><span class="cl">                 <span class="k">break</span><span class="o">;</span>
+</span></span><span class="line"><span class="cl">            <span class="k">case</span> <span class="n">FOLLOWING</span><span class="o">:</span>
+</span></span><span class="line"><span class="cl">                 <span class="k">try</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">                     <span class="c1">// 执行follower程序
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>                     <span class="n">setFollower</span><span class="o">(</span><span class="n">makeFollower</span><span class="o">(</span><span class="n">logFactory</span><span class="o">));</span>
+</span></span><span class="line"><span class="cl">                     <span class="n">follower</span><span class="o">.</span><span class="na">followLeader</span><span class="o">();</span>
+</span></span><span class="line"><span class="cl">                 <span class="o">}</span> <span class="k">finally</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">                     <span class="c1">// 如果follower程序发生异常或退出
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>                     <span class="n">follower</span><span class="o">.</span><span class="na">shutdown</span><span class="o">();</span>
+</span></span><span class="line"><span class="cl">                     <span class="n">setFollower</span><span class="o">(</span><span class="kc">null</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">                     <span class="c1">// 设置状态为LOOKING
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>                     <span class="n">updateServerState</span><span class="o">();</span>
+</span></span><span class="line"><span class="cl">                 <span class="o">}</span>
+</span></span><span class="line"><span class="cl">                 <span class="k">break</span><span class="o">;</span>
+</span></span><span class="line"><span class="cl">            <span class="k">case</span> <span class="n">LEADING</span><span class="o">:</span>
+</span></span><span class="line"><span class="cl">                 <span class="k">try</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">                     <span class="c1">// 执行leader程序
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>                     <span class="n">setLeader</span><span class="o">(</span><span class="n">makeLeader</span><span class="o">(</span><span class="n">logFactory</span><span class="o">));</span>
+</span></span><span class="line"><span class="cl">                     <span class="n">leader</span><span class="o">.</span><span class="na">lead</span><span class="o">();</span>
+</span></span><span class="line"><span class="cl">                     <span class="n">setLeader</span><span class="o">(</span><span class="kc">null</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">                 <span class="o">}</span> <span class="k">finally</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">                     <span class="c1">// 如果leader程序发生异常或退出，设置状态为LOOKING
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>                     <span class="n">setLeader</span><span class="o">(</span><span class="kc">null</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">                     <span class="n">updateServerState</span><span class="o">();</span>
+</span></span><span class="line"><span class="cl">                 <span class="o">}</span>
+</span></span><span class="line"><span class="cl">            <span class="o">}</span>
+</span></span><span class="line"><span class="cl">        <span class="o">}</span>
+</span></span><span class="line"><span class="cl">    <span class="o">}</span>
+</span></span><span class="line"><span class="cl"><span class="o">}</span>   
+</span></span></code></pre></td></tr></table></div>
 </div>
 </div><h2 id="通信组件"><a href="#通信组件" class="anchor-link"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon anchor-icon"><path d="M326.612 185.391c59.747 59.809 58.927 155.698.36 214.59-.11.12-.24.25-.36.37l-67.2 67.2c-59.27 59.27-155.699 59.262-214.96 0-59.27-59.26-59.27-155.7 0-214.96l37.106-37.106c9.84-9.84 26.786-3.3 27.294 10.606.648 17.722 3.826 35.527 9.69 52.721 1.986 5.822.567 12.262-3.783 16.612l-13.087 13.087c-28.026 28.026-28.905 73.66-1.155 101.96 28.024 28.579 74.086 28.749 102.325.51l67.2-67.19c28.191-28.191 28.073-73.757 0-101.83-3.701-3.694-7.429-6.564-10.341-8.569a16.037 16.037 0 0 1-6.947-12.606c-.396-10.567 3.348-21.456 11.698-29.806l21.054-21.055c5.521-5.521 14.182-6.199 20.584-1.731a152.482 152.482 0 0 1 20.522 17.197zM467.547 44.449c-59.261-59.262-155.69-59.27-214.96 0l-67.2 67.2c-.12.12-.25.25-.36.37-58.566 58.892-59.387 154.781.36 214.59a152.454 152.454 0 0 0 20.521 17.196c6.402 4.468 15.064 3.789 20.584-1.731l21.054-21.055c8.35-8.35 12.094-19.239 11.698-29.806a16.037 16.037 0 0 0-6.947-12.606c-2.912-2.005-6.64-4.875-10.341-8.569-28.073-28.073-28.191-73.639 0-101.83l67.2-67.19c28.239-28.239 74.3-28.069 102.325.51 27.75 28.3 26.872 73.934-1.155 101.96l-13.087 13.087c-4.35 4.35-5.769 10.79-3.783 16.612 5.864 17.194 9.042 34.999 9.69 52.721.509 13.906 17.454 20.446 27.294 10.606l37.106-37.106c59.271-59.259 59.271-155.699.001-214.959z"/></svg></a>通信组件</h2>
 <p>zookeeper 集群有着多个节点，节点之间的通信都是通过网络。zookeeper 使用队列存储请求和响应，并且对于每个连接都有单独的读队列和写队列，同时还有单独的读线程负责解析请求，单独的写线程负责发送数据。</p>
@@ -360,17 +360,17 @@
 </span><span class="lnt">10
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">Vote</span> <span class="o">{</span>
-    <span class="c1">// 选择哪个节点作为leader
-</span><span class="c1"></span>    <span class="kd">final</span> <span class="kd">private</span> <span class="kt">long</span> <span class="n">id</span><span class="o">;</span>
-    <span class="c1">// 选定leader节点的最大事务id，越大说明数据越新
-</span><span class="c1"></span>    <span class="kd">final</span> <span class="kd">private</span> <span class="kt">long</span> <span class="n">zxid</span><span class="o">;</span>
-    <span class="c1">// 该投票属于第几轮选举
-</span><span class="c1"></span>    <span class="kd">final</span> <span class="kd">private</span> <span class="kt">long</span> <span class="n">electionEpoch</span><span class="o">;</span>
-    <span class="c1">// leader节点的epoch
-</span><span class="c1"></span>    <span class="kd">final</span> <span class="kd">private</span> <span class="kt">long</span> <span class="n">peerEpoch</span><span class="o">;</span>
-<span class="o">}</span>
-</code></pre></td></tr></table></div>
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">Vote</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// 选择哪个节点作为leader
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="kd">final</span> <span class="kd">private</span> <span class="kt">long</span> <span class="n">id</span><span class="o">;</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// 选定leader节点的最大事务id，越大说明数据越新
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="kd">final</span> <span class="kd">private</span> <span class="kt">long</span> <span class="n">zxid</span><span class="o">;</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// 该投票属于第几轮选举
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="kd">final</span> <span class="kd">private</span> <span class="kt">long</span> <span class="n">electionEpoch</span><span class="o">;</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// leader节点的epoch
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="kd">final</span> <span class="kd">private</span> <span class="kt">long</span> <span class="n">peerEpoch</span><span class="o">;</span>
+</span></span><span class="line"><span class="cl"><span class="o">}</span>
+</span></span></code></pre></td></tr></table></div>
 </div>
 </div><p>接下来看看选举原理，</p>
 <div class="highlight"><div class="chroma">
@@ -482,118 +482,116 @@
 </span><span class="lnt">105
 </span><span class="lnt">106
 </span><span class="lnt">107
-</span><span class="lnt">108
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">FastLeaderElection</span> <span class="kd">implements</span> <span class="n">Election</span> <span class="o">{</span>
-    <span class="n">AtomicLong</span> <span class="n">logicalclock</span> <span class="o">=</span> <span class="k">new</span> <span class="n">AtomicLong</span><span class="o">();</span>  <span class="c1">// 选举轮数
-</span><span class="c1"></span>    
-    <span class="c1">// 自身节点的投票信息
-</span><span class="c1"></span>    <span class="kt">long</span> <span class="n">proposedLeader</span><span class="o">;</span>  <span class="c1">// 哪个节点为leader
-</span><span class="c1"></span>    <span class="kt">long</span> <span class="n">proposedZxid</span><span class="o">;</span>    <span class="c1">// 选举的leader节点的最大事务id
-</span><span class="c1"></span>    <span class="kt">long</span> <span class="n">proposedEpoch</span><span class="o">;</span>   <span class="c1">// 选举的leader节点的最大epoch
-</span><span class="c1"></span>    
-    <span class="kd">public</span> <span class="n">Vote</span> <span class="nf">lookForLeader</span><span class="o">()</span> <span class="kd">throws</span> <span class="n">InterruptedException</span> <span class="o">{</span>
-        <span class="c1">// 存储着来自同选举轮数，每个节点对应的投票，投票里包含了选举哪个节点作为leader
-</span><span class="c1"></span>        <span class="n">Map</span><span class="o">&lt;</span><span class="n">Long</span><span class="o">,</span> <span class="n">Vote</span><span class="o">&gt;</span> <span class="n">recvset</span> <span class="o">=</span> <span class="k">new</span> <span class="n">HashMap</span><span class="o">&lt;</span><span class="n">Long</span><span class="o">,</span> <span class="n">Vote</span><span class="o">&gt;();</span>
-        <span class="c1">// 存储着来自leader或者follower的投票
-</span><span class="c1"></span>        <span class="n">Map</span><span class="o">&lt;</span><span class="n">Long</span><span class="o">,</span> <span class="n">Vote</span><span class="o">&gt;</span> <span class="n">outofelection</span> <span class="o">=</span> <span class="k">new</span> <span class="n">HashMap</span><span class="o">&lt;</span><span class="n">Long</span><span class="o">,</span> <span class="n">Vote</span><span class="o">&gt;();</span>
-        <span class="c1">// 每次选举都会增加选举轮数
-</span><span class="c1"></span>        <span class="n">logicalclock</span><span class="o">.</span><span class="na">incrementAndGet</span><span class="o">();</span>
-        <span class="c1">// 设置自身的投票信息
-</span><span class="c1"></span>        <span class="n">updateProposal</span><span class="o">(</span><span class="n">getInitId</span><span class="o">(),</span> <span class="n">getInitLastLoggedZxid</span><span class="o">(),</span> <span class="n">getPeerEpoch</span><span class="o">());</span>
-        <span class="c1">// 发送投票给其余的节点
-</span><span class="c1"></span>        <span class="n">sendNotifications</span><span class="o">();</span>
-        
-        <span class="c1">// 循环，一直到选出leader为止
-</span><span class="c1"></span>        <span class="k">while</span> <span class="o">((</span><span class="n">self</span><span class="o">.</span><span class="na">getPeerState</span><span class="o">()</span> <span class="o">==</span> <span class="n">ServerState</span><span class="o">.</span><span class="na">LOOKING</span><span class="o">)</span> <span class="o">&amp;&amp;</span> <span class="o">(!</span><span class="n">stop</span><span class="o">))</span> <span class="o">{</span>
-            <span class="c1">// 从队列里获取其余节点的投票信息
-</span><span class="c1"></span>            <span class="n">Notification</span> <span class="n">n</span> <span class="o">=</span> <span class="n">recvqueue</span><span class="o">.</span><span class="na">poll</span><span class="o">(</span><span class="n">notTimeout</span><span class="o">,</span> <span class="n">TimeUnit</span><span class="o">.</span><span class="na">MILLISECONDS</span><span class="o">);</span>
-            <span class="c1">// 根据发送投票的节点的状态，做不同的处理
-</span><span class="c1"></span>            <span class="k">switch</span> <span class="o">(</span><span class="n">n</span><span class="o">.</span><span class="na">state</span><span class="o">)</span> <span class="o">{</span>
-            <span class="k">case</span> <span class="n">LOOKING</span><span class="o">:</span>
-                 <span class="c1">// 发送节点的状态为LOOKING
-</span><span class="c1"></span>                 <span class="c1">// 先比较选举轮数，再比较epoch和事务id
-</span><span class="c1"></span>                 <span class="k">if</span> <span class="o">(</span><span class="n">n</span><span class="o">.</span><span class="na">electionEpoch</span> <span class="o">&gt;</span> <span class="n">logicalclock</span><span class="o">.</span><span class="na">get</span><span class="o">())</span> <span class="o">{</span>
-                     <span class="c1">// 如果自己的选举轮数落后，更新自己的选举轮数
-</span><span class="c1"></span>                     <span class="n">logicalclock</span><span class="o">.</span><span class="na">set</span><span class="o">(</span><span class="n">n</span><span class="o">.</span><span class="na">electionEpoch</span><span class="o">);</span>
-                     <span class="c1">// 还需要清除旧的投票信息，因为这些都已经过时了
-</span><span class="c1"></span>                     <span class="n">recvset</span><span class="o">.</span><span class="na">clear</span><span class="o">();</span>
-                     <span class="c1">// 比较谁更适合当选leader，如果是别的节点，那么就更新自己的投票信息
-</span><span class="c1"></span>                     <span class="k">if</span> <span class="o">(</span><span class="n">totalOrderPredicate</span><span class="o">(</span><span class="n">n</span><span class="o">.</span><span class="na">leader</span><span class="o">,</span> <span class="n">n</span><span class="o">.</span><span class="na">zxid</span><span class="o">,</span> <span class="n">n</span><span class="o">.</span><span class="na">peerEpoch</span><span class="o">,</span> <span class="n">getInitId</span><span class="o">(),</span> <span class="n">getInitLastLoggedZxid</span><span class="o">(),</span> <span class="n">getPeerEpoch</span><span class="o">()))</span> <span class="o">{</span>
-                         <span class="n">updateProposal</span><span class="o">(</span><span class="n">n</span><span class="o">.</span><span class="na">leader</span><span class="o">,</span> <span class="n">n</span><span class="o">.</span><span class="na">zxid</span><span class="o">,</span> <span class="n">n</span><span class="o">.</span><span class="na">peerEpoch</span><span class="o">);</span>
-                     <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
-                         <span class="n">updateProposal</span><span class="o">(</span><span class="n">getInitId</span><span class="o">(),</span> <span class="n">getInitLastLoggedZxid</span><span class="o">(),</span> <span class="n">getPeerEpoch</span><span class="o">());</span>
-                     <span class="o">}</span>
-                     <span class="c1">// 需要重新发送投票，因为之前的已经过时了
-</span><span class="c1"></span>                     <span class="n">sendNotifications</span><span class="o">();</span>
-                 <span class="o">}</span> <span class="k">else</span> <span class="k">if</span> <span class="o">(</span><span class="n">n</span><span class="o">.</span><span class="na">electionEpoch</span> <span class="o">&lt;</span> <span class="n">logicalclock</span><span class="o">.</span><span class="na">get</span><span class="o">())</span> <span class="o">{</span>
-                     <span class="c1">// 如果发送投票的节点，选举轮数落后，那么就不用理睬
-</span><span class="c1"></span>                     <span class="k">break</span><span class="o">;</span>
-                 <span class="o">}</span> <span class="k">else</span> <span class="k">if</span> <span class="o">(</span><span class="n">totalOrderPredicate</span><span class="o">(</span><span class="n">n</span><span class="o">.</span><span class="na">leader</span><span class="o">,</span> <span class="n">n</span><span class="o">.</span><span class="na">zxid</span><span class="o">,</span> <span class="n">n</span><span class="o">.</span><span class="na">peerEpoch</span><span class="o">,</span> <span class="n">proposedLeader</span><span class="o">,</span> <span class="n">proposedZxid</span><span class="o">,</span> <span class="n">proposedEpoch</span><span class="o">))</span> <span class="o">{</span>
-                     <span class="c1">// 如果别的节点更适合当选leader，那么就更新自己的投票信息，并且重新发送
-</span><span class="c1"></span>                     <span class="n">updateProposal</span><span class="o">(</span><span class="n">n</span><span class="o">.</span><span class="na">leader</span><span class="o">,</span> <span class="n">n</span><span class="o">.</span><span class="na">zxid</span><span class="o">,</span> <span class="n">n</span><span class="o">.</span><span class="na">peerEpoch</span><span class="o">);</span>
-                     <span class="n">sendNotifications</span><span class="o">();</span>
-                 <span class="o">}</span>
-                 
-                 <span class="c1">// 记录投票信息
-</span><span class="c1"></span>                 <span class="n">recvset</span><span class="o">.</span><span class="na">put</span><span class="o">(</span><span class="n">n</span><span class="o">.</span><span class="na">sid</span><span class="o">,</span> <span class="k">new</span> <span class="n">Vote</span><span class="o">(</span><span class="n">n</span><span class="o">.</span><span class="na">leader</span><span class="o">,</span> <span class="n">n</span><span class="o">.</span><span class="na">zxid</span><span class="o">,</span> <span class="n">n</span><span class="o">.</span><span class="na">electionEpoch</span><span class="o">,</span> <span class="n">n</span><span class="o">.</span><span class="na">peerEpoch</span><span class="o">));</span>
-                
-                 <span class="c1">// 如果有超过半数的投票一致，那么有可能新的leader被选举出来了
-</span><span class="c1"></span>                <span class="k">if</span> <span class="o">(</span><span class="n">voteSet</span><span class="o">.</span><span class="na">hasAllQuorums</span><span class="o">())</span> <span class="o">{</span>
-                    <span class="c1">// 检测队列里的剩余投票请求，并且直到等待finalizeWait时间，仍然没有新的请求
-</span><span class="c1"></span>                    <span class="c1">// 如果有别的节点更适合当选leader，那么就跳到循环开始，来处理投票信息
-</span><span class="c1"></span>                    <span class="k">while</span> <span class="o">((</span><span class="n">n</span> <span class="o">=</span> <span class="n">recvqueue</span><span class="o">.</span><span class="na">poll</span><span class="o">(</span><span class="n">finalizeWait</span><span class="o">,</span> <span class="n">TimeUnit</span><span class="o">.</span><span class="na">MILLISECONDS</span><span class="o">))</span> <span class="o">!=</span> <span class="kc">null</span><span class="o">)</span> <span class="o">{</span>
-                        <span class="k">if</span> <span class="o">(</span><span class="n">totalOrderPredicate</span><span class="o">(</span><span class="n">n</span><span class="o">.</span><span class="na">leader</span><span class="o">,</span> <span class="n">n</span><span class="o">.</span><span class="na">zxid</span><span class="o">,</span> <span class="n">n</span><span class="o">.</span><span class="na">peerEpoch</span><span class="o">,</span> <span class="n">proposedLeader</span><span class="o">,</span> <span class="n">proposedZxid</span><span class="o">,</span> <span class="n">proposedEpoch</span><span class="o">))</span> <span class="o">{</span>
-                            <span class="n">recvqueue</span><span class="o">.</span><span class="na">put</span><span class="o">(</span><span class="n">n</span><span class="o">);</span>
-                            <span class="k">break</span><span class="o">;</span>
-                        <span class="o">}</span>
-                    <span class="o">}</span>
-                    <span class="c1">// 如果仍然没有新请求，那么就认为leader选定出来了
-</span><span class="c1"></span>                    <span class="c1">// 根据比较节点id，判断是follower角色还是leader角色
-</span><span class="c1"></span>                    <span class="k">if</span> <span class="o">(</span><span class="n">n</span> <span class="o">==</span> <span class="kc">null</span><span class="o">)</span> <span class="o">{</span>
-                        <span class="c1">// 这里会更新该节点的状态为follower或者leader
-</span><span class="c1"></span>                        <span class="n">setPeerState</span><span class="o">(</span><span class="n">proposedLeader</span><span class="o">,</span> <span class="n">voteSet</span><span class="o">);</span>
-                        <span class="c1">// 返回最终的选票
-</span><span class="c1"></span>                        <span class="n">Vote</span> <span class="n">endVote</span> <span class="o">=</span> <span class="k">new</span> <span class="n">Vote</span><span class="o">(</span><span class="n">proposedLeader</span><span class="o">,</span> <span class="n">proposedZxid</span><span class="o">,</span> <span class="n">logicalclock</span><span class="o">.</span><span class="na">get</span><span class="o">(),</span> <span class="n">proposedEpoch</span><span class="o">);</span>
-                        <span class="k">return</span> <span class="n">endVote</span><span class="o">;</span>
-                    <span class="o">}</span>
-                <span class="o">}</span>
-                <span class="k">break</span><span class="o">;</span>
-           
-            <span class="k">case</span> <span class="n">FOLLOWING</span><span class="o">:</span>
-            <span class="k">case</span> <span class="n">LEADING</span><span class="o">:</span>
-                <span class="k">if</span><span class="o">(</span><span class="n">n</span><span class="o">.</span><span class="na">electionEpoch</span> <span class="o">==</span> <span class="n">logicalclock</span><span class="o">.</span><span class="na">get</span><span class="o">()){</span>
-                    <span class="c1">// 在同一选举轮数中，已经有leader产生并且开始运行了
-</span><span class="c1"></span>                    <span class="n">recvset</span><span class="o">.</span><span class="na">put</span><span class="o">(</span><span class="n">n</span><span class="o">.</span><span class="na">sid</span><span class="o">,</span> <span class="k">new</span> <span class="n">Vote</span><span class="o">(</span><span class="n">n</span><span class="o">.</span><span class="na">leader</span><span class="o">,</span> <span class="n">n</span><span class="o">.</span><span class="na">zxid</span><span class="o">,</span> <span class="n">n</span><span class="o">.</span><span class="na">electionEpoch</span><span class="o">,</span> <span class="n">n</span><span class="o">.</span><span class="na">peerEpoch</span><span class="o">));</span>
-                    <span class="k">if</span> <span class="o">(</span><span class="n">voteSet</span><span class="o">.</span><span class="na">hasAllQuorums</span><span class="o">()</span> <span class="o">&amp;&amp;</span> <span class="n">checkLeader</span><span class="o">(</span><span class="n">outofelection</span><span class="o">,</span> <span class="n">n</span><span class="o">.</span><span class="na">leader</span><span class="o">,</span> <span class="n">n</span><span class="o">.</span><span class="na">electionEpoch</span><span class="o">))</span> <span class="o">{</span>
-                        <span class="c1">// 这里会更新该节点的状态为follower或者leader
-</span><span class="c1"></span>                        <span class="n">setPeerState</span><span class="o">(</span><span class="n">n</span><span class="o">.</span><span class="na">leader</span><span class="o">,</span> <span class="n">voteSet</span><span class="o">);</span>
-                        <span class="n">Vote</span> <span class="n">endVote</span> <span class="o">=</span> <span class="k">new</span> <span class="n">Vote</span><span class="o">(</span><span class="n">n</span><span class="o">.</span><span class="na">leader</span><span class="o">,</span> <span class="n">n</span><span class="o">.</span><span class="na">zxid</span><span class="o">,</span> <span class="n">n</span><span class="o">.</span><span class="na">electionEpoch</span><span class="o">,</span> <span class="n">n</span><span class="o">.</span><span class="na">peerEpoch</span><span class="o">);</span>
-                        <span class="k">return</span> <span class="n">endVote</span><span class="o">;</span>
-                    <span class="o">}</span>
-                <span class="o">}</span>
-                <span class="c1">// 这里不用区分选举轮数，因为follower和leader角色已经稳定运行了
-</span><span class="c1"></span>                <span class="n">outofelection</span><span class="o">.</span><span class="na">put</span><span class="o">(</span><span class="n">n</span><span class="o">.</span><span class="na">sid</span><span class="o">,</span> <span class="k">new</span> <span class="n">Vote</span><span class="o">(</span><span class="n">n</span><span class="o">.</span><span class="na">version</span><span class="o">,</span> <span class="n">n</span><span class="o">.</span><span class="na">leader</span><span class="o">,</span>
-                                <span class="n">n</span><span class="o">.</span><span class="na">zxid</span><span class="o">,</span> <span class="n">n</span><span class="o">.</span><span class="na">electionEpoch</span><span class="o">,</span> <span class="n">n</span><span class="o">.</span><span class="na">peerEpoch</span><span class="o">,</span> <span class="n">n</span><span class="o">.</span><span class="na">state</span><span class="o">));</span>
-                <span class="c1">// 如果多数节点的投票相同，那么检查该leader节点是否处于leader状态
-</span><span class="c1"></span>                <span class="k">if</span> <span class="o">(</span><span class="n">voteSet</span><span class="o">.</span><span class="na">hasAllQuorums</span><span class="o">()</span> <span class="o">&amp;&amp;</span> <span class="n">checkLeader</span><span class="o">(</span><span class="n">outofelection</span><span class="o">,</span> <span class="n">n</span><span class="o">.</span><span class="na">leader</span><span class="o">,</span> <span class="n">n</span><span class="o">.</span><span class="na">electionEpoch</span><span class="o">))</span> <span class="o">{</span>
-                    <span class="c1">// 设置选举轮数
-</span><span class="c1"></span>                    <span class="n">logicalclock</span><span class="o">.</span><span class="na">set</span><span class="o">(</span><span class="n">n</span><span class="o">.</span><span class="na">electionEpoch</span><span class="o">);</span>
-                    <span class="c1">// 这里会更新该节点的状态为follower或者leader
-</span><span class="c1"></span>                    <span class="n">setPeerState</span><span class="o">(</span><span class="n">n</span><span class="o">.</span><span class="na">leader</span><span class="o">,</span> <span class="n">voteSet</span><span class="o">);</span>
-                    <span class="c1">// 返回最终的选票
-</span><span class="c1"></span>                	<span class="n">Vote</span> <span class="n">endVote</span> <span class="o">=</span> <span class="k">new</span> <span class="n">Vote</span><span class="o">(</span><span class="n">n</span><span class="o">.</span><span class="na">leader</span><span class="o">,</span> <span class="n">n</span><span class="o">.</span><span class="na">zxid</span><span class="o">,</span> <span class="n">n</span><span class="o">.</span><span class="na">electionEpoch</span><span class="o">,</span> <span class="n">n</span><span class="o">.</span><span class="na">peerEpoch</span><span class="o">);</span>
-                	<span class="k">return</span> <span class="n">endVote</span><span class="o">;</span>
-                <span class="o">}</span>
-           		<span class="k">break</span><span class="o">;</span>
-        <span class="o">}</span>
-    <span class="o">}</span>
-<span class="o">}</span>
-                    
-            
-
-</code></pre></td></tr></table></div>
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">FastLeaderElection</span> <span class="kd">implements</span> <span class="n">Election</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">    <span class="n">AtomicLong</span> <span class="n">logicalclock</span> <span class="o">=</span> <span class="k">new</span> <span class="n">AtomicLong</span><span class="o">();</span>  <span class="c1">// 选举轮数
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    
+</span></span><span class="line"><span class="cl">    <span class="c1">// 自身节点的投票信息
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="kt">long</span> <span class="n">proposedLeader</span><span class="o">;</span>  <span class="c1">// 哪个节点为leader
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="kt">long</span> <span class="n">proposedZxid</span><span class="o">;</span>    <span class="c1">// 选举的leader节点的最大事务id
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="kt">long</span> <span class="n">proposedEpoch</span><span class="o">;</span>   <span class="c1">// 选举的leader节点的最大epoch
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    
+</span></span><span class="line"><span class="cl">    <span class="kd">public</span> <span class="n">Vote</span> <span class="nf">lookForLeader</span><span class="o">()</span> <span class="kd">throws</span> <span class="n">InterruptedException</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">        <span class="c1">// 存储着来自同选举轮数，每个节点对应的投票，投票里包含了选举哪个节点作为leader
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>        <span class="n">Map</span><span class="o">&lt;</span><span class="n">Long</span><span class="o">,</span> <span class="n">Vote</span><span class="o">&gt;</span> <span class="n">recvset</span> <span class="o">=</span> <span class="k">new</span> <span class="n">HashMap</span><span class="o">&lt;</span><span class="n">Long</span><span class="o">,</span> <span class="n">Vote</span><span class="o">&gt;();</span>
+</span></span><span class="line"><span class="cl">        <span class="c1">// 存储着来自leader或者follower的投票
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>        <span class="n">Map</span><span class="o">&lt;</span><span class="n">Long</span><span class="o">,</span> <span class="n">Vote</span><span class="o">&gt;</span> <span class="n">outofelection</span> <span class="o">=</span> <span class="k">new</span> <span class="n">HashMap</span><span class="o">&lt;</span><span class="n">Long</span><span class="o">,</span> <span class="n">Vote</span><span class="o">&gt;();</span>
+</span></span><span class="line"><span class="cl">        <span class="c1">// 每次选举都会增加选举轮数
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>        <span class="n">logicalclock</span><span class="o">.</span><span class="na">incrementAndGet</span><span class="o">();</span>
+</span></span><span class="line"><span class="cl">        <span class="c1">// 设置自身的投票信息
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>        <span class="n">updateProposal</span><span class="o">(</span><span class="n">getInitId</span><span class="o">(),</span> <span class="n">getInitLastLoggedZxid</span><span class="o">(),</span> <span class="n">getPeerEpoch</span><span class="o">());</span>
+</span></span><span class="line"><span class="cl">        <span class="c1">// 发送投票给其余的节点
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>        <span class="n">sendNotifications</span><span class="o">();</span>
+</span></span><span class="line"><span class="cl">        
+</span></span><span class="line"><span class="cl">        <span class="c1">// 循环，一直到选出leader为止
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>        <span class="k">while</span> <span class="o">((</span><span class="n">self</span><span class="o">.</span><span class="na">getPeerState</span><span class="o">()</span> <span class="o">==</span> <span class="n">ServerState</span><span class="o">.</span><span class="na">LOOKING</span><span class="o">)</span> <span class="o">&amp;&amp;</span> <span class="o">(!</span><span class="n">stop</span><span class="o">))</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">            <span class="c1">// 从队列里获取其余节点的投票信息
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>            <span class="n">Notification</span> <span class="n">n</span> <span class="o">=</span> <span class="n">recvqueue</span><span class="o">.</span><span class="na">poll</span><span class="o">(</span><span class="n">notTimeout</span><span class="o">,</span> <span class="n">TimeUnit</span><span class="o">.</span><span class="na">MILLISECONDS</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">            <span class="c1">// 根据发送投票的节点的状态，做不同的处理
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>            <span class="k">switch</span> <span class="o">(</span><span class="n">n</span><span class="o">.</span><span class="na">state</span><span class="o">)</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">            <span class="k">case</span> <span class="n">LOOKING</span><span class="o">:</span>
+</span></span><span class="line"><span class="cl">                 <span class="c1">// 发送节点的状态为LOOKING
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>                 <span class="c1">// 先比较选举轮数，再比较epoch和事务id
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>                 <span class="k">if</span> <span class="o">(</span><span class="n">n</span><span class="o">.</span><span class="na">electionEpoch</span> <span class="o">&gt;</span> <span class="n">logicalclock</span><span class="o">.</span><span class="na">get</span><span class="o">())</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">                     <span class="c1">// 如果自己的选举轮数落后，更新自己的选举轮数
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>                     <span class="n">logicalclock</span><span class="o">.</span><span class="na">set</span><span class="o">(</span><span class="n">n</span><span class="o">.</span><span class="na">electionEpoch</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">                     <span class="c1">// 还需要清除旧的投票信息，因为这些都已经过时了
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>                     <span class="n">recvset</span><span class="o">.</span><span class="na">clear</span><span class="o">();</span>
+</span></span><span class="line"><span class="cl">                     <span class="c1">// 比较谁更适合当选leader，如果是别的节点，那么就更新自己的投票信息
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>                     <span class="k">if</span> <span class="o">(</span><span class="n">totalOrderPredicate</span><span class="o">(</span><span class="n">n</span><span class="o">.</span><span class="na">leader</span><span class="o">,</span> <span class="n">n</span><span class="o">.</span><span class="na">zxid</span><span class="o">,</span> <span class="n">n</span><span class="o">.</span><span class="na">peerEpoch</span><span class="o">,</span> <span class="n">getInitId</span><span class="o">(),</span> <span class="n">getInitLastLoggedZxid</span><span class="o">(),</span> <span class="n">getPeerEpoch</span><span class="o">()))</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">                         <span class="n">updateProposal</span><span class="o">(</span><span class="n">n</span><span class="o">.</span><span class="na">leader</span><span class="o">,</span> <span class="n">n</span><span class="o">.</span><span class="na">zxid</span><span class="o">,</span> <span class="n">n</span><span class="o">.</span><span class="na">peerEpoch</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">                     <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">                         <span class="n">updateProposal</span><span class="o">(</span><span class="n">getInitId</span><span class="o">(),</span> <span class="n">getInitLastLoggedZxid</span><span class="o">(),</span> <span class="n">getPeerEpoch</span><span class="o">());</span>
+</span></span><span class="line"><span class="cl">                     <span class="o">}</span>
+</span></span><span class="line"><span class="cl">                     <span class="c1">// 需要重新发送投票，因为之前的已经过时了
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>                     <span class="n">sendNotifications</span><span class="o">();</span>
+</span></span><span class="line"><span class="cl">                 <span class="o">}</span> <span class="k">else</span> <span class="k">if</span> <span class="o">(</span><span class="n">n</span><span class="o">.</span><span class="na">electionEpoch</span> <span class="o">&lt;</span> <span class="n">logicalclock</span><span class="o">.</span><span class="na">get</span><span class="o">())</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">                     <span class="c1">// 如果发送投票的节点，选举轮数落后，那么就不用理睬
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>                     <span class="k">break</span><span class="o">;</span>
+</span></span><span class="line"><span class="cl">                 <span class="o">}</span> <span class="k">else</span> <span class="k">if</span> <span class="o">(</span><span class="n">totalOrderPredicate</span><span class="o">(</span><span class="n">n</span><span class="o">.</span><span class="na">leader</span><span class="o">,</span> <span class="n">n</span><span class="o">.</span><span class="na">zxid</span><span class="o">,</span> <span class="n">n</span><span class="o">.</span><span class="na">peerEpoch</span><span class="o">,</span> <span class="n">proposedLeader</span><span class="o">,</span> <span class="n">proposedZxid</span><span class="o">,</span> <span class="n">proposedEpoch</span><span class="o">))</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">                     <span class="c1">// 如果别的节点更适合当选leader，那么就更新自己的投票信息，并且重新发送
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>                     <span class="n">updateProposal</span><span class="o">(</span><span class="n">n</span><span class="o">.</span><span class="na">leader</span><span class="o">,</span> <span class="n">n</span><span class="o">.</span><span class="na">zxid</span><span class="o">,</span> <span class="n">n</span><span class="o">.</span><span class="na">peerEpoch</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">                     <span class="n">sendNotifications</span><span class="o">();</span>
+</span></span><span class="line"><span class="cl">                 <span class="o">}</span>
+</span></span><span class="line"><span class="cl">                 
+</span></span><span class="line"><span class="cl">                 <span class="c1">// 记录投票信息
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>                 <span class="n">recvset</span><span class="o">.</span><span class="na">put</span><span class="o">(</span><span class="n">n</span><span class="o">.</span><span class="na">sid</span><span class="o">,</span> <span class="k">new</span> <span class="n">Vote</span><span class="o">(</span><span class="n">n</span><span class="o">.</span><span class="na">leader</span><span class="o">,</span> <span class="n">n</span><span class="o">.</span><span class="na">zxid</span><span class="o">,</span> <span class="n">n</span><span class="o">.</span><span class="na">electionEpoch</span><span class="o">,</span> <span class="n">n</span><span class="o">.</span><span class="na">peerEpoch</span><span class="o">));</span>
+</span></span><span class="line"><span class="cl">                
+</span></span><span class="line"><span class="cl">                 <span class="c1">// 如果有超过半数的投票一致，那么有可能新的leader被选举出来了
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>                <span class="k">if</span> <span class="o">(</span><span class="n">voteSet</span><span class="o">.</span><span class="na">hasAllQuorums</span><span class="o">())</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">                    <span class="c1">// 检测队列里的剩余投票请求，并且直到等待finalizeWait时间，仍然没有新的请求
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>                    <span class="c1">// 如果有别的节点更适合当选leader，那么就跳到循环开始，来处理投票信息
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>                    <span class="k">while</span> <span class="o">((</span><span class="n">n</span> <span class="o">=</span> <span class="n">recvqueue</span><span class="o">.</span><span class="na">poll</span><span class="o">(</span><span class="n">finalizeWait</span><span class="o">,</span> <span class="n">TimeUnit</span><span class="o">.</span><span class="na">MILLISECONDS</span><span class="o">))</span> <span class="o">!=</span> <span class="kc">null</span><span class="o">)</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">                        <span class="k">if</span> <span class="o">(</span><span class="n">totalOrderPredicate</span><span class="o">(</span><span class="n">n</span><span class="o">.</span><span class="na">leader</span><span class="o">,</span> <span class="n">n</span><span class="o">.</span><span class="na">zxid</span><span class="o">,</span> <span class="n">n</span><span class="o">.</span><span class="na">peerEpoch</span><span class="o">,</span> <span class="n">proposedLeader</span><span class="o">,</span> <span class="n">proposedZxid</span><span class="o">,</span> <span class="n">proposedEpoch</span><span class="o">))</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">                            <span class="n">recvqueue</span><span class="o">.</span><span class="na">put</span><span class="o">(</span><span class="n">n</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">                            <span class="k">break</span><span class="o">;</span>
+</span></span><span class="line"><span class="cl">                        <span class="o">}</span>
+</span></span><span class="line"><span class="cl">                    <span class="o">}</span>
+</span></span><span class="line"><span class="cl">                    <span class="c1">// 如果仍然没有新请求，那么就认为leader选定出来了
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>                    <span class="c1">// 根据比较节点id，判断是follower角色还是leader角色
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>                    <span class="k">if</span> <span class="o">(</span><span class="n">n</span> <span class="o">==</span> <span class="kc">null</span><span class="o">)</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">                        <span class="c1">// 这里会更新该节点的状态为follower或者leader
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>                        <span class="n">setPeerState</span><span class="o">(</span><span class="n">proposedLeader</span><span class="o">,</span> <span class="n">voteSet</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">                        <span class="c1">// 返回最终的选票
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>                        <span class="n">Vote</span> <span class="n">endVote</span> <span class="o">=</span> <span class="k">new</span> <span class="n">Vote</span><span class="o">(</span><span class="n">proposedLeader</span><span class="o">,</span> <span class="n">proposedZxid</span><span class="o">,</span> <span class="n">logicalclock</span><span class="o">.</span><span class="na">get</span><span class="o">(),</span> <span class="n">proposedEpoch</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">                        <span class="k">return</span> <span class="n">endVote</span><span class="o">;</span>
+</span></span><span class="line"><span class="cl">                    <span class="o">}</span>
+</span></span><span class="line"><span class="cl">                <span class="o">}</span>
+</span></span><span class="line"><span class="cl">                <span class="k">break</span><span class="o">;</span>
+</span></span><span class="line"><span class="cl">           
+</span></span><span class="line"><span class="cl">            <span class="k">case</span> <span class="n">FOLLOWING</span><span class="o">:</span>
+</span></span><span class="line"><span class="cl">            <span class="k">case</span> <span class="n">LEADING</span><span class="o">:</span>
+</span></span><span class="line"><span class="cl">                <span class="k">if</span><span class="o">(</span><span class="n">n</span><span class="o">.</span><span class="na">electionEpoch</span> <span class="o">==</span> <span class="n">logicalclock</span><span class="o">.</span><span class="na">get</span><span class="o">()){</span>
+</span></span><span class="line"><span class="cl">                    <span class="c1">// 在同一选举轮数中，已经有leader产生并且开始运行了
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>                    <span class="n">recvset</span><span class="o">.</span><span class="na">put</span><span class="o">(</span><span class="n">n</span><span class="o">.</span><span class="na">sid</span><span class="o">,</span> <span class="k">new</span> <span class="n">Vote</span><span class="o">(</span><span class="n">n</span><span class="o">.</span><span class="na">leader</span><span class="o">,</span> <span class="n">n</span><span class="o">.</span><span class="na">zxid</span><span class="o">,</span> <span class="n">n</span><span class="o">.</span><span class="na">electionEpoch</span><span class="o">,</span> <span class="n">n</span><span class="o">.</span><span class="na">peerEpoch</span><span class="o">));</span>
+</span></span><span class="line"><span class="cl">                    <span class="k">if</span> <span class="o">(</span><span class="n">voteSet</span><span class="o">.</span><span class="na">hasAllQuorums</span><span class="o">()</span> <span class="o">&amp;&amp;</span> <span class="n">checkLeader</span><span class="o">(</span><span class="n">outofelection</span><span class="o">,</span> <span class="n">n</span><span class="o">.</span><span class="na">leader</span><span class="o">,</span> <span class="n">n</span><span class="o">.</span><span class="na">electionEpoch</span><span class="o">))</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">                        <span class="c1">// 这里会更新该节点的状态为follower或者leader
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>                        <span class="n">setPeerState</span><span class="o">(</span><span class="n">n</span><span class="o">.</span><span class="na">leader</span><span class="o">,</span> <span class="n">voteSet</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">                        <span class="n">Vote</span> <span class="n">endVote</span> <span class="o">=</span> <span class="k">new</span> <span class="n">Vote</span><span class="o">(</span><span class="n">n</span><span class="o">.</span><span class="na">leader</span><span class="o">,</span> <span class="n">n</span><span class="o">.</span><span class="na">zxid</span><span class="o">,</span> <span class="n">n</span><span class="o">.</span><span class="na">electionEpoch</span><span class="o">,</span> <span class="n">n</span><span class="o">.</span><span class="na">peerEpoch</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">                        <span class="k">return</span> <span class="n">endVote</span><span class="o">;</span>
+</span></span><span class="line"><span class="cl">                    <span class="o">}</span>
+</span></span><span class="line"><span class="cl">                <span class="o">}</span>
+</span></span><span class="line"><span class="cl">                <span class="c1">// 这里不用区分选举轮数，因为follower和leader角色已经稳定运行了
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>                <span class="n">outofelection</span><span class="o">.</span><span class="na">put</span><span class="o">(</span><span class="n">n</span><span class="o">.</span><span class="na">sid</span><span class="o">,</span> <span class="k">new</span> <span class="n">Vote</span><span class="o">(</span><span class="n">n</span><span class="o">.</span><span class="na">version</span><span class="o">,</span> <span class="n">n</span><span class="o">.</span><span class="na">leader</span><span class="o">,</span>
+</span></span><span class="line"><span class="cl">                                <span class="n">n</span><span class="o">.</span><span class="na">zxid</span><span class="o">,</span> <span class="n">n</span><span class="o">.</span><span class="na">electionEpoch</span><span class="o">,</span> <span class="n">n</span><span class="o">.</span><span class="na">peerEpoch</span><span class="o">,</span> <span class="n">n</span><span class="o">.</span><span class="na">state</span><span class="o">));</span>
+</span></span><span class="line"><span class="cl">                <span class="c1">// 如果多数节点的投票相同，那么检查该leader节点是否处于leader状态
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>                <span class="k">if</span> <span class="o">(</span><span class="n">voteSet</span><span class="o">.</span><span class="na">hasAllQuorums</span><span class="o">()</span> <span class="o">&amp;&amp;</span> <span class="n">checkLeader</span><span class="o">(</span><span class="n">outofelection</span><span class="o">,</span> <span class="n">n</span><span class="o">.</span><span class="na">leader</span><span class="o">,</span> <span class="n">n</span><span class="o">.</span><span class="na">electionEpoch</span><span class="o">))</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">                    <span class="c1">// 设置选举轮数
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>                    <span class="n">logicalclock</span><span class="o">.</span><span class="na">set</span><span class="o">(</span><span class="n">n</span><span class="o">.</span><span class="na">electionEpoch</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">                    <span class="c1">// 这里会更新该节点的状态为follower或者leader
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>                    <span class="n">setPeerState</span><span class="o">(</span><span class="n">n</span><span class="o">.</span><span class="na">leader</span><span class="o">,</span> <span class="n">voteSet</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">                    <span class="c1">// 返回最终的选票
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>                	<span class="n">Vote</span> <span class="n">endVote</span> <span class="o">=</span> <span class="k">new</span> <span class="n">Vote</span><span class="o">(</span><span class="n">n</span><span class="o">.</span><span class="na">leader</span><span class="o">,</span> <span class="n">n</span><span class="o">.</span><span class="na">zxid</span><span class="o">,</span> <span class="n">n</span><span class="o">.</span><span class="na">electionEpoch</span><span class="o">,</span> <span class="n">n</span><span class="o">.</span><span class="na">peerEpoch</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">                	<span class="k">return</span> <span class="n">endVote</span><span class="o">;</span>
+</span></span><span class="line"><span class="cl">                <span class="o">}</span>
+</span></span><span class="line"><span class="cl">           		<span class="k">break</span><span class="o">;</span>
+</span></span><span class="line"><span class="cl">        <span class="o">}</span>
+</span></span><span class="line"><span class="cl">    <span class="o">}</span>
+</span></span><span class="line"><span class="cl"><span class="o">}</span>
+</span></span><span class="line"><span class="cl">                    
+</span></span><span class="line"><span class="cl">            
+</span></span></code></pre></td></tr></table></div>
 </div>
 </div><p>我们再来看看 leader 角色或者 follower 角色是如何处理投票请求的。在 WorkerReceiver 线程里，会检查选票请求。如果自身是 leader 或者 follower，会直接返回自身的选票 。如果自身是 LOOKING 状态，那么就会将选票添加到队列里，等待选举算法处理。</p>
 <div class="highlight"><div class="chroma">
@@ -655,62 +653,62 @@
 </span><span class="lnt">55
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="kd">class</span> <span class="nc">WorkerReceiver</span> <span class="kd">extends</span> <span class="n">ZooKeeperThread</span> <span class="o">{</span>
-    
-    <span class="n">QuorumCnxManager</span> <span class="n">manager</span><span class="o">;</span>
-    
-    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">run</span><span class="o">()</span> <span class="o">{</span>
-    	<span class="n">Message</span> <span class="n">response</span><span class="o">;</span>
-        <span class="k">while</span> <span class="o">(!</span><span class="n">stop</span><span class="o">)</span> <span class="o">{</span>
-            <span class="n">response</span> <span class="o">=</span> <span class="n">manager</span><span class="o">.</span><span class="na">pollRecvQueue</span><span class="o">(</span><span class="n">3000</span><span class="o">,</span> <span class="n">TimeUnit</span><span class="o">.</span><span class="na">MILLISECONDS</span><span class="o">);</span>
-            <span class="n">Notification</span> <span class="n">n</span> <span class="o">=</span> <span class="k">new</span> <span class="n">Notification</span><span class="o">();</span>
-            
-            <span class="c1">// 解析响应，生成Notification实例
-</span><span class="c1"></span>            <span class="o">......</span>
-            
-            <span class="k">if</span> <span class="o">(</span><span class="n">self</span><span class="o">.</span><span class="na">getPeerState</span><span class="o">()</span> <span class="o">==</span> <span class="n">QuorumPeer</span><span class="o">.</span><span class="na">ServerState</span><span class="o">.</span><span class="na">LOOKING</span><span class="o">)</span> <span class="o">{</span>
-                <span class="c1">// 如果自身节点是LOOKING状态，那么将请求添加到队列里，等待算法处理
-</span><span class="c1"></span>                <span class="n">recvqueue</span><span class="o">.</span><span class="na">offer</span><span class="o">(</span><span class="n">n</span><span class="o">);</span>
-                <span class="c1">// ackstate表示发送该响应的节点的状态，如果对方状态也是LOOKING，并且选举轮数落后，
-</span><span class="c1"></span>                <span class="c1">// 那么将自身的选票返回给它
-</span><span class="c1"></span>                <span class="k">if</span> <span class="o">((</span><span class="n">ackstate</span> <span class="o">==</span> <span class="n">QuorumPeer</span><span class="o">.</span><span class="na">ServerState</span><span class="o">.</span><span class="na">LOOKING</span><span class="o">)</span> <span class="o">&amp;&amp;</span> <span class="o">(</span><span class="n">n</span><span class="o">.</span><span class="na">electionEpoch</span> <span class="o">&lt;</span> <span class="n">logicalclock</span><span class="o">.</span><span class="na">get</span><span class="o">()))</span> <span class="o">{</span>
-                    <span class="c1">// 获取自身节点的选票
-</span><span class="c1"></span>                    <span class="n">Vote</span> <span class="n">v</span> <span class="o">=</span> <span class="n">getVote</span><span class="o">();</span>
-                    <span class="c1">// 构建响应
-</span><span class="c1"></span>                    <span class="n">ToSend</span> <span class="n">notmsg</span> <span class="o">=</span> <span class="k">new</span> <span class="n">ToSend</span><span class="o">(</span>
-                        <span class="n">ToSend</span><span class="o">.</span><span class="na">mType</span><span class="o">.</span><span class="na">notification</span><span class="o">,</span>
-                        <span class="n">v</span><span class="o">.</span><span class="na">getId</span><span class="o">(),</span>
-                        <span class="n">v</span><span class="o">.</span><span class="na">getZxid</span><span class="o">(),</span>
-                        <span class="n">logicalclock</span><span class="o">.</span><span class="na">get</span><span class="o">(),</span>
-                        <span class="n">self</span><span class="o">.</span><span class="na">getPeerState</span><span class="o">(),</span>
-                        <span class="n">response</span><span class="o">.</span><span class="na">sid</span><span class="o">,</span>
-                        <span class="n">v</span><span class="o">.</span><span class="na">getPeerEpoch</span><span class="o">(),</span>
-                        <span class="n">qv</span><span class="o">.</span><span class="na">toString</span><span class="o">().</span><span class="na">getBytes</span><span class="o">());</span>
-                    <span class="c1">// 添加到队列，由后台线程发送
-</span><span class="c1"></span>                    <span class="n">sendqueue</span><span class="o">.</span><span class="na">offer</span><span class="o">(</span><span class="n">notmsg</span><span class="o">);</span>
-                <span class="o">}</span>
-            <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
-                <span class="c1">// 如果自身节点是leader或者follower，那么表明集群中已经有了leader节点了
-</span><span class="c1"></span>                <span class="n">Vote</span> <span class="n">current</span> <span class="o">=</span> <span class="n">self</span><span class="o">.</span><span class="na">getCurrentVote</span><span class="o">();</span>
-                <span class="k">if</span> <span class="o">(</span><span class="n">ackstate</span> <span class="o">==</span> <span class="n">QuorumPeer</span><span class="o">.</span><span class="na">ServerState</span><span class="o">.</span><span class="na">LOOKING</span><span class="o">)</span> <span class="o">{</span>
-                    <span class="c1">// 直接返回自身节点的选票
-</span><span class="c1"></span>                    <span class="n">ToSend</span> <span class="n">notmsg</span> <span class="o">=</span> <span class="k">new</span> <span class="n">ToSend</span><span class="o">(</span>
-                        <span class="n">ToSend</span><span class="o">.</span><span class="na">mType</span><span class="o">.</span><span class="na">notification</span><span class="o">,</span>
-                        <span class="n">current</span><span class="o">.</span><span class="na">getId</span><span class="o">(),</span>
-                        <span class="n">current</span><span class="o">.</span><span class="na">getZxid</span><span class="o">(),</span>
-                        <span class="n">current</span><span class="o">.</span><span class="na">getElectionEpoch</span><span class="o">(),</span>
-                        <span class="n">self</span><span class="o">.</span><span class="na">getPeerState</span><span class="o">(),</span>
-                        <span class="n">response</span><span class="o">.</span><span class="na">sid</span><span class="o">,</span>
-                        <span class="n">current</span><span class="o">.</span><span class="na">getPeerEpoch</span><span class="o">(),</span>
-                        <span class="n">qv</span><span class="o">.</span><span class="na">toString</span><span class="o">().</span><span class="na">getBytes</span><span class="o">());</span>
-                    <span class="c1">// 添加到队列，由后台线程发送
-</span><span class="c1"></span>                    <span class="n">sendqueue</span><span class="o">.</span><span class="na">offer</span><span class="o">(</span><span class="n">notmsg</span><span class="o">);</span>
-                <span class="o">}</span>
-            <span class="o">}</span>
-        <span class="o">}</span>
-    <span class="o">}</span>
-<span class="o">}</span>          
-</code></pre></td></tr></table></div>
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="kd">class</span> <span class="nc">WorkerReceiver</span> <span class="kd">extends</span> <span class="n">ZooKeeperThread</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">    
+</span></span><span class="line"><span class="cl">    <span class="n">QuorumCnxManager</span> <span class="n">manager</span><span class="o">;</span>
+</span></span><span class="line"><span class="cl">    
+</span></span><span class="line"><span class="cl">    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">run</span><span class="o">()</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">    	<span class="n">Message</span> <span class="n">response</span><span class="o">;</span>
+</span></span><span class="line"><span class="cl">        <span class="k">while</span> <span class="o">(!</span><span class="n">stop</span><span class="o">)</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">            <span class="n">response</span> <span class="o">=</span> <span class="n">manager</span><span class="o">.</span><span class="na">pollRecvQueue</span><span class="o">(</span><span class="mi">3000</span><span class="o">,</span> <span class="n">TimeUnit</span><span class="o">.</span><span class="na">MILLISECONDS</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">            <span class="n">Notification</span> <span class="n">n</span> <span class="o">=</span> <span class="k">new</span> <span class="n">Notification</span><span class="o">();</span>
+</span></span><span class="line"><span class="cl">            
+</span></span><span class="line"><span class="cl">            <span class="c1">// 解析响应，生成Notification实例
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>            <span class="o">......</span>
+</span></span><span class="line"><span class="cl">            
+</span></span><span class="line"><span class="cl">            <span class="k">if</span> <span class="o">(</span><span class="n">self</span><span class="o">.</span><span class="na">getPeerState</span><span class="o">()</span> <span class="o">==</span> <span class="n">QuorumPeer</span><span class="o">.</span><span class="na">ServerState</span><span class="o">.</span><span class="na">LOOKING</span><span class="o">)</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">                <span class="c1">// 如果自身节点是LOOKING状态，那么将请求添加到队列里，等待算法处理
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>                <span class="n">recvqueue</span><span class="o">.</span><span class="na">offer</span><span class="o">(</span><span class="n">n</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">                <span class="c1">// ackstate表示发送该响应的节点的状态，如果对方状态也是LOOKING，并且选举轮数落后，
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>                <span class="c1">// 那么将自身的选票返回给它
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>                <span class="k">if</span> <span class="o">((</span><span class="n">ackstate</span> <span class="o">==</span> <span class="n">QuorumPeer</span><span class="o">.</span><span class="na">ServerState</span><span class="o">.</span><span class="na">LOOKING</span><span class="o">)</span> <span class="o">&amp;&amp;</span> <span class="o">(</span><span class="n">n</span><span class="o">.</span><span class="na">electionEpoch</span> <span class="o">&lt;</span> <span class="n">logicalclock</span><span class="o">.</span><span class="na">get</span><span class="o">()))</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">                    <span class="c1">// 获取自身节点的选票
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>                    <span class="n">Vote</span> <span class="n">v</span> <span class="o">=</span> <span class="n">getVote</span><span class="o">();</span>
+</span></span><span class="line"><span class="cl">                    <span class="c1">// 构建响应
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>                    <span class="n">ToSend</span> <span class="n">notmsg</span> <span class="o">=</span> <span class="k">new</span> <span class="n">ToSend</span><span class="o">(</span>
+</span></span><span class="line"><span class="cl">                        <span class="n">ToSend</span><span class="o">.</span><span class="na">mType</span><span class="o">.</span><span class="na">notification</span><span class="o">,</span>
+</span></span><span class="line"><span class="cl">                        <span class="n">v</span><span class="o">.</span><span class="na">getId</span><span class="o">(),</span>
+</span></span><span class="line"><span class="cl">                        <span class="n">v</span><span class="o">.</span><span class="na">getZxid</span><span class="o">(),</span>
+</span></span><span class="line"><span class="cl">                        <span class="n">logicalclock</span><span class="o">.</span><span class="na">get</span><span class="o">(),</span>
+</span></span><span class="line"><span class="cl">                        <span class="n">self</span><span class="o">.</span><span class="na">getPeerState</span><span class="o">(),</span>
+</span></span><span class="line"><span class="cl">                        <span class="n">response</span><span class="o">.</span><span class="na">sid</span><span class="o">,</span>
+</span></span><span class="line"><span class="cl">                        <span class="n">v</span><span class="o">.</span><span class="na">getPeerEpoch</span><span class="o">(),</span>
+</span></span><span class="line"><span class="cl">                        <span class="n">qv</span><span class="o">.</span><span class="na">toString</span><span class="o">().</span><span class="na">getBytes</span><span class="o">());</span>
+</span></span><span class="line"><span class="cl">                    <span class="c1">// 添加到队列，由后台线程发送
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>                    <span class="n">sendqueue</span><span class="o">.</span><span class="na">offer</span><span class="o">(</span><span class="n">notmsg</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">                <span class="o">}</span>
+</span></span><span class="line"><span class="cl">            <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">                <span class="c1">// 如果自身节点是leader或者follower，那么表明集群中已经有了leader节点了
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>                <span class="n">Vote</span> <span class="n">current</span> <span class="o">=</span> <span class="n">self</span><span class="o">.</span><span class="na">getCurrentVote</span><span class="o">();</span>
+</span></span><span class="line"><span class="cl">                <span class="k">if</span> <span class="o">(</span><span class="n">ackstate</span> <span class="o">==</span> <span class="n">QuorumPeer</span><span class="o">.</span><span class="na">ServerState</span><span class="o">.</span><span class="na">LOOKING</span><span class="o">)</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">                    <span class="c1">// 直接返回自身节点的选票
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>                    <span class="n">ToSend</span> <span class="n">notmsg</span> <span class="o">=</span> <span class="k">new</span> <span class="n">ToSend</span><span class="o">(</span>
+</span></span><span class="line"><span class="cl">                        <span class="n">ToSend</span><span class="o">.</span><span class="na">mType</span><span class="o">.</span><span class="na">notification</span><span class="o">,</span>
+</span></span><span class="line"><span class="cl">                        <span class="n">current</span><span class="o">.</span><span class="na">getId</span><span class="o">(),</span>
+</span></span><span class="line"><span class="cl">                        <span class="n">current</span><span class="o">.</span><span class="na">getZxid</span><span class="o">(),</span>
+</span></span><span class="line"><span class="cl">                        <span class="n">current</span><span class="o">.</span><span class="na">getElectionEpoch</span><span class="o">(),</span>
+</span></span><span class="line"><span class="cl">                        <span class="n">self</span><span class="o">.</span><span class="na">getPeerState</span><span class="o">(),</span>
+</span></span><span class="line"><span class="cl">                        <span class="n">response</span><span class="o">.</span><span class="na">sid</span><span class="o">,</span>
+</span></span><span class="line"><span class="cl">                        <span class="n">current</span><span class="o">.</span><span class="na">getPeerEpoch</span><span class="o">(),</span>
+</span></span><span class="line"><span class="cl">                        <span class="n">qv</span><span class="o">.</span><span class="na">toString</span><span class="o">().</span><span class="na">getBytes</span><span class="o">());</span>
+</span></span><span class="line"><span class="cl">                    <span class="c1">// 添加到队列，由后台线程发送
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>                    <span class="n">sendqueue</span><span class="o">.</span><span class="na">offer</span><span class="o">(</span><span class="n">notmsg</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">                <span class="o">}</span>
+</span></span><span class="line"><span class="cl">            <span class="o">}</span>
+</span></span><span class="line"><span class="cl">        <span class="o">}</span>
+</span></span><span class="line"><span class="cl">    <span class="o">}</span>
+</span></span><span class="line"><span class="cl"><span class="o">}</span>          
+</span></span></code></pre></td></tr></table></div>
 </div>
 </div><p>选举完成后，各个节点的角色都已经确定好了，接下来继续看 leader 和 follower 角色的运行原理。</p>
 <h2 id="同步"><a href="#同步" class="anchor-link"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon anchor-icon"><path d="M326.612 185.391c59.747 59.809 58.927 155.698.36 214.59-.11.12-.24.25-.36.37l-67.2 67.2c-59.27 59.27-155.699 59.262-214.96 0-59.27-59.26-59.27-155.7 0-214.96l37.106-37.106c9.84-9.84 26.786-3.3 27.294 10.606.648 17.722 3.826 35.527 9.69 52.721 1.986 5.822.567 12.262-3.783 16.612l-13.087 13.087c-28.026 28.026-28.905 73.66-1.155 101.96 28.024 28.579 74.086 28.749 102.325.51l67.2-67.19c28.191-28.191 28.073-73.757 0-101.83-3.701-3.694-7.429-6.564-10.341-8.569a16.037 16.037 0 0 1-6.947-12.606c-.396-10.567 3.348-21.456 11.698-29.806l21.054-21.055c5.521-5.521 14.182-6.199 20.584-1.731a152.482 152.482 0 0 1 20.522 17.197zM467.547 44.449c-59.261-59.262-155.69-59.27-214.96 0l-67.2 67.2c-.12.12-.25.25-.36.37-58.566 58.892-59.387 154.781.36 214.59a152.454 152.454 0 0 0 20.521 17.196c6.402 4.468 15.064 3.789 20.584-1.731l21.054-21.055c8.35-8.35 12.094-19.239 11.698-29.806a16.037 16.037 0 0 0-6.947-12.606c-2.912-2.005-6.64-4.875-10.341-8.569-28.073-28.073-28.191-73.639 0-101.83l67.2-67.19c28.239-28.239 74.3-28.069 102.325.51 27.75 28.3 26.872 73.934-1.155 101.96l-13.087 13.087c-4.35 4.35-5.769 10.79-3.783 16.612 5.864 17.194 9.042 34.999 9.69 52.721.509 13.906 17.454 20.446 27.294 10.606l37.106-37.106c59.271-59.259 59.271-155.699.001-214.959z"/></svg></a>同步</h2>
@@ -750,9 +748,9 @@
 
         
     <div class="updated-badge-container">
-        <span title="Updated @ 2021-10-22 14:44:34 CST" style="cursor:help">
+        <span title="Updated @ 2023-07-02 16:59:09 CST" style="cursor:help">
 
-<svg xmlns="http://www.w3.org/2000/svg" width="130" height="20" class="updated-badge"><linearGradient id="b" x2="0" y2="100%"><stop offset="0" stop-color="#bbb" stop-opacity=".1"/><stop offset="1" stop-opacity=".1"/></linearGradient><clipPath id="a"><rect width="130" height="20" rx="3" fill="#fff"/></clipPath><g clip-path="url(#a)"><path class="updated-badge-left" d="M0 0h55v20H0z"/><path class="updated-badge-right" d="M55 0h75v20H55z"/><path fill="url(#b)" d="M0 0h130v20H0z"/></g><g fill="#fff" text-anchor="middle" font-size="110"><text x="285" y="150" fill="#010101" fill-opacity=".3" textLength="450" transform="scale(.1)">updated</text><text x="285" y="140" textLength="450" transform="scale(.1)">updated</text><text x="915" y="150" fill="#010101" fill-opacity=".3" textLength="650" transform="scale(.1)">2021-10-22</text><text x="915" y="140" textLength="650" transform="scale(.1)">2021-10-22</text></g></svg>
+<svg xmlns="http://www.w3.org/2000/svg" width="130" height="20" class="updated-badge"><linearGradient id="b" x2="0" y2="100%"><stop offset="0" stop-color="#bbb" stop-opacity=".1"/><stop offset="1" stop-opacity=".1"/></linearGradient><clipPath id="a"><rect width="130" height="20" rx="3" fill="#fff"/></clipPath><g clip-path="url(#a)"><path class="updated-badge-left" d="M0 0h55v20H0z"/><path class="updated-badge-right" d="M55 0h75v20H55z"/><path fill="url(#b)" d="M0 0h130v20H0z"/></g><g fill="#fff" text-anchor="middle" font-size="110"><text x="285" y="150" fill="#010101" fill-opacity=".3" textLength="450" transform="scale(.1)">updated</text><text x="285" y="140" textLength="450" transform="scale(.1)">updated</text><text x="915" y="150" fill="#010101" fill-opacity=".3" textLength="650" transform="scale(.1)">2023-07-02</text><text x="915" y="140" textLength="650" transform="scale(.1)">2023-07-02</text></g></svg>
         </span></div>
 
 

@@ -3,7 +3,7 @@
     <head prefix="og: http://ogp.me/ns# article: http://ogp.me/ns/article#">
     <meta charset="UTF-8" />
 
-    <meta name="generator" content="Hugo 0.88.1" /><meta name="theme-color" content="#fff" />
+    <meta name="generator" content="Hugo 0.115.0"><meta name="theme-color" content="#fff" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     
     <meta name="format-detection" content="telephone=no, date=no, address=no, email=no" />
@@ -14,11 +14,11 @@
 
     <title>Postgresql LWLock 原理 | 学习笔记</title>
 
-    <link rel="stylesheet" href="/css/meme.min.2d3e1834af2bc8dda20c7d74aaa1d8134845094441b7a554a5206ccd4b472596.css"/>
+    <link rel="stylesheet" href="/css/meme.min.91e7f58f97e1c60563ef481c38d9684fa8099537801d6f17bbfc724121e7d8f1.css"/>
 
     
     
-        <script src="/js/meme.min.800f61672145711eb3e1f29fcfcc3dbe0139dd459259718b611a0390f74703d1.js"></script>
+        <script src="/js/meme.min.3210a00c2fdcf6f831170b681b8ee40f83f0224663661e986872616aec45407f.js"></script>
 
     
 
@@ -54,7 +54,7 @@
         "@context": "https://schema.org",
         "@type": "BlogPosting",
         "datePublished": "2019-10-15T20:59:32+00:00",
-        "dateModified": "2021-10-22T14:44:34+08:00",
+        "dateModified": "2023-07-02T16:59:09+08:00",
         "url": "https://zhmin.github.io/posts/postgresql-lwlock/",
         "headline": "Postgresql LWLock 原理",
         "description": "前言 postgresql 的架构是基于多进程的，进程之间往往存在着数据共享，比如缓存读写。这时 postgresql 需要提高一种锁机制来支持并发访问，但是 linux 只实现了线程间的读写锁，所以 postgresql 自己实现进程间的读写锁，它主要利用了信号量和自旋锁来实……",
@@ -98,7 +98,7 @@
 <meta property="og:locale" content="zh" /><meta property="og:image" content="https://zhmin.github.io/icons/apple-touch-icon.png" />
     <meta property="og:type" content="article" />
     <meta property="article:published_time" content="2019-10-15T20:59:32&#43;00:00" />
-    <meta property="article:modified_time" content="2021-10-22T14:44:34&#43;08:00" />
+    <meta property="article:modified_time" content="2023-07-02T16:59:09&#43;08:00" />
     
     <meta property="article:section" content="posts" />
 
@@ -254,17 +254,17 @@
 </span><span class="lnt">10
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="k">struct</span> <span class="n">PGPROC</span> 
-<span class="p">{</span>
-    <span class="n">BackendId</span>	<span class="n">backendId</span><span class="p">;</span>		<span class="cm">/* This backend&#39;s backend ID (if assigned) */</span>
-    <span class="n">PGSemaphore</span> <span class="n">sem</span><span class="p">;</span>			<span class="c1">// 信号量
-</span><span class="c1"></span>
-    <span class="c1">// 正在等待的lwLock
-</span><span class="c1"></span>    <span class="kt">bool</span>		<span class="n">lwWaiting</span><span class="p">;</span>		<span class="c1">// 是否在等待lwlock
-</span><span class="c1"></span>    <span class="n">uint8</span>		<span class="n">lwWaitMode</span><span class="p">;</span>		<span class="c1">// lwlock加锁类型，有读锁和写锁
-</span><span class="c1"></span>    <span class="n">proclist_node</span> <span class="n">lwWaitLink</span><span class="p">;</span>	<span class="c1">// 位于等待列表中的位置
-</span><span class="c1"></span><span class="p">}</span>
-</code></pre></td></tr></table></div>
+<pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="line"><span class="cl"><span class="k">struct</span> <span class="n">PGPROC</span> 
+</span></span><span class="line"><span class="cl"><span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="n">BackendId</span>	<span class="n">backendId</span><span class="p">;</span>		<span class="cm">/* This backend&#39;s backend ID (if assigned) */</span>
+</span></span><span class="line"><span class="cl">    <span class="n">PGSemaphore</span> <span class="n">sem</span><span class="p">;</span>			<span class="c1">// 信号量
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// 正在等待的lwLock
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="kt">bool</span>		<span class="n">lwWaiting</span><span class="p">;</span>		<span class="c1">// 是否在等待lwlock
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="n">uint8</span>		<span class="n">lwWaitMode</span><span class="p">;</span>		<span class="c1">// lwlock加锁类型，有读锁和写锁
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="n">proclist_node</span> <span class="n">lwWaitLink</span><span class="p">;</span>	<span class="c1">// 位于等待列表中的位置
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="p">}</span>
+</span></span></code></pre></td></tr></table></div>
 </div>
 </div><p><code>PGPROC</code> 实例存储在进程共享内存里，在创建进程时会被初始化。这里需要提醒下，信号量 sem 的初始值为0，属于无名信号量。</p>
 <h2 id="锁结构"><a href="#锁结构" class="anchor-link"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon anchor-icon"><path d="M326.612 185.391c59.747 59.809 58.927 155.698.36 214.59-.11.12-.24.25-.36.37l-67.2 67.2c-59.27 59.27-155.699 59.262-214.96 0-59.27-59.26-59.27-155.7 0-214.96l37.106-37.106c9.84-9.84 26.786-3.3 27.294 10.606.648 17.722 3.826 35.527 9.69 52.721 1.986 5.822.567 12.262-3.783 16.612l-13.087 13.087c-28.026 28.026-28.905 73.66-1.155 101.96 28.024 28.579 74.086 28.749 102.325.51l67.2-67.19c28.191-28.191 28.073-73.757 0-101.83-3.701-3.694-7.429-6.564-10.341-8.569a16.037 16.037 0 0 1-6.947-12.606c-.396-10.567 3.348-21.456 11.698-29.806l21.054-21.055c5.521-5.521 14.182-6.199 20.584-1.731a152.482 152.482 0 0 1 20.522 17.197zM467.547 44.449c-59.261-59.262-155.69-59.27-214.96 0l-67.2 67.2c-.12.12-.25.25-.36.37-58.566 58.892-59.387 154.781.36 214.59a152.454 152.454 0 0 0 20.521 17.196c6.402 4.468 15.064 3.789 20.584-1.731l21.054-21.055c8.35-8.35 12.094-19.239 11.698-29.806a16.037 16.037 0 0 0-6.947-12.606c-2.912-2.005-6.64-4.875-10.341-8.569-28.073-28.073-28.191-73.639 0-101.83l67.2-67.19c28.239-28.239 74.3-28.069 102.325.51 27.75 28.3 26.872 73.934-1.155 101.96l-13.087 13.087c-4.35 4.35-5.769 10.79-3.783 16.612 5.864 17.194 9.042 34.999 9.69 52.721.509 13.906 17.454 20.446 27.294 10.606l37.106-37.106c59.271-59.259 59.271-155.699.001-214.959z"/></svg></a>锁结构</h2>
@@ -279,13 +279,13 @@
 </span><span class="lnt">6
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="k">typedef</span> <span class="k">struct</span> <span class="n">LWLock</span>
-<span class="p">{</span>
-	<span class="n">uint16</span>		<span class="n">tranche</span><span class="p">;</span>		<span class="c1">// tranche id，表示用于哪个方面
-</span><span class="c1"></span>	<span class="n">pg_atomic_uint32</span> <span class="n">state</span><span class="p">;</span>		<span class="c1">// 状态值，包含多个标记位
-</span><span class="c1"></span>	<span class="n">proclist_head</span> <span class="n">waiters</span><span class="p">;</span>		<span class="cm">/* 等待进程链表 */</span>
-<span class="p">}</span> <span class="n">LWLock</span><span class="p">;</span>
-</code></pre></td></tr></table></div>
+<pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="line"><span class="cl"><span class="k">typedef</span> <span class="k">struct</span> <span class="n">LWLock</span>
+</span></span><span class="line"><span class="cl"><span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="n">uint16</span>		<span class="n">tranche</span><span class="p">;</span>		<span class="c1">// tranche id，表示用于哪个方面
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="n">pg_atomic_uint32</span> <span class="n">state</span><span class="p">;</span>		<span class="c1">// 状态值，包含多个标记位
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="n">proclist_head</span> <span class="n">waiters</span><span class="p">;</span>		<span class="cm">/* 等待进程链表 */</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span> <span class="n">LWLock</span><span class="p">;</span>
+</span></span></code></pre></td></tr></table></div>
 </div>
 </div><p>需要介绍下 state 字段的标记位</p>
 <div class="highlight"><div class="chroma">
@@ -297,12 +297,12 @@
 </span><span class="lnt">5
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="cp">#define LW_VAL_SHARED         1                    </span><span class="c1">// 1~23位表示读锁的数量
-</span><span class="c1"></span><span class="cp">#define LW_VAL_EXCLUSIVE     ((uint32) 1 &lt;&lt; 24)    </span><span class="c1">// 是否写锁已经被占用
-</span><span class="c1"></span><span class="cp">#define LW_FLAG_LOCKED       ((uint32) 1 &lt;&lt; 28)    </span><span class="c1">// 锁标记位，用来保护进程列表的并发操作
-</span><span class="c1"></span><span class="cp">#define LW_FLAG_HAS_WAITERS  ((uint32) 1 &lt;&lt; 30)    </span><span class="c1">// 是否有进程在等待，用于快速判断等待列表是否为空
-</span><span class="c1"></span><span class="cp">#define LW_FLAG_RELEASE_OK   ((uint32) 1 &lt;&lt; 29)    </span><span class="c1">// 是否可以执行唤醒操作（目前我还没弄懂为什么需要这个标记位）
-</span></code></pre></td></tr></table></div>
+<pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="line"><span class="cl"><span class="cp">#define LW_VAL_SHARED         1                    </span><span class="c1">// 1~23位表示读锁的数量
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="cp">#define LW_VAL_EXCLUSIVE     ((uint32) 1 &lt;&lt; 24)    </span><span class="c1">// 是否写锁已经被占用
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="cp">#define LW_FLAG_LOCKED       ((uint32) 1 &lt;&lt; 28)    </span><span class="c1">// 锁标记位，用来保护进程列表的并发操作
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="cp">#define LW_FLAG_HAS_WAITERS  ((uint32) 1 &lt;&lt; 30)    </span><span class="c1">// 是否有进程在等待，用于快速判断等待列表是否为空
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="cp">#define LW_FLAG_RELEASE_OK   ((uint32) 1 &lt;&lt; 29)    </span><span class="c1">// 是否可以执行唤醒操作（目前我还没弄懂为什么需要这个标记位）
+</span></span></span></code></pre></td></tr></table></div>
 </div>
 </div><h2 id="加锁原理"><a href="#加锁原理" class="anchor-link"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon anchor-icon"><path d="M326.612 185.391c59.747 59.809 58.927 155.698.36 214.59-.11.12-.24.25-.36.37l-67.2 67.2c-59.27 59.27-155.699 59.262-214.96 0-59.27-59.26-59.27-155.7 0-214.96l37.106-37.106c9.84-9.84 26.786-3.3 27.294 10.606.648 17.722 3.826 35.527 9.69 52.721 1.986 5.822.567 12.262-3.783 16.612l-13.087 13.087c-28.026 28.026-28.905 73.66-1.155 101.96 28.024 28.579 74.086 28.749 102.325.51l67.2-67.19c28.191-28.191 28.073-73.757 0-101.83-3.701-3.694-7.429-6.564-10.341-8.569a16.037 16.037 0 0 1-6.947-12.606c-.396-10.567 3.348-21.456 11.698-29.806l21.054-21.055c5.521-5.521 14.182-6.199 20.584-1.731a152.482 152.482 0 0 1 20.522 17.197zM467.547 44.449c-59.261-59.262-155.69-59.27-214.96 0l-67.2 67.2c-.12.12-.25.25-.36.37-58.566 58.892-59.387 154.781.36 214.59a152.454 152.454 0 0 0 20.521 17.196c6.402 4.468 15.064 3.789 20.584-1.731l21.054-21.055c8.35-8.35 12.094-19.239 11.698-29.806a16.037 16.037 0 0 0-6.947-12.606c-2.912-2.005-6.64-4.875-10.341-8.569-28.073-28.073-28.191-73.639 0-101.83l67.2-67.19c28.239-28.239 74.3-28.069 102.325.51 27.75 28.3 26.872 73.934-1.155 101.96l-13.087 13.087c-4.35 4.35-5.769 10.79-3.783 16.612 5.864 17.194 9.042 34.999 9.69 52.721.509 13.906 17.454 20.446 27.294 10.606l37.106-37.106c59.271-59.259 59.271-155.699.001-214.959z"/></svg></a>加锁原理</h2>
 <p><code>LWLockAcquire</code>函数负责整个加过程，这里将过程分为下面四步：</p>
@@ -319,8 +319,8 @@
 <pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="k">static</span> <span class="kt">bool</span> <span class="nf">LWLockAttemptLock</span><span class="p">(</span><span class="n">LWLock</span> <span class="o">*</span><span class="n">lock</span><span class="p">,</span> <span class="n">LWLockMode</span> <span class="n">mode</span><span class="p">);</span>
-</code></pre></td></tr></table></div>
+<pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="line"><span class="cl"><span class="k">static</span> <span class="kt">bool</span> <span class="nf">LWLockAttemptLock</span><span class="p">(</span><span class="n">LWLock</span> <span class="o">*</span><span class="n">lock</span><span class="p">,</span> <span class="n">LWLockMode</span> <span class="n">mode</span><span class="p">);</span>
+</span></span></code></pre></td></tr></table></div>
 </div>
 </div><p>尝试通过 CAS 操作，设置<code>LW_VAL_EXCLUSIVE</code>或<code>LW_VAL_SHARED</code>标记位。来获取锁。使用到的 CAS 操作函数如下：</p>
 <div class="highlight"><div class="chroma">
@@ -331,11 +331,11 @@
 </span><span class="lnt">4
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="c1">// 如果当前ptr指向的值，等于expected指向的值，那么就会更改ptr指向的值为newval。
-</span><span class="c1">// 无论是否成功修改，当前ptr的最新值会保存到 expected。
-</span><span class="c1">// 返回true表示修改成功，返回false表示修改失败
-</span><span class="c1"></span><span class="kt">bool</span> <span class="nf">pg_atomic_compare_exchange_u32</span><span class="p">(</span><span class="k">volatile</span> <span class="n">pg_atomic_uint32</span> <span class="o">*</span><span class="n">ptr</span><span class="p">,</span> <span class="n">uint32</span> <span class="o">*</span><span class="n">expected</span><span class="p">,</span> <span class="n">uint32</span> <span class="n">newval</span><span class="p">);</span>
-</code></pre></td></tr></table></div>
+<pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="line"><span class="cl"><span class="c1">// 如果当前ptr指向的值，等于expected指向的值，那么就会更改ptr指向的值为newval。
+</span></span></span><span class="line"><span class="cl"><span class="c1">// 无论是否成功修改，当前ptr的最新值会保存到 expected。
+</span></span></span><span class="line"><span class="cl"><span class="c1">// 返回true表示修改成功，返回false表示修改失败
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="kt">bool</span> <span class="nf">pg_atomic_compare_exchange_u32</span><span class="p">(</span><span class="k">volatile</span> <span class="n">pg_atomic_uint32</span> <span class="o">*</span><span class="n">ptr</span><span class="p">,</span> <span class="n">uint32</span> <span class="o">*</span><span class="n">expected</span><span class="p">,</span> <span class="n">uint32</span> <span class="n">newval</span><span class="p">);</span>
+</span></span></code></pre></td></tr></table></div>
 </div>
 </div><p>当尝试获取写锁时，需要检查<code>EXCLUSIVE</code>和<code>SHARED</code>标记位，只有两者为零，才能成功获取。</p>
 <p>当尝试获取读锁时，只需要检查<code>EXCLUSIVE</code>标记位。如果为零，就认为成功获取。</p>
@@ -346,8 +346,8 @@
 <pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="k">static</span> <span class="kt">void</span> <span class="nf">LWLockQueueSelf</span><span class="p">(</span><span class="n">LWLock</span> <span class="o">*</span><span class="n">lock</span><span class="p">,</span> <span class="n">LWLockMode</span> <span class="n">mode</span><span class="p">);</span>
-</code></pre></td></tr></table></div>
+<pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="line"><span class="cl"><span class="k">static</span> <span class="kt">void</span> <span class="nf">LWLockQueueSelf</span><span class="p">(</span><span class="n">LWLock</span> <span class="o">*</span><span class="n">lock</span><span class="p">,</span> <span class="n">LWLockMode</span> <span class="n">mode</span><span class="p">);</span>
+</span></span></code></pre></td></tr></table></div>
 </div>
 </div><p>当加入到队列后，还需要更新<code>LW_FLAG_HAS_WAITERS</code>标记位，表示有进程在等待。</p>
 <h3 id="等待信号量"><a href="#等待信号量" class="anchor-link"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon anchor-icon"><path d="M326.612 185.391c59.747 59.809 58.927 155.698.36 214.59-.11.12-.24.25-.36.37l-67.2 67.2c-59.27 59.27-155.699 59.262-214.96 0-59.27-59.26-59.27-155.7 0-214.96l37.106-37.106c9.84-9.84 26.786-3.3 27.294 10.606.648 17.722 3.826 35.527 9.69 52.721 1.986 5.822.567 12.262-3.783 16.612l-13.087 13.087c-28.026 28.026-28.905 73.66-1.155 101.96 28.024 28.579 74.086 28.749 102.325.51l67.2-67.19c28.191-28.191 28.073-73.757 0-101.83-3.701-3.694-7.429-6.564-10.341-8.569a16.037 16.037 0 0 1-6.947-12.606c-.396-10.567 3.348-21.456 11.698-29.806l21.054-21.055c5.521-5.521 14.182-6.199 20.584-1.731a152.482 152.482 0 0 1 20.522 17.197zM467.547 44.449c-59.261-59.262-155.69-59.27-214.96 0l-67.2 67.2c-.12.12-.25.25-.36.37-58.566 58.892-59.387 154.781.36 214.59a152.454 152.454 0 0 0 20.521 17.196c6.402 4.468 15.064 3.789 20.584-1.731l21.054-21.055c8.35-8.35 12.094-19.239 11.698-29.806a16.037 16.037 0 0 0-6.947-12.606c-2.912-2.005-6.64-4.875-10.341-8.569-28.073-28.073-28.191-73.639 0-101.83l67.2-67.19c28.239-28.239 74.3-28.069 102.325.51 27.75 28.3 26.872 73.934-1.155 101.96l-13.087 13.087c-4.35 4.35-5.769 10.79-3.783 16.612 5.864 17.194 9.042 34.999 9.69 52.721.509 13.906 17.454 20.446 27.294 10.606l37.106-37.106c59.271-59.259 59.271-155.699.001-214.959z"/></svg></a>等待信号量</h3>
@@ -375,25 +375,25 @@
 </span><span class="lnt">18
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="c1">// 获取锁之前
-</span><span class="c1"></span><span class="n">extraWaits</span> <span class="o">=</span> <span class="mi">0</span>
-<span class="k">for</span> <span class="p">(;;)</span>
-<span class="p">{</span>
-    <span class="c1">// 执行信号量阻塞
-</span><span class="c1"></span>    <span class="n">PGSemaphoreLock</span><span class="p">(</span><span class="n">proc</span><span class="o">-&gt;</span><span class="n">sem</span><span class="p">);</span>
-    <span class="c1">// 当被唤醒之后，需要检查唤醒条件是不是因为锁释放，
-</span><span class="c1"></span>    <span class="c1">// 如果是锁释放的原因，proc-&gt;lwWaiting 会为false
-</span><span class="c1"></span>    <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="n">proc</span><span class="o">-&gt;</span><span class="n">lwWaiting</span><span class="p">)</span>
-        <span class="k">break</span><span class="p">;</span>
-    <span class="c1">// 如果不是期望条件，需要记录次数
-</span><span class="c1"></span>    <span class="n">extraWaits</span><span class="o">++</span><span class="p">;</span>
-<span class="p">}</span>
-
-<span class="c1">// 获取到锁之后
-</span><span class="c1">// 因为刚刚占有了其余条件的唤醒，所以现在需要进行补偿
-</span><span class="c1"></span><span class="k">while</span> <span class="p">(</span><span class="n">extraWaits</span><span class="o">--</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">)</span>
-        <span class="n">PGSemaphoreUnlock</span><span class="p">(</span><span class="n">proc</span><span class="o">-&gt;</span><span class="n">sem</span><span class="p">);</span>
-</code></pre></td></tr></table></div>
+<pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="line"><span class="cl"><span class="c1">// 获取锁之前
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="n">extraWaits</span> <span class="o">=</span> <span class="mi">0</span>
+</span></span><span class="line"><span class="cl"><span class="k">for</span> <span class="p">(;;)</span>
+</span></span><span class="line"><span class="cl"><span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// 执行信号量阻塞
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="nf">PGSemaphoreLock</span><span class="p">(</span><span class="n">proc</span><span class="o">-&gt;</span><span class="n">sem</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// 当被唤醒之后，需要检查唤醒条件是不是因为锁释放，
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="c1">// 如果是锁释放的原因，proc-&gt;lwWaiting 会为false
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="n">proc</span><span class="o">-&gt;</span><span class="n">lwWaiting</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">        <span class="k">break</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// 如果不是期望条件，需要记录次数
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="n">extraWaits</span><span class="o">++</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1">// 获取到锁之后
+</span></span></span><span class="line"><span class="cl"><span class="c1">// 因为刚刚占有了其余条件的唤醒，所以现在需要进行补偿
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="k">while</span> <span class="p">(</span><span class="n">extraWaits</span><span class="o">--</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">        <span class="nf">PGSemaphoreUnlock</span><span class="p">(</span><span class="n">proc</span><span class="o">-&gt;</span><span class="n">sem</span><span class="p">);</span>
+</span></span></code></pre></td></tr></table></div>
 </div>
 </div><p>假设下面有一个进程A对应信号量A，它会被用于两个方面，条件A和条件B。</p>
 <div class="highlight"><div class="chroma">
@@ -404,11 +404,11 @@
 </span><span class="lnt">4
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell">----------                          ------------                          ------------
- 进程A    <span class="p">|</span>    阻塞条件A ----&gt;      <span class="p">|</span>  信号量A   <span class="p">|</span>   &lt;----- 因为条件A唤醒   <span class="p">|</span>   进程B   <span class="p">|</span>
-          <span class="p">|</span>    阻塞条件B ----&gt;      <span class="p">|</span>           <span class="p">|</span>   &lt;----- 因为条件B唤醒   <span class="p">|</span>           <span class="p">|</span>
-----------                          ------------                          ------------
-</code></pre></td></tr></table></div>
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">----------                          ------------                          ------------
+</span></span><span class="line"><span class="cl"> 进程A    <span class="p">|</span>    阻塞条件A ----&gt;      <span class="p">|</span>  信号量A   <span class="p">|</span>   &lt;----- 因为条件A唤醒   <span class="p">|</span>   进程B   <span class="p">|</span>
+</span></span><span class="line"><span class="cl">          <span class="p">|</span>    阻塞条件B ----&gt;      <span class="p">|</span>           <span class="p">|</span>   &lt;----- 因为条件B唤醒   <span class="p">|</span>           <span class="p">|</span>
+</span></span><span class="line"><span class="cl">----------                          ------------                          ------------
+</span></span></code></pre></td></tr></table></div>
 </div>
 </div><p>进程A正在阻塞条件A，此时进程B因为条件B唤醒了进程A。但进程A发现并不是期望的条件所唤醒的，所以它会继续阻塞，直到满足条件A被唤醒，最后进程A还会执行一次唤醒操作。</p>
 <h3 id="离开等待队列"><a href="#离开等待队列" class="anchor-link"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon anchor-icon"><path d="M326.612 185.391c59.747 59.809 58.927 155.698.36 214.59-.11.12-.24.25-.36.37l-67.2 67.2c-59.27 59.27-155.699 59.262-214.96 0-59.27-59.26-59.27-155.7 0-214.96l37.106-37.106c9.84-9.84 26.786-3.3 27.294 10.606.648 17.722 3.826 35.527 9.69 52.721 1.986 5.822.567 12.262-3.783 16.612l-13.087 13.087c-28.026 28.026-28.905 73.66-1.155 101.96 28.024 28.579 74.086 28.749 102.325.51l67.2-67.19c28.191-28.191 28.073-73.757 0-101.83-3.701-3.694-7.429-6.564-10.341-8.569a16.037 16.037 0 0 1-6.947-12.606c-.396-10.567 3.348-21.456 11.698-29.806l21.054-21.055c5.521-5.521 14.182-6.199 20.584-1.731a152.482 152.482 0 0 1 20.522 17.197zM467.547 44.449c-59.261-59.262-155.69-59.27-214.96 0l-67.2 67.2c-.12.12-.25.25-.36.37-58.566 58.892-59.387 154.781.36 214.59a152.454 152.454 0 0 0 20.521 17.196c6.402 4.468 15.064 3.789 20.584-1.731l21.054-21.055c8.35-8.35 12.094-19.239 11.698-29.806a16.037 16.037 0 0 0-6.947-12.606c-2.912-2.005-6.64-4.875-10.341-8.569-28.073-28.073-28.191-73.639 0-101.83l67.2-67.19c28.239-28.239 74.3-28.069 102.325.51 27.75 28.3 26.872 73.934-1.155 101.96l-13.087 13.087c-4.35 4.35-5.769 10.79-3.783 16.612 5.864 17.194 9.042 34.999 9.69 52.721.509 13.906 17.454 20.446 27.294 10.606l37.106-37.106c59.271-59.259 59.271-155.699.001-214.959z"/></svg></a>离开等待队列</h3>
@@ -470,58 +470,58 @@
 </span><span class="lnt">51
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="kt">bool</span> <span class="nf">LWLockAcquire</span><span class="p">(</span><span class="n">LWLock</span> <span class="o">*</span><span class="n">lock</span><span class="p">,</span> <span class="n">LWLockMode</span> <span class="n">mode</span><span class="p">);</span>
-<span class="p">{</span>
-    <span class="kt">bool</span> <span class="n">result</span> <span class="o">=</span> <span class="nb">true</span><span class="p">;</span>
-    <span class="kt">int</span>	<span class="n">extraWaits</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
-    <span class="k">for</span> <span class="p">(;;)</span>
-    <span class="p">{</span>
-        <span class="c1">// 尝试获取锁，如果成功则直接返回
-</span><span class="c1"></span>        <span class="kt">bool</span> <span class="n">mustwait</span> <span class="o">=</span> <span class="n">LWLockAttemptLock</span><span class="p">(</span><span class="n">lock</span><span class="p">,</span> <span class="n">mode</span><span class="p">);</span>
-        <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="n">mustwait</span><span class="p">)</span>
-            <span class="k">break</span><span class="p">;</span>
-        
-        <span class="c1">// 步骤A，获取锁失败，则将自身添加到等待队列里
-</span><span class="c1"></span>        <span class="n">LWLockQueueSelf</span><span class="p">(</span><span class="n">lock</span><span class="p">,</span> <span class="n">mode</span><span class="p">);</span>
-    	<span class="c1">// 步骤C
-</span><span class="c1"></span>        
-        <span class="c1">// 在添加到队列时，有可能锁刚好释放。因为这时还未添加到队列里，所以不会通知它。
-</span><span class="c1"></span>        <span class="c1">// 所以这里需要再次尝试获取锁
-</span><span class="c1"></span>        <span class="n">mustwait</span> <span class="o">=</span> <span class="n">LWLockAttemptLock</span><span class="p">(</span><span class="n">lock</span><span class="p">,</span> <span class="n">mode</span><span class="p">);</span>
-    
-        <span class="c1">// 如果刚好成功获取了别人释放的锁，那么需要将自身从等待队列中删除
-</span><span class="c1"></span>        <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="n">mustwait</span><span class="p">)</span>
-        <span class="p">{</span>
-            <span class="n">LWLockDequeueSelf</span><span class="p">(</span><span class="n">lock</span><span class="p">);</span>
-            <span class="k">break</span><span class="p">;</span>
-        <span class="p">}</span>
-    
-        <span class="c1">// 等待信号量，因为这个信号量是共享的，所以此次唤醒有可能是别的通知，而不是此次锁释放的原因
-</span><span class="c1"></span>        <span class="c1">// 通过检查 proc-&gt;lwWaiting 就可以判断是否是因为锁释放的原因唤醒的
-</span><span class="c1"></span>        <span class="k">for</span> <span class="p">(;;)</span>
-        <span class="p">{</span>
-            <span class="n">PGSemaphoreLock</span><span class="p">(</span><span class="n">proc</span><span class="o">-&gt;</span><span class="n">sem</span><span class="p">);</span>
-            <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="n">proc</span><span class="o">-&gt;</span><span class="n">lwWaiting</span><span class="p">)</span>
-                <span class="k">break</span><span class="p">;</span>
-            <span class="n">extraWaits</span><span class="o">++</span><span class="p">;</span>
-        <span class="p">}</span>
-    
-        <span class="cm">/* Retrying, allow LWLockRelease to release waiters again. */</span>
-        <span class="n">pg_atomic_fetch_or_u32</span><span class="p">(</span><span class="o">&amp;</span><span class="n">lock</span><span class="o">-&gt;</span><span class="n">state</span><span class="p">,</span> <span class="n">LW_FLAG_RELEASE_OK</span><span class="p">);</span>
-        <span class="c1">// result为false表示需要将
-</span><span class="c1"></span>        <span class="n">result</span> <span class="o">=</span> <span class="nb">false</span><span class="p">;</span>
-    <span class="p">}</span>
-    <span class="c1">// 将锁添加到队列里
-</span><span class="c1"></span>    <span class="n">held_lwlocks</span><span class="p">[</span><span class="n">num_held_lwlocks</span><span class="p">].</span><span class="n">lock</span> <span class="o">=</span> <span class="n">lock</span><span class="p">;</span>
-    <span class="n">held_lwlocks</span><span class="p">[</span><span class="n">num_held_lwlocks</span><span class="o">++</span><span class="p">].</span><span class="n">mode</span> <span class="o">=</span> <span class="n">mode</span><span class="p">;</span>
-    
-    <span class="c1">// 因为刚刚有别的原因造成唤醒，所以现在需要唤醒其他等待进程相同次数
-</span><span class="c1"></span>    <span class="k">while</span> <span class="p">(</span><span class="n">extraWaits</span><span class="o">--</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">)</span>
-        <span class="n">PGSemaphoreUnlock</span><span class="p">(</span><span class="n">proc</span><span class="o">-&gt;</span><span class="n">sem</span><span class="p">);</span>
-    
-    <span class="k">return</span> <span class="n">result</span><span class="p">;</span>
-<span class="p">}</span>
-</code></pre></td></tr></table></div>
+<pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="line"><span class="cl"><span class="kt">bool</span> <span class="nf">LWLockAcquire</span><span class="p">(</span><span class="n">LWLock</span> <span class="o">*</span><span class="n">lock</span><span class="p">,</span> <span class="n">LWLockMode</span> <span class="n">mode</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl"><span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="kt">bool</span> <span class="n">result</span> <span class="o">=</span> <span class="nb">true</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="kt">int</span>	<span class="n">extraWaits</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="k">for</span> <span class="p">(;;)</span>
+</span></span><span class="line"><span class="cl">    <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="c1">// 尝试获取锁，如果成功则直接返回
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>        <span class="kt">bool</span> <span class="n">mustwait</span> <span class="o">=</span> <span class="nf">LWLockAttemptLock</span><span class="p">(</span><span class="n">lock</span><span class="p">,</span> <span class="n">mode</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">        <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="n">mustwait</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">            <span class="k">break</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">        
+</span></span><span class="line"><span class="cl">        <span class="c1">// 步骤A，获取锁失败，则将自身添加到等待队列里
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>        <span class="nf">LWLockQueueSelf</span><span class="p">(</span><span class="n">lock</span><span class="p">,</span> <span class="n">mode</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">    	<span class="c1">// 步骤C
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>        
+</span></span><span class="line"><span class="cl">        <span class="c1">// 在添加到队列时，有可能锁刚好释放。因为这时还未添加到队列里，所以不会通知它。
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>        <span class="c1">// 所以这里需要再次尝试获取锁
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>        <span class="n">mustwait</span> <span class="o">=</span> <span class="nf">LWLockAttemptLock</span><span class="p">(</span><span class="n">lock</span><span class="p">,</span> <span class="n">mode</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">    
+</span></span><span class="line"><span class="cl">        <span class="c1">// 如果刚好成功获取了别人释放的锁，那么需要将自身从等待队列中删除
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>        <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="n">mustwait</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">        <span class="p">{</span>
+</span></span><span class="line"><span class="cl">            <span class="nf">LWLockDequeueSelf</span><span class="p">(</span><span class="n">lock</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">            <span class="k">break</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">        <span class="p">}</span>
+</span></span><span class="line"><span class="cl">    
+</span></span><span class="line"><span class="cl">        <span class="c1">// 等待信号量，因为这个信号量是共享的，所以此次唤醒有可能是别的通知，而不是此次锁释放的原因
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>        <span class="c1">// 通过检查 proc-&gt;lwWaiting 就可以判断是否是因为锁释放的原因唤醒的
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>        <span class="k">for</span> <span class="p">(;;)</span>
+</span></span><span class="line"><span class="cl">        <span class="p">{</span>
+</span></span><span class="line"><span class="cl">            <span class="nf">PGSemaphoreLock</span><span class="p">(</span><span class="n">proc</span><span class="o">-&gt;</span><span class="n">sem</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">            <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="n">proc</span><span class="o">-&gt;</span><span class="n">lwWaiting</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">                <span class="k">break</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">            <span class="n">extraWaits</span><span class="o">++</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">        <span class="p">}</span>
+</span></span><span class="line"><span class="cl">    
+</span></span><span class="line"><span class="cl">        <span class="cm">/* Retrying, allow LWLockRelease to release waiters again. */</span>
+</span></span><span class="line"><span class="cl">        <span class="nf">pg_atomic_fetch_or_u32</span><span class="p">(</span><span class="o">&amp;</span><span class="n">lock</span><span class="o">-&gt;</span><span class="n">state</span><span class="p">,</span> <span class="n">LW_FLAG_RELEASE_OK</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">        <span class="c1">// result为false表示需要将
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>        <span class="n">result</span> <span class="o">=</span> <span class="nb">false</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// 将锁添加到队列里
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="n">held_lwlocks</span><span class="p">[</span><span class="n">num_held_lwlocks</span><span class="p">].</span><span class="n">lock</span> <span class="o">=</span> <span class="n">lock</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="n">held_lwlocks</span><span class="p">[</span><span class="n">num_held_lwlocks</span><span class="o">++</span><span class="p">].</span><span class="n">mode</span> <span class="o">=</span> <span class="n">mode</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    
+</span></span><span class="line"><span class="cl">    <span class="c1">// 因为刚刚有别的原因造成唤醒，所以现在需要唤醒其他等待进程相同次数
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="k">while</span> <span class="p">(</span><span class="n">extraWaits</span><span class="o">--</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">        <span class="nf">PGSemaphoreUnlock</span><span class="p">(</span><span class="n">proc</span><span class="o">-&gt;</span><span class="n">sem</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">    
+</span></span><span class="line"><span class="cl">    <span class="k">return</span> <span class="n">result</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table></div>
 </div>
 </div><h2 id="释放锁"><a href="#释放锁" class="anchor-link"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon anchor-icon"><path d="M326.612 185.391c59.747 59.809 58.927 155.698.36 214.59-.11.12-.24.25-.36.37l-67.2 67.2c-59.27 59.27-155.699 59.262-214.96 0-59.27-59.26-59.27-155.7 0-214.96l37.106-37.106c9.84-9.84 26.786-3.3 27.294 10.606.648 17.722 3.826 35.527 9.69 52.721 1.986 5.822.567 12.262-3.783 16.612l-13.087 13.087c-28.026 28.026-28.905 73.66-1.155 101.96 28.024 28.579 74.086 28.749 102.325.51l67.2-67.19c28.191-28.191 28.073-73.757 0-101.83-3.701-3.694-7.429-6.564-10.341-8.569a16.037 16.037 0 0 1-6.947-12.606c-.396-10.567 3.348-21.456 11.698-29.806l21.054-21.055c5.521-5.521 14.182-6.199 20.584-1.731a152.482 152.482 0 0 1 20.522 17.197zM467.547 44.449c-59.261-59.262-155.69-59.27-214.96 0l-67.2 67.2c-.12.12-.25.25-.36.37-58.566 58.892-59.387 154.781.36 214.59a152.454 152.454 0 0 0 20.521 17.196c6.402 4.468 15.064 3.789 20.584-1.731l21.054-21.055c8.35-8.35 12.094-19.239 11.698-29.806a16.037 16.037 0 0 0-6.947-12.606c-2.912-2.005-6.64-4.875-10.341-8.569-28.073-28.073-28.191-73.639 0-101.83l67.2-67.19c28.239-28.239 74.3-28.069 102.325.51 27.75 28.3 26.872 73.934-1.155 101.96l-13.087 13.087c-4.35 4.35-5.769 10.79-3.783 16.612 5.864 17.194 9.042 34.999 9.69 52.721.509 13.906 17.454 20.446 27.294 10.606l37.106-37.106c59.271-59.259 59.271-155.699.001-214.959z"/></svg></a>释放锁</h2>
 <p><code>LWLockRelease</code>函数负责释放锁，定义如下：</p>
@@ -530,8 +530,8 @@
 <pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="kt">void</span> <span class="nf">LWLockRelease</span><span class="p">(</span><span class="n">LWLock</span> <span class="o">*</span><span class="n">lock</span><span class="p">);</span>
-</code></pre></td></tr></table></div>
+<pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="line"><span class="cl"><span class="kt">void</span> <span class="nf">LWLockRelease</span><span class="p">(</span><span class="n">LWLock</span> <span class="o">*</span><span class="n">lock</span><span class="p">);</span>
+</span></span></code></pre></td></tr></table></div>
 </div>
 </div><p>释放锁分为下列步骤：</p>
 <ol>
@@ -579,9 +579,9 @@
 
         
     <div class="updated-badge-container">
-        <span title="Updated @ 2021-10-22 14:44:34 CST" style="cursor:help">
+        <span title="Updated @ 2023-07-02 16:59:09 CST" style="cursor:help">
 
-<svg xmlns="http://www.w3.org/2000/svg" width="130" height="20" class="updated-badge"><linearGradient id="b" x2="0" y2="100%"><stop offset="0" stop-color="#bbb" stop-opacity=".1"/><stop offset="1" stop-opacity=".1"/></linearGradient><clipPath id="a"><rect width="130" height="20" rx="3" fill="#fff"/></clipPath><g clip-path="url(#a)"><path class="updated-badge-left" d="M0 0h55v20H0z"/><path class="updated-badge-right" d="M55 0h75v20H55z"/><path fill="url(#b)" d="M0 0h130v20H0z"/></g><g fill="#fff" text-anchor="middle" font-size="110"><text x="285" y="150" fill="#010101" fill-opacity=".3" textLength="450" transform="scale(.1)">updated</text><text x="285" y="140" textLength="450" transform="scale(.1)">updated</text><text x="915" y="150" fill="#010101" fill-opacity=".3" textLength="650" transform="scale(.1)">2021-10-22</text><text x="915" y="140" textLength="650" transform="scale(.1)">2021-10-22</text></g></svg>
+<svg xmlns="http://www.w3.org/2000/svg" width="130" height="20" class="updated-badge"><linearGradient id="b" x2="0" y2="100%"><stop offset="0" stop-color="#bbb" stop-opacity=".1"/><stop offset="1" stop-opacity=".1"/></linearGradient><clipPath id="a"><rect width="130" height="20" rx="3" fill="#fff"/></clipPath><g clip-path="url(#a)"><path class="updated-badge-left" d="M0 0h55v20H0z"/><path class="updated-badge-right" d="M55 0h75v20H55z"/><path fill="url(#b)" d="M0 0h130v20H0z"/></g><g fill="#fff" text-anchor="middle" font-size="110"><text x="285" y="150" fill="#010101" fill-opacity=".3" textLength="450" transform="scale(.1)">updated</text><text x="285" y="140" textLength="450" transform="scale(.1)">updated</text><text x="915" y="150" fill="#010101" fill-opacity=".3" textLength="650" transform="scale(.1)">2023-07-02</text><text x="915" y="140" textLength="650" transform="scale(.1)">2023-07-02</text></g></svg>
         </span></div>
 
 

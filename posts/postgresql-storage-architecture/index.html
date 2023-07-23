@@ -3,7 +3,7 @@
     <head prefix="og: http://ogp.me/ns# article: http://ogp.me/ns/article#">
     <meta charset="UTF-8" />
 
-    <meta name="generator" content="Hugo 0.88.1" /><meta name="theme-color" content="#fff" />
+    <meta name="generator" content="Hugo 0.115.0"><meta name="theme-color" content="#fff" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     
     <meta name="format-detection" content="telephone=no, date=no, address=no, email=no" />
@@ -14,11 +14,11 @@
 
     <title>Postgresql 存储设计 | 学习笔记</title>
 
-    <link rel="stylesheet" href="/css/meme.min.2d3e1834af2bc8dda20c7d74aaa1d8134845094441b7a554a5206ccd4b472596.css"/>
+    <link rel="stylesheet" href="/css/meme.min.91e7f58f97e1c60563ef481c38d9684fa8099537801d6f17bbfc724121e7d8f1.css"/>
 
     
     
-        <script src="/js/meme.min.800f61672145711eb3e1f29fcfcc3dbe0139dd459259718b611a0390f74703d1.js"></script>
+        <script src="/js/meme.min.3210a00c2fdcf6f831170b681b8ee40f83f0224663661e986872616aec45407f.js"></script>
 
     
 
@@ -54,13 +54,13 @@
         "@context": "https://schema.org",
         "@type": "BlogPosting",
         "datePublished": "2020-09-05T18:11:05+00:00",
-        "dateModified": "2021-10-22T14:44:34+08:00",
+        "dateModified": "2023-07-02T16:59:09+08:00",
         "url": "https://zhmin.github.io/posts/postgresql-storage-architecture/",
         "headline": "Postgresql 存储设计",
         "description": "架构图 用户查询指定 page 的数据 首先查询该 page 是否在缓存中，通过 hash table 快速查找它在缓存池的位置 如果存在，那么从缓存池读取返回 如果不存在需要从磁盘读取数据，并且放入到缓存池中，然后返回 postgresql 存储单位 postgresql 底层存储的数据交……",
         "inLanguage" : "zh-CN",
         "articleSection": "posts",
-        "wordCount":  1645 ,
+        "wordCount":  1644 ,
         "image": ["https://zhmin.github.io/pg-storage-architecture.svg"],
         "author": {
             "@type": "Person",
@@ -98,7 +98,7 @@
 <meta property="og:locale" content="zh" /><meta property="og:image" content="https://zhmin.github.io/pg-storage-architecture.svg" />
 <meta property="og:type" content="article" />
     <meta property="article:published_time" content="2020-09-05T18:11:05&#43;00:00" />
-    <meta property="article:modified_time" content="2021-10-22T14:44:34&#43;08:00" />
+    <meta property="article:modified_time" content="2023-07-02T16:59:09&#43;08:00" />
     
     <meta property="article:section" content="posts" />
 
@@ -223,7 +223,7 @@
     
     
         
-        <span class="post-meta-item wordcount"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon post-meta-icon"><path d="M497.9 142.1l-46.1 46.1c-4.7 4.7-12.3 4.7-17 0l-111-111c-4.7-4.7-4.7-12.3 0-17l46.1-46.1c18.7-18.7 49.1-18.7 67.9 0l60.1 60.1c18.8 18.7 18.8 49.1 0 67.9zM284.2 99.8L21.6 362.4.4 483.9c-2.9 16.4 11.4 30.6 27.8 27.8l121.5-21.3 262.6-262.6c4.7-4.7 4.7-12.3 0-17l-111-111c-4.8-4.7-12.4-4.7-17.1 0zM124.1 339.9c-5.5-5.5-5.5-14.3 0-19.8l154-154c5.5-5.5 14.3-5.5 19.8 0s5.5 14.3 0 19.8l-154 154c-5.5 5.5-14.3 5.5-19.8 0zM88 424h48v36.3l-64.5 11.3-31.1-31.1L51.7 376H88v48z"/></svg>&nbsp;1645</span>
+        <span class="post-meta-item wordcount"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon post-meta-icon"><path d="M497.9 142.1l-46.1 46.1c-4.7 4.7-12.3 4.7-17 0l-111-111c-4.7-4.7-4.7-12.3 0-17l46.1-46.1c18.7-18.7 49.1-18.7 67.9 0l60.1 60.1c18.8 18.7 18.8 49.1 0 67.9zM284.2 99.8L21.6 362.4.4 483.9c-2.9 16.4 11.4 30.6 27.8 27.8l121.5-21.3 262.6-262.6c4.7-4.7 4.7-12.3 0-17l-111-111c-4.8-4.7-12.4-4.7-17.1 0zM124.1 339.9c-5.5-5.5-5.5-14.3 0-19.8l154-154c5.5-5.5 14.3-5.5 19.8 0s5.5 14.3 0 19.8l-154 154c-5.5 5.5-14.3 5.5-19.8 0zM88 424h48v36.3l-64.5 11.3-31.1-31.1L51.7 376H88v48z"/></svg>&nbsp;1644</span>
     
     
         
@@ -266,22 +266,20 @@
 </span><span class="lnt"> 9
 </span><span class="lnt">10
 </span><span class="lnt">11
-</span><span class="lnt">12
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="kt">char</span>	   <span class="o">*</span><span class="n">BufferBlocks</span><span class="p">;</span>            <span class="c1">// 缓存数组
-</span><span class="c1"></span><span class="n">BufferDescPadded</span> <span class="o">*</span><span class="n">BufferDescriptors</span><span class="p">;</span>  <span class="c1">// 缓存元数据
-</span><span class="c1"></span>
-<span class="c1">// 初始化缓存数组
-</span><span class="c1"></span><span class="kt">void</span> <span class="nf">InitBufferPool</span><span class="p">(</span><span class="kt">void</span><span class="p">)</span>
-<span class="p">{</span>
-    <span class="c1">// 创建一块共享内存，里面存储了 NBuffers 个缓存，每个缓存的大小为 BLCKSZ
-</span><span class="c1"></span>    <span class="n">BufferBlocks</span> <span class="o">=</span> <span class="p">(</span><span class="kt">char</span> <span class="o">*</span><span class="p">)</span> <span class="n">ShmemInitStruct</span><span class="p">(</span><span class="s">&#34;Buffer Blocks&#34;</span><span class="p">,</span> <span class="n">NBuffers</span> <span class="o">*</span> <span class="p">(</span><span class="n">Size</span><span class="p">)</span> <span class="n">BLCKSZ</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">foundBufs</span><span class="p">);</span>
-    <span class="c1">// 创建一块共享内存，里面存储了 NBuffers 个缓存元数据
-</span><span class="c1"></span>    <span class="n">BufferDescriptors</span> <span class="o">=</span> <span class="p">(</span><span class="n">BufferDescPadded</span> <span class="o">*</span><span class="p">)</span> <span class="n">ShmemInitStruct</span><span class="p">(</span><span class="s">&#34;Buffer Descriptors&#34;</span><span class="p">,</span> <span class="n">NBuffers</span> <span class="o">*</span> <span class="k">sizeof</span><span class="p">(</span><span class="n">BufferDescPadded</span><span class="p">),</span> <span class="o">&amp;</span><span class="n">foundDescs</span><span class="p">);</span>
-<span class="p">}</span>
-
-</code></pre></td></tr></table></div>
+<pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="line"><span class="cl"><span class="kt">char</span>	   <span class="o">*</span><span class="n">BufferBlocks</span><span class="p">;</span>            <span class="c1">// 缓存数组
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="n">BufferDescPadded</span> <span class="o">*</span><span class="n">BufferDescriptors</span><span class="p">;</span>  <span class="c1">// 缓存元数据
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>
+</span></span><span class="line"><span class="cl"><span class="c1">// 初始化缓存数组
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="kt">void</span> <span class="nf">InitBufferPool</span><span class="p">(</span><span class="kt">void</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// 创建一块共享内存，里面存储了 NBuffers 个缓存，每个缓存的大小为 BLCKSZ
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="n">BufferBlocks</span> <span class="o">=</span> <span class="p">(</span><span class="kt">char</span> <span class="o">*</span><span class="p">)</span> <span class="nf">ShmemInitStruct</span><span class="p">(</span><span class="s">&#34;Buffer Blocks&#34;</span><span class="p">,</span> <span class="n">NBuffers</span> <span class="o">*</span> <span class="p">(</span><span class="n">Size</span><span class="p">)</span> <span class="n">BLCKSZ</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">foundBufs</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// 创建一块共享内存，里面存储了 NBuffers 个缓存元数据
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="n">BufferDescriptors</span> <span class="o">=</span> <span class="p">(</span><span class="n">BufferDescPadded</span> <span class="o">*</span><span class="p">)</span> <span class="nf">ShmemInitStruct</span><span class="p">(</span><span class="s">&#34;Buffer Descriptors&#34;</span><span class="p">,</span> <span class="n">NBuffers</span> <span class="o">*</span> <span class="k">sizeof</span><span class="p">(</span><span class="n">BufferDescPadded</span><span class="p">),</span> <span class="o">&amp;</span><span class="n">foundDescs</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table></div>
 </div>
 </div><p>Buffer 存储的数据是和 Page 完全一样的。我们还需要一些描述 Buffer 的信息，比如该 Buffer 对应哪个 Page，这里当持久化该 Buffer 的时候，知道存储到磁盘的哪个位置。还有为了支持并发，需要保存一些并发的信息。这些信息都由 BufferDesc 保存，需要强调下 BufferDesc 信息是不会被持久化的。</p>
 <div class="highlight"><div class="chroma">
@@ -301,20 +299,20 @@
 </span><span class="lnt">13
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="k">typedef</span> <span class="k">struct</span> <span class="n">BufferDesc</span>
-<span class="p">{</span>
-	<span class="n">BufferTag</span>	<span class="n">tag</span><span class="p">;</span>			<span class="cm">/* 指定对应的 page 地址 */</span>
-	<span class="kt">int</span>			<span class="n">buf_id</span><span class="p">;</span>			<span class="cm">/* 指定的 buffer 在数组中的索引 */</span>
-
-	<span class="cm">/* state of the tag, containing flags, refcount and usagecount */</span>
-	<span class="n">pg_atomic_uint32</span> <span class="n">state</span><span class="p">;</span>
-
-	<span class="kt">int</span>			<span class="n">wait_backend_pid</span><span class="p">;</span>	<span class="cm">/* backend PID of pin-count waiter */</span>
-	<span class="kt">int</span>			<span class="n">freeNext</span><span class="p">;</span>		<span class="cm">/* link in freelist chain */</span>
-
-	<span class="n">LWLock</span>		<span class="n">content_lock</span><span class="p">;</span>	<span class="cm">/* 锁，用于并发控制 */</span>
-<span class="p">}</span> <span class="n">BufferDesc</span><span class="p">;</span>
-</code></pre></td></tr></table></div>
+<pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="line"><span class="cl"><span class="k">typedef</span> <span class="k">struct</span> <span class="n">BufferDesc</span>
+</span></span><span class="line"><span class="cl"><span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="n">BufferTag</span>	<span class="n">tag</span><span class="p">;</span>			<span class="cm">/* 指定对应的 page 地址 */</span>
+</span></span><span class="line"><span class="cl">	<span class="kt">int</span>			<span class="n">buf_id</span><span class="p">;</span>			<span class="cm">/* 指定的 buffer 在数组中的索引 */</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">	<span class="cm">/* state of the tag, containing flags, refcount and usagecount */</span>
+</span></span><span class="line"><span class="cl">	<span class="n">pg_atomic_uint32</span> <span class="n">state</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">	<span class="kt">int</span>			<span class="n">wait_backend_pid</span><span class="p">;</span>	<span class="cm">/* backend PID of pin-count waiter */</span>
+</span></span><span class="line"><span class="cl">	<span class="kt">int</span>			<span class="n">freeNext</span><span class="p">;</span>		<span class="cm">/* link in freelist chain */</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">	<span class="n">LWLock</span>		<span class="n">content_lock</span><span class="p">;</span>	<span class="cm">/* 锁，用于并发控制 */</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span> <span class="n">BufferDesc</span><span class="p">;</span>
+</span></span></code></pre></td></tr></table></div>
 </div>
 </div><p>我们查看下 <code>BufferTag</code>的定义，看看 postgresql 是如何表示 page 地址的。postgresql 对于表是单独存储的，每个表除了包含了本身的数据文件，还有其它一些类型的文件。</p>
 <div class="highlight"><div class="chroma">
@@ -327,13 +325,13 @@
 </span><span class="lnt">6
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="k">typedef</span> <span class="k">struct</span> <span class="n">buftag</span>
-<span class="p">{</span>
-	<span class="n">RelFileNode</span> <span class="n">rnode</span><span class="p">;</span>			<span class="cm">/* 表标识 */</span>
-	<span class="n">ForkNumber</span>	<span class="n">forkNum</span><span class="p">;</span>         <span class="cm">/* 文件类型 */</span>
-	<span class="n">BlockNumber</span> <span class="n">blockNum</span><span class="p">;</span>		<span class="cm">/* page 在底层文件的索引 */</span>
-<span class="p">}</span> <span class="n">BufferTag</span><span class="p">;</span>
-</code></pre></td></tr></table></div>
+<pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="line"><span class="cl"><span class="k">typedef</span> <span class="k">struct</span> <span class="n">buftag</span>
+</span></span><span class="line"><span class="cl"><span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="n">RelFileNode</span> <span class="n">rnode</span><span class="p">;</span>			<span class="cm">/* 表标识 */</span>
+</span></span><span class="line"><span class="cl">	<span class="n">ForkNumber</span>	<span class="n">forkNum</span><span class="p">;</span>         <span class="cm">/* 文件类型 */</span>
+</span></span><span class="line"><span class="cl">	<span class="n">BlockNumber</span> <span class="n">blockNum</span><span class="p">;</span>		<span class="cm">/* page 在底层文件的索引 */</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span> <span class="n">BufferTag</span><span class="p">;</span>
+</span></span></code></pre></td></tr></table></div>
 </div>
 </div><p>我们仔细看看<code>BufferDesc</code>虽然是数组，但是在创建的时候，却是以<code>BufferDescPadded</code>格式存储的。</p>
 <div class="highlight"><div class="chroma">
@@ -347,14 +345,14 @@
 </span><span class="lnt">7
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="cp">#define BUFFERDESC_PAD_TO_SIZE	(SIZEOF_VOID_P == 8 ? 64 : 1)
-</span><span class="cp"></span>
-<span class="k">typedef</span> <span class="k">union</span> <span class="n">BufferDescPadded</span>
-<span class="p">{</span>
-	<span class="n">BufferDesc</span>	<span class="n">bufferdesc</span><span class="p">;</span>
-	<span class="kt">char</span>		<span class="n">pad</span><span class="p">[</span><span class="n">BUFFERDESC_PAD_TO_SIZE</span><span class="p">];</span>
-<span class="p">}</span> <span class="n">BufferDescPadded</span><span class="p">;</span>
-</code></pre></td></tr></table></div>
+<pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="line"><span class="cl"><span class="cp">#define BUFFERDESC_PAD_TO_SIZE	(SIZEOF_VOID_P == 8 ? 64 : 1)
+</span></span></span><span class="line"><span class="cl"><span class="cp"></span>
+</span></span><span class="line"><span class="cl"><span class="k">typedef</span> <span class="k">union</span> <span class="n">BufferDescPadded</span>
+</span></span><span class="line"><span class="cl"><span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="n">BufferDesc</span>	<span class="n">bufferdesc</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">	<span class="kt">char</span>		<span class="n">pad</span><span class="p">[</span><span class="n">BUFFERDESC_PAD_TO_SIZE</span><span class="p">];</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span> <span class="n">BufferDescPadded</span><span class="p">;</span>
+</span></span></code></pre></td></tr></table></div>
 </div>
 </div><p>为什么需要在<code>BufferDesc</code>添加一个 64 bytes 的空闲数据呢。其实这是 postgresql 针对 cpu cache 做的优化，这里简单说下 cache 原理。如今的 cpu 处理速度越来越快，以至于内存的读取速度已经不能满足了，所以每个 cpu 都会有着独立的 高速 cache。当 cpu 要处理数据时，会先从内存中把数据加载到 cache，每次交互的数据单位大小叫做 cache line size，一般是 64 bytes。当两个 cpu 并行的处理同一块数据，那么就会造成该数据都会被拷贝到两个 cpu 的 cache 里。如果一个 cpu 修改了该 cache，那么会造成另外一个 cpu 的 cache 失效，那么另外的 cpu 就会重新去共享内存或者共享 cache 取数据，这种现象称为 false share。</p>
 <p>postgresql 解决这个问题非常粗暴，在 BufferDesc 之间添加了 64bytes 的空闲数据，这样就能够保证在同一个 cache line 是不可能包含多个 <code>BufferDesc</code>，避免了 false share。不过这也造成了内存浪费，假如我们的缓存个数为 1024 个，那么就会造成 64Kb 的空间浪费。</p>
@@ -385,9 +383,9 @@
 
         
     <div class="updated-badge-container">
-        <span title="Updated @ 2021-10-22 14:44:34 CST" style="cursor:help">
+        <span title="Updated @ 2023-07-02 16:59:09 CST" style="cursor:help">
 
-<svg xmlns="http://www.w3.org/2000/svg" width="130" height="20" class="updated-badge"><linearGradient id="b" x2="0" y2="100%"><stop offset="0" stop-color="#bbb" stop-opacity=".1"/><stop offset="1" stop-opacity=".1"/></linearGradient><clipPath id="a"><rect width="130" height="20" rx="3" fill="#fff"/></clipPath><g clip-path="url(#a)"><path class="updated-badge-left" d="M0 0h55v20H0z"/><path class="updated-badge-right" d="M55 0h75v20H55z"/><path fill="url(#b)" d="M0 0h130v20H0z"/></g><g fill="#fff" text-anchor="middle" font-size="110"><text x="285" y="150" fill="#010101" fill-opacity=".3" textLength="450" transform="scale(.1)">updated</text><text x="285" y="140" textLength="450" transform="scale(.1)">updated</text><text x="915" y="150" fill="#010101" fill-opacity=".3" textLength="650" transform="scale(.1)">2021-10-22</text><text x="915" y="140" textLength="650" transform="scale(.1)">2021-10-22</text></g></svg>
+<svg xmlns="http://www.w3.org/2000/svg" width="130" height="20" class="updated-badge"><linearGradient id="b" x2="0" y2="100%"><stop offset="0" stop-color="#bbb" stop-opacity=".1"/><stop offset="1" stop-opacity=".1"/></linearGradient><clipPath id="a"><rect width="130" height="20" rx="3" fill="#fff"/></clipPath><g clip-path="url(#a)"><path class="updated-badge-left" d="M0 0h55v20H0z"/><path class="updated-badge-right" d="M55 0h75v20H55z"/><path fill="url(#b)" d="M0 0h130v20H0z"/></g><g fill="#fff" text-anchor="middle" font-size="110"><text x="285" y="150" fill="#010101" fill-opacity=".3" textLength="450" transform="scale(.1)">updated</text><text x="285" y="140" textLength="450" transform="scale(.1)">updated</text><text x="915" y="150" fill="#010101" fill-opacity=".3" textLength="650" transform="scale(.1)">2023-07-02</text><text x="915" y="140" textLength="650" transform="scale(.1)">2023-07-02</text></g></svg>
         </span></div>
 
 

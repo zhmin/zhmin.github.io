@@ -3,7 +3,7 @@
     <head prefix="og: http://ogp.me/ns# article: http://ogp.me/ns/article#">
     <meta charset="UTF-8" />
 
-    <meta name="generator" content="Hugo 0.88.1" /><meta name="theme-color" content="#fff" />
+    <meta name="generator" content="Hugo 0.115.0"><meta name="theme-color" content="#fff" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     
     <meta name="format-detection" content="telephone=no, date=no, address=no, email=no" />
@@ -14,11 +14,11 @@
 
     <title>Kafka ConsumerNetworkClient 原理 | 学习笔记</title>
 
-    <link rel="stylesheet" href="/css/meme.min.2d3e1834af2bc8dda20c7d74aaa1d8134845094441b7a554a5206ccd4b472596.css"/>
+    <link rel="stylesheet" href="/css/meme.min.91e7f58f97e1c60563ef481c38d9684fa8099537801d6f17bbfc724121e7d8f1.css"/>
 
     
     
-        <script src="/js/meme.min.800f61672145711eb3e1f29fcfcc3dbe0139dd459259718b611a0390f74703d1.js"></script>
+        <script src="/js/meme.min.3210a00c2fdcf6f831170b681b8ee40f83f0224663661e986872616aec45407f.js"></script>
 
     
 
@@ -54,7 +54,7 @@
         "@context": "https://schema.org",
         "@type": "BlogPosting",
         "datePublished": "2019-03-12T21:29:12+00:00",
-        "dateModified": "2021-10-22T14:44:34+08:00",
+        "dateModified": "2023-07-02T16:59:09+08:00",
         "url": "https://zhmin.github.io/posts/kafka-consumer-network-client/",
         "headline": "Kafka ConsumerNetworkClient 原理",
         "description": "Kafka ConsumerNetworkClient 原理 Kafka消费者会使用ConsumerNetworkClient发送和处理请求。ConsumerNetworkClient是在NetworkClient之外封装了一层，提供了异步的请求方法。它……",
@@ -98,7 +98,7 @@
 <meta property="og:locale" content="zh" /><meta property="og:image" content="https://zhmin.github.io/icons/apple-touch-icon.png" />
     <meta property="og:type" content="article" />
     <meta property="article:published_time" content="2019-03-12T21:29:12&#43;00:00" />
-    <meta property="article:modified_time" content="2021-10-22T14:44:34&#43;08:00" />
+    <meta property="article:modified_time" content="2023-07-02T16:59:09&#43;08:00" />
     
     <meta property="article:section" content="posts" />
 
@@ -270,33 +270,33 @@
 </span><span class="lnt">26
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">RequestFuture</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span> <span class="kd">implements</span> <span class="n">ConsumerNetworkClient</span><span class="o">.</span><span class="na">PollCondition</span> <span class="o">{</span>
-    <span class="kd">private</span> <span class="kd">static</span> <span class="kd">final</span> <span class="n">Object</span> <span class="n">INCOMPLETE_SENTINEL</span> <span class="o">=</span> <span class="k">new</span> <span class="n">Object</span><span class="o">();</span>
-    <span class="c1">// result保存了结果
-</span><span class="c1"></span>    <span class="kd">private</span> <span class="kd">final</span> <span class="n">AtomicReference</span><span class="o">&lt;</span><span class="n">Object</span><span class="o">&gt;</span> <span class="n">result</span> <span class="o">=</span> <span class="k">new</span> <span class="n">AtomicReference</span><span class="o">&lt;&gt;(</span><span class="n">INCOMPLETE_SENTINEL</span><span class="o">);</span>
-    <span class="c1">// CountDownLatch变量，用来执行等待和通知
-</span><span class="c1"></span>    <span class="kd">private</span> <span class="kd">final</span> <span class="n">CountDownLatch</span> <span class="n">completedLatch</span> <span class="o">=</span> <span class="k">new</span> <span class="n">CountDownLatch</span><span class="o">(</span><span class="n">1</span><span class="o">);</span>
-    
-    <span class="c1">// 等待完成
-</span><span class="c1"></span>    <span class="kd">public</span> <span class="kt">boolean</span> <span class="nf">awaitDone</span><span class="o">(</span><span class="kt">long</span> <span class="n">timeout</span><span class="o">,</span> <span class="n">TimeUnit</span> <span class="n">unit</span><span class="o">)</span> <span class="kd">throws</span> <span class="n">InterruptedException</span> <span class="o">{</span>
-        <span class="c1">// 使用了CountDownLatch的await方法实现等待
-</span><span class="c1"></span>        <span class="k">return</span> <span class="n">completedLatch</span><span class="o">.</span><span class="na">await</span><span class="o">(</span><span class="n">timeout</span><span class="o">,</span> <span class="n">unit</span><span class="o">);</span>
-    <span class="o">}</span>
-    
-    <span class="c1">// 判断是否完成，INCOMPLETE_SENTINEL表示未完成
-</span><span class="c1"></span>    <span class="kd">public</span> <span class="kt">boolean</span> <span class="nf">isDone</span><span class="o">()</span> <span class="o">{</span>
-        <span class="k">return</span> <span class="n">result</span><span class="o">.</span><span class="na">get</span><span class="o">()</span> <span class="o">!=</span> <span class="n">INCOMPLETE_SENTINEL</span><span class="o">;</span>
-    <span class="o">}</span>
-    
-    <span class="c1">// 获取值
-</span><span class="c1"></span>    <span class="kd">public</span> <span class="n">T</span> <span class="nf">value</span><span class="o">()</span> <span class="o">{</span>
-        <span class="k">if</span> <span class="o">(!</span><span class="n">succeeded</span><span class="o">())</span>
-            <span class="k">throw</span> <span class="k">new</span> <span class="n">IllegalStateException</span><span class="o">(</span><span class="s">&#34;Attempt to retrieve value from future which hasn&#39;t successfully completed&#34;</span><span class="o">);</span>
-        <span class="k">return</span> <span class="o">(</span><span class="n">T</span><span class="o">)</span> <span class="n">result</span><span class="o">.</span><span class="na">get</span><span class="o">();</span>
-    <span class="o">}</span>    
-    
-<span class="o">}</span>
-</code></pre></td></tr></table></div>
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">RequestFuture</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span> <span class="kd">implements</span> <span class="n">ConsumerNetworkClient</span><span class="o">.</span><span class="na">PollCondition</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">    <span class="kd">private</span> <span class="kd">static</span> <span class="kd">final</span> <span class="n">Object</span> <span class="n">INCOMPLETE_SENTINEL</span> <span class="o">=</span> <span class="k">new</span> <span class="n">Object</span><span class="o">();</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// result保存了结果
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="kd">private</span> <span class="kd">final</span> <span class="n">AtomicReference</span><span class="o">&lt;</span><span class="n">Object</span><span class="o">&gt;</span> <span class="n">result</span> <span class="o">=</span> <span class="k">new</span> <span class="n">AtomicReference</span><span class="o">&lt;&gt;(</span><span class="n">INCOMPLETE_SENTINEL</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// CountDownLatch变量，用来执行等待和通知
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="kd">private</span> <span class="kd">final</span> <span class="n">CountDownLatch</span> <span class="n">completedLatch</span> <span class="o">=</span> <span class="k">new</span> <span class="n">CountDownLatch</span><span class="o">(</span><span class="mi">1</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">    
+</span></span><span class="line"><span class="cl">    <span class="c1">// 等待完成
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="kd">public</span> <span class="kt">boolean</span> <span class="nf">awaitDone</span><span class="o">(</span><span class="kt">long</span> <span class="n">timeout</span><span class="o">,</span> <span class="n">TimeUnit</span> <span class="n">unit</span><span class="o">)</span> <span class="kd">throws</span> <span class="n">InterruptedException</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">        <span class="c1">// 使用了CountDownLatch的await方法实现等待
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>        <span class="k">return</span> <span class="n">completedLatch</span><span class="o">.</span><span class="na">await</span><span class="o">(</span><span class="n">timeout</span><span class="o">,</span> <span class="n">unit</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">    <span class="o">}</span>
+</span></span><span class="line"><span class="cl">    
+</span></span><span class="line"><span class="cl">    <span class="c1">// 判断是否完成，INCOMPLETE_SENTINEL表示未完成
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="kd">public</span> <span class="kt">boolean</span> <span class="nf">isDone</span><span class="o">()</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">        <span class="k">return</span> <span class="n">result</span><span class="o">.</span><span class="na">get</span><span class="o">()</span> <span class="o">!=</span> <span class="n">INCOMPLETE_SENTINEL</span><span class="o">;</span>
+</span></span><span class="line"><span class="cl">    <span class="o">}</span>
+</span></span><span class="line"><span class="cl">    
+</span></span><span class="line"><span class="cl">    <span class="c1">// 获取值
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="kd">public</span> <span class="n">T</span> <span class="nf">value</span><span class="o">()</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">        <span class="k">if</span> <span class="o">(!</span><span class="n">succeeded</span><span class="o">())</span>
+</span></span><span class="line"><span class="cl">            <span class="k">throw</span> <span class="k">new</span> <span class="n">IllegalStateException</span><span class="o">(</span><span class="s">&#34;Attempt to retrieve value from future which hasn&#39;t successfully completed&#34;</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">        <span class="k">return</span> <span class="o">(</span><span class="n">T</span><span class="o">)</span> <span class="n">result</span><span class="o">.</span><span class="na">get</span><span class="o">();</span>
+</span></span><span class="line"><span class="cl">    <span class="o">}</span>    
+</span></span><span class="line"><span class="cl">    
+</span></span><span class="line"><span class="cl"><span class="o">}</span>
+</span></span></code></pre></td></tr></table></div>
 </div>
 </div><h3 id="管理监听器"><a href="#管理监听器" class="anchor-link"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon anchor-icon"><path d="M326.612 185.391c59.747 59.809 58.927 155.698.36 214.59-.11.12-.24.25-.36.37l-67.2 67.2c-59.27 59.27-155.699 59.262-214.96 0-59.27-59.26-59.27-155.7 0-214.96l37.106-37.106c9.84-9.84 26.786-3.3 27.294 10.606.648 17.722 3.826 35.527 9.69 52.721 1.986 5.822.567 12.262-3.783 16.612l-13.087 13.087c-28.026 28.026-28.905 73.66-1.155 101.96 28.024 28.579 74.086 28.749 102.325.51l67.2-67.19c28.191-28.191 28.073-73.757 0-101.83-3.701-3.694-7.429-6.564-10.341-8.569a16.037 16.037 0 0 1-6.947-12.606c-.396-10.567 3.348-21.456 11.698-29.806l21.054-21.055c5.521-5.521 14.182-6.199 20.584-1.731a152.482 152.482 0 0 1 20.522 17.197zM467.547 44.449c-59.261-59.262-155.69-59.27-214.96 0l-67.2 67.2c-.12.12-.25.25-.36.37-58.566 58.892-59.387 154.781.36 214.59a152.454 152.454 0 0 0 20.521 17.196c6.402 4.468 15.064 3.789 20.584-1.731l21.054-21.055c8.35-8.35 12.094-19.239 11.698-29.806a16.037 16.037 0 0 0-6.947-12.606c-2.912-2.005-6.64-4.875-10.341-8.569-28.073-28.073-28.191-73.639 0-101.83l67.2-67.19c28.239-28.239 74.3-28.069 102.325.51 27.75 28.3 26.872 73.934-1.155 101.96l-13.087 13.087c-4.35 4.35-5.769 10.79-3.783 16.612 5.864 17.194 9.042 34.999 9.69 52.721.509 13.906 17.454 20.446 27.294 10.606l37.106-37.106c59.271-59.259 59.271-155.699.001-214.959z"/></svg></a>管理监听器</h3>
 <p>RequestFuture在Future基础之上，还添加了监听器的功能，这使得编程回调更加方便。</p>
@@ -344,47 +344,47 @@
 </span><span class="lnt">40
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">RequestFuture</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span> <span class="kd">implements</span> <span class="n">ConsumerNetworkClient</span><span class="o">.</span><span class="na">PollCondition</span> <span class="o">{</span>
-    <span class="c1">// 保存了监听器的队列
-</span><span class="c1"></span>    <span class="kd">private</span> <span class="kd">final</span> <span class="n">ConcurrentLinkedQueue</span><span class="o">&lt;</span><span class="n">RequestFutureListener</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;&gt;</span> <span class="n">listeners</span> <span class="o">=</span> <span class="k">new</span> <span class="n">ConcurrentLinkedQueue</span><span class="o">&lt;&gt;();</span>
-    
-    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">addListener</span><span class="o">(</span><span class="n">RequestFutureListener</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span> <span class="n">listener</span><span class="o">)</span> <span class="o">{</span>
-        <span class="c1">// 将监听器保存到队列里
-</span><span class="c1"></span>        <span class="k">this</span><span class="o">.</span><span class="na">listeners</span><span class="o">.</span><span class="na">add</span><span class="o">(</span><span class="n">listener</span><span class="o">);</span>
-        
-        <span class="k">if</span> <span class="o">(</span><span class="n">failed</span><span class="o">())</span>
-            <span class="c1">// 如果结果已经完成，并且结果失败，则执行回调函数
-</span><span class="c1"></span>            <span class="n">fireFailure</span><span class="o">();</span>
-        <span class="k">else</span> <span class="k">if</span> <span class="o">(</span><span class="n">succeeded</span><span class="o">())</span>
-            <span class="c1">// 如果结果已经完成，并且结果成功，则执行回调函数
-</span><span class="c1"></span>            <span class="n">fireSuccess</span><span class="o">();</span>
-    <span class="o">}</span>
-    
-    <span class="kd">private</span> <span class="kt">void</span> <span class="nf">fireSuccess</span><span class="o">()</span> <span class="o">{</span>
-        <span class="c1">// 获取值
-</span><span class="c1"></span>        <span class="n">T</span> <span class="n">value</span> <span class="o">=</span> <span class="n">value</span><span class="o">();</span>
-        <span class="c1">// 从队列里取出监听器，依次执行onSuccess回调
-</span><span class="c1"></span>        <span class="k">while</span> <span class="o">(</span><span class="kc">true</span><span class="o">)</span> <span class="o">{</span>
-            <span class="n">RequestFutureListener</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span> <span class="n">listener</span> <span class="o">=</span> <span class="n">listeners</span><span class="o">.</span><span class="na">poll</span><span class="o">();</span>
-            <span class="k">if</span> <span class="o">(</span><span class="n">listener</span> <span class="o">==</span> <span class="kc">null</span><span class="o">)</span>
-                <span class="k">break</span><span class="o">;</span>
-            <span class="n">listener</span><span class="o">.</span><span class="na">onSuccess</span><span class="o">(</span><span class="n">value</span><span class="o">);</span>
-        <span class="o">}</span>
-    <span class="o">}</span>
-
-    <span class="kd">private</span> <span class="kt">void</span> <span class="nf">fireFailure</span><span class="o">()</span> <span class="o">{</span>
-        <span class="c1">// 获取异常，
-</span><span class="c1"></span>        <span class="n">RuntimeException</span> <span class="n">exception</span> <span class="o">=</span> <span class="n">exception</span><span class="o">();</span>
-        <span class="c1">// 从队列里取出监听器，依次执行onFailure回调
-</span><span class="c1"></span>        <span class="k">while</span> <span class="o">(</span><span class="kc">true</span><span class="o">)</span> <span class="o">{</span>
-            <span class="n">RequestFutureListener</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span> <span class="n">listener</span> <span class="o">=</span> <span class="n">listeners</span><span class="o">.</span><span class="na">poll</span><span class="o">();</span>
-            <span class="k">if</span> <span class="o">(</span><span class="n">listener</span> <span class="o">==</span> <span class="kc">null</span><span class="o">)</span>
-                <span class="k">break</span><span class="o">;</span>
-            <span class="n">listener</span><span class="o">.</span><span class="na">onFailure</span><span class="o">(</span><span class="n">exception</span><span class="o">);</span>
-        <span class="o">}</span>
-    <span class="o">}</span>
-<span class="o">}</span>
-</code></pre></td></tr></table></div>
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">RequestFuture</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span> <span class="kd">implements</span> <span class="n">ConsumerNetworkClient</span><span class="o">.</span><span class="na">PollCondition</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// 保存了监听器的队列
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="kd">private</span> <span class="kd">final</span> <span class="n">ConcurrentLinkedQueue</span><span class="o">&lt;</span><span class="n">RequestFutureListener</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;&gt;</span> <span class="n">listeners</span> <span class="o">=</span> <span class="k">new</span> <span class="n">ConcurrentLinkedQueue</span><span class="o">&lt;&gt;();</span>
+</span></span><span class="line"><span class="cl">    
+</span></span><span class="line"><span class="cl">    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">addListener</span><span class="o">(</span><span class="n">RequestFutureListener</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span> <span class="n">listener</span><span class="o">)</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">        <span class="c1">// 将监听器保存到队列里
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>        <span class="k">this</span><span class="o">.</span><span class="na">listeners</span><span class="o">.</span><span class="na">add</span><span class="o">(</span><span class="n">listener</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">        
+</span></span><span class="line"><span class="cl">        <span class="k">if</span> <span class="o">(</span><span class="n">failed</span><span class="o">())</span>
+</span></span><span class="line"><span class="cl">            <span class="c1">// 如果结果已经完成，并且结果失败，则执行回调函数
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>            <span class="n">fireFailure</span><span class="o">();</span>
+</span></span><span class="line"><span class="cl">        <span class="k">else</span> <span class="k">if</span> <span class="o">(</span><span class="n">succeeded</span><span class="o">())</span>
+</span></span><span class="line"><span class="cl">            <span class="c1">// 如果结果已经完成，并且结果成功，则执行回调函数
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>            <span class="n">fireSuccess</span><span class="o">();</span>
+</span></span><span class="line"><span class="cl">    <span class="o">}</span>
+</span></span><span class="line"><span class="cl">    
+</span></span><span class="line"><span class="cl">    <span class="kd">private</span> <span class="kt">void</span> <span class="nf">fireSuccess</span><span class="o">()</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">        <span class="c1">// 获取值
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>        <span class="n">T</span> <span class="n">value</span> <span class="o">=</span> <span class="n">value</span><span class="o">();</span>
+</span></span><span class="line"><span class="cl">        <span class="c1">// 从队列里取出监听器，依次执行onSuccess回调
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>        <span class="k">while</span> <span class="o">(</span><span class="kc">true</span><span class="o">)</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">            <span class="n">RequestFutureListener</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span> <span class="n">listener</span> <span class="o">=</span> <span class="n">listeners</span><span class="o">.</span><span class="na">poll</span><span class="o">();</span>
+</span></span><span class="line"><span class="cl">            <span class="k">if</span> <span class="o">(</span><span class="n">listener</span> <span class="o">==</span> <span class="kc">null</span><span class="o">)</span>
+</span></span><span class="line"><span class="cl">                <span class="k">break</span><span class="o">;</span>
+</span></span><span class="line"><span class="cl">            <span class="n">listener</span><span class="o">.</span><span class="na">onSuccess</span><span class="o">(</span><span class="n">value</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">        <span class="o">}</span>
+</span></span><span class="line"><span class="cl">    <span class="o">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="kd">private</span> <span class="kt">void</span> <span class="nf">fireFailure</span><span class="o">()</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">        <span class="c1">// 获取异常，
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>        <span class="n">RuntimeException</span> <span class="n">exception</span> <span class="o">=</span> <span class="n">exception</span><span class="o">();</span>
+</span></span><span class="line"><span class="cl">        <span class="c1">// 从队列里取出监听器，依次执行onFailure回调
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>        <span class="k">while</span> <span class="o">(</span><span class="kc">true</span><span class="o">)</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">            <span class="n">RequestFutureListener</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span> <span class="n">listener</span> <span class="o">=</span> <span class="n">listeners</span><span class="o">.</span><span class="na">poll</span><span class="o">();</span>
+</span></span><span class="line"><span class="cl">            <span class="k">if</span> <span class="o">(</span><span class="n">listener</span> <span class="o">==</span> <span class="kc">null</span><span class="o">)</span>
+</span></span><span class="line"><span class="cl">                <span class="k">break</span><span class="o">;</span>
+</span></span><span class="line"><span class="cl">            <span class="n">listener</span><span class="o">.</span><span class="na">onFailure</span><span class="o">(</span><span class="n">exception</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">        <span class="o">}</span>
+</span></span><span class="line"><span class="cl">    <span class="o">}</span>
+</span></span><span class="line"><span class="cl"><span class="o">}</span>
+</span></span></code></pre></td></tr></table></div>
 </div>
 </div><h3 id="设置结果"><a href="#设置结果" class="anchor-link"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon anchor-icon"><path d="M326.612 185.391c59.747 59.809 58.927 155.698.36 214.59-.11.12-.24.25-.36.37l-67.2 67.2c-59.27 59.27-155.699 59.262-214.96 0-59.27-59.26-59.27-155.7 0-214.96l37.106-37.106c9.84-9.84 26.786-3.3 27.294 10.606.648 17.722 3.826 35.527 9.69 52.721 1.986 5.822.567 12.262-3.783 16.612l-13.087 13.087c-28.026 28.026-28.905 73.66-1.155 101.96 28.024 28.579 74.086 28.749 102.325.51l67.2-67.19c28.191-28.191 28.073-73.757 0-101.83-3.701-3.694-7.429-6.564-10.341-8.569a16.037 16.037 0 0 1-6.947-12.606c-.396-10.567 3.348-21.456 11.698-29.806l21.054-21.055c5.521-5.521 14.182-6.199 20.584-1.731a152.482 152.482 0 0 1 20.522 17.197zM467.547 44.449c-59.261-59.262-155.69-59.27-214.96 0l-67.2 67.2c-.12.12-.25.25-.36.37-58.566 58.892-59.387 154.781.36 214.59a152.454 152.454 0 0 0 20.521 17.196c6.402 4.468 15.064 3.789 20.584-1.731l21.054-21.055c8.35-8.35 12.094-19.239 11.698-29.806a16.037 16.037 0 0 0-6.947-12.606c-2.912-2.005-6.64-4.875-10.341-8.569-28.073-28.073-28.191-73.639 0-101.83l67.2-67.19c28.239-28.239 74.3-28.069 102.325.51 27.75 28.3 26.872 73.934-1.155 101.96l-13.087 13.087c-4.35 4.35-5.769 10.79-3.783 16.612 5.864 17.194 9.042 34.999 9.69 52.721.509 13.906 17.454 20.446 27.294 10.606l37.106-37.106c59.271-59.259 59.271-155.699.001-214.959z"/></svg></a>设置结果</h3>
 <p>RequestFuture提供了两个方法设置结果，一个是成功完成，调用complete方法设置结果。另一个是执行失败，调用raise方法设置异常。</p>
@@ -424,39 +424,39 @@
 </span><span class="lnt">32
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kt">void</span> <span class="nf">complete</span><span class="o">(</span><span class="n">T</span> <span class="n">value</span><span class="o">)</span> <span class="o">{</span>
-    <span class="k">try</span> <span class="o">{</span>
-        <span class="c1">// value必须为值，不能为异常
-</span><span class="c1"></span>        <span class="k">if</span> <span class="o">(</span><span class="n">value</span> <span class="k">instanceof</span> <span class="n">RuntimeException</span><span class="o">)</span>
-            <span class="k">throw</span> <span class="k">new</span> <span class="n">IllegalArgumentException</span><span class="o">(</span><span class="s">&#34;The argument to complete can not be an instance of RuntimeException&#34;</span><span class="o">);</span>
-        <span class="c1">// 检查result的值是否为INCOMPLETE_SENTINEL，并且设置为value
-</span><span class="c1"></span>        <span class="c1">// 否则认为result的值已经被设置过了
-</span><span class="c1"></span>        <span class="k">if</span> <span class="o">(!</span><span class="n">result</span><span class="o">.</span><span class="na">compareAndSet</span><span class="o">(</span><span class="n">INCOMPLETE_SENTINEL</span><span class="o">,</span> <span class="n">value</span><span class="o">))</span>
-            <span class="k">throw</span> <span class="k">new</span> <span class="n">IllegalStateException</span><span class="o">(</span><span class="s">&#34;Invalid attempt to complete a request future which is already complete&#34;</span><span class="o">);</span>
-        <span class="c1">// 执行监听器
-</span><span class="c1"></span>        <span class="n">fireSuccess</span><span class="o">();</span>
-    <span class="o">}</span> <span class="k">finally</span> <span class="o">{</span>
-        <span class="c1">// 调用completedLatch的countDown方法，通知等待线程
-</span><span class="c1"></span>        <span class="n">completedLatch</span><span class="o">.</span><span class="na">countDown</span><span class="o">();</span>
-    <span class="o">}</span>
-<span class="o">}</span>
-
-<span class="kd">public</span> <span class="kt">void</span> <span class="nf">raise</span><span class="o">(</span><span class="n">RuntimeException</span> <span class="n">e</span><span class="o">)</span> <span class="o">{</span>
-    <span class="k">try</span> <span class="o">{</span>
-        <span class="c1">// 异常不能为空
-</span><span class="c1"></span>        <span class="k">if</span> <span class="o">(</span><span class="n">e</span> <span class="o">==</span> <span class="kc">null</span><span class="o">)</span>
-            <span class="k">throw</span> <span class="k">new</span> <span class="n">IllegalArgumentException</span><span class="o">(</span><span class="s">&#34;The exception passed to raise must not be null&#34;</span><span class="o">);</span>
-        <span class="c1">// 检查result的值是否为INCOMPLETE_SENTINEL，并且设置为异常
-</span><span class="c1"></span>        <span class="k">if</span> <span class="o">(!</span><span class="n">result</span><span class="o">.</span><span class="na">compareAndSet</span><span class="o">(</span><span class="n">INCOMPLETE_SENTINEL</span><span class="o">,</span> <span class="n">e</span><span class="o">))</span>
-            <span class="k">throw</span> <span class="k">new</span> <span class="n">IllegalStateException</span><span class="o">(</span><span class="s">&#34;Invalid attempt to complete a request future which is already complete&#34;</span><span class="o">);</span>
-        <span class="c1">// 执行监听器
-</span><span class="c1"></span>        <span class="n">fireFailure</span><span class="o">();</span>
-    <span class="o">}</span> <span class="k">finally</span> <span class="o">{</span>
-        <span class="c1">// 调用completedLatch的countDown方法，通知等待线程
-</span><span class="c1"></span>        <span class="n">completedLatch</span><span class="o">.</span><span class="na">countDown</span><span class="o">();</span>
-    <span class="o">}</span>
-<span class="o">}</span>
-</code></pre></td></tr></table></div>
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="kd">public</span> <span class="kt">void</span> <span class="nf">complete</span><span class="o">(</span><span class="n">T</span> <span class="n">value</span><span class="o">)</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">    <span class="k">try</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">        <span class="c1">// value必须为值，不能为异常
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>        <span class="k">if</span> <span class="o">(</span><span class="n">value</span> <span class="k">instanceof</span> <span class="n">RuntimeException</span><span class="o">)</span>
+</span></span><span class="line"><span class="cl">            <span class="k">throw</span> <span class="k">new</span> <span class="n">IllegalArgumentException</span><span class="o">(</span><span class="s">&#34;The argument to complete can not be an instance of RuntimeException&#34;</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">        <span class="c1">// 检查result的值是否为INCOMPLETE_SENTINEL，并且设置为value
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>        <span class="c1">// 否则认为result的值已经被设置过了
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>        <span class="k">if</span> <span class="o">(!</span><span class="n">result</span><span class="o">.</span><span class="na">compareAndSet</span><span class="o">(</span><span class="n">INCOMPLETE_SENTINEL</span><span class="o">,</span> <span class="n">value</span><span class="o">))</span>
+</span></span><span class="line"><span class="cl">            <span class="k">throw</span> <span class="k">new</span> <span class="n">IllegalStateException</span><span class="o">(</span><span class="s">&#34;Invalid attempt to complete a request future which is already complete&#34;</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">        <span class="c1">// 执行监听器
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>        <span class="n">fireSuccess</span><span class="o">();</span>
+</span></span><span class="line"><span class="cl">    <span class="o">}</span> <span class="k">finally</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">        <span class="c1">// 调用completedLatch的countDown方法，通知等待线程
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>        <span class="n">completedLatch</span><span class="o">.</span><span class="na">countDown</span><span class="o">();</span>
+</span></span><span class="line"><span class="cl">    <span class="o">}</span>
+</span></span><span class="line"><span class="cl"><span class="o">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kd">public</span> <span class="kt">void</span> <span class="nf">raise</span><span class="o">(</span><span class="n">RuntimeException</span> <span class="n">e</span><span class="o">)</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">    <span class="k">try</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">        <span class="c1">// 异常不能为空
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>        <span class="k">if</span> <span class="o">(</span><span class="n">e</span> <span class="o">==</span> <span class="kc">null</span><span class="o">)</span>
+</span></span><span class="line"><span class="cl">            <span class="k">throw</span> <span class="k">new</span> <span class="n">IllegalArgumentException</span><span class="o">(</span><span class="s">&#34;The exception passed to raise must not be null&#34;</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">        <span class="c1">// 检查result的值是否为INCOMPLETE_SENTINEL，并且设置为异常
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>        <span class="k">if</span> <span class="o">(!</span><span class="n">result</span><span class="o">.</span><span class="na">compareAndSet</span><span class="o">(</span><span class="n">INCOMPLETE_SENTINEL</span><span class="o">,</span> <span class="n">e</span><span class="o">))</span>
+</span></span><span class="line"><span class="cl">            <span class="k">throw</span> <span class="k">new</span> <span class="n">IllegalStateException</span><span class="o">(</span><span class="s">&#34;Invalid attempt to complete a request future which is already complete&#34;</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">        <span class="c1">// 执行监听器
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>        <span class="n">fireFailure</span><span class="o">();</span>
+</span></span><span class="line"><span class="cl">    <span class="o">}</span> <span class="k">finally</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">        <span class="c1">// 调用completedLatch的countDown方法，通知等待线程
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>        <span class="n">completedLatch</span><span class="o">.</span><span class="na">countDown</span><span class="o">();</span>
+</span></span><span class="line"><span class="cl">    <span class="o">}</span>
+</span></span><span class="line"><span class="cl"><span class="o">}</span>
+</span></span></code></pre></td></tr></table></div>
 </div>
 </div><h3 id="装饰-requestfuture"><a href="#装饰-requestfuture" class="anchor-link"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon anchor-icon"><path d="M326.612 185.391c59.747 59.809 58.927 155.698.36 214.59-.11.12-.24.25-.36.37l-67.2 67.2c-59.27 59.27-155.699 59.262-214.96 0-59.27-59.26-59.27-155.7 0-214.96l37.106-37.106c9.84-9.84 26.786-3.3 27.294 10.606.648 17.722 3.826 35.527 9.69 52.721 1.986 5.822.567 12.262-3.783 16.612l-13.087 13.087c-28.026 28.026-28.905 73.66-1.155 101.96 28.024 28.579 74.086 28.749 102.325.51l67.2-67.19c28.191-28.191 28.073-73.757 0-101.83-3.701-3.694-7.429-6.564-10.341-8.569a16.037 16.037 0 0 1-6.947-12.606c-.396-10.567 3.348-21.456 11.698-29.806l21.054-21.055c5.521-5.521 14.182-6.199 20.584-1.731a152.482 152.482 0 0 1 20.522 17.197zM467.547 44.449c-59.261-59.262-155.69-59.27-214.96 0l-67.2 67.2c-.12.12-.25.25-.36.37-58.566 58.892-59.387 154.781.36 214.59a152.454 152.454 0 0 0 20.521 17.196c6.402 4.468 15.064 3.789 20.584-1.731l21.054-21.055c8.35-8.35 12.094-19.239 11.698-29.806a16.037 16.037 0 0 0-6.947-12.606c-2.912-2.005-6.64-4.875-10.341-8.569-28.073-28.073-28.191-73.639 0-101.83l67.2-67.19c28.239-28.239 74.3-28.069 102.325.51 27.75 28.3 26.872 73.934-1.155 101.96l-13.087 13.087c-4.35 4.35-5.769 10.79-3.783 16.612 5.864 17.194 9.042 34.999 9.69 52.721.509 13.906 17.454 20.446 27.294 10.606l37.106-37.106c59.271-59.259 59.271-155.699.001-214.959z"/></svg></a>装饰 RequestFuture</h3>
 <p>RequestFuture有两个方法比较特殊，</p>
@@ -483,25 +483,25 @@
 </span><span class="lnt">18
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kt">void</span> <span class="nf">chain</span><span class="o">(</span><span class="kd">final</span> <span class="n">RequestFuture</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span> <span class="n">future</span><span class="o">)</span> <span class="o">{</span>
-    <span class="c1">// 添加监听器来实现
-</span><span class="c1"></span>    <span class="n">addListener</span><span class="o">(</span><span class="k">new</span> <span class="n">RequestFutureListener</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;()</span> <span class="o">{</span>
-        <span class="nd">@Override</span>
-        <span class="kd">public</span> <span class="kt">void</span> <span class="nf">onSuccess</span><span class="o">(</span><span class="n">T</span> <span class="n">value</span><span class="o">)</span> <span class="o">{</span>
-            <span class="c1">// 当父RequestFuture完成时，会调用这个监听器的onSuccess方法
-</span><span class="c1"></span>            <span class="c1">// 这个监听器执行时，会调用future的complete方法设置结果
-</span><span class="c1"></span>            <span class="n">future</span><span class="o">.</span><span class="na">complete</span><span class="o">(</span><span class="n">value</span><span class="o">);</span>
-        <span class="o">}</span>
-
-        <span class="nd">@Override</span>
-        <span class="kd">public</span> <span class="kt">void</span> <span class="nf">onFailure</span><span class="o">(</span><span class="n">RuntimeException</span> <span class="n">e</span><span class="o">)</span> <span class="o">{</span>
-            <span class="c1">// 当父RequestFuture完成时，会调用这个监听器的onFailure方法
-</span><span class="c1"></span>            <span class="c1">// 这个监听器执行时，会调用future的raise方法设置结果
-</span><span class="c1"></span>            <span class="n">future</span><span class="o">.</span><span class="na">raise</span><span class="o">(</span><span class="n">e</span><span class="o">);</span>
-        <span class="o">}</span>
-    <span class="o">});</span>
-<span class="o">}</span>
-</code></pre></td></tr></table></div>
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="kd">public</span> <span class="kt">void</span> <span class="nf">chain</span><span class="o">(</span><span class="kd">final</span> <span class="n">RequestFuture</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span> <span class="n">future</span><span class="o">)</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// 添加监听器来实现
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="n">addListener</span><span class="o">(</span><span class="k">new</span> <span class="n">RequestFutureListener</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;()</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">        <span class="nd">@Override</span>
+</span></span><span class="line"><span class="cl">        <span class="kd">public</span> <span class="kt">void</span> <span class="nf">onSuccess</span><span class="o">(</span><span class="n">T</span> <span class="n">value</span><span class="o">)</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">            <span class="c1">// 当父RequestFuture完成时，会调用这个监听器的onSuccess方法
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>            <span class="c1">// 这个监听器执行时，会调用future的complete方法设置结果
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>            <span class="n">future</span><span class="o">.</span><span class="na">complete</span><span class="o">(</span><span class="n">value</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">        <span class="o">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">        <span class="nd">@Override</span>
+</span></span><span class="line"><span class="cl">        <span class="kd">public</span> <span class="kt">void</span> <span class="nf">onFailure</span><span class="o">(</span><span class="n">RuntimeException</span> <span class="n">e</span><span class="o">)</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">            <span class="c1">// 当父RequestFuture完成时，会调用这个监听器的onFailure方法
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>            <span class="c1">// 这个监听器执行时，会调用future的raise方法设置结果
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>            <span class="n">future</span><span class="o">.</span><span class="na">raise</span><span class="o">(</span><span class="n">e</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">        <span class="o">}</span>
+</span></span><span class="line"><span class="cl">    <span class="o">});</span>
+</span></span><span class="line"><span class="cl"><span class="o">}</span>
+</span></span></code></pre></td></tr></table></div>
 </div>
 </div><p>compose方法，负责转换RequestFuture的泛型。比如一个RequestFuture<String> 类型，表示它的结果是String类型的。现在需要将结果转换为Integer类型，返回RequestFuture<Integer> ，那么就需要compose方法。</p>
 <div class="highlight"><div class="chroma">
@@ -529,28 +529,28 @@
 </span><span class="lnt">21
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="c1">// T 表示源类型，S表示目标类型
-</span><span class="c1"></span><span class="kd">public</span> <span class="o">&lt;</span><span class="n">S</span><span class="o">&gt;</span> <span class="n">RequestFuture</span><span class="o">&lt;</span><span class="n">S</span><span class="o">&gt;</span> <span class="nf">compose</span><span class="o">(</span><span class="kd">final</span> <span class="n">RequestFutureAdapter</span><span class="o">&lt;</span><span class="n">T</span><span class="o">,</span> <span class="n">S</span><span class="o">&gt;</span> <span class="n">adapter</span><span class="o">)</span> <span class="o">{</span>
-    <span class="c1">// 这里生成S类型的RequestFuture
-</span><span class="c1"></span>    <span class="kd">final</span> <span class="n">RequestFuture</span><span class="o">&lt;</span><span class="n">S</span><span class="o">&gt;</span> <span class="n">adapted</span> <span class="o">=</span> <span class="k">new</span> <span class="n">RequestFuture</span><span class="o">&lt;&gt;();</span>
-    <span class="c1">// 添加监听器
-</span><span class="c1"></span>    <span class="n">addListener</span><span class="o">(</span><span class="k">new</span> <span class="n">RequestFutureListener</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;()</span> <span class="o">{</span>
-        <span class="nd">@Override</span>
-        <span class="kd">public</span> <span class="kt">void</span> <span class="nf">onSuccess</span><span class="o">(</span><span class="n">T</span> <span class="n">value</span><span class="o">)</span> <span class="o">{</span>
-            <span class="c1">// 当父RequestFuture完成时，会调用这个监听器的onSuccess方法
-</span><span class="c1"></span>            <span class="c1">// 这个监听器调用了RequestFutureAdapter的onSucceess方法，
-</span><span class="c1"></span>            <span class="c1">// RequestFutureAdapter这里需要设置adapted的结果
-</span><span class="c1"></span>            <span class="n">adapter</span><span class="o">.</span><span class="na">onSuccess</span><span class="o">(</span><span class="n">value</span><span class="o">,</span> <span class="n">adapted</span><span class="o">);</span>
-        <span class="o">}</span>
-
-        <span class="nd">@Override</span>
-        <span class="kd">public</span> <span class="kt">void</span> <span class="nf">onFailure</span><span class="o">(</span><span class="n">RuntimeException</span> <span class="n">e</span><span class="o">)</span> <span class="o">{</span>
-            <span class="n">adapter</span><span class="o">.</span><span class="na">onFailure</span><span class="o">(</span><span class="n">e</span><span class="o">,</span> <span class="n">adapted</span><span class="o">);</span>
-        <span class="o">}</span>
-    <span class="o">});</span>
-    <span class="k">return</span> <span class="n">adapted</span><span class="o">;</span>
-<span class="o">}</span>
-</code></pre></td></tr></table></div>
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="c1">// T 表示源类型，S表示目标类型
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="kd">public</span> <span class="o">&lt;</span><span class="n">S</span><span class="o">&gt;</span> <span class="n">RequestFuture</span><span class="o">&lt;</span><span class="n">S</span><span class="o">&gt;</span> <span class="nf">compose</span><span class="o">(</span><span class="kd">final</span> <span class="n">RequestFutureAdapter</span><span class="o">&lt;</span><span class="n">T</span><span class="o">,</span> <span class="n">S</span><span class="o">&gt;</span> <span class="n">adapter</span><span class="o">)</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// 这里生成S类型的RequestFuture
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="kd">final</span> <span class="n">RequestFuture</span><span class="o">&lt;</span><span class="n">S</span><span class="o">&gt;</span> <span class="n">adapted</span> <span class="o">=</span> <span class="k">new</span> <span class="n">RequestFuture</span><span class="o">&lt;&gt;();</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// 添加监听器
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="n">addListener</span><span class="o">(</span><span class="k">new</span> <span class="n">RequestFutureListener</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;()</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">        <span class="nd">@Override</span>
+</span></span><span class="line"><span class="cl">        <span class="kd">public</span> <span class="kt">void</span> <span class="nf">onSuccess</span><span class="o">(</span><span class="n">T</span> <span class="n">value</span><span class="o">)</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">            <span class="c1">// 当父RequestFuture完成时，会调用这个监听器的onSuccess方法
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>            <span class="c1">// 这个监听器调用了RequestFutureAdapter的onSucceess方法，
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>            <span class="c1">// RequestFutureAdapter这里需要设置adapted的结果
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>            <span class="n">adapter</span><span class="o">.</span><span class="na">onSuccess</span><span class="o">(</span><span class="n">value</span><span class="o">,</span> <span class="n">adapted</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">        <span class="o">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">        <span class="nd">@Override</span>
+</span></span><span class="line"><span class="cl">        <span class="kd">public</span> <span class="kt">void</span> <span class="nf">onFailure</span><span class="o">(</span><span class="n">RuntimeException</span> <span class="n">e</span><span class="o">)</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">            <span class="n">adapter</span><span class="o">.</span><span class="na">onFailure</span><span class="o">(</span><span class="n">e</span><span class="o">,</span> <span class="n">adapted</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">        <span class="o">}</span>
+</span></span><span class="line"><span class="cl">    <span class="o">});</span>
+</span></span><span class="line"><span class="cl">    <span class="k">return</span> <span class="n">adapted</span><span class="o">;</span>
+</span></span><span class="line"><span class="cl"><span class="o">}</span>
+</span></span></code></pre></td></tr></table></div>
 </div>
 </div><p>这里注意下传递的RequestFutureAdapter参数。RequestFutureAdapter它是一个接口，用户必须实现它的onSuccess和onFailure方法。</p>
 <p>onSuccess方法，必须根据value参数，生成结果，并且赋予给S类型的RequestFuture。</p>
@@ -574,18 +574,18 @@
 </span><span class="lnt">11
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="kd">private</span> <span class="kd">class</span> <span class="nc">RequestFutureCompletionHandler</span> <span class="kd">implements</span> <span class="n">RequestCompletionHandler</span> <span class="o">{</span>
-    <span class="kd">private</span> <span class="n">ClientResponse</span> <span class="n">response</span><span class="o">;</span>
-    
-    <span class="nd">@Override</span>
-    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">onComplete</span><span class="o">(</span><span class="n">ClientResponse</span> <span class="n">response</span><span class="o">)</span> <span class="o">{</span>
-        <span class="c1">// 更新响应数据
-</span><span class="c1"></span>        <span class="k">this</span><span class="o">.</span><span class="na">response</span> <span class="o">=</span> <span class="n">response</span><span class="o">;</span>
-        <span class="c1">// 将自身添加到pendingCompletion队列里
-</span><span class="c1"></span>        <span class="n">pendingCompletion</span><span class="o">.</span><span class="na">add</span><span class="o">(</span><span class="k">this</span><span class="o">);</span>
-    <span class="o">}</span>
-<span class="o">}</span>
-</code></pre></td></tr></table></div>
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="kd">private</span> <span class="kd">class</span> <span class="nc">RequestFutureCompletionHandler</span> <span class="kd">implements</span> <span class="n">RequestCompletionHandler</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">    <span class="kd">private</span> <span class="n">ClientResponse</span> <span class="n">response</span><span class="o">;</span>
+</span></span><span class="line"><span class="cl">    
+</span></span><span class="line"><span class="cl">    <span class="nd">@Override</span>
+</span></span><span class="line"><span class="cl">    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">onComplete</span><span class="o">(</span><span class="n">ClientResponse</span> <span class="n">response</span><span class="o">)</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">        <span class="c1">// 更新响应数据
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>        <span class="k">this</span><span class="o">.</span><span class="na">response</span> <span class="o">=</span> <span class="n">response</span><span class="o">;</span>
+</span></span><span class="line"><span class="cl">        <span class="c1">// 将自身添加到pendingCompletion队列里
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>        <span class="n">pendingCompletion</span><span class="o">.</span><span class="na">add</span><span class="o">(</span><span class="k">this</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">    <span class="o">}</span>
+</span></span><span class="line"><span class="cl"><span class="o">}</span>
+</span></span></code></pre></td></tr></table></div>
 </div>
 </div><p>ConsumerNetworkClient的send方法，负责构建请求，然后将请求保存到UnsentRequests集合里。UnsentRequests为每个节点都保存了一个请求队列。</p>
 <div class="highlight"><div class="chroma">
@@ -616,31 +616,31 @@
 </span><span class="lnt">24
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">ConsumerNetworkClient</span> <span class="kd">implements</span> <span class="n">Closeable</span> <span class="o">{</span>
-    <span class="c1">// NetworkClient 实例
-</span><span class="c1"></span>    <span class="kd">private</span> <span class="kd">final</span> <span class="n">KafkaClient</span> <span class="n">client</span><span class="o">;</span>
-    <span class="c1">// ClientRequest集合，它为每个节点保存了一个请求队列
-</span><span class="c1"></span>    <span class="kd">private</span> <span class="kd">final</span> <span class="n">UnsentRequests</span> <span class="n">unsent</span> <span class="o">=</span> <span class="k">new</span> <span class="n">UnsentRequests</span><span class="o">();</span>
-
-    <span class="kd">public</span> <span class="n">RequestFuture</span><span class="o">&lt;</span><span class="n">ClientResponse</span><span class="o">&gt;</span> <span class="nf">send</span><span class="o">(</span><span class="n">Node</span> <span class="n">node</span><span class="o">,</span>
-                                              <span class="n">AbstractRequest</span><span class="o">.</span><span class="na">Builder</span><span class="o">&lt;?&gt;</span> <span class="n">requestBuilder</span><span class="o">,</span>
-                                              <span class="kt">int</span> <span class="n">requestTimeoutMs</span><span class="o">)</span> <span class="o">{</span>
-        <span class="kt">long</span> <span class="n">now</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="na">milliseconds</span><span class="o">();</span>
-        <span class="c1">// 实例化RequestFutureCompletionHandler，里面实例化了RequestFuture
-</span><span class="c1"></span>        <span class="n">RequestFutureCompletionHandler</span> <span class="n">completionHandler</span> <span class="o">=</span> <span class="k">new</span> <span class="n">RequestFutureCompletionHandler</span><span class="o">();</span>
-        <span class="c1">// 构建ClientRequest，需要注意的是completionHandler，它作为回调函数
-</span><span class="c1"></span>        <span class="n">ClientRequest</span> <span class="n">clientRequest</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="na">newClientRequest</span><span class="o">(</span><span class="n">node</span><span class="o">.</span><span class="na">idString</span><span class="o">(),</span> <span class="n">requestBuilder</span><span class="o">,</span> <span class="n">now</span><span class="o">,</span> <span class="kc">true</span><span class="o">,</span>
-                <span class="n">requestTimeoutMs</span><span class="o">,</span> <span class="n">completionHandler</span><span class="o">);</span>
-        <span class="c1">// 将请求保存到unsent集合里
-</span><span class="c1"></span>        <span class="n">unsent</span><span class="o">.</span><span class="na">put</span><span class="o">(</span><span class="n">node</span><span class="o">,</span> <span class="n">clientRequest</span><span class="o">);</span>
-
-        <span class="c1">// 如果NetworkClient阻塞了，通知它
-</span><span class="c1"></span>        <span class="n">client</span><span class="o">.</span><span class="na">wakeup</span><span class="o">();</span>
-        <span class="c1">// 返回 RequestFuture
-</span><span class="c1"></span>        <span class="k">return</span> <span class="n">completionHandler</span><span class="o">.</span><span class="na">future</span><span class="o">;</span>
-    <span class="o">}</span>
-<span class="o">}</span>
-</code></pre></td></tr></table></div>
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">ConsumerNetworkClient</span> <span class="kd">implements</span> <span class="n">Closeable</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// NetworkClient 实例
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="kd">private</span> <span class="kd">final</span> <span class="n">KafkaClient</span> <span class="n">client</span><span class="o">;</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// ClientRequest集合，它为每个节点保存了一个请求队列
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="kd">private</span> <span class="kd">final</span> <span class="n">UnsentRequests</span> <span class="n">unsent</span> <span class="o">=</span> <span class="k">new</span> <span class="n">UnsentRequests</span><span class="o">();</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="kd">public</span> <span class="n">RequestFuture</span><span class="o">&lt;</span><span class="n">ClientResponse</span><span class="o">&gt;</span> <span class="nf">send</span><span class="o">(</span><span class="n">Node</span> <span class="n">node</span><span class="o">,</span>
+</span></span><span class="line"><span class="cl">                                              <span class="n">AbstractRequest</span><span class="o">.</span><span class="na">Builder</span><span class="o">&lt;?&gt;</span> <span class="n">requestBuilder</span><span class="o">,</span>
+</span></span><span class="line"><span class="cl">                                              <span class="kt">int</span> <span class="n">requestTimeoutMs</span><span class="o">)</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">        <span class="kt">long</span> <span class="n">now</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="na">milliseconds</span><span class="o">();</span>
+</span></span><span class="line"><span class="cl">        <span class="c1">// 实例化RequestFutureCompletionHandler，里面实例化了RequestFuture
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>        <span class="n">RequestFutureCompletionHandler</span> <span class="n">completionHandler</span> <span class="o">=</span> <span class="k">new</span> <span class="n">RequestFutureCompletionHandler</span><span class="o">();</span>
+</span></span><span class="line"><span class="cl">        <span class="c1">// 构建ClientRequest，需要注意的是completionHandler，它作为回调函数
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>        <span class="n">ClientRequest</span> <span class="n">clientRequest</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="na">newClientRequest</span><span class="o">(</span><span class="n">node</span><span class="o">.</span><span class="na">idString</span><span class="o">(),</span> <span class="n">requestBuilder</span><span class="o">,</span> <span class="n">now</span><span class="o">,</span> <span class="kc">true</span><span class="o">,</span>
+</span></span><span class="line"><span class="cl">                <span class="n">requestTimeoutMs</span><span class="o">,</span> <span class="n">completionHandler</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">        <span class="c1">// 将请求保存到unsent集合里
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>        <span class="n">unsent</span><span class="o">.</span><span class="na">put</span><span class="o">(</span><span class="n">node</span><span class="o">,</span> <span class="n">clientRequest</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">        <span class="c1">// 如果NetworkClient阻塞了，通知它
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>        <span class="n">client</span><span class="o">.</span><span class="na">wakeup</span><span class="o">();</span>
+</span></span><span class="line"><span class="cl">        <span class="c1">// 返回 RequestFuture
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>        <span class="k">return</span> <span class="n">completionHandler</span><span class="o">.</span><span class="na">future</span><span class="o">;</span>
+</span></span><span class="line"><span class="cl">    <span class="o">}</span>
+</span></span><span class="line"><span class="cl"><span class="o">}</span>
+</span></span></code></pre></td></tr></table></div>
 </div>
 </div><h2 id="处理响应"><a href="#处理响应" class="anchor-link"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon anchor-icon"><path d="M326.612 185.391c59.747 59.809 58.927 155.698.36 214.59-.11.12-.24.25-.36.37l-67.2 67.2c-59.27 59.27-155.699 59.262-214.96 0-59.27-59.26-59.27-155.7 0-214.96l37.106-37.106c9.84-9.84 26.786-3.3 27.294 10.606.648 17.722 3.826 35.527 9.69 52.721 1.986 5.822.567 12.262-3.783 16.612l-13.087 13.087c-28.026 28.026-28.905 73.66-1.155 101.96 28.024 28.579 74.086 28.749 102.325.51l67.2-67.19c28.191-28.191 28.073-73.757 0-101.83-3.701-3.694-7.429-6.564-10.341-8.569a16.037 16.037 0 0 1-6.947-12.606c-.396-10.567 3.348-21.456 11.698-29.806l21.054-21.055c5.521-5.521 14.182-6.199 20.584-1.731a152.482 152.482 0 0 1 20.522 17.197zM467.547 44.449c-59.261-59.262-155.69-59.27-214.96 0l-67.2 67.2c-.12.12-.25.25-.36.37-58.566 58.892-59.387 154.781.36 214.59a152.454 152.454 0 0 0 20.521 17.196c6.402 4.468 15.064 3.789 20.584-1.731l21.054-21.055c8.35-8.35 12.094-19.239 11.698-29.806a16.037 16.037 0 0 0-6.947-12.606c-2.912-2.005-6.64-4.875-10.341-8.569-28.073-28.073-28.191-73.639 0-101.83l67.2-67.19c28.239-28.239 74.3-28.069 102.325.51 27.75 28.3 26.872 73.934-1.155 101.96l-13.087 13.087c-4.35 4.35-5.769 10.79-3.783 16.612 5.864 17.194 9.042 34.999 9.69 52.721.509 13.906 17.454 20.446 27.294 10.606l37.106-37.106c59.271-59.259 59.271-155.699.001-214.959z"/></svg></a>处理响应</h2>
 <p>send方法只是将请求保存到了队列里，并没有发送。ConsumerNetworkClient还提供了poll方法，可以接收RequestFuture参数，等待请求完成。ConsumerNetworkClient放入poll方法，不仅仅负责发送请求，还包括处理响应。</p>
@@ -697,56 +697,56 @@
 </span><span class="lnt">49
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">ConsumerNetworkClient</span> <span class="kd">implements</span> <span class="n">Closeable</span> <span class="o">{</span>
-    
-     <span class="kd">public</span> <span class="kt">void</span> <span class="nf">poll</span><span class="o">(</span><span class="n">RequestFuture</span><span class="o">&lt;?&gt;</span> <span class="n">future</span><span class="o">)</span> <span class="o">{</span>
-         <span class="c1">// 循环执行poll方法，直到future完成
-</span><span class="c1"></span>        <span class="k">while</span> <span class="o">(!</span><span class="n">future</span><span class="o">.</span><span class="na">isDone</span><span class="o">())</span>
-            <span class="n">poll</span><span class="o">(</span><span class="n">Long</span><span class="o">.</span><span class="na">MAX_VALUE</span><span class="o">,</span> <span class="n">time</span><span class="o">.</span><span class="na">milliseconds</span><span class="o">(),</span> <span class="n">future</span><span class="o">);</span>
-    <span class="o">}</span>
-    
-    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">poll</span><span class="o">(</span><span class="kt">long</span> <span class="n">timeout</span><span class="o">,</span> <span class="kt">long</span> <span class="n">now</span><span class="o">,</span> <span class="n">PollCondition</span> <span class="n">pollCondition</span><span class="o">)</span> <span class="o">{</span>
-        <span class="n">poll</span><span class="o">(</span><span class="n">timeout</span><span class="o">,</span> <span class="n">now</span><span class="o">,</span> <span class="n">pollCondition</span><span class="o">,</span> <span class="kc">false</span><span class="o">);</span>
-    <span class="o">}</span>
-    
-    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">poll</span><span class="o">(</span><span class="kt">long</span> <span class="n">timeout</span><span class="o">,</span> <span class="kt">long</span> <span class="n">now</span><span class="o">,</span> <span class="n">PollCondition</span> <span class="n">pollCondition</span><span class="o">,</span> <span class="kt">boolean</span> <span class="n">disableWakeup</span><span class="o">)</span> <span class="o">{</span>
-        <span class="c1">// 执行完成的回调函数
-</span><span class="c1"></span>        <span class="n">firePendingCompletedRequests</span><span class="o">();</span>
-        <span class="n">lock</span><span class="o">.</span><span class="na">lock</span><span class="o">();</span>
-        <span class="k">try</span> <span class="o">{</span>
-            <span class="n">handlePendingDisconnects</span><span class="o">();</span>
-            <span class="c1">// 发送请求
-</span><span class="c1"></span>            <span class="kt">long</span> <span class="n">pollDelayMs</span> <span class="o">=</span> <span class="n">trySend</span><span class="o">(</span><span class="n">now</span><span class="o">);</span>
-            <span class="n">timeout</span> <span class="o">=</span> <span class="n">Math</span><span class="o">.</span><span class="na">min</span><span class="o">(</span><span class="n">timeout</span><span class="o">,</span> <span class="n">pollDelayMs</span><span class="o">);</span>
-            <span class="k">if</span> <span class="o">(</span><span class="n">pendingCompletion</span><span class="o">.</span><span class="na">isEmpty</span><span class="o">()</span> <span class="o">&amp;&amp;</span> <span class="o">(</span><span class="n">pollCondition</span> <span class="o">==</span> <span class="kc">null</span> <span class="o">||</span> <span class="n">pollCondition</span><span class="o">.</span><span class="na">shouldBlock</span><span class="o">()))</span> <span class="o">{</span>
-                <span class="k">if</span> <span class="o">(</span><span class="n">client</span><span class="o">.</span><span class="na">inFlightRequestCount</span><span class="o">()</span> <span class="o">==</span> <span class="n">0</span><span class="o">)</span>
-                    <span class="n">timeout</span> <span class="o">=</span> <span class="n">Math</span><span class="o">.</span><span class="na">min</span><span class="o">(</span><span class="n">timeout</span><span class="o">,</span> <span class="n">retryBackoffMs</span><span class="o">);</span>
-                <span class="n">client</span><span class="o">.</span><span class="na">poll</span><span class="o">(</span><span class="n">Math</span><span class="o">.</span><span class="na">min</span><span class="o">(</span><span class="n">maxPollTimeoutMs</span><span class="o">,</span> <span class="n">timeout</span><span class="o">),</span> <span class="n">now</span><span class="o">);</span>
-                <span class="n">now</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="na">milliseconds</span><span class="o">();</span>
-            <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
-                <span class="n">client</span><span class="o">.</span><span class="na">poll</span><span class="o">(</span><span class="n">0</span><span class="o">,</span> <span class="n">now</span><span class="o">);</span>
-            <span class="o">}</span>
-            <span class="n">checkDisconnects</span><span class="o">(</span><span class="n">now</span><span class="o">);</span>
-            <span class="k">if</span> <span class="o">(!</span><span class="n">disableWakeup</span><span class="o">)</span> <span class="o">{</span>
-                <span class="n">maybeTriggerWakeup</span><span class="o">();</span>
-            <span class="o">}</span>
-            <span class="n">maybeThrowInterruptException</span><span class="o">();</span>
-            <span class="c1">// 发送请求
-</span><span class="c1"></span>            <span class="n">trySend</span><span class="o">(</span><span class="n">now</span><span class="o">);</span>
-
-            <span class="c1">// 处理过期的请求
-</span><span class="c1"></span>            <span class="n">failExpiredRequests</span><span class="o">(</span><span class="n">now</span><span class="o">);</span>
-
-            <span class="c1">// 清空unset集合，因为请求都已经发送出去了
-</span><span class="c1"></span>            <span class="n">unsent</span><span class="o">.</span><span class="na">clean</span><span class="o">();</span>
-        <span class="o">}</span> <span class="k">finally</span> <span class="o">{</span>
-            <span class="n">lock</span><span class="o">.</span><span class="na">unlock</span><span class="o">();</span><span class="n">0</span><span class="o">.</span>
-        <span class="o">}</span>
-        <span class="c1">// 执行完成的回调函数
-</span><span class="c1"></span>        <span class="n">firePendingCompletedRequests</span><span class="o">();</span>
-    <span class="o">}</span>
-<span class="o">}</span>
-</code></pre></td></tr></table></div>
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">ConsumerNetworkClient</span> <span class="kd">implements</span> <span class="n">Closeable</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">    
+</span></span><span class="line"><span class="cl">     <span class="kd">public</span> <span class="kt">void</span> <span class="nf">poll</span><span class="o">(</span><span class="n">RequestFuture</span><span class="o">&lt;?&gt;</span> <span class="n">future</span><span class="o">)</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">         <span class="c1">// 循环执行poll方法，直到future完成
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>        <span class="k">while</span> <span class="o">(!</span><span class="n">future</span><span class="o">.</span><span class="na">isDone</span><span class="o">())</span>
+</span></span><span class="line"><span class="cl">            <span class="n">poll</span><span class="o">(</span><span class="n">Long</span><span class="o">.</span><span class="na">MAX_VALUE</span><span class="o">,</span> <span class="n">time</span><span class="o">.</span><span class="na">milliseconds</span><span class="o">(),</span> <span class="n">future</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">    <span class="o">}</span>
+</span></span><span class="line"><span class="cl">    
+</span></span><span class="line"><span class="cl">    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">poll</span><span class="o">(</span><span class="kt">long</span> <span class="n">timeout</span><span class="o">,</span> <span class="kt">long</span> <span class="n">now</span><span class="o">,</span> <span class="n">PollCondition</span> <span class="n">pollCondition</span><span class="o">)</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">        <span class="n">poll</span><span class="o">(</span><span class="n">timeout</span><span class="o">,</span> <span class="n">now</span><span class="o">,</span> <span class="n">pollCondition</span><span class="o">,</span> <span class="kc">false</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">    <span class="o">}</span>
+</span></span><span class="line"><span class="cl">    
+</span></span><span class="line"><span class="cl">    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">poll</span><span class="o">(</span><span class="kt">long</span> <span class="n">timeout</span><span class="o">,</span> <span class="kt">long</span> <span class="n">now</span><span class="o">,</span> <span class="n">PollCondition</span> <span class="n">pollCondition</span><span class="o">,</span> <span class="kt">boolean</span> <span class="n">disableWakeup</span><span class="o">)</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">        <span class="c1">// 执行完成的回调函数
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>        <span class="n">firePendingCompletedRequests</span><span class="o">();</span>
+</span></span><span class="line"><span class="cl">        <span class="n">lock</span><span class="o">.</span><span class="na">lock</span><span class="o">();</span>
+</span></span><span class="line"><span class="cl">        <span class="k">try</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">            <span class="n">handlePendingDisconnects</span><span class="o">();</span>
+</span></span><span class="line"><span class="cl">            <span class="c1">// 发送请求
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>            <span class="kt">long</span> <span class="n">pollDelayMs</span> <span class="o">=</span> <span class="n">trySend</span><span class="o">(</span><span class="n">now</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">            <span class="n">timeout</span> <span class="o">=</span> <span class="n">Math</span><span class="o">.</span><span class="na">min</span><span class="o">(</span><span class="n">timeout</span><span class="o">,</span> <span class="n">pollDelayMs</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">            <span class="k">if</span> <span class="o">(</span><span class="n">pendingCompletion</span><span class="o">.</span><span class="na">isEmpty</span><span class="o">()</span> <span class="o">&amp;&amp;</span> <span class="o">(</span><span class="n">pollCondition</span> <span class="o">==</span> <span class="kc">null</span> <span class="o">||</span> <span class="n">pollCondition</span><span class="o">.</span><span class="na">shouldBlock</span><span class="o">()))</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">                <span class="k">if</span> <span class="o">(</span><span class="n">client</span><span class="o">.</span><span class="na">inFlightRequestCount</span><span class="o">()</span> <span class="o">==</span> <span class="mi">0</span><span class="o">)</span>
+</span></span><span class="line"><span class="cl">                    <span class="n">timeout</span> <span class="o">=</span> <span class="n">Math</span><span class="o">.</span><span class="na">min</span><span class="o">(</span><span class="n">timeout</span><span class="o">,</span> <span class="n">retryBackoffMs</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">                <span class="n">client</span><span class="o">.</span><span class="na">poll</span><span class="o">(</span><span class="n">Math</span><span class="o">.</span><span class="na">min</span><span class="o">(</span><span class="n">maxPollTimeoutMs</span><span class="o">,</span> <span class="n">timeout</span><span class="o">),</span> <span class="n">now</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">                <span class="n">now</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="na">milliseconds</span><span class="o">();</span>
+</span></span><span class="line"><span class="cl">            <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">                <span class="n">client</span><span class="o">.</span><span class="na">poll</span><span class="o">(</span><span class="mi">0</span><span class="o">,</span> <span class="n">now</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">            <span class="o">}</span>
+</span></span><span class="line"><span class="cl">            <span class="n">checkDisconnects</span><span class="o">(</span><span class="n">now</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">            <span class="k">if</span> <span class="o">(!</span><span class="n">disableWakeup</span><span class="o">)</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">                <span class="n">maybeTriggerWakeup</span><span class="o">();</span>
+</span></span><span class="line"><span class="cl">            <span class="o">}</span>
+</span></span><span class="line"><span class="cl">            <span class="n">maybeThrowInterruptException</span><span class="o">();</span>
+</span></span><span class="line"><span class="cl">            <span class="c1">// 发送请求
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>            <span class="n">trySend</span><span class="o">(</span><span class="n">now</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">            <span class="c1">// 处理过期的请求
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>            <span class="n">failExpiredRequests</span><span class="o">(</span><span class="n">now</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">            <span class="c1">// 清空unset集合，因为请求都已经发送出去了
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>            <span class="n">unsent</span><span class="o">.</span><span class="na">clean</span><span class="o">();</span>
+</span></span><span class="line"><span class="cl">        <span class="o">}</span> <span class="k">finally</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">            <span class="n">lock</span><span class="o">.</span><span class="na">unlock</span><span class="o">();</span><span class="mf">0.</span>
+</span></span><span class="line"><span class="cl">        <span class="o">}</span>
+</span></span><span class="line"><span class="cl">        <span class="c1">// 执行完成的回调函数
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>        <span class="n">firePendingCompletedRequests</span><span class="o">();</span>
+</span></span><span class="line"><span class="cl">    <span class="o">}</span>
+</span></span><span class="line"><span class="cl"><span class="o">}</span>
+</span></span></code></pre></td></tr></table></div>
 </div>
 </div><p>trySend方法负责发送请求。它会遍历请求集合unsent，依次发送。</p>
 <div class="highlight"><div class="chroma">
@@ -776,30 +776,30 @@
 </span><span class="lnt">23
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="kd">private</span> <span class="kt">long</span> <span class="nf">trySend</span><span class="o">(</span><span class="kt">long</span> <span class="n">now</span><span class="o">)</span> <span class="o">{</span>
-    <span class="kt">long</span> <span class="n">pollDelayMs</span> <span class="o">=</span> <span class="n">Long</span><span class="o">.</span><span class="na">MAX_VALUE</span><span class="o">;</span>
-    <span class="c1">// 遍历unsent请求
-</span><span class="c1"></span>    <span class="k">for</span> <span class="o">(</span><span class="n">Node</span> <span class="n">node</span> <span class="o">:</span> <span class="n">unsent</span><span class="o">.</span><span class="na">nodes</span><span class="o">())</span> <span class="o">{</span>
-        <span class="c1">// 提取该节点的请求
-</span><span class="c1"></span>        <span class="n">Iterator</span><span class="o">&lt;</span><span class="n">ClientRequest</span><span class="o">&gt;</span> <span class="n">iterator</span> <span class="o">=</span> <span class="n">unsent</span><span class="o">.</span><span class="na">requestIterator</span><span class="o">(</span><span class="n">node</span><span class="o">);</span>
-        <span class="k">if</span> <span class="o">(</span><span class="n">iterator</span><span class="o">.</span><span class="na">hasNext</span><span class="o">())</span>
-            <span class="n">pollDelayMs</span> <span class="o">=</span> <span class="n">Math</span><span class="o">.</span><span class="na">min</span><span class="o">(</span><span class="n">pollDelayMs</span><span class="o">,</span> <span class="n">client</span><span class="o">.</span><span class="na">pollDelayMs</span><span class="o">(</span><span class="n">node</span><span class="o">,</span> <span class="n">now</span><span class="o">));</span>
-        
-        <span class="k">while</span> <span class="o">(</span><span class="n">iterator</span><span class="o">.</span><span class="na">hasNext</span><span class="o">())</span> <span class="o">{</span>
-            <span class="c1">// 遍历该节点的请求
-</span><span class="c1"></span>            <span class="n">ClientRequest</span> <span class="n">request</span> <span class="o">=</span> <span class="n">iterator</span><span class="o">.</span><span class="na">next</span><span class="o">();</span>
-            <span class="c1">// 调用ready创建连接
-</span><span class="c1"></span>            <span class="k">if</span> <span class="o">(</span><span class="n">client</span><span class="o">.</span><span class="na">ready</span><span class="o">(</span><span class="n">node</span><span class="o">,</span> <span class="n">now</span><span class="o">))</span> <span class="o">{</span>
-                <span class="c1">// 调用NetworkClient的send方法发送请求
-</span><span class="c1"></span>                <span class="n">client</span><span class="o">.</span><span class="na">send</span><span class="o">(</span><span class="n">request</span><span class="o">,</span> <span class="n">now</span><span class="o">);</span>
-                <span class="c1">// 移除掉已发送的请求
-</span><span class="c1"></span>                <span class="n">iterator</span><span class="o">.</span><span class="na">remove</span><span class="o">();</span>
-            <span class="o">}</span>
-        <span class="o">}</span>
-    <span class="o">}</span>
-    <span class="k">return</span> <span class="n">pollDelayMs</span><span class="o">;</span>
-<span class="o">}</span>
-</code></pre></td></tr></table></div>
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="kd">private</span> <span class="kt">long</span> <span class="nf">trySend</span><span class="o">(</span><span class="kt">long</span> <span class="n">now</span><span class="o">)</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">    <span class="kt">long</span> <span class="n">pollDelayMs</span> <span class="o">=</span> <span class="n">Long</span><span class="o">.</span><span class="na">MAX_VALUE</span><span class="o">;</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// 遍历unsent请求
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="k">for</span> <span class="o">(</span><span class="n">Node</span> <span class="n">node</span> <span class="o">:</span> <span class="n">unsent</span><span class="o">.</span><span class="na">nodes</span><span class="o">())</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">        <span class="c1">// 提取该节点的请求
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>        <span class="n">Iterator</span><span class="o">&lt;</span><span class="n">ClientRequest</span><span class="o">&gt;</span> <span class="n">iterator</span> <span class="o">=</span> <span class="n">unsent</span><span class="o">.</span><span class="na">requestIterator</span><span class="o">(</span><span class="n">node</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">        <span class="k">if</span> <span class="o">(</span><span class="n">iterator</span><span class="o">.</span><span class="na">hasNext</span><span class="o">())</span>
+</span></span><span class="line"><span class="cl">            <span class="n">pollDelayMs</span> <span class="o">=</span> <span class="n">Math</span><span class="o">.</span><span class="na">min</span><span class="o">(</span><span class="n">pollDelayMs</span><span class="o">,</span> <span class="n">client</span><span class="o">.</span><span class="na">pollDelayMs</span><span class="o">(</span><span class="n">node</span><span class="o">,</span> <span class="n">now</span><span class="o">));</span>
+</span></span><span class="line"><span class="cl">        
+</span></span><span class="line"><span class="cl">        <span class="k">while</span> <span class="o">(</span><span class="n">iterator</span><span class="o">.</span><span class="na">hasNext</span><span class="o">())</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">            <span class="c1">// 遍历该节点的请求
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>            <span class="n">ClientRequest</span> <span class="n">request</span> <span class="o">=</span> <span class="n">iterator</span><span class="o">.</span><span class="na">next</span><span class="o">();</span>
+</span></span><span class="line"><span class="cl">            <span class="c1">// 调用ready创建连接
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>            <span class="k">if</span> <span class="o">(</span><span class="n">client</span><span class="o">.</span><span class="na">ready</span><span class="o">(</span><span class="n">node</span><span class="o">,</span> <span class="n">now</span><span class="o">))</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">                <span class="c1">// 调用NetworkClient的send方法发送请求
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>                <span class="n">client</span><span class="o">.</span><span class="na">send</span><span class="o">(</span><span class="n">request</span><span class="o">,</span> <span class="n">now</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">                <span class="c1">// 移除掉已发送的请求
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>                <span class="n">iterator</span><span class="o">.</span><span class="na">remove</span><span class="o">();</span>
+</span></span><span class="line"><span class="cl">            <span class="o">}</span>
+</span></span><span class="line"><span class="cl">        <span class="o">}</span>
+</span></span><span class="line"><span class="cl">    <span class="o">}</span>
+</span></span><span class="line"><span class="cl">    <span class="k">return</span> <span class="n">pollDelayMs</span><span class="o">;</span>
+</span></span><span class="line"><span class="cl"><span class="o">}</span>
+</span></span></code></pre></td></tr></table></div>
 </div>
 </div><p>firePendingCompletedRequests方法负责处理响应。我们回想下，在构建请求时，指定了回调类。回调函数执行时，会将自身添加到pendingCompletion队列里。</p>
 <div class="highlight"><div class="chroma">
@@ -821,22 +821,22 @@
 </span><span class="lnt">15
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">ConsumerNetworkClient</span> <span class="kd">implements</span> <span class="n">Closeable</span> <span class="o">{</span>
-    <span class="c1">// 请求完成的回调队列
-</span><span class="c1"></span>    <span class="kd">private</span> <span class="kd">final</span> <span class="n">ConcurrentLinkedQueue</span><span class="o">&lt;</span><span class="n">RequestFutureCompletionHandler</span><span class="o">&gt;</span> <span class="n">pendingCompletion</span> <span class="o">=</span> <span class="k">new</span> <span class="n">ConcurrentLinkedQueue</span><span class="o">&lt;&gt;();</span>
-    
-    <span class="kd">private</span> <span class="kt">void</span> <span class="nf">firePendingCompletedRequests</span><span class="o">()</span> <span class="o">{</span>
-        <span class="kt">boolean</span> <span class="n">completedRequestsFired</span> <span class="o">=</span> <span class="kc">false</span><span class="o">;</span>
-        <span class="k">for</span> <span class="o">(;;)</span> <span class="o">{</span>
-            <span class="c1">// 循环从队列中，提取completionHandler
-</span><span class="c1"></span>            <span class="n">RequestFutureCompletionHandler</span> <span class="n">completionHandler</span> <span class="o">=</span> <span class="n">pendingCompletion</span><span class="o">.</span><span class="na">poll</span><span class="o">();</span>
-            <span class="k">if</span> <span class="o">(</span><span class="n">completionHandler</span> <span class="o">==</span> <span class="kc">null</span><span class="o">)</span>
-                <span class="k">break</span><span class="o">;</span>
-            <span class="c1">// 执行回调函数
-</span><span class="c1"></span>            <span class="n">completionHandler</span><span class="o">.</span><span class="na">fireCompletion</span><span class="o">();</span>
-        <span class="o">}</span>
-<span class="o">}</span>
-</code></pre></td></tr></table></div>
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">ConsumerNetworkClient</span> <span class="kd">implements</span> <span class="n">Closeable</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// 请求完成的回调队列
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="kd">private</span> <span class="kd">final</span> <span class="n">ConcurrentLinkedQueue</span><span class="o">&lt;</span><span class="n">RequestFutureCompletionHandler</span><span class="o">&gt;</span> <span class="n">pendingCompletion</span> <span class="o">=</span> <span class="k">new</span> <span class="n">ConcurrentLinkedQueue</span><span class="o">&lt;&gt;();</span>
+</span></span><span class="line"><span class="cl">    
+</span></span><span class="line"><span class="cl">    <span class="kd">private</span> <span class="kt">void</span> <span class="nf">firePendingCompletedRequests</span><span class="o">()</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">        <span class="kt">boolean</span> <span class="n">completedRequestsFired</span> <span class="o">=</span> <span class="kc">false</span><span class="o">;</span>
+</span></span><span class="line"><span class="cl">        <span class="k">for</span> <span class="o">(;;)</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">            <span class="c1">// 循环从队列中，提取completionHandler
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>            <span class="n">RequestFutureCompletionHandler</span> <span class="n">completionHandler</span> <span class="o">=</span> <span class="n">pendingCompletion</span><span class="o">.</span><span class="na">poll</span><span class="o">();</span>
+</span></span><span class="line"><span class="cl">            <span class="k">if</span> <span class="o">(</span><span class="n">completionHandler</span> <span class="o">==</span> <span class="kc">null</span><span class="o">)</span>
+</span></span><span class="line"><span class="cl">                <span class="k">break</span><span class="o">;</span>
+</span></span><span class="line"><span class="cl">            <span class="c1">// 执行回调函数
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>            <span class="n">completionHandler</span><span class="o">.</span><span class="na">fireCompletion</span><span class="o">();</span>
+</span></span><span class="line"><span class="cl">        <span class="o">}</span>
+</span></span><span class="line"><span class="cl"><span class="o">}</span>
+</span></span></code></pre></td></tr></table></div>
 </div>
 </div><p>最后看看RequestFutureCompletionHandler的fireCompletion方法，它会根据响应结果，来设置RequestFuture的结果。</p>
 <div class="highlight"><div class="chroma">
@@ -867,31 +867,31 @@
 </span><span class="lnt">24
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="kd">private</span> <span class="kd">class</span> <span class="nc">RequestFutureCompletionHandler</span> <span class="kd">implements</span> <span class="n">RequestCompletionHandler</span> <span class="o">{</span>
-    
-    <span class="kd">private</span> <span class="kd">final</span> <span class="n">RequestFuture</span><span class="o">&lt;</span><span class="n">ClientResponse</span><span class="o">&gt;</span> <span class="n">future</span><span class="o">;</span>
-    <span class="c1">// 响应数据
-</span><span class="c1"></span>    <span class="kd">private</span> <span class="n">ClientResponse</span> <span class="n">response</span><span class="o">;</span>
-    <span class="c1">// 如果请求失败，这里会设置异常值
-</span><span class="c1"></span>    <span class="kd">private</span> <span class="n">RuntimeException</span> <span class="n">e</span><span class="o">;</span>
-    
-    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">fireCompletion</span><span class="o">()</span> <span class="o">{</span>
-        <span class="k">if</span> <span class="o">(</span><span class="n">e</span> <span class="o">!=</span> <span class="kc">null</span><span class="o">)</span> <span class="o">{</span>
-            <span class="c1">// 如果请求出现异常，则调用raise方法设置异常，完成future
-</span><span class="c1"></span>            <span class="n">future</span><span class="o">.</span><span class="na">raise</span><span class="o">(</span><span class="n">e</span><span class="o">);</span>
-        <span class="o">}</span> <span class="k">else</span> <span class="k">if</span> <span class="o">(</span><span class="n">response</span><span class="o">.</span><span class="na">versionMismatch</span><span class="o">()</span> <span class="o">!=</span> <span class="kc">null</span><span class="o">)</span> <span class="o">{</span>
-            <span class="c1">// 响应出现版本不支持错误
-</span><span class="c1"></span>            <span class="n">future</span><span class="o">.</span><span class="na">raise</span><span class="o">(</span><span class="n">response</span><span class="o">.</span><span class="na">versionMismatch</span><span class="o">());</span>
-        <span class="o">}</span> <span class="k">else</span> <span class="k">if</span> <span class="o">(....)</span> <span class="o">{</span>
-            <span class="c1">// 检查其他错误
-</span><span class="c1"></span>            <span class="o">.....</span>
-        <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
-            <span class="c1">// 调用complete方法，设置future的结果
-</span><span class="c1"></span>            <span class="n">future</span><span class="o">.</span><span class="na">complete</span><span class="o">(</span><span class="n">response</span><span class="o">);</span>
-        <span class="o">}</span>
-    <span class="o">}</span>
-<span class="o">}</span>
-</code></pre></td></tr></table></div>
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="kd">private</span> <span class="kd">class</span> <span class="nc">RequestFutureCompletionHandler</span> <span class="kd">implements</span> <span class="n">RequestCompletionHandler</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">    
+</span></span><span class="line"><span class="cl">    <span class="kd">private</span> <span class="kd">final</span> <span class="n">RequestFuture</span><span class="o">&lt;</span><span class="n">ClientResponse</span><span class="o">&gt;</span> <span class="n">future</span><span class="o">;</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// 响应数据
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="kd">private</span> <span class="n">ClientResponse</span> <span class="n">response</span><span class="o">;</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// 如果请求失败，这里会设置异常值
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="kd">private</span> <span class="n">RuntimeException</span> <span class="n">e</span><span class="o">;</span>
+</span></span><span class="line"><span class="cl">    
+</span></span><span class="line"><span class="cl">    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">fireCompletion</span><span class="o">()</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">        <span class="k">if</span> <span class="o">(</span><span class="n">e</span> <span class="o">!=</span> <span class="kc">null</span><span class="o">)</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">            <span class="c1">// 如果请求出现异常，则调用raise方法设置异常，完成future
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>            <span class="n">future</span><span class="o">.</span><span class="na">raise</span><span class="o">(</span><span class="n">e</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">        <span class="o">}</span> <span class="k">else</span> <span class="k">if</span> <span class="o">(</span><span class="n">response</span><span class="o">.</span><span class="na">versionMismatch</span><span class="o">()</span> <span class="o">!=</span> <span class="kc">null</span><span class="o">)</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">            <span class="c1">// 响应出现版本不支持错误
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>            <span class="n">future</span><span class="o">.</span><span class="na">raise</span><span class="o">(</span><span class="n">response</span><span class="o">.</span><span class="na">versionMismatch</span><span class="o">());</span>
+</span></span><span class="line"><span class="cl">        <span class="o">}</span> <span class="k">else</span> <span class="k">if</span> <span class="o">(....)</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">            <span class="c1">// 检查其他错误
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>            <span class="o">.....</span>
+</span></span><span class="line"><span class="cl">        <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">            <span class="c1">// 调用complete方法，设置future的结果
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>            <span class="n">future</span><span class="o">.</span><span class="na">complete</span><span class="o">(</span><span class="n">response</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">        <span class="o">}</span>
+</span></span><span class="line"><span class="cl">    <span class="o">}</span>
+</span></span><span class="line"><span class="cl"><span class="o">}</span>
+</span></span></code></pre></td></tr></table></div>
 </div>
 </div>
             </div>
@@ -920,9 +920,9 @@
 
         
     <div class="updated-badge-container">
-        <span title="Updated @ 2021-10-22 14:44:34 CST" style="cursor:help">
+        <span title="Updated @ 2023-07-02 16:59:09 CST" style="cursor:help">
 
-<svg xmlns="http://www.w3.org/2000/svg" width="130" height="20" class="updated-badge"><linearGradient id="b" x2="0" y2="100%"><stop offset="0" stop-color="#bbb" stop-opacity=".1"/><stop offset="1" stop-opacity=".1"/></linearGradient><clipPath id="a"><rect width="130" height="20" rx="3" fill="#fff"/></clipPath><g clip-path="url(#a)"><path class="updated-badge-left" d="M0 0h55v20H0z"/><path class="updated-badge-right" d="M55 0h75v20H55z"/><path fill="url(#b)" d="M0 0h130v20H0z"/></g><g fill="#fff" text-anchor="middle" font-size="110"><text x="285" y="150" fill="#010101" fill-opacity=".3" textLength="450" transform="scale(.1)">updated</text><text x="285" y="140" textLength="450" transform="scale(.1)">updated</text><text x="915" y="150" fill="#010101" fill-opacity=".3" textLength="650" transform="scale(.1)">2021-10-22</text><text x="915" y="140" textLength="650" transform="scale(.1)">2021-10-22</text></g></svg>
+<svg xmlns="http://www.w3.org/2000/svg" width="130" height="20" class="updated-badge"><linearGradient id="b" x2="0" y2="100%"><stop offset="0" stop-color="#bbb" stop-opacity=".1"/><stop offset="1" stop-opacity=".1"/></linearGradient><clipPath id="a"><rect width="130" height="20" rx="3" fill="#fff"/></clipPath><g clip-path="url(#a)"><path class="updated-badge-left" d="M0 0h55v20H0z"/><path class="updated-badge-right" d="M55 0h75v20H55z"/><path fill="url(#b)" d="M0 0h130v20H0z"/></g><g fill="#fff" text-anchor="middle" font-size="110"><text x="285" y="150" fill="#010101" fill-opacity=".3" textLength="450" transform="scale(.1)">updated</text><text x="285" y="140" textLength="450" transform="scale(.1)">updated</text><text x="915" y="150" fill="#010101" fill-opacity=".3" textLength="650" transform="scale(.1)">2023-07-02</text><text x="915" y="140" textLength="650" transform="scale(.1)">2023-07-02</text></g></svg>
         </span></div>
 
 

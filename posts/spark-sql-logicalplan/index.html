@@ -3,7 +3,7 @@
     <head prefix="og: http://ogp.me/ns# article: http://ogp.me/ns/article#">
     <meta charset="UTF-8" />
 
-    <meta name="generator" content="Hugo 0.88.1" /><meta name="theme-color" content="#fff" />
+    <meta name="generator" content="Hugo 0.115.0"><meta name="theme-color" content="#fff" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     
     <meta name="format-detection" content="telephone=no, date=no, address=no, email=no" />
@@ -14,11 +14,11 @@
 
     <title>Spark Sql  LogicalPlan 介绍 | 学习笔记</title>
 
-    <link rel="stylesheet" href="/css/meme.min.2d3e1834af2bc8dda20c7d74aaa1d8134845094441b7a554a5206ccd4b472596.css"/>
+    <link rel="stylesheet" href="/css/meme.min.91e7f58f97e1c60563ef481c38d9684fa8099537801d6f17bbfc724121e7d8f1.css"/>
 
     
     
-        <script src="/js/meme.min.800f61672145711eb3e1f29fcfcc3dbe0139dd459259718b611a0390f74703d1.js"></script>
+        <script src="/js/meme.min.3210a00c2fdcf6f831170b681b8ee40f83f0224663661e986872616aec45407f.js"></script>
 
     
 
@@ -54,13 +54,13 @@
         "@context": "https://schema.org",
         "@type": "BlogPosting",
         "datePublished": "2019-06-18T21:58:42+00:00",
-        "dateModified": "2021-10-22T14:44:34+08:00",
+        "dateModified": "2023-07-02T16:59:09+08:00",
         "url": "https://zhmin.github.io/posts/spark-sql-logicalplan/",
         "headline": "Spark Sql  LogicalPlan 介绍",
         "description": "前言 LogicalPlan 表示逻辑计划，它表示 spark sql 初步解析的成果。之后的验证和优化，都是基于逻辑计划的。spark sql 使用 antrl4 解析 sql 语句生成语法树，然后遍历这棵树生成 LogicalPlan 二叉树。这篇文章介绍常见的 LogicalPlan 子类和是如何生成 LogicalPlan 树的。读者……",
         "inLanguage" : "zh-CN",
         "articleSection": "posts",
-        "wordCount":  4661 ,
+        "wordCount":  4720 ,
         "image": "https://zhmin.github.io/icons/apple-touch-icon.png",
         "author": {
             "@type": "Person",
@@ -98,7 +98,7 @@
 <meta property="og:locale" content="zh" /><meta property="og:image" content="https://zhmin.github.io/icons/apple-touch-icon.png" />
     <meta property="og:type" content="article" />
     <meta property="article:published_time" content="2019-06-18T21:58:42&#43;00:00" />
-    <meta property="article:modified_time" content="2021-10-22T14:44:34&#43;08:00" />
+    <meta property="article:modified_time" content="2023-07-02T16:59:09&#43;08:00" />
     
     <meta property="article:section" content="posts" />
 
@@ -223,7 +223,7 @@
     
     
         
-        <span class="post-meta-item wordcount"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon post-meta-icon"><path d="M497.9 142.1l-46.1 46.1c-4.7 4.7-12.3 4.7-17 0l-111-111c-4.7-4.7-4.7-12.3 0-17l46.1-46.1c18.7-18.7 49.1-18.7 67.9 0l60.1 60.1c18.8 18.7 18.8 49.1 0 67.9zM284.2 99.8L21.6 362.4.4 483.9c-2.9 16.4 11.4 30.6 27.8 27.8l121.5-21.3 262.6-262.6c4.7-4.7 4.7-12.3 0-17l-111-111c-4.8-4.7-12.4-4.7-17.1 0zM124.1 339.9c-5.5-5.5-5.5-14.3 0-19.8l154-154c5.5-5.5 14.3-5.5 19.8 0s5.5 14.3 0 19.8l-154 154c-5.5 5.5-14.3 5.5-19.8 0zM88 424h48v36.3l-64.5 11.3-31.1-31.1L51.7 376H88v48z"/></svg>&nbsp;4661</span>
+        <span class="post-meta-item wordcount"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon post-meta-icon"><path d="M497.9 142.1l-46.1 46.1c-4.7 4.7-12.3 4.7-17 0l-111-111c-4.7-4.7-4.7-12.3 0-17l46.1-46.1c18.7-18.7 49.1-18.7 67.9 0l60.1 60.1c18.8 18.7 18.8 49.1 0 67.9zM284.2 99.8L21.6 362.4.4 483.9c-2.9 16.4 11.4 30.6 27.8 27.8l121.5-21.3 262.6-262.6c4.7-4.7 4.7-12.3 0-17l-111-111c-4.8-4.7-12.4-4.7-17.1 0zM124.1 339.9c-5.5-5.5-5.5-14.3 0-19.8l154-154c5.5-5.5 14.3-5.5 19.8 0s5.5 14.3 0 19.8l-154 154c-5.5 5.5-14.3 5.5-19.8 0zM88 424h48v36.3l-64.5 11.3-31.1-31.1L51.7 376H88v48z"/></svg>&nbsp;4720</span>
     
     
         
@@ -253,8 +253,8 @@
 <pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-scala" data-lang="scala"><span class="k">case</span> <span class="k">class</span> <span class="nc">Project</span><span class="o">(</span><span class="n">projectList</span><span class="k">:</span> <span class="kt">Seq</span><span class="o">[</span><span class="kt">NamedExpression</span><span class="o">],</span> <span class="n">child</span><span class="k">:</span> <span class="kt">LogicalPlan</span><span class="o">)</span>
-</code></pre></td></tr></table></div>
+<pre tabindex="0" class="chroma"><code class="language-scala" data-lang="scala"><span class="line"><span class="cl"><span class="k">case</span> <span class="k">class</span> <span class="nc">Project</span><span class="o">(</span><span class="n">projectList</span><span class="k">:</span> <span class="kt">Seq</span><span class="o">[</span><span class="kt">NamedExpression</span><span class="o">],</span> <span class="n">child</span><span class="k">:</span> <span class="kt">LogicalPlan</span><span class="o">)</span>
+</span></span></code></pre></td></tr></table></div>
 </div>
 </div><p>Project 节点表示 SELECT 语句中选中列的那部分。它包含了选中列的表达式，这些表达式叫做命名表达式，原理参考下篇博客。</p>
 <h3 id="表节点"><a href="#表节点" class="anchor-link"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon anchor-icon"><path d="M326.612 185.391c59.747 59.809 58.927 155.698.36 214.59-.11.12-.24.25-.36.37l-67.2 67.2c-59.27 59.27-155.699 59.262-214.96 0-59.27-59.26-59.27-155.7 0-214.96l37.106-37.106c9.84-9.84 26.786-3.3 27.294 10.606.648 17.722 3.826 35.527 9.69 52.721 1.986 5.822.567 12.262-3.783 16.612l-13.087 13.087c-28.026 28.026-28.905 73.66-1.155 101.96 28.024 28.579 74.086 28.749 102.325.51l67.2-67.19c28.191-28.191 28.073-73.757 0-101.83-3.701-3.694-7.429-6.564-10.341-8.569a16.037 16.037 0 0 1-6.947-12.606c-.396-10.567 3.348-21.456 11.698-29.806l21.054-21.055c5.521-5.521 14.182-6.199 20.584-1.731a152.482 152.482 0 0 1 20.522 17.197zM467.547 44.449c-59.261-59.262-155.69-59.27-214.96 0l-67.2 67.2c-.12.12-.25.25-.36.37-58.566 58.892-59.387 154.781.36 214.59a152.454 152.454 0 0 0 20.521 17.196c6.402 4.468 15.064 3.789 20.584-1.731l21.054-21.055c8.35-8.35 12.094-19.239 11.698-29.806a16.037 16.037 0 0 0-6.947-12.606c-2.912-2.005-6.64-4.875-10.341-8.569-28.073-28.073-28.191-73.639 0-101.83l67.2-67.19c28.239-28.239 74.3-28.069 102.325.51 27.75 28.3 26.872 73.934-1.155 101.96l-13.087 13.087c-4.35 4.35-5.769 10.79-3.783 16.612 5.864 17.194 9.042 34.999 9.69 52.721.509 13.906 17.454 20.446 27.294 10.606l37.106-37.106c59.271-59.259 59.271-155.699.001-214.959z"/></svg></a>表节点</h3>
@@ -263,8 +263,8 @@
 <pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-scala" data-lang="scala"><span class="k">case</span> <span class="k">class</span> <span class="nc">UnresolvedRelation</span><span class="o">(</span><span class="n">tableIdentifier</span><span class="k">:</span> <span class="kt">TableIdentifier</span><span class="o">)</span>
-</code></pre></td></tr></table></div>
+<pre tabindex="0" class="chroma"><code class="language-scala" data-lang="scala"><span class="line"><span class="cl"><span class="k">case</span> <span class="k">class</span> <span class="nc">UnresolvedRelation</span><span class="o">(</span><span class="n">tableIdentifier</span><span class="k">:</span> <span class="kt">TableIdentifier</span><span class="o">)</span>
+</span></span></code></pre></td></tr></table></div>
 </div>
 </div><p>表表名由 UnresolvedRelation 类表示，在上个 sql 例子中，在 analyse 之后会转换成一个子查询 SubqueryAlias，而这个子查询包含了 Hive 表节点 HiveTableRelation。</p>
 <h3 id="join-节点"><a href="#join-节点" class="anchor-link"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon anchor-icon"><path d="M326.612 185.391c59.747 59.809 58.927 155.698.36 214.59-.11.12-.24.25-.36.37l-67.2 67.2c-59.27 59.27-155.699 59.262-214.96 0-59.27-59.26-59.27-155.7 0-214.96l37.106-37.106c9.84-9.84 26.786-3.3 27.294 10.606.648 17.722 3.826 35.527 9.69 52.721 1.986 5.822.567 12.262-3.783 16.612l-13.087 13.087c-28.026 28.026-28.905 73.66-1.155 101.96 28.024 28.579 74.086 28.749 102.325.51l67.2-67.19c28.191-28.191 28.073-73.757 0-101.83-3.701-3.694-7.429-6.564-10.341-8.569a16.037 16.037 0 0 1-6.947-12.606c-.396-10.567 3.348-21.456 11.698-29.806l21.054-21.055c5.521-5.521 14.182-6.199 20.584-1.731a152.482 152.482 0 0 1 20.522 17.197zM467.547 44.449c-59.261-59.262-155.69-59.27-214.96 0l-67.2 67.2c-.12.12-.25.25-.36.37-58.566 58.892-59.387 154.781.36 214.59a152.454 152.454 0 0 0 20.521 17.196c6.402 4.468 15.064 3.789 20.584-1.731l21.054-21.055c8.35-8.35 12.094-19.239 11.698-29.806a16.037 16.037 0 0 0-6.947-12.606c-2.912-2.005-6.64-4.875-10.341-8.569-28.073-28.073-28.191-73.639 0-101.83l67.2-67.19c28.239-28.239 74.3-28.069 102.325.51 27.75 28.3 26.872 73.934-1.155 101.96l-13.087 13.087c-4.35 4.35-5.769 10.79-3.783 16.612 5.864 17.194 9.042 34.999 9.69 52.721.509 13.906 17.454 20.446 27.294 10.606l37.106-37.106c59.271-59.259 59.271-155.699.001-214.959z"/></svg></a>Join 节点</h3>
@@ -277,12 +277,12 @@
 </span><span class="lnt">5
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-scala" data-lang="scala"><span class="k">case</span> <span class="k">class</span> <span class="nc">Join</span><span class="o">(</span>
-    <span class="n">left</span><span class="k">:</span> <span class="kt">LogicalPlan</span><span class="o">,</span>
-    <span class="n">right</span><span class="k">:</span> <span class="kt">LogicalPlan</span><span class="o">,</span>
-    <span class="n">joinType</span><span class="k">:</span> <span class="kt">JoinType</span><span class="o">,</span>
-    <span class="n">condition</span><span class="k">:</span> <span class="kt">Option</span><span class="o">[</span><span class="kt">Expression</span><span class="o">])</span>
-</code></pre></td></tr></table></div>
+<pre tabindex="0" class="chroma"><code class="language-scala" data-lang="scala"><span class="line"><span class="cl"><span class="k">case</span> <span class="k">class</span> <span class="nc">Join</span><span class="o">(</span>
+</span></span><span class="line"><span class="cl">    <span class="n">left</span><span class="k">:</span> <span class="kt">LogicalPlan</span><span class="o">,</span>
+</span></span><span class="line"><span class="cl">    <span class="n">right</span><span class="k">:</span> <span class="kt">LogicalPlan</span><span class="o">,</span>
+</span></span><span class="line"><span class="cl">    <span class="n">joinType</span><span class="k">:</span> <span class="kt">JoinType</span><span class="o">,</span>
+</span></span><span class="line"><span class="cl">    <span class="n">condition</span><span class="k">:</span> <span class="kt">Option</span><span class="o">[</span><span class="kt">Expression</span><span class="o">])</span>
+</span></span></code></pre></td></tr></table></div>
 </div>
 </div><p>Join 表示sql 的 join 操作，包含两个需要 join 的子节点，join 类型 和 join 条件。join type 有下列几种：</p>
 <ul>
@@ -300,8 +300,8 @@
 <pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-scala" data-lang="scala"><span class="k">case</span> <span class="k">class</span> <span class="nc">Filter</span><span class="o">(</span><span class="n">condition</span><span class="k">:</span> <span class="kt">Expression</span><span class="o">,</span> <span class="n">child</span><span class="k">:</span> <span class="kt">LogicalPlan</span><span class="o">)</span>
-</code></pre></td></tr></table></div>
+<pre tabindex="0" class="chroma"><code class="language-scala" data-lang="scala"><span class="line"><span class="cl"><span class="k">case</span> <span class="k">class</span> <span class="nc">Filter</span><span class="o">(</span><span class="n">condition</span><span class="k">:</span> <span class="kt">Expression</span><span class="o">,</span> <span class="n">child</span><span class="k">:</span> <span class="kt">LogicalPlan</span><span class="o">)</span>
+</span></span></code></pre></td></tr></table></div>
 </div>
 </div><p>Filter 节点包含了布尔表达式，对应了 sql 语句中的 WHERE 条件。</p>
 <h3 id="sort-节点"><a href="#sort-节点" class="anchor-link"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon anchor-icon"><path d="M326.612 185.391c59.747 59.809 58.927 155.698.36 214.59-.11.12-.24.25-.36.37l-67.2 67.2c-59.27 59.27-155.699 59.262-214.96 0-59.27-59.26-59.27-155.7 0-214.96l37.106-37.106c9.84-9.84 26.786-3.3 27.294 10.606.648 17.722 3.826 35.527 9.69 52.721 1.986 5.822.567 12.262-3.783 16.612l-13.087 13.087c-28.026 28.026-28.905 73.66-1.155 101.96 28.024 28.579 74.086 28.749 102.325.51l67.2-67.19c28.191-28.191 28.073-73.757 0-101.83-3.701-3.694-7.429-6.564-10.341-8.569a16.037 16.037 0 0 1-6.947-12.606c-.396-10.567 3.348-21.456 11.698-29.806l21.054-21.055c5.521-5.521 14.182-6.199 20.584-1.731a152.482 152.482 0 0 1 20.522 17.197zM467.547 44.449c-59.261-59.262-155.69-59.27-214.96 0l-67.2 67.2c-.12.12-.25.25-.36.37-58.566 58.892-59.387 154.781.36 214.59a152.454 152.454 0 0 0 20.521 17.196c6.402 4.468 15.064 3.789 20.584-1.731l21.054-21.055c8.35-8.35 12.094-19.239 11.698-29.806a16.037 16.037 0 0 0-6.947-12.606c-2.912-2.005-6.64-4.875-10.341-8.569-28.073-28.073-28.191-73.639 0-101.83l67.2-67.19c28.239-28.239 74.3-28.069 102.325.51 27.75 28.3 26.872 73.934-1.155 101.96l-13.087 13.087c-4.35 4.35-5.769 10.79-3.783 16.612 5.864 17.194 9.042 34.999 9.69 52.721.509 13.906 17.454 20.446 27.294 10.606l37.106-37.106c59.271-59.259 59.271-155.699.001-214.959z"/></svg></a>Sort 节点</h3>
@@ -313,11 +313,11 @@
 </span><span class="lnt">4
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-scala" data-lang="scala"><span class="k">case</span> <span class="k">class</span> <span class="nc">Sort</span><span class="o">(</span>
-    <span class="n">order</span><span class="k">:</span> <span class="kt">Seq</span><span class="o">[</span><span class="kt">SortOrder</span><span class="o">],</span>  <span class="c1">// 排序的字段或者表达式，还有排序方向
-</span><span class="c1"></span>    <span class="n">global</span><span class="k">:</span> <span class="kt">Boolean</span><span class="o">,</span>       <span class="c1">// 否为全局的排序，还是分区的排序。
-</span><span class="c1"></span>    <span class="n">child</span><span class="k">:</span> <span class="kt">LogicalPlan</span><span class="o">)</span>
-</code></pre></td></tr></table></div>
+<pre tabindex="0" class="chroma"><code class="language-scala" data-lang="scala"><span class="line"><span class="cl"><span class="k">case</span> <span class="k">class</span> <span class="nc">Sort</span><span class="o">(</span>
+</span></span><span class="line"><span class="cl">    <span class="n">order</span><span class="k">:</span> <span class="kt">Seq</span><span class="o">[</span><span class="kt">SortOrder</span><span class="o">],</span>  <span class="c1">// 排序的字段或者表达式，还有排序方向
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="n">global</span><span class="k">:</span> <span class="kt">Boolean</span><span class="o">,</span>       <span class="c1">// 否为全局的排序，还是分区的排序。
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="n">child</span><span class="k">:</span> <span class="kt">LogicalPlan</span><span class="o">)</span>
+</span></span></code></pre></td></tr></table></div>
 </div>
 </div><p>如果 sql 语句中使用了 ORDER BY 语句，那么就是全局排序。</p>
 <p>如果使用了 SORT BY 语句，那么就是局部排序，也就是只保证同个分区是有序的，但是不能保证分区合并后的结果是有序的。</p>
@@ -327,8 +327,8 @@
 <pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-scala" data-lang="scala"><span class="k">case</span> <span class="k">class</span> <span class="nc">Distinct</span><span class="o">(</span><span class="n">child</span><span class="k">:</span> <span class="kt">LogicalPlan</span><span class="o">)</span>
-</code></pre></td></tr></table></div>
+<pre tabindex="0" class="chroma"><code class="language-scala" data-lang="scala"><span class="line"><span class="cl"><span class="k">case</span> <span class="k">class</span> <span class="nc">Distinct</span><span class="o">(</span><span class="n">child</span><span class="k">:</span> <span class="kt">LogicalPlan</span><span class="o">)</span>
+</span></span></code></pre></td></tr></table></div>
 </div>
 </div><p>如果选中的列有 DISTINCT 关键字，那么就会生成 Distinct 节点，表示需要对最后的结果去重。</p>
 <h3 id="aggregate-节点"><a href="#aggregate-节点" class="anchor-link"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon anchor-icon"><path d="M326.612 185.391c59.747 59.809 58.927 155.698.36 214.59-.11.12-.24.25-.36.37l-67.2 67.2c-59.27 59.27-155.699 59.262-214.96 0-59.27-59.26-59.27-155.7 0-214.96l37.106-37.106c9.84-9.84 26.786-3.3 27.294 10.606.648 17.722 3.826 35.527 9.69 52.721 1.986 5.822.567 12.262-3.783 16.612l-13.087 13.087c-28.026 28.026-28.905 73.66-1.155 101.96 28.024 28.579 74.086 28.749 102.325.51l67.2-67.19c28.191-28.191 28.073-73.757 0-101.83-3.701-3.694-7.429-6.564-10.341-8.569a16.037 16.037 0 0 1-6.947-12.606c-.396-10.567 3.348-21.456 11.698-29.806l21.054-21.055c5.521-5.521 14.182-6.199 20.584-1.731a152.482 152.482 0 0 1 20.522 17.197zM467.547 44.449c-59.261-59.262-155.69-59.27-214.96 0l-67.2 67.2c-.12.12-.25.25-.36.37-58.566 58.892-59.387 154.781.36 214.59a152.454 152.454 0 0 0 20.521 17.196c6.402 4.468 15.064 3.789 20.584-1.731l21.054-21.055c8.35-8.35 12.094-19.239 11.698-29.806a16.037 16.037 0 0 0-6.947-12.606c-2.912-2.005-6.64-4.875-10.341-8.569-28.073-28.073-28.191-73.639 0-101.83l67.2-67.19c28.239-28.239 74.3-28.069 102.325.51 27.75 28.3 26.872 73.934-1.155 101.96l-13.087 13.087c-4.35 4.35-5.769 10.79-3.783 16.612 5.864 17.194 9.042 34.999 9.69 52.721.509 13.906 17.454 20.446 27.294 10.606l37.106-37.106c59.271-59.259 59.271-155.699.001-214.959z"/></svg></a>Aggregate 节点</h3>
@@ -340,11 +340,11 @@
 </span><span class="lnt">4
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-scala" data-lang="scala"><span class="k">case</span> <span class="k">class</span> <span class="nc">Aggregate</span><span class="o">(</span>
-    <span class="n">groupingExpressions</span><span class="k">:</span> <span class="kt">Seq</span><span class="o">[</span><span class="kt">Expression</span><span class="o">],</span>     <span class="c1">// GROUP BY 的字段
-</span><span class="c1"></span>    <span class="n">aggregateExpressions</span><span class="k">:</span> <span class="kt">Seq</span><span class="o">[</span><span class="kt">NamedExpression</span><span class="o">],</span>   <span class="c1">// SELECT 的字段
-</span><span class="c1"></span>    <span class="n">child</span><span class="k">:</span> <span class="kt">LogicalPlan</span><span class="o">)</span>
-</code></pre></td></tr></table></div>
+<pre tabindex="0" class="chroma"><code class="language-scala" data-lang="scala"><span class="line"><span class="cl"><span class="k">case</span> <span class="k">class</span> <span class="nc">Aggregate</span><span class="o">(</span>
+</span></span><span class="line"><span class="cl">    <span class="n">groupingExpressions</span><span class="k">:</span> <span class="kt">Seq</span><span class="o">[</span><span class="kt">Expression</span><span class="o">],</span>     <span class="c1">// GROUP BY 的字段
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="n">aggregateExpressions</span><span class="k">:</span> <span class="kt">Seq</span><span class="o">[</span><span class="kt">NamedExpression</span><span class="o">],</span>   <span class="c1">// SELECT 的字段
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="n">child</span><span class="k">:</span> <span class="kt">LogicalPlan</span><span class="o">)</span>
+</span></span></code></pre></td></tr></table></div>
 </div>
 </div><p>Aggregate 节点对应 GROUP BY 语句。</p>
 <h3 id="union-节点"><a href="#union-节点" class="anchor-link"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon anchor-icon"><path d="M326.612 185.391c59.747 59.809 58.927 155.698.36 214.59-.11.12-.24.25-.36.37l-67.2 67.2c-59.27 59.27-155.699 59.262-214.96 0-59.27-59.26-59.27-155.7 0-214.96l37.106-37.106c9.84-9.84 26.786-3.3 27.294 10.606.648 17.722 3.826 35.527 9.69 52.721 1.986 5.822.567 12.262-3.783 16.612l-13.087 13.087c-28.026 28.026-28.905 73.66-1.155 101.96 28.024 28.579 74.086 28.749 102.325.51l67.2-67.19c28.191-28.191 28.073-73.757 0-101.83-3.701-3.694-7.429-6.564-10.341-8.569a16.037 16.037 0 0 1-6.947-12.606c-.396-10.567 3.348-21.456 11.698-29.806l21.054-21.055c5.521-5.521 14.182-6.199 20.584-1.731a152.482 152.482 0 0 1 20.522 17.197zM467.547 44.449c-59.261-59.262-155.69-59.27-214.96 0l-67.2 67.2c-.12.12-.25.25-.36.37-58.566 58.892-59.387 154.781.36 214.59a152.454 152.454 0 0 0 20.521 17.196c6.402 4.468 15.064 3.789 20.584-1.731l21.054-21.055c8.35-8.35 12.094-19.239 11.698-29.806a16.037 16.037 0 0 0-6.947-12.606c-2.912-2.005-6.64-4.875-10.341-8.569-28.073-28.073-28.191-73.639 0-101.83l67.2-67.19c28.239-28.239 74.3-28.069 102.325.51 27.75 28.3 26.872 73.934-1.155 101.96l-13.087 13.087c-4.35 4.35-5.769 10.79-3.783 16.612 5.864 17.194 9.042 34.999 9.69 52.721.509 13.906 17.454 20.446 27.294 10.606l37.106-37.106c59.271-59.259 59.271-155.699.001-214.959z"/></svg></a>Union 节点</h3>
@@ -353,8 +353,8 @@
 <pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-scala" data-lang="scala"><span class="k">case</span> <span class="k">class</span> <span class="nc">Union</span><span class="o">(</span><span class="n">children</span><span class="k">:</span> <span class="kt">Seq</span><span class="o">[</span><span class="kt">LogicalPlan</span><span class="o">])</span> 
-</code></pre></td></tr></table></div>
+<pre tabindex="0" class="chroma"><code class="language-scala" data-lang="scala"><span class="line"><span class="cl"><span class="k">case</span> <span class="k">class</span> <span class="nc">Union</span><span class="o">(</span><span class="n">children</span><span class="k">:</span> <span class="kt">Seq</span><span class="o">[</span><span class="kt">LogicalPlan</span><span class="o">])</span> 
+</span></span></code></pre></td></tr></table></div>
 </div>
 </div><p>Union 节点 对应 UNION 语句。UNION 内部的每个 SELECT 语句必须拥有相同数量的列，列也必须拥有相似的数据类型。</p>
 <h2 id="解析类"><a href="#解析类" class="anchor-link"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon anchor-icon"><path d="M326.612 185.391c59.747 59.809 58.927 155.698.36 214.59-.11.12-.24.25-.36.37l-67.2 67.2c-59.27 59.27-155.699 59.262-214.96 0-59.27-59.26-59.27-155.7 0-214.96l37.106-37.106c9.84-9.84 26.786-3.3 27.294 10.606.648 17.722 3.826 35.527 9.69 52.721 1.986 5.822.567 12.262-3.783 16.612l-13.087 13.087c-28.026 28.026-28.905 73.66-1.155 101.96 28.024 28.579 74.086 28.749 102.325.51l67.2-67.19c28.191-28.191 28.073-73.757 0-101.83-3.701-3.694-7.429-6.564-10.341-8.569a16.037 16.037 0 0 1-6.947-12.606c-.396-10.567 3.348-21.456 11.698-29.806l21.054-21.055c5.521-5.521 14.182-6.199 20.584-1.731a152.482 152.482 0 0 1 20.522 17.197zM467.547 44.449c-59.261-59.262-155.69-59.27-214.96 0l-67.2 67.2c-.12.12-.25.25-.36.37-58.566 58.892-59.387 154.781.36 214.59a152.454 152.454 0 0 0 20.521 17.196c6.402 4.468 15.064 3.789 20.584-1.731l21.054-21.055c8.35-8.35 12.094-19.239 11.698-29.806a16.037 16.037 0 0 0-6.947-12.606c-2.912-2.005-6.64-4.875-10.341-8.569-28.073-28.073-28.191-73.639 0-101.83l67.2-67.19c28.239-28.239 74.3-28.069 102.325.51 27.75 28.3 26.872 73.934-1.155 101.96l-13.087 13.087c-4.35 4.35-5.769 10.79-3.783 16.612 5.864 17.194 9.042 34.999 9.69 52.721.509 13.906 17.454 20.446 27.294 10.606l37.106-37.106c59.271-59.259 59.271-155.699.001-214.959z"/></svg></a>解析类</h2>
@@ -389,31 +389,31 @@
 </span><span class="lnt">24
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-scala" data-lang="scala"><span class="k">class</span> <span class="nc">AstBuilder</span><span class="o">(</span><span class="n">conf</span><span class="k">:</span> <span class="kt">SQLConf</span><span class="o">)</span> <span class="k">extends</span> <span class="nc">SqlBaseBaseVisitor</span><span class="o">[</span><span class="kt">AnyRef</span><span class="o">]</span> <span class="k">with</span> <span class="nc">Logging</span> <span class="o">{</span>
-    
-  <span class="c1">// 复写默认的遍历方法
-</span><span class="c1"></span>  <span class="k">override</span> <span class="k">def</span> <span class="n">visitChildren</span><span class="o">(</span><span class="n">node</span><span class="k">:</span> <span class="kt">RuleNode</span><span class="o">)</span><span class="k">:</span> <span class="kt">AnyRef</span> <span class="o">=</span> <span class="o">{</span>
-    <span class="c1">// 如果该节点只有一个子节点，那么返回子节点的遍历结果
-</span><span class="c1"></span>    <span class="c1">// 否则返回null
-</span><span class="c1"></span>    <span class="k">if</span> <span class="o">(</span><span class="n">node</span><span class="o">.</span><span class="n">getChildCount</span> <span class="o">==</span> <span class="mi">1</span><span class="o">)</span> <span class="o">{</span>
-      <span class="n">node</span><span class="o">.</span><span class="n">getChild</span><span class="o">(</span><span class="mi">0</span><span class="o">).</span><span class="n">accept</span><span class="o">(</span><span class="k">this</span><span class="o">)</span>
-    <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
-      <span class="kc">null</span>
-    <span class="o">}</span>
-  <span class="o">}</span>
-  
-  <span class="c1">// 指定返回结果类型
-</span><span class="c1"></span>  <span class="k">protected</span> <span class="k">def</span> <span class="n">typedVisit</span><span class="o">[</span><span class="kt">T</span><span class="o">](</span><span class="n">ctx</span><span class="k">:</span> <span class="kt">ParseTree</span><span class="o">)</span><span class="k">:</span> <span class="kt">T</span> <span class="o">=</span> <span class="o">{</span>
-    <span class="n">ctx</span><span class="o">.</span><span class="n">accept</span><span class="o">(</span><span class="k">this</span><span class="o">).</span><span class="n">asInstanceOf</span><span class="o">[</span><span class="kt">T</span><span class="o">]</span>
-  <span class="o">}</span>  
-      
-  <span class="c1">// 访问该语法树节点，并且将结果类型转换为LogicalPlan
-</span><span class="c1"></span>  <span class="k">protected</span> <span class="k">def</span> <span class="n">plan</span><span class="o">(</span><span class="n">tree</span><span class="k">:</span> <span class="kt">ParserRuleContext</span><span class="o">)</span><span class="k">:</span> <span class="kt">LogicalPlan</span> <span class="o">=</span> <span class="n">typedVisit</span><span class="o">(</span><span class="n">tree</span><span class="o">)</span>
-    
-  <span class="c1">// 访问该语法树节点，并且将结果类型转换为Expression
-</span><span class="c1"></span>  <span class="k">protected</span> <span class="k">def</span> <span class="n">expression</span><span class="o">(</span><span class="n">ctx</span><span class="k">:</span> <span class="kt">ParserRuleContext</span><span class="o">)</span><span class="k">:</span> <span class="kt">Expression</span> <span class="o">=</span> <span class="n">typedVisit</span><span class="o">(</span><span class="n">ctx</span><span class="o">)</span>    
-<span class="o">}</span>
-</code></pre></td></tr></table></div>
+<pre tabindex="0" class="chroma"><code class="language-scala" data-lang="scala"><span class="line"><span class="cl"><span class="k">class</span> <span class="nc">AstBuilder</span><span class="o">(</span><span class="n">conf</span><span class="k">:</span> <span class="kt">SQLConf</span><span class="o">)</span> <span class="k">extends</span> <span class="nc">SqlBaseBaseVisitor</span><span class="o">[</span><span class="kt">AnyRef</span><span class="o">]</span> <span class="k">with</span> <span class="nc">Logging</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">    
+</span></span><span class="line"><span class="cl">  <span class="c1">// 复写默认的遍历方法
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="k">override</span> <span class="k">def</span> <span class="n">visitChildren</span><span class="o">(</span><span class="n">node</span><span class="k">:</span> <span class="kt">RuleNode</span><span class="o">)</span><span class="k">:</span> <span class="kt">AnyRef</span> <span class="o">=</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// 如果该节点只有一个子节点，那么返回子节点的遍历结果
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="c1">// 否则返回null
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="k">if</span> <span class="o">(</span><span class="n">node</span><span class="o">.</span><span class="n">getChildCount</span> <span class="o">==</span> <span class="mi">1</span><span class="o">)</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">      <span class="n">node</span><span class="o">.</span><span class="n">getChild</span><span class="o">(</span><span class="mi">0</span><span class="o">).</span><span class="n">accept</span><span class="o">(</span><span class="k">this</span><span class="o">)</span>
+</span></span><span class="line"><span class="cl">    <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">      <span class="kc">null</span>
+</span></span><span class="line"><span class="cl">    <span class="o">}</span>
+</span></span><span class="line"><span class="cl">  <span class="o">}</span>
+</span></span><span class="line"><span class="cl">  
+</span></span><span class="line"><span class="cl">  <span class="c1">// 指定返回结果类型
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="k">protected</span> <span class="k">def</span> <span class="n">typedVisit</span><span class="o">[</span><span class="kt">T</span><span class="o">](</span><span class="n">ctx</span><span class="k">:</span> <span class="kt">ParseTree</span><span class="o">)</span><span class="k">:</span> <span class="kt">T</span> <span class="o">=</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">    <span class="n">ctx</span><span class="o">.</span><span class="n">accept</span><span class="o">(</span><span class="k">this</span><span class="o">).</span><span class="n">asInstanceOf</span><span class="o">[</span><span class="kt">T</span><span class="o">]</span>
+</span></span><span class="line"><span class="cl">  <span class="o">}</span>  
+</span></span><span class="line"><span class="cl">      
+</span></span><span class="line"><span class="cl">  <span class="c1">// 访问该语法树节点，并且将结果类型转换为LogicalPlan
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="k">protected</span> <span class="k">def</span> <span class="n">plan</span><span class="o">(</span><span class="n">tree</span><span class="k">:</span> <span class="kt">ParserRuleContext</span><span class="o">)</span><span class="k">:</span> <span class="kt">LogicalPlan</span> <span class="o">=</span> <span class="n">typedVisit</span><span class="o">(</span><span class="n">tree</span><span class="o">)</span>
+</span></span><span class="line"><span class="cl">    
+</span></span><span class="line"><span class="cl">  <span class="c1">// 访问该语法树节点，并且将结果类型转换为Expression
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="k">protected</span> <span class="k">def</span> <span class="n">expression</span><span class="o">(</span><span class="n">ctx</span><span class="k">:</span> <span class="kt">ParserRuleContext</span><span class="o">)</span><span class="k">:</span> <span class="kt">Expression</span> <span class="o">=</span> <span class="n">typedVisit</span><span class="o">(</span><span class="n">ctx</span><span class="o">)</span>    
+</span></span><span class="line"><span class="cl"><span class="o">}</span>
+</span></span></code></pre></td></tr></table></div>
 </div>
 </div><h2 id="遍历语法树"><a href="#遍历语法树" class="anchor-link"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon anchor-icon"><path d="M326.612 185.391c59.747 59.809 58.927 155.698.36 214.59-.11.12-.24.25-.36.37l-67.2 67.2c-59.27 59.27-155.699 59.262-214.96 0-59.27-59.26-59.27-155.7 0-214.96l37.106-37.106c9.84-9.84 26.786-3.3 27.294 10.606.648 17.722 3.826 35.527 9.69 52.721 1.986 5.822.567 12.262-3.783 16.612l-13.087 13.087c-28.026 28.026-28.905 73.66-1.155 101.96 28.024 28.579 74.086 28.749 102.325.51l67.2-67.19c28.191-28.191 28.073-73.757 0-101.83-3.701-3.694-7.429-6.564-10.341-8.569a16.037 16.037 0 0 1-6.947-12.606c-.396-10.567 3.348-21.456 11.698-29.806l21.054-21.055c5.521-5.521 14.182-6.199 20.584-1.731a152.482 152.482 0 0 1 20.522 17.197zM467.547 44.449c-59.261-59.262-155.69-59.27-214.96 0l-67.2 67.2c-.12.12-.25.25-.36.37-58.566 58.892-59.387 154.781.36 214.59a152.454 152.454 0 0 0 20.521 17.196c6.402 4.468 15.064 3.789 20.584-1.731l21.054-21.055c8.35-8.35 12.094-19.239 11.698-29.806a16.037 16.037 0 0 0-6.947-12.606c-2.912-2.005-6.64-4.875-10.341-8.569-28.073-28.073-28.191-73.639 0-101.83l67.2-67.19c28.239-28.239 74.3-28.069 102.325.51 27.75 28.3 26.872 73.934-1.155 101.96l-13.087 13.087c-4.35 4.35-5.769 10.79-3.783 16.612 5.864 17.194 9.042 34.999 9.69 52.721.509 13.906 17.454 20.446 27.294 10.606l37.106-37.106c59.271-59.259 59.271-155.699.001-214.959z"/></svg></a>遍历语法树</h2>
 <p>接下来我们以 antrl4 文件为主，按照从上到下的顺序来查看语法树，是如何生成 LogicalPlan 树。读者可以自行编写 sql 语句生成语法树，然后结合下面的程序一起看。</p>
@@ -426,10 +426,10 @@
 </span><span class="lnt">3
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-scala" data-lang="scala"><span class="k">override</span> <span class="k">def</span> <span class="n">visitSingleStatement</span><span class="o">(</span><span class="n">ctx</span><span class="k">:</span> <span class="kt">SingleStatementContext</span><span class="o">)</span><span class="k">:</span> <span class="kt">LogicalPlan</span> <span class="o">=</span> <span class="n">withOrigin</span><span class="o">(</span><span class="n">ctx</span><span class="o">)</span> <span class="o">{</span>
-  <span class="n">visit</span><span class="o">(</span><span class="n">ctx</span><span class="o">.</span><span class="n">statement</span><span class="o">).</span><span class="n">asInstanceOf</span><span class="o">[</span><span class="kt">LogicalPlan</span><span class="o">]</span>
-<span class="o">}</span>
-</code></pre></td></tr></table></div>
+<pre tabindex="0" class="chroma"><code class="language-scala" data-lang="scala"><span class="line"><span class="cl"><span class="k">override</span> <span class="k">def</span> <span class="n">visitSingleStatement</span><span class="o">(</span><span class="n">ctx</span><span class="k">:</span> <span class="kt">SingleStatementContext</span><span class="o">)</span><span class="k">:</span> <span class="kt">LogicalPlan</span> <span class="o">=</span> <span class="n">withOrigin</span><span class="o">(</span><span class="n">ctx</span><span class="o">)</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">  <span class="n">visit</span><span class="o">(</span><span class="n">ctx</span><span class="o">.</span><span class="n">statement</span><span class="o">).</span><span class="n">asInstanceOf</span><span class="o">[</span><span class="kt">LogicalPlan</span><span class="o">]</span>
+</span></span><span class="line"><span class="cl"><span class="o">}</span>
+</span></span></code></pre></td></tr></table></div>
 </div>
 </div><p>它只是继续遍历了statement 子规则，注意到 statement 规则有多种格式，支持 USE，CREATE 等语句。而我们使用的 一般 sql 语句，匹配了 statementDefault 格式。statementDefault 格式只有一个 query 子规则，它没有定义访问方法，所以它使用了 AstBuilder 的默认访问方法，即访问 query 子规则。</p>
 <h3 id="query-语法规则"><a href="#query-语法规则" class="anchor-link"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon anchor-icon"><path d="M326.612 185.391c59.747 59.809 58.927 155.698.36 214.59-.11.12-.24.25-.36.37l-67.2 67.2c-59.27 59.27-155.699 59.262-214.96 0-59.27-59.26-59.27-155.7 0-214.96l37.106-37.106c9.84-9.84 26.786-3.3 27.294 10.606.648 17.722 3.826 35.527 9.69 52.721 1.986 5.822.567 12.262-3.783 16.612l-13.087 13.087c-28.026 28.026-28.905 73.66-1.155 101.96 28.024 28.579 74.086 28.749 102.325.51l67.2-67.19c28.191-28.191 28.073-73.757 0-101.83-3.701-3.694-7.429-6.564-10.341-8.569a16.037 16.037 0 0 1-6.947-12.606c-.396-10.567 3.348-21.456 11.698-29.806l21.054-21.055c5.521-5.521 14.182-6.199 20.584-1.731a152.482 152.482 0 0 1 20.522 17.197zM467.547 44.449c-59.261-59.262-155.69-59.27-214.96 0l-67.2 67.2c-.12.12-.25.25-.36.37-58.566 58.892-59.387 154.781.36 214.59a152.454 152.454 0 0 0 20.521 17.196c6.402 4.468 15.064 3.789 20.584-1.731l21.054-21.055c8.35-8.35 12.094-19.239 11.698-29.806a16.037 16.037 0 0 0-6.947-12.606c-2.912-2.005-6.64-4.875-10.341-8.569-28.073-28.073-28.191-73.639 0-101.83l67.2-67.19c28.239-28.239 74.3-28.069 102.325.51 27.75 28.3 26.872 73.934-1.155 101.96l-13.087 13.087c-4.35 4.35-5.769 10.79-3.783 16.612 5.864 17.194 9.042 34.999 9.69 52.721.509 13.906 17.454 20.446 27.294 10.606l37.106-37.106c59.271-59.259 59.271-155.699.001-214.959z"/></svg></a>query 语法规则</h3>
@@ -455,24 +455,24 @@
 </span><span class="lnt">17
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-scala" data-lang="scala"><span class="k">override</span> <span class="k">def</span> <span class="n">visitQuery</span><span class="o">(</span><span class="n">ctx</span><span class="k">:</span> <span class="kt">QueryContext</span><span class="o">)</span><span class="k">:</span> <span class="kt">LogicalPlan</span> <span class="o">=</span> <span class="n">withOrigin</span><span class="o">(</span><span class="n">ctx</span><span class="o">)</span> <span class="o">{</span>
-  <span class="c1">// 首先遍历 queryNoWith 子节点，plan方法就是调用了typedVisit方法
-</span><span class="c1"></span>  <span class="k">val</span> <span class="n">query</span> <span class="k">=</span> <span class="n">plan</span><span class="o">(</span><span class="n">ctx</span><span class="o">.</span><span class="n">queryNoWith</span><span class="o">)</span>
-
-  <span class="c1">// 如果由 ctes 子节点，则遍历它并且生成 With 节点，将queryNoWIth的结果当作With的子节点
-</span><span class="c1"></span>  <span class="n">query</span><span class="o">.</span><span class="n">optional</span><span class="o">(</span><span class="n">ctx</span><span class="o">.</span><span class="n">ctes</span><span class="o">)</span> <span class="o">{</span>
-    <span class="c1">// 解析WITH语句中的表达式
-</span><span class="c1"></span>    <span class="k">val</span> <span class="n">ctes</span> <span class="k">=</span> <span class="n">ctx</span><span class="o">.</span><span class="n">ctes</span><span class="o">.</span><span class="n">namedQuery</span><span class="o">.</span><span class="n">asScala</span><span class="o">.</span><span class="n">map</span> <span class="o">{</span> <span class="n">nCtx</span> <span class="k">=&gt;</span>
-      <span class="k">val</span> <span class="n">namedQuery</span> <span class="k">=</span> <span class="n">visitNamedQuery</span><span class="o">(</span><span class="n">nCtx</span><span class="o">)</span>
-      <span class="o">(</span><span class="n">namedQuery</span><span class="o">.</span><span class="n">alias</span><span class="o">,</span> <span class="n">namedQuery</span><span class="o">)</span>
-    <span class="o">}</span>
-    <span class="c1">// Check for duplicate names.
-</span><span class="c1"></span>    <span class="n">checkDuplicateKeys</span><span class="o">(</span><span class="n">ctes</span><span class="o">,</span> <span class="n">ctx</span><span class="o">)</span>
-    <span class="c1">// 生成With实例
-</span><span class="c1"></span>    <span class="nc">With</span><span class="o">(</span><span class="n">query</span><span class="o">,</span> <span class="n">ctes</span><span class="o">)</span>
-  <span class="o">}</span>
-<span class="o">}</span>
-</code></pre></td></tr></table></div>
+<pre tabindex="0" class="chroma"><code class="language-scala" data-lang="scala"><span class="line"><span class="cl"><span class="k">override</span> <span class="k">def</span> <span class="n">visitQuery</span><span class="o">(</span><span class="n">ctx</span><span class="k">:</span> <span class="kt">QueryContext</span><span class="o">)</span><span class="k">:</span> <span class="kt">LogicalPlan</span> <span class="o">=</span> <span class="n">withOrigin</span><span class="o">(</span><span class="n">ctx</span><span class="o">)</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">  <span class="c1">// 首先遍历 queryNoWith 子节点，plan方法就是调用了typedVisit方法
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="k">val</span> <span class="n">query</span> <span class="k">=</span> <span class="n">plan</span><span class="o">(</span><span class="n">ctx</span><span class="o">.</span><span class="n">queryNoWith</span><span class="o">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="c1">// 如果由 ctes 子节点，则遍历它并且生成 With 节点，将queryNoWIth的结果当作With的子节点
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="n">query</span><span class="o">.</span><span class="n">optional</span><span class="o">(</span><span class="n">ctx</span><span class="o">.</span><span class="n">ctes</span><span class="o">)</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// 解析WITH语句中的表达式
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="k">val</span> <span class="n">ctes</span> <span class="k">=</span> <span class="n">ctx</span><span class="o">.</span><span class="n">ctes</span><span class="o">.</span><span class="n">namedQuery</span><span class="o">.</span><span class="n">asScala</span><span class="o">.</span><span class="n">map</span> <span class="o">{</span> <span class="n">nCtx</span> <span class="k">=&gt;</span>
+</span></span><span class="line"><span class="cl">      <span class="k">val</span> <span class="n">namedQuery</span> <span class="k">=</span> <span class="n">visitNamedQuery</span><span class="o">(</span><span class="n">nCtx</span><span class="o">)</span>
+</span></span><span class="line"><span class="cl">      <span class="o">(</span><span class="n">namedQuery</span><span class="o">.</span><span class="n">alias</span><span class="o">,</span> <span class="n">namedQuery</span><span class="o">)</span>
+</span></span><span class="line"><span class="cl">    <span class="o">}</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// Check for duplicate names.
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="n">checkDuplicateKeys</span><span class="o">(</span><span class="n">ctes</span><span class="o">,</span> <span class="n">ctx</span><span class="o">)</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// 生成With实例
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="nc">With</span><span class="o">(</span><span class="n">query</span><span class="o">,</span> <span class="n">ctes</span><span class="o">)</span>
+</span></span><span class="line"><span class="cl">  <span class="o">}</span>
+</span></span><span class="line"><span class="cl"><span class="o">}</span>
+</span></span></code></pre></td></tr></table></div>
 </div>
 </div><p>这里的 With 类是 LogicalPlan 的子类，它对应 WITH 语句。因为 WITH 语句用得不多，这里不再详细介绍。</p>
 <h3 id="querynowith-语法规则"><a href="#querynowith-语法规则" class="anchor-link"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon anchor-icon"><path d="M326.612 185.391c59.747 59.809 58.927 155.698.36 214.59-.11.12-.24.25-.36.37l-67.2 67.2c-59.27 59.27-155.699 59.262-214.96 0-59.27-59.26-59.27-155.7 0-214.96l37.106-37.106c9.84-9.84 26.786-3.3 27.294 10.606.648 17.722 3.826 35.527 9.69 52.721 1.986 5.822.567 12.262-3.783 16.612l-13.087 13.087c-28.026 28.026-28.905 73.66-1.155 101.96 28.024 28.579 74.086 28.749 102.325.51l67.2-67.19c28.191-28.191 28.073-73.757 0-101.83-3.701-3.694-7.429-6.564-10.341-8.569a16.037 16.037 0 0 1-6.947-12.606c-.396-10.567 3.348-21.456 11.698-29.806l21.054-21.055c5.521-5.521 14.182-6.199 20.584-1.731a152.482 152.482 0 0 1 20.522 17.197zM467.547 44.449c-59.261-59.262-155.69-59.27-214.96 0l-67.2 67.2c-.12.12-.25.25-.36.37-58.566 58.892-59.387 154.781.36 214.59a152.454 152.454 0 0 0 20.521 17.196c6.402 4.468 15.064 3.789 20.584-1.731l21.054-21.055c8.35-8.35 12.094-19.239 11.698-29.806a16.037 16.037 0 0 0-6.947-12.606c-2.912-2.005-6.64-4.875-10.341-8.569-28.073-28.073-28.191-73.639 0-101.83l67.2-67.19c28.239-28.239 74.3-28.069 102.325.51 27.75 28.3 26.872 73.934-1.155 101.96l-13.087 13.087c-4.35 4.35-5.769 10.79-3.783 16.612 5.864 17.194 9.042 34.999 9.69 52.721.509 13.906 17.454 20.446 27.294 10.606l37.106-37.106c59.271-59.259 59.271-155.699.001-214.959z"/></svg></a>queryNoWith 语法规则</h3>
@@ -495,16 +495,16 @@
 </span><span class="lnt">9
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-scala" data-lang="scala"><span class="k">override</span> <span class="k">def</span> <span class="n">visitSingleInsertQuery</span><span class="o">(</span>
-    <span class="n">ctx</span><span class="k">:</span> <span class="kt">SingleInsertQueryContext</span><span class="o">)</span><span class="k">:</span> <span class="kt">LogicalPlan</span> <span class="o">=</span> <span class="n">withOrigin</span><span class="o">(</span><span class="n">ctx</span><span class="o">)</span> <span class="o">{</span>
-  <span class="c1">// 解析子节点 queryTerm，生成LogicalPlan子类
-</span><span class="c1"></span>  <span class="n">plan</span><span class="o">(</span><span class="n">ctx</span><span class="o">.</span><span class="n">queryTerm</span><span class="o">).</span>
-    <span class="c1">// Add organization statements.
-</span><span class="c1"></span>    <span class="n">optionalMap</span><span class="o">(</span><span class="n">ctx</span><span class="o">.</span><span class="n">queryOrganization</span><span class="o">)(</span><span class="n">withQueryResultClauses</span><span class="o">).</span>
-    <span class="c1">// Add insert.
-</span><span class="c1"></span>    <span class="n">optionalMap</span><span class="o">(</span><span class="n">ctx</span><span class="o">.</span><span class="n">insertInto</span><span class="o">())(</span><span class="n">withInsertInto</span><span class="o">)</span>
-<span class="o">}</span>
-</code></pre></td></tr></table></div>
+<pre tabindex="0" class="chroma"><code class="language-scala" data-lang="scala"><span class="line"><span class="cl"><span class="k">override</span> <span class="k">def</span> <span class="n">visitSingleInsertQuery</span><span class="o">(</span>
+</span></span><span class="line"><span class="cl">    <span class="n">ctx</span><span class="k">:</span> <span class="kt">SingleInsertQueryContext</span><span class="o">)</span><span class="k">:</span> <span class="kt">LogicalPlan</span> <span class="o">=</span> <span class="n">withOrigin</span><span class="o">(</span><span class="n">ctx</span><span class="o">)</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">  <span class="c1">// 解析子节点 queryTerm，生成LogicalPlan子类
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="n">plan</span><span class="o">(</span><span class="n">ctx</span><span class="o">.</span><span class="n">queryTerm</span><span class="o">).</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// Add organization statements.
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="n">optionalMap</span><span class="o">(</span><span class="n">ctx</span><span class="o">.</span><span class="n">queryOrganization</span><span class="o">)(</span><span class="n">withQueryResultClauses</span><span class="o">).</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// Add insert.
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="n">optionalMap</span><span class="o">(</span><span class="n">ctx</span><span class="o">.</span><span class="n">insertInto</span><span class="o">())(</span><span class="n">withInsertInto</span><span class="o">)</span>
+</span></span><span class="line"><span class="cl"><span class="o">}</span>
+</span></span></code></pre></td></tr></table></div>
 </div>
 </div><p>singleInsertQuery 格式有三部分组成</p>
 <ul>
@@ -579,10 +579,10 @@
 </span><span class="lnt">3
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-scala" data-lang="scala"><span class="k">override</span> <span class="k">def</span> <span class="n">visitTable</span><span class="o">(</span><span class="n">ctx</span><span class="k">:</span> <span class="kt">TableContext</span><span class="o">)</span><span class="k">:</span> <span class="kt">LogicalPlan</span> <span class="o">=</span> <span class="n">withOrigin</span><span class="o">(</span><span class="n">ctx</span><span class="o">)</span> <span class="o">{</span>
-  <span class="nc">UnresolvedRelation</span><span class="o">(</span><span class="n">visitTableIdentifier</span><span class="o">(</span><span class="n">ctx</span><span class="o">.</span><span class="n">tableIdentifier</span><span class="o">))</span>
-<span class="o">}</span>
-</code></pre></td></tr></table></div>
+<pre tabindex="0" class="chroma"><code class="language-scala" data-lang="scala"><span class="line"><span class="cl"><span class="k">override</span> <span class="k">def</span> <span class="n">visitTable</span><span class="o">(</span><span class="n">ctx</span><span class="k">:</span> <span class="kt">TableContext</span><span class="o">)</span><span class="k">:</span> <span class="kt">LogicalPlan</span> <span class="o">=</span> <span class="n">withOrigin</span><span class="o">(</span><span class="n">ctx</span><span class="o">)</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">  <span class="nc">UnresolvedRelation</span><span class="o">(</span><span class="n">visitTableIdentifier</span><span class="o">(</span><span class="n">ctx</span><span class="o">.</span><span class="n">tableIdentifier</span><span class="o">))</span>
+</span></span><span class="line"><span class="cl"><span class="o">}</span>
+</span></span></code></pre></td></tr></table></div>
 </div>
 </div><p>解析 subquery 格式，也只是继续遍历子规则 queryNoWith。</p>
 <div class="highlight"><div class="chroma">
@@ -592,10 +592,10 @@
 </span><span class="lnt">3
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-scala" data-lang="scala"><span class="k">override</span> <span class="k">def</span> <span class="n">visitSubquery</span><span class="o">(</span><span class="n">ctx</span><span class="k">:</span> <span class="kt">SubqueryContext</span><span class="o">)</span><span class="k">:</span> <span class="kt">LogicalPlan</span> <span class="o">=</span> <span class="n">withOrigin</span><span class="o">(</span><span class="n">ctx</span><span class="o">)</span> <span class="o">{</span>
-  <span class="n">plan</span><span class="o">(</span><span class="n">ctx</span><span class="o">.</span><span class="n">queryNoWith</span><span class="o">)</span>
-<span class="o">}</span>
-</code></pre></td></tr></table></div>
+<pre tabindex="0" class="chroma"><code class="language-scala" data-lang="scala"><span class="line"><span class="cl"><span class="k">override</span> <span class="k">def</span> <span class="n">visitSubquery</span><span class="o">(</span><span class="n">ctx</span><span class="k">:</span> <span class="kt">SubqueryContext</span><span class="o">)</span><span class="k">:</span> <span class="kt">LogicalPlan</span> <span class="o">=</span> <span class="n">withOrigin</span><span class="o">(</span><span class="n">ctx</span><span class="o">)</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">  <span class="n">plan</span><span class="o">(</span><span class="n">ctx</span><span class="o">.</span><span class="n">queryNoWith</span><span class="o">)</span>
+</span></span><span class="line"><span class="cl"><span class="o">}</span>
+</span></span></code></pre></td></tr></table></div>
 </div>
 </div><p>解析 inlineTableDefault1 格式，这个用法不是很常见。举个简单的例子，</p>
 <div class="highlight"><div class="chroma">
@@ -603,8 +603,8 @@
 <pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-sql" data-lang="sql"><span class="k">SELECT</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="k">FROM</span><span class="w"> </span><span class="p">(</span><span class="k">VALUES</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;apple&#39;</span><span class="p">),</span><span class="w"> </span><span class="p">(</span><span class="mi">2</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;orange&#39;</span><span class="p">))</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">FRUIT</span><span class="p">(</span><span class="n">ID</span><span class="p">,</span><span class="w"> </span><span class="n">NAME</span><span class="p">)</span><span class="w">
-</span></code></pre></td></tr></table></div>
+<pre tabindex="0" class="chroma"><code class="language-sql" data-lang="sql"><span class="line"><span class="cl"><span class="k">SELECT</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="k">FROM</span><span class="w"> </span><span class="p">(</span><span class="k">VALUES</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;apple&#39;</span><span class="p">),</span><span class="w"> </span><span class="p">(</span><span class="mi">2</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;orange&#39;</span><span class="p">))</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">FRUIT</span><span class="p">(</span><span class="n">ID</span><span class="p">,</span><span class="w"> </span><span class="n">NAME</span><span class="p">)</span><span class="w">
+</span></span></span></code></pre></td></tr></table></div>
 </div>
 </div><p>这条语句就使用VALUES语句，创建了一张表 FRUIT，有 ID 和 NAME 两列。</p>
 <div class="highlight"><div class="chroma">
@@ -638,34 +638,34 @@
 </span><span class="lnt">27
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-scala" data-lang="scala"><span class="k">override</span> <span class="k">def</span> <span class="n">visitInlineTable</span><span class="o">(</span><span class="n">ctx</span><span class="k">:</span> <span class="kt">InlineTableContext</span><span class="o">)</span><span class="k">:</span> <span class="kt">LogicalPlan</span> <span class="o">=</span> <span class="n">withOrigin</span><span class="o">(</span><span class="n">ctx</span><span class="o">)</span> <span class="o">{</span>
-  <span class="c1">// 遍历每个表达式
-</span><span class="c1"></span>  <span class="k">val</span> <span class="n">rows</span> <span class="k">=</span> <span class="n">ctx</span><span class="o">.</span><span class="n">expression</span><span class="o">.</span><span class="n">asScala</span><span class="o">.</span><span class="n">map</span> <span class="o">{</span> <span class="n">e</span> <span class="k">=&gt;</span>
-    <span class="n">expression</span><span class="o">(</span><span class="n">e</span><span class="o">)</span> <span class="k">match</span> <span class="o">{</span>
-      <span class="c1">// inline table comes in two styles:
-</span><span class="c1"></span>      <span class="c1">// style 1: values (1), (2), (3)  -- multiple columns are supported
-</span><span class="c1"></span>      <span class="c1">// style 2: values 1, 2, 3  -- only a single column is supported here
-</span><span class="c1"></span>      <span class="k">case</span> <span class="n">struct</span><span class="k">:</span> <span class="kt">CreateNamedStruct</span> <span class="o">=&gt;</span> <span class="n">struct</span><span class="o">.</span><span class="n">valExprs</span> <span class="c1">// style 1
-</span><span class="c1"></span>      <span class="k">case</span> <span class="n">child</span> <span class="k">=&gt;</span> <span class="nc">Seq</span><span class="o">(</span><span class="n">child</span><span class="o">)</span>                          <span class="c1">// style 2
-</span><span class="c1"></span>    <span class="o">}</span>
-  <span class="o">}</span>
-  <span class="c1">// 是否指明了列名，如果没有指定则自动生成列名（col1,col2...）
-</span><span class="c1"></span>  <span class="k">val</span> <span class="n">aliases</span> <span class="k">=</span> <span class="k">if</span> <span class="o">(</span><span class="n">ctx</span><span class="o">.</span><span class="n">identifierList</span> <span class="o">!=</span> <span class="kc">null</span><span class="o">)</span> <span class="o">{</span>
-    <span class="n">visitIdentifierList</span><span class="o">(</span><span class="n">ctx</span><span class="o">.</span><span class="n">identifierList</span><span class="o">)</span>
-  <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
-    <span class="nc">Seq</span><span class="o">.</span><span class="n">tabulate</span><span class="o">(</span><span class="n">rows</span><span class="o">.</span><span class="n">head</span><span class="o">.</span><span class="n">size</span><span class="o">)(</span><span class="n">i</span> <span class="k">=&gt;</span> <span class="s">s&#34;col</span><span class="si">${</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="si">}</span><span class="s">&#34;</span><span class="o">)</span>
-  <span class="o">}</span>
-  <span class="c1">// 生成 UnresolvedInlineTable 实例
-</span><span class="c1"></span>  <span class="k">val</span> <span class="n">table</span> <span class="k">=</span> <span class="nc">UnresolvedInlineTable</span><span class="o">(</span><span class="n">aliases</span><span class="o">,</span> <span class="n">rows</span><span class="o">)</span>
-  <span class="c1">// 这里没弄明白，为什么有identifier属性，需要再去查看下antrl4文档，因为antrl4文件的内容被改了
-</span><span class="c1"></span>  <span class="c1">// 如果指定了表名，那么就生成 SubqueryAlias 实例
-</span><span class="c1"></span>  <span class="n">table</span><span class="o">.</span><span class="n">optionalMap</span><span class="o">(</span><span class="n">ctx</span><span class="o">.</span><span class="n">identifier</span><span class="o">)(</span><span class="n">aliasPlan</span><span class="o">)</span>
-<span class="o">}</span>
-
-<span class="k">private</span> <span class="k">def</span> <span class="n">aliasPlan</span><span class="o">(</span><span class="n">alias</span><span class="k">:</span> <span class="kt">ParserRuleContext</span><span class="o">,</span> <span class="n">plan</span><span class="k">:</span> <span class="kt">LogicalPlan</span><span class="o">)</span><span class="k">:</span> <span class="kt">LogicalPlan</span> <span class="o">=</span> <span class="o">{</span>
-  <span class="nc">SubqueryAlias</span><span class="o">(</span><span class="n">alias</span><span class="o">.</span><span class="n">getText</span><span class="o">,</span> <span class="n">plan</span><span class="o">)</span>
-<span class="o">}</span>
-</code></pre></td></tr></table></div>
+<pre tabindex="0" class="chroma"><code class="language-scala" data-lang="scala"><span class="line"><span class="cl"><span class="k">override</span> <span class="k">def</span> <span class="n">visitInlineTable</span><span class="o">(</span><span class="n">ctx</span><span class="k">:</span> <span class="kt">InlineTableContext</span><span class="o">)</span><span class="k">:</span> <span class="kt">LogicalPlan</span> <span class="o">=</span> <span class="n">withOrigin</span><span class="o">(</span><span class="n">ctx</span><span class="o">)</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">  <span class="c1">// 遍历每个表达式
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="k">val</span> <span class="n">rows</span> <span class="k">=</span> <span class="n">ctx</span><span class="o">.</span><span class="n">expression</span><span class="o">.</span><span class="n">asScala</span><span class="o">.</span><span class="n">map</span> <span class="o">{</span> <span class="n">e</span> <span class="k">=&gt;</span>
+</span></span><span class="line"><span class="cl">    <span class="n">expression</span><span class="o">(</span><span class="n">e</span><span class="o">)</span> <span class="k">match</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">      <span class="c1">// inline table comes in two styles:
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>      <span class="c1">// style 1: values (1), (2), (3)  -- multiple columns are supported
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>      <span class="c1">// style 2: values 1, 2, 3  -- only a single column is supported here
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>      <span class="k">case</span> <span class="n">struct</span><span class="k">:</span> <span class="kt">CreateNamedStruct</span> <span class="o">=&gt;</span> <span class="n">struct</span><span class="o">.</span><span class="n">valExprs</span> <span class="c1">// style 1
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>      <span class="k">case</span> <span class="n">child</span> <span class="k">=&gt;</span> <span class="nc">Seq</span><span class="o">(</span><span class="n">child</span><span class="o">)</span>                          <span class="c1">// style 2
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="o">}</span>
+</span></span><span class="line"><span class="cl">  <span class="o">}</span>
+</span></span><span class="line"><span class="cl">  <span class="c1">// 是否指明了列名，如果没有指定则自动生成列名（col1,col2...）
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="k">val</span> <span class="n">aliases</span> <span class="k">=</span> <span class="k">if</span> <span class="o">(</span><span class="n">ctx</span><span class="o">.</span><span class="n">identifierList</span> <span class="o">!=</span> <span class="kc">null</span><span class="o">)</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">    <span class="n">visitIdentifierList</span><span class="o">(</span><span class="n">ctx</span><span class="o">.</span><span class="n">identifierList</span><span class="o">)</span>
+</span></span><span class="line"><span class="cl">  <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">    <span class="nc">Seq</span><span class="o">.</span><span class="n">tabulate</span><span class="o">(</span><span class="n">rows</span><span class="o">.</span><span class="n">head</span><span class="o">.</span><span class="n">size</span><span class="o">)(</span><span class="n">i</span> <span class="k">=&gt;</span> <span class="s">s&#34;col</span><span class="si">${</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="si">}</span><span class="s">&#34;</span><span class="o">)</span>
+</span></span><span class="line"><span class="cl">  <span class="o">}</span>
+</span></span><span class="line"><span class="cl">  <span class="c1">// 生成 UnresolvedInlineTable 实例
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="k">val</span> <span class="n">table</span> <span class="k">=</span> <span class="nc">UnresolvedInlineTable</span><span class="o">(</span><span class="n">aliases</span><span class="o">,</span> <span class="n">rows</span><span class="o">)</span>
+</span></span><span class="line"><span class="cl">  <span class="c1">// 这里没弄明白，为什么有identifier属性，需要再去查看下antrl4文档，因为antrl4文件的内容被改了
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="c1">// 如果指定了表名，那么就生成 SubqueryAlias 实例
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="n">table</span><span class="o">.</span><span class="n">optionalMap</span><span class="o">(</span><span class="n">ctx</span><span class="o">.</span><span class="n">identifier</span><span class="o">)(</span><span class="n">aliasPlan</span><span class="o">)</span>
+</span></span><span class="line"><span class="cl"><span class="o">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="k">private</span> <span class="k">def</span> <span class="n">aliasPlan</span><span class="o">(</span><span class="n">alias</span><span class="k">:</span> <span class="kt">ParserRuleContext</span><span class="o">,</span> <span class="n">plan</span><span class="k">:</span> <span class="kt">LogicalPlan</span><span class="o">)</span><span class="k">:</span> <span class="kt">LogicalPlan</span> <span class="o">=</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">  <span class="nc">SubqueryAlias</span><span class="o">(</span><span class="n">alias</span><span class="o">.</span><span class="n">getText</span><span class="o">,</span> <span class="n">plan</span><span class="o">)</span>
+</span></span><span class="line"><span class="cl"><span class="o">}</span>
+</span></span></code></pre></td></tr></table></div>
 </div>
 </div><p>可以看到 inlineTable 规则，生成了 UnresolvedInlineTable 和 SubqueryAlias 实例。</p>
 <p>解析 queryPrimaryDefault 规则，因为它没有重新定义访问方法，所以它使用了默认访问，继续遍历它的子节点querySpecification。</p>
@@ -703,35 +703,35 @@
 </span><span class="lnt">28
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-scala" data-lang="scala"><span class="k">override</span> <span class="k">def</span> <span class="n">visitQuerySpecification</span><span class="o">(</span>
-    <span class="n">ctx</span><span class="k">:</span> <span class="kt">QuerySpecificationContext</span><span class="o">)</span><span class="k">:</span> <span class="kt">LogicalPlan</span> <span class="o">=</span> <span class="n">withOrigin</span><span class="o">(</span><span class="n">ctx</span><span class="o">)</span> <span class="o">{</span>
-  <span class="c1">// 如果有FROM语句,那么先调用visitFromClause方法解析
-</span><span class="c1"></span>  <span class="c1">// 否则返回OneRowRelation实例，表示没有FROM语句的情况
-</span><span class="c1"></span>  <span class="k">val</span> <span class="n">from</span> <span class="k">=</span> <span class="nc">OneRowRelation</span><span class="o">.</span><span class="n">optional</span><span class="o">(</span><span class="n">ctx</span><span class="o">.</span><span class="n">fromClause</span><span class="o">)</span> <span class="o">{</span>
-    <span class="n">visitFromClause</span><span class="o">(</span><span class="n">ctx</span><span class="o">.</span><span class="n">fromClause</span><span class="o">)</span>
-  <span class="o">}</span>
-  <span class="c1">// 继续遍历其他部分
-</span><span class="c1"></span>  <span class="n">withQuerySpecification</span><span class="o">(</span><span class="n">ctx</span><span class="o">,</span> <span class="n">from</span><span class="o">)</span>
-<span class="o">}</span>
-
-<span class="k">override</span> <span class="k">def</span> <span class="n">visitFromClause</span><span class="o">(</span><span class="n">ctx</span><span class="k">:</span> <span class="kt">FromClauseContext</span><span class="o">)</span><span class="k">:</span> <span class="kt">LogicalPlan</span> <span class="o">=</span> <span class="n">withOrigin</span><span class="o">(</span><span class="n">ctx</span><span class="o">)</span> <span class="o">{</span>
-  <span class="c1">// 如果 FROM 后面接了多张表，那么默认认为这些表都是 INNER JOIN
-</span><span class="c1"></span>  <span class="k">val</span> <span class="n">from</span> <span class="k">=</span> <span class="n">ctx</span><span class="o">.</span><span class="n">relation</span><span class="o">.</span><span class="n">asScala</span><span class="o">.</span><span class="n">foldLeft</span><span class="o">(</span><span class="kc">null</span><span class="k">:</span> <span class="kt">LogicalPlan</span><span class="o">)</span> <span class="o">{</span> <span class="o">(</span><span class="n">left</span><span class="o">,</span> <span class="n">relation</span><span class="o">)</span> <span class="k">=&gt;</span>
-    <span class="c1">// 遍历relation的子节点relationPrimary
-</span><span class="c1"></span>    <span class="k">val</span> <span class="n">right</span> <span class="k">=</span> <span class="n">plan</span><span class="o">(</span><span class="n">relation</span><span class="o">.</span><span class="n">relationPrimary</span><span class="o">)</span>
-    <span class="k">val</span> <span class="n">join</span> <span class="k">=</span> <span class="n">right</span><span class="o">.</span><span class="n">optionalMap</span><span class="o">(</span><span class="n">left</span><span class="o">)(</span><span class="nc">Join</span><span class="o">(</span><span class="k">_</span><span class="o">,</span> <span class="k">_</span><span class="o">,</span> <span class="nc">Inner</span><span class="o">,</span> <span class="nc">None</span><span class="o">))</span>
-    <span class="n">withJoinRelations</span><span class="o">(</span><span class="n">join</span><span class="o">,</span> <span class="n">relation</span><span class="o">)</span>
-  <span class="o">}</span>
-  <span class="c1">// 查看是否有 lateralView 语句
-</span><span class="c1"></span>  <span class="n">ctx</span><span class="o">.</span><span class="n">lateralView</span><span class="o">.</span><span class="n">asScala</span><span class="o">.</span><span class="n">foldLeft</span><span class="o">(</span><span class="n">from</span><span class="o">)(</span><span class="n">withGenerate</span><span class="o">)</span>
-<span class="o">}</span>
-
-<span class="c1">// table 规则是 relationPrimary最常见的一种类型
-</span><span class="c1"></span><span class="k">override</span> <span class="k">def</span> <span class="n">visitTable</span><span class="o">(</span><span class="n">ctx</span><span class="k">:</span> <span class="kt">TableContext</span><span class="o">)</span><span class="k">:</span> <span class="kt">LogicalPlan</span> <span class="o">=</span> <span class="n">withOrigin</span><span class="o">(</span><span class="n">ctx</span><span class="o">)</span> <span class="o">{</span>
-  <span class="c1">// 返回UnresolvedRelation实例
-</span><span class="c1"></span>  <span class="nc">UnresolvedRelation</span><span class="o">(</span><span class="n">visitTableIdentifier</span><span class="o">(</span><span class="n">ctx</span><span class="o">.</span><span class="n">tableIdentifier</span><span class="o">))</span>
-<span class="o">}</span>
-</code></pre></td></tr></table></div>
+<pre tabindex="0" class="chroma"><code class="language-scala" data-lang="scala"><span class="line"><span class="cl"><span class="k">override</span> <span class="k">def</span> <span class="n">visitQuerySpecification</span><span class="o">(</span>
+</span></span><span class="line"><span class="cl">    <span class="n">ctx</span><span class="k">:</span> <span class="kt">QuerySpecificationContext</span><span class="o">)</span><span class="k">:</span> <span class="kt">LogicalPlan</span> <span class="o">=</span> <span class="n">withOrigin</span><span class="o">(</span><span class="n">ctx</span><span class="o">)</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">  <span class="c1">// 如果有FROM语句,那么先调用visitFromClause方法解析
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="c1">// 否则返回OneRowRelation实例，表示没有FROM语句的情况
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="k">val</span> <span class="n">from</span> <span class="k">=</span> <span class="nc">OneRowRelation</span><span class="o">.</span><span class="n">optional</span><span class="o">(</span><span class="n">ctx</span><span class="o">.</span><span class="n">fromClause</span><span class="o">)</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">    <span class="n">visitFromClause</span><span class="o">(</span><span class="n">ctx</span><span class="o">.</span><span class="n">fromClause</span><span class="o">)</span>
+</span></span><span class="line"><span class="cl">  <span class="o">}</span>
+</span></span><span class="line"><span class="cl">  <span class="c1">// 继续遍历其他部分
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="n">withQuerySpecification</span><span class="o">(</span><span class="n">ctx</span><span class="o">,</span> <span class="n">from</span><span class="o">)</span>
+</span></span><span class="line"><span class="cl"><span class="o">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="k">override</span> <span class="k">def</span> <span class="n">visitFromClause</span><span class="o">(</span><span class="n">ctx</span><span class="k">:</span> <span class="kt">FromClauseContext</span><span class="o">)</span><span class="k">:</span> <span class="kt">LogicalPlan</span> <span class="o">=</span> <span class="n">withOrigin</span><span class="o">(</span><span class="n">ctx</span><span class="o">)</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">  <span class="c1">// 如果 FROM 后面接了多张表，那么默认认为这些表都是 INNER JOIN
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="k">val</span> <span class="n">from</span> <span class="k">=</span> <span class="n">ctx</span><span class="o">.</span><span class="n">relation</span><span class="o">.</span><span class="n">asScala</span><span class="o">.</span><span class="n">foldLeft</span><span class="o">(</span><span class="kc">null</span><span class="k">:</span> <span class="kt">LogicalPlan</span><span class="o">)</span> <span class="o">{</span> <span class="o">(</span><span class="n">left</span><span class="o">,</span> <span class="n">relation</span><span class="o">)</span> <span class="k">=&gt;</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// 遍历relation的子节点relationPrimary
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="k">val</span> <span class="n">right</span> <span class="k">=</span> <span class="n">plan</span><span class="o">(</span><span class="n">relation</span><span class="o">.</span><span class="n">relationPrimary</span><span class="o">)</span>
+</span></span><span class="line"><span class="cl">    <span class="k">val</span> <span class="n">join</span> <span class="k">=</span> <span class="n">right</span><span class="o">.</span><span class="n">optionalMap</span><span class="o">(</span><span class="n">left</span><span class="o">)(</span><span class="nc">Join</span><span class="o">(</span><span class="k">_</span><span class="o">,</span> <span class="k">_</span><span class="o">,</span> <span class="nc">Inner</span><span class="o">,</span> <span class="nc">None</span><span class="o">))</span>
+</span></span><span class="line"><span class="cl">    <span class="n">withJoinRelations</span><span class="o">(</span><span class="n">join</span><span class="o">,</span> <span class="n">relation</span><span class="o">)</span>
+</span></span><span class="line"><span class="cl">  <span class="o">}</span>
+</span></span><span class="line"><span class="cl">  <span class="c1">// 查看是否有 lateralView 语句
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="n">ctx</span><span class="o">.</span><span class="n">lateralView</span><span class="o">.</span><span class="n">asScala</span><span class="o">.</span><span class="n">foldLeft</span><span class="o">(</span><span class="n">from</span><span class="o">)(</span><span class="n">withGenerate</span><span class="o">)</span>
+</span></span><span class="line"><span class="cl"><span class="o">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1">// table 规则是 relationPrimary最常见的一种类型
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="k">override</span> <span class="k">def</span> <span class="n">visitTable</span><span class="o">(</span><span class="n">ctx</span><span class="k">:</span> <span class="kt">TableContext</span><span class="o">)</span><span class="k">:</span> <span class="kt">LogicalPlan</span> <span class="o">=</span> <span class="n">withOrigin</span><span class="o">(</span><span class="n">ctx</span><span class="o">)</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">  <span class="c1">// 返回UnresolvedRelation实例
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="nc">UnresolvedRelation</span><span class="o">(</span><span class="n">visitTableIdentifier</span><span class="o">(</span><span class="n">ctx</span><span class="o">.</span><span class="n">tableIdentifier</span><span class="o">))</span>
+</span></span><span class="line"><span class="cl"><span class="o">}</span>
+</span></span></code></pre></td></tr></table></div>
 </div>
 </div><p>继续查看withQuerySpecification方法的定义</p>
 <div class="highlight"><div class="chroma">
@@ -813,82 +813,82 @@
 </span><span class="lnt">75
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-scala" data-lang="scala"><span class="k">private</span> <span class="k">def</span> <span class="n">withQuerySpecification</span><span class="o">(</span>
-    <span class="n">ctx</span><span class="k">:</span> <span class="kt">QuerySpecificationContext</span><span class="o">,</span>
-    <span class="n">relation</span><span class="k">:</span> <span class="kt">LogicalPlan</span><span class="o">)</span><span class="k">:</span> <span class="kt">LogicalPlan</span> <span class="o">=</span> <span class="n">withOrigin</span><span class="o">(</span><span class="n">ctx</span><span class="o">)</span> <span class="o">{</span>
-  <span class="k">import</span> <span class="nn">ctx._</span>  <span class="c1">// import QuerySpecificationContext 类的属性
-</span><span class="c1"></span>
-  <span class="c1">// 根据WHERE语句生成Filter节点
-</span><span class="c1"></span>  <span class="k">def</span> <span class="n">filter</span><span class="o">(</span><span class="n">ctx</span><span class="k">:</span> <span class="kt">BooleanExpressionContext</span><span class="o">,</span> <span class="n">plan</span><span class="k">:</span> <span class="kt">LogicalPlan</span><span class="o">)</span><span class="k">:</span> <span class="kt">LogicalPlan</span> <span class="o">=</span> <span class="o">{</span>
-    <span class="nc">Filter</span><span class="o">(</span><span class="n">expression</span><span class="o">(</span><span class="n">ctx</span><span class="o">),</span> <span class="n">plan</span><span class="o">)</span>
-  <span class="o">}</span>
-
-  <span class="c1">// 遍历SELECT选中的列
-</span><span class="c1"></span>  <span class="k">val</span> <span class="n">expressions</span> <span class="k">=</span> <span class="nc">Option</span><span class="o">(</span><span class="n">namedExpressionSeq</span><span class="o">).</span><span class="n">toSeq</span>
-    <span class="o">.</span><span class="n">flatMap</span><span class="o">(</span><span class="k">_</span><span class="o">.</span><span class="n">namedExpression</span><span class="o">.</span><span class="n">asScala</span><span class="o">)</span>
-    <span class="o">.</span><span class="n">map</span><span class="o">(</span><span class="n">typedVisit</span><span class="o">[</span><span class="kt">Expression</span><span class="o">])</span>
-
-  <span class="c1">// Create either a transform or a regular query.
-</span><span class="c1"></span>  <span class="k">val</span> <span class="n">specType</span> <span class="k">=</span> <span class="nc">Option</span><span class="o">(</span><span class="n">kind</span><span class="o">).</span><span class="n">map</span><span class="o">(</span><span class="k">_</span><span class="o">.</span><span class="n">getType</span><span class="o">).</span><span class="n">getOrElse</span><span class="o">(</span><span class="nc">SqlBaseParser</span><span class="o">.</span><span class="nc">SELECT</span><span class="o">)</span>
-  <span class="n">specType</span> <span class="k">match</span> <span class="o">{</span>
-    <span class="k">case</span> <span class="nc">SqlBaseParser</span><span class="o">.</span><span class="nc">MAP</span> <span class="o">|</span> <span class="nc">SqlBaseParser</span><span class="o">.</span><span class="nc">REDUCE</span> <span class="o">|</span> <span class="nc">SqlBaseParser</span><span class="o">.</span><span class="nc">TRANSFORM</span> <span class="k">=&gt;</span>
-      <span class="c1">// Transform 类型，会生成 ScriptTransformation 实例。
-</span><span class="c1"></span>      <span class="o">.......</span>
-    <span class="k">case</span> <span class="nc">SqlBaseParser</span><span class="o">.</span><span class="nc">SELECT</span> <span class="k">=&gt;</span>
-      <span class="c1">// 普通 select 类型
-</span><span class="c1"></span>
-      <span class="c1">// lateral views 用来将此列数据分开，生成多行数据
-</span><span class="c1"></span>      <span class="k">val</span> <span class="n">withLateralView</span> <span class="k">=</span> <span class="n">ctx</span><span class="o">.</span><span class="n">lateralView</span><span class="o">.</span><span class="n">asScala</span><span class="o">.</span><span class="n">foldLeft</span><span class="o">(</span><span class="n">relation</span><span class="o">)(</span><span class="n">withGenerate</span><span class="o">)</span>
-
-      <span class="c1">// 如果有 where 语句，那么生成Filter实例
-</span><span class="c1"></span>      <span class="k">val</span> <span class="n">withFilter</span> <span class="k">=</span> <span class="n">withLateralView</span><span class="o">.</span><span class="n">optionalMap</span><span class="o">(</span><span class="n">where</span><span class="o">)(</span><span class="n">filter</span><span class="o">)</span>
-
-      <span class="c1">// 注意到这里，会对Expression子类进行处理，将其转换为NamedExpression的子类。
-</span><span class="c1"></span>      <span class="c1">// 如果表达式不是NamedExpression的子类，那么生成UnresolvedAlias实例，
-</span><span class="c1"></span>      <span class="c1">// UnresolvedAlias只是起到封装的作用，后面会被analyze
-</span><span class="c1"></span>      <span class="k">val</span> <span class="n">namedExpressions</span> <span class="k">=</span> <span class="n">expressions</span><span class="o">.</span><span class="n">map</span> <span class="o">{</span>
-        <span class="k">case</span> <span class="n">e</span><span class="k">:</span> <span class="kt">NamedExpression</span> <span class="o">=&gt;</span> <span class="n">e</span>
-        <span class="k">case</span> <span class="n">e</span><span class="k">:</span> <span class="kt">Expression</span> <span class="o">=&gt;</span> <span class="nc">UnresolvedAlias</span><span class="o">(</span><span class="n">e</span><span class="o">)</span>
-      <span class="o">}</span>
-      <span class="c1">// 这里的aggregation是属于QuerySpecificationContext的，因为前面已经import，所以直接使用
-</span><span class="c1"></span>      <span class="k">val</span> <span class="n">withProject</span> <span class="k">=</span> <span class="k">if</span> <span class="o">(</span><span class="n">aggregation</span> <span class="o">!=</span> <span class="kc">null</span><span class="o">)</span> <span class="o">{</span>
-        <span class="c1">// 如果有聚合语句，那么调用withAggregation方法，生成聚合节点
-</span><span class="c1"></span>        <span class="c1">// 如果聚合语句包含GROUPING SETS用法，那么返回GroupingSets实例
-</span><span class="c1"></span>        <span class="c1">// 苟泽返回Aggregate实例
-</span><span class="c1"></span>        <span class="n">withAggregation</span><span class="o">(</span><span class="n">aggregation</span><span class="o">,</span> <span class="n">namedExpressions</span><span class="o">,</span> <span class="n">withFilter</span><span class="o">)</span>
-      <span class="o">}</span> <span class="k">else</span> <span class="k">if</span> <span class="o">(</span><span class="n">namedExpressions</span><span class="o">.</span><span class="n">nonEmpty</span><span class="o">)</span> <span class="o">{</span>
-        <span class="c1">// 否则生成Project实例
-</span><span class="c1"></span>        <span class="nc">Project</span><span class="o">(</span><span class="n">namedExpressions</span><span class="o">,</span> <span class="n">withFilter</span><span class="o">)</span>
-      <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
-        <span class="c1">// 如果聚合语句和选中列都没有，那么直接返回 withFilter
-</span><span class="c1"></span>        <span class="n">withFilter</span>
-      <span class="o">}</span>
-
-      <span class="c1">// 如果有Having语句，那么生成Filter节点
-</span><span class="c1"></span>      <span class="k">val</span> <span class="n">withHaving</span> <span class="k">=</span> <span class="n">withProject</span><span class="o">.</span><span class="n">optional</span><span class="o">(</span><span class="n">having</span><span class="o">)</span> <span class="o">{</span>
-        <span class="c1">// 提取HAVING语句的表达式
-</span><span class="c1"></span>        <span class="k">val</span> <span class="n">predicate</span> <span class="k">=</span> <span class="n">expression</span><span class="o">(</span><span class="n">having</span><span class="o">)</span> <span class="k">match</span> <span class="o">{</span>
-          <span class="k">case</span> <span class="n">p</span><span class="k">:</span> <span class="kt">Predicate</span> <span class="o">=&gt;</span> <span class="n">p</span>
-          <span class="k">case</span> <span class="n">e</span> <span class="k">=&gt;</span> <span class="nc">Cast</span><span class="o">(</span><span class="n">e</span><span class="o">,</span> <span class="nc">BooleanType</span><span class="o">)</span>
-        <span class="o">}</span>
-        <span class="nc">Filter</span><span class="o">(</span><span class="n">predicate</span><span class="o">,</span> <span class="n">withProject</span><span class="o">)</span>
-      <span class="o">}</span>
-
-      <span class="c1">// 如果有DISTINCT关键字，那么生成Distinct节点
-</span><span class="c1"></span>      <span class="k">val</span> <span class="n">withDistinct</span> <span class="k">=</span> <span class="k">if</span> <span class="o">(</span><span class="n">setQuantifier</span><span class="o">()</span> <span class="o">!=</span> <span class="kc">null</span> <span class="o">&amp;&amp;</span> <span class="n">setQuantifier</span><span class="o">().</span><span class="nc">DISTINCT</span><span class="o">()</span> <span class="o">!=</span> <span class="kc">null</span><span class="o">)</span> <span class="o">{</span>
-        <span class="nc">Distinct</span><span class="o">(</span><span class="n">withHaving</span><span class="o">)</span>
-      <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
-        <span class="n">withHaving</span>
-      <span class="o">}</span>
-
-      <span class="c1">// 如果有WINDOW语句，那么调用withWindows方法生成
-</span><span class="c1"></span>      <span class="k">val</span> <span class="n">withWindow</span> <span class="k">=</span> <span class="n">withDistinct</span><span class="o">.</span><span class="n">optionalMap</span><span class="o">(</span><span class="n">windows</span><span class="o">)(</span><span class="n">withWindows</span><span class="o">)</span>
-
-      <span class="c1">// Hint 语句
-</span><span class="c1"></span>      <span class="n">hints</span><span class="o">.</span><span class="n">asScala</span><span class="o">.</span><span class="n">foldRight</span><span class="o">(</span><span class="n">withWindow</span><span class="o">)(</span><span class="n">withHints</span><span class="o">)</span>
-  <span class="o">}</span>
-<span class="o">}</span>
-</code></pre></td></tr></table></div>
+<pre tabindex="0" class="chroma"><code class="language-scala" data-lang="scala"><span class="line"><span class="cl"><span class="k">private</span> <span class="k">def</span> <span class="n">withQuerySpecification</span><span class="o">(</span>
+</span></span><span class="line"><span class="cl">    <span class="n">ctx</span><span class="k">:</span> <span class="kt">QuerySpecificationContext</span><span class="o">,</span>
+</span></span><span class="line"><span class="cl">    <span class="n">relation</span><span class="k">:</span> <span class="kt">LogicalPlan</span><span class="o">)</span><span class="k">:</span> <span class="kt">LogicalPlan</span> <span class="o">=</span> <span class="n">withOrigin</span><span class="o">(</span><span class="n">ctx</span><span class="o">)</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">  <span class="k">import</span> <span class="nn">ctx._</span>  <span class="c1">// import QuerySpecificationContext 类的属性
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>
+</span></span><span class="line"><span class="cl">  <span class="c1">// 根据WHERE语句生成Filter节点
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="k">def</span> <span class="n">filter</span><span class="o">(</span><span class="n">ctx</span><span class="k">:</span> <span class="kt">BooleanExpressionContext</span><span class="o">,</span> <span class="n">plan</span><span class="k">:</span> <span class="kt">LogicalPlan</span><span class="o">)</span><span class="k">:</span> <span class="kt">LogicalPlan</span> <span class="o">=</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">    <span class="nc">Filter</span><span class="o">(</span><span class="n">expression</span><span class="o">(</span><span class="n">ctx</span><span class="o">),</span> <span class="n">plan</span><span class="o">)</span>
+</span></span><span class="line"><span class="cl">  <span class="o">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="c1">// 遍历SELECT选中的列
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="k">val</span> <span class="n">expressions</span> <span class="k">=</span> <span class="nc">Option</span><span class="o">(</span><span class="n">namedExpressionSeq</span><span class="o">).</span><span class="n">toSeq</span>
+</span></span><span class="line"><span class="cl">    <span class="o">.</span><span class="n">flatMap</span><span class="o">(</span><span class="k">_</span><span class="o">.</span><span class="n">namedExpression</span><span class="o">.</span><span class="n">asScala</span><span class="o">)</span>
+</span></span><span class="line"><span class="cl">    <span class="o">.</span><span class="n">map</span><span class="o">(</span><span class="n">typedVisit</span><span class="o">[</span><span class="kt">Expression</span><span class="o">])</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="c1">// Create either a transform or a regular query.
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="k">val</span> <span class="n">specType</span> <span class="k">=</span> <span class="nc">Option</span><span class="o">(</span><span class="n">kind</span><span class="o">).</span><span class="n">map</span><span class="o">(</span><span class="k">_</span><span class="o">.</span><span class="n">getType</span><span class="o">).</span><span class="n">getOrElse</span><span class="o">(</span><span class="nc">SqlBaseParser</span><span class="o">.</span><span class="nc">SELECT</span><span class="o">)</span>
+</span></span><span class="line"><span class="cl">  <span class="n">specType</span> <span class="k">match</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">    <span class="k">case</span> <span class="nc">SqlBaseParser</span><span class="o">.</span><span class="nc">MAP</span> <span class="o">|</span> <span class="nc">SqlBaseParser</span><span class="o">.</span><span class="nc">REDUCE</span> <span class="o">|</span> <span class="nc">SqlBaseParser</span><span class="o">.</span><span class="nc">TRANSFORM</span> <span class="k">=&gt;</span>
+</span></span><span class="line"><span class="cl">      <span class="c1">// Transform 类型，会生成 ScriptTransformation 实例。
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>      <span class="o">.......</span>
+</span></span><span class="line"><span class="cl">    <span class="k">case</span> <span class="nc">SqlBaseParser</span><span class="o">.</span><span class="nc">SELECT</span> <span class="k">=&gt;</span>
+</span></span><span class="line"><span class="cl">      <span class="c1">// 普通 select 类型
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>
+</span></span><span class="line"><span class="cl">      <span class="c1">// lateral views 用来将此列数据分开，生成多行数据
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>      <span class="k">val</span> <span class="n">withLateralView</span> <span class="k">=</span> <span class="n">ctx</span><span class="o">.</span><span class="n">lateralView</span><span class="o">.</span><span class="n">asScala</span><span class="o">.</span><span class="n">foldLeft</span><span class="o">(</span><span class="n">relation</span><span class="o">)(</span><span class="n">withGenerate</span><span class="o">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">      <span class="c1">// 如果有 where 语句，那么生成Filter实例
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>      <span class="k">val</span> <span class="n">withFilter</span> <span class="k">=</span> <span class="n">withLateralView</span><span class="o">.</span><span class="n">optionalMap</span><span class="o">(</span><span class="n">where</span><span class="o">)(</span><span class="n">filter</span><span class="o">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">      <span class="c1">// 注意到这里，会对Expression子类进行处理，将其转换为NamedExpression的子类。
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>      <span class="c1">// 如果表达式不是NamedExpression的子类，那么生成UnresolvedAlias实例，
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>      <span class="c1">// UnresolvedAlias只是起到封装的作用，后面会被analyze
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>      <span class="k">val</span> <span class="n">namedExpressions</span> <span class="k">=</span> <span class="n">expressions</span><span class="o">.</span><span class="n">map</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">        <span class="k">case</span> <span class="n">e</span><span class="k">:</span> <span class="kt">NamedExpression</span> <span class="o">=&gt;</span> <span class="n">e</span>
+</span></span><span class="line"><span class="cl">        <span class="k">case</span> <span class="n">e</span><span class="k">:</span> <span class="kt">Expression</span> <span class="o">=&gt;</span> <span class="nc">UnresolvedAlias</span><span class="o">(</span><span class="n">e</span><span class="o">)</span>
+</span></span><span class="line"><span class="cl">      <span class="o">}</span>
+</span></span><span class="line"><span class="cl">      <span class="c1">// 这里的aggregation是属于QuerySpecificationContext的，因为前面已经import，所以直接使用
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>      <span class="k">val</span> <span class="n">withProject</span> <span class="k">=</span> <span class="k">if</span> <span class="o">(</span><span class="n">aggregation</span> <span class="o">!=</span> <span class="kc">null</span><span class="o">)</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">        <span class="c1">// 如果有聚合语句，那么调用withAggregation方法，生成聚合节点
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>        <span class="c1">// 如果聚合语句包含GROUPING SETS用法，那么返回GroupingSets实例
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>        <span class="c1">// 苟泽返回Aggregate实例
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>        <span class="n">withAggregation</span><span class="o">(</span><span class="n">aggregation</span><span class="o">,</span> <span class="n">namedExpressions</span><span class="o">,</span> <span class="n">withFilter</span><span class="o">)</span>
+</span></span><span class="line"><span class="cl">      <span class="o">}</span> <span class="k">else</span> <span class="k">if</span> <span class="o">(</span><span class="n">namedExpressions</span><span class="o">.</span><span class="n">nonEmpty</span><span class="o">)</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">        <span class="c1">// 否则生成Project实例
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>        <span class="nc">Project</span><span class="o">(</span><span class="n">namedExpressions</span><span class="o">,</span> <span class="n">withFilter</span><span class="o">)</span>
+</span></span><span class="line"><span class="cl">      <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">        <span class="c1">// 如果聚合语句和选中列都没有，那么直接返回 withFilter
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>        <span class="n">withFilter</span>
+</span></span><span class="line"><span class="cl">      <span class="o">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">      <span class="c1">// 如果有Having语句，那么生成Filter节点
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>      <span class="k">val</span> <span class="n">withHaving</span> <span class="k">=</span> <span class="n">withProject</span><span class="o">.</span><span class="n">optional</span><span class="o">(</span><span class="n">having</span><span class="o">)</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">        <span class="c1">// 提取HAVING语句的表达式
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>        <span class="k">val</span> <span class="n">predicate</span> <span class="k">=</span> <span class="n">expression</span><span class="o">(</span><span class="n">having</span><span class="o">)</span> <span class="k">match</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">          <span class="k">case</span> <span class="n">p</span><span class="k">:</span> <span class="kt">Predicate</span> <span class="o">=&gt;</span> <span class="n">p</span>
+</span></span><span class="line"><span class="cl">          <span class="k">case</span> <span class="n">e</span> <span class="k">=&gt;</span> <span class="nc">Cast</span><span class="o">(</span><span class="n">e</span><span class="o">,</span> <span class="nc">BooleanType</span><span class="o">)</span>
+</span></span><span class="line"><span class="cl">        <span class="o">}</span>
+</span></span><span class="line"><span class="cl">        <span class="nc">Filter</span><span class="o">(</span><span class="n">predicate</span><span class="o">,</span> <span class="n">withProject</span><span class="o">)</span>
+</span></span><span class="line"><span class="cl">      <span class="o">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">      <span class="c1">// 如果有DISTINCT关键字，那么生成Distinct节点
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>      <span class="k">val</span> <span class="n">withDistinct</span> <span class="k">=</span> <span class="k">if</span> <span class="o">(</span><span class="n">setQuantifier</span><span class="o">()</span> <span class="o">!=</span> <span class="kc">null</span> <span class="o">&amp;&amp;</span> <span class="n">setQuantifier</span><span class="o">().</span><span class="nc">DISTINCT</span><span class="o">()</span> <span class="o">!=</span> <span class="kc">null</span><span class="o">)</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">        <span class="nc">Distinct</span><span class="o">(</span><span class="n">withHaving</span><span class="o">)</span>
+</span></span><span class="line"><span class="cl">      <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">        <span class="n">withHaving</span>
+</span></span><span class="line"><span class="cl">      <span class="o">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">      <span class="c1">// 如果有WINDOW语句，那么调用withWindows方法生成
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>      <span class="k">val</span> <span class="n">withWindow</span> <span class="k">=</span> <span class="n">withDistinct</span><span class="o">.</span><span class="n">optionalMap</span><span class="o">(</span><span class="n">windows</span><span class="o">)(</span><span class="n">withWindows</span><span class="o">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">      <span class="c1">// Hint 语句
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>      <span class="n">hints</span><span class="o">.</span><span class="n">asScala</span><span class="o">.</span><span class="n">foldRight</span><span class="o">(</span><span class="n">withWindow</span><span class="o">)(</span><span class="n">withHints</span><span class="o">)</span>
+</span></span><span class="line"><span class="cl">  <span class="o">}</span>
+</span></span><span class="line"><span class="cl"><span class="o">}</span>
+</span></span></code></pre></td></tr></table></div>
 </div>
 </div><p>从上面可以看到如何生成了多个LogicalPlan的种类。</p>
 <h3 id="from-规则"><a href="#from-规则" class="anchor-link"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon anchor-icon"><path d="M326.612 185.391c59.747 59.809 58.927 155.698.36 214.59-.11.12-.24.25-.36.37l-67.2 67.2c-59.27 59.27-155.699 59.262-214.96 0-59.27-59.26-59.27-155.7 0-214.96l37.106-37.106c9.84-9.84 26.786-3.3 27.294 10.606.648 17.722 3.826 35.527 9.69 52.721 1.986 5.822.567 12.262-3.783 16.612l-13.087 13.087c-28.026 28.026-28.905 73.66-1.155 101.96 28.024 28.579 74.086 28.749 102.325.51l67.2-67.19c28.191-28.191 28.073-73.757 0-101.83-3.701-3.694-7.429-6.564-10.341-8.569a16.037 16.037 0 0 1-6.947-12.606c-.396-10.567 3.348-21.456 11.698-29.806l21.054-21.055c5.521-5.521 14.182-6.199 20.584-1.731a152.482 152.482 0 0 1 20.522 17.197zM467.547 44.449c-59.261-59.262-155.69-59.27-214.96 0l-67.2 67.2c-.12.12-.25.25-.36.37-58.566 58.892-59.387 154.781.36 214.59a152.454 152.454 0 0 0 20.521 17.196c6.402 4.468 15.064 3.789 20.584-1.731l21.054-21.055c8.35-8.35 12.094-19.239 11.698-29.806a16.037 16.037 0 0 0-6.947-12.606c-2.912-2.005-6.64-4.875-10.341-8.569-28.073-28.073-28.191-73.639 0-101.83l67.2-67.19c28.239-28.239 74.3-28.069 102.325.51 27.75 28.3 26.872 73.934-1.155 101.96l-13.087 13.087c-4.35 4.35-5.769 10.79-3.783 16.612 5.864 17.194 9.042 34.999 9.69 52.721.509 13.906 17.454 20.446 27.294 10.606l37.106-37.106c59.271-59.259 59.271-155.699.001-214.959z"/></svg></a>from 规则</h3>
@@ -904,14 +904,14 @@
 </span><span class="lnt">7
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell">+- <span class="s1">&#39;Join Inner
-</span><span class="s1">   :- &#39;</span>Join Inner
-   :  :- <span class="s1">&#39;Join Inner
-</span><span class="s1">   :  :  :- &#39;</span>UnresolvedRelation <span class="sb">`</span>A<span class="sb">`</span>
-   :  :  +- <span class="s1">&#39;UnresolvedRelation `B`
-</span><span class="s1">   :  +- &#39;</span>UnresolvedRelation <span class="sb">`</span>C<span class="sb">`</span>
-   +- <span class="err">&#39;</span>UnresolvedRelation <span class="sb">`</span>D<span class="sb">`</span>
-</code></pre></td></tr></table></div>
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">+- <span class="s1">&#39;Join Inner
+</span></span></span><span class="line"><span class="cl"><span class="s1">   :- &#39;</span>Join Inner
+</span></span><span class="line"><span class="cl">   :  :- <span class="s1">&#39;Join Inner
+</span></span></span><span class="line"><span class="cl"><span class="s1">   :  :  :- &#39;</span>UnresolvedRelation <span class="sb">`</span>A<span class="sb">`</span>
+</span></span><span class="line"><span class="cl">   :  :  +- <span class="s1">&#39;UnresolvedRelation `B`
+</span></span></span><span class="line"><span class="cl"><span class="s1">   :  +- &#39;</span>UnresolvedRelation <span class="sb">`</span>C<span class="sb">`</span>
+</span></span><span class="line"><span class="cl">   +- <span class="err">&#39;</span>UnresolvedRelation <span class="sb">`</span>D<span class="sb">`</span>
+</span></span></code></pre></td></tr></table></div>
 </div>
 </div><p>因为遍历的顺序，这样整个树的左边节点（不包括叶子节点）都是 JOIN 节点，其余的都是非JOIN节点。</p>
 <h2 id="解析-sql-实例"><a href="#解析-sql-实例" class="anchor-link"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon anchor-icon"><path d="M326.612 185.391c59.747 59.809 58.927 155.698.36 214.59-.11.12-.24.25-.36.37l-67.2 67.2c-59.27 59.27-155.699 59.262-214.96 0-59.27-59.26-59.27-155.7 0-214.96l37.106-37.106c9.84-9.84 26.786-3.3 27.294 10.606.648 17.722 3.826 35.527 9.69 52.721 1.986 5.822.567 12.262-3.783 16.612l-13.087 13.087c-28.026 28.026-28.905 73.66-1.155 101.96 28.024 28.579 74.086 28.749 102.325.51l67.2-67.19c28.191-28.191 28.073-73.757 0-101.83-3.701-3.694-7.429-6.564-10.341-8.569a16.037 16.037 0 0 1-6.947-12.606c-.396-10.567 3.348-21.456 11.698-29.806l21.054-21.055c5.521-5.521 14.182-6.199 20.584-1.731a152.482 152.482 0 0 1 20.522 17.197zM467.547 44.449c-59.261-59.262-155.69-59.27-214.96 0l-67.2 67.2c-.12.12-.25.25-.36.37-58.566 58.892-59.387 154.781.36 214.59a152.454 152.454 0 0 0 20.521 17.196c6.402 4.468 15.064 3.789 20.584-1.731l21.054-21.055c8.35-8.35 12.094-19.239 11.698-29.806a16.037 16.037 0 0 0-6.947-12.606c-2.912-2.005-6.64-4.875-10.341-8.569-28.073-28.073-28.191-73.639 0-101.83l67.2-67.19c28.239-28.239 74.3-28.069 102.325.51 27.75 28.3 26.872 73.934-1.155 101.96l-13.087 13.087c-4.35 4.35-5.769 10.79-3.783 16.612 5.864 17.194 9.042 34.999 9.69 52.721.509 13.906 17.454 20.446 27.294 10.606l37.106-37.106c59.271-59.259 59.271-155.699.001-214.959z"/></svg></a>解析 Sql 实例</h2>
@@ -933,20 +933,20 @@
 </span><span class="lnt">13
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-sql" data-lang="sql"><span class="w"> </span><span class="k">CREATE</span><span class="w"> </span><span class="k">TABLE</span><span class="w"> </span><span class="n">fruit</span><span class="w"> </span><span class="p">(</span><span class="w">
-</span><span class="w">     </span><span class="n">id</span><span class="w"> </span><span class="nb">INT</span><span class="p">,</span><span class="w"> 
-</span><span class="w">     </span><span class="n">name</span><span class="w"> </span><span class="n">STRING</span><span class="p">,</span><span class="w"> 
-</span><span class="w">     </span><span class="n">price</span><span class="w"> </span><span class="nb">FLOAT</span><span class="p">,</span><span class="w">
-</span><span class="w">     </span><span class="n">amount</span><span class="w"> </span><span class="nb">INT</span><span class="w">
-</span><span class="w"> </span><span class="p">);</span><span class="w">
-</span><span class="w">
-</span><span class="w"> </span><span class="k">CREATE</span><span class="w"> </span><span class="k">TABLE</span><span class="w"> </span><span class="n">orders</span><span class="w"> </span><span class="p">(</span><span class="w">
-</span><span class="w"> 	</span><span class="n">id</span><span class="w"> </span><span class="nb">INT</span><span class="p">,</span><span class="w">
-</span><span class="w">    </span><span class="n">fruit_id</span><span class="w"> </span><span class="nb">INT</span><span class="p">,</span><span class="w">
-</span><span class="w">    </span><span class="n">create_time</span><span class="w"> </span><span class="k">TIMESTAMP</span><span class="p">,</span><span class="w">
-</span><span class="w">    </span><span class="n">consumer_name</span><span class="w"> </span><span class="n">STRING</span><span class="w">
-</span><span class="w"> </span><span class="p">);</span><span class="w">
-</span></code></pre></td></tr></table></div>
+<pre tabindex="0" class="chroma"><code class="language-sql" data-lang="sql"><span class="line"><span class="cl"><span class="w"> </span><span class="k">CREATE</span><span class="w"> </span><span class="k">TABLE</span><span class="w"> </span><span class="n">fruit</span><span class="w"> </span><span class="p">(</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">     </span><span class="n">id</span><span class="w"> </span><span class="nb">INT</span><span class="p">,</span><span class="w"> 
+</span></span></span><span class="line"><span class="cl"><span class="w">     </span><span class="n">name</span><span class="w"> </span><span class="n">STRING</span><span class="p">,</span><span class="w"> 
+</span></span></span><span class="line"><span class="cl"><span class="w">     </span><span class="n">price</span><span class="w"> </span><span class="nb">FLOAT</span><span class="p">,</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">     </span><span class="n">amount</span><span class="w"> </span><span class="nb">INT</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"> </span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"> </span><span class="k">CREATE</span><span class="w"> </span><span class="k">TABLE</span><span class="w"> </span><span class="n">orders</span><span class="w"> </span><span class="p">(</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"> 	</span><span class="n">id</span><span class="w"> </span><span class="nb">INT</span><span class="p">,</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="n">fruit_id</span><span class="w"> </span><span class="nb">INT</span><span class="p">,</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="n">create_time</span><span class="w"> </span><span class="k">TIMESTAMP</span><span class="p">,</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="n">consumer_name</span><span class="w"> </span><span class="n">STRING</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"> </span><span class="p">);</span><span class="w">
+</span></span></span></code></pre></td></tr></table></div>
 </div>
 </div><h3 id="查询语句一"><a href="#查询语句一" class="anchor-link"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon anchor-icon"><path d="M326.612 185.391c59.747 59.809 58.927 155.698.36 214.59-.11.12-.24.25-.36.37l-67.2 67.2c-59.27 59.27-155.699 59.262-214.96 0-59.27-59.26-59.27-155.7 0-214.96l37.106-37.106c9.84-9.84 26.786-3.3 27.294 10.606.648 17.722 3.826 35.527 9.69 52.721 1.986 5.822.567 12.262-3.783 16.612l-13.087 13.087c-28.026 28.026-28.905 73.66-1.155 101.96 28.024 28.579 74.086 28.749 102.325.51l67.2-67.19c28.191-28.191 28.073-73.757 0-101.83-3.701-3.694-7.429-6.564-10.341-8.569a16.037 16.037 0 0 1-6.947-12.606c-.396-10.567 3.348-21.456 11.698-29.806l21.054-21.055c5.521-5.521 14.182-6.199 20.584-1.731a152.482 152.482 0 0 1 20.522 17.197zM467.547 44.449c-59.261-59.262-155.69-59.27-214.96 0l-67.2 67.2c-.12.12-.25.25-.36.37-58.566 58.892-59.387 154.781.36 214.59a152.454 152.454 0 0 0 20.521 17.196c6.402 4.468 15.064 3.789 20.584-1.731l21.054-21.055c8.35-8.35 12.094-19.239 11.698-29.806a16.037 16.037 0 0 0-6.947-12.606c-2.912-2.005-6.64-4.875-10.341-8.569-28.073-28.073-28.191-73.639 0-101.83l67.2-67.19c28.239-28.239 74.3-28.069 102.325.51 27.75 28.3 26.872 73.934-1.155 101.96l-13.087 13.087c-4.35 4.35-5.769 10.79-3.783 16.612 5.864 17.194 9.042 34.999 9.69 52.721.509 13.906 17.454 20.446 27.294 10.606l37.106-37.106c59.271-59.259 59.271-155.699.001-214.959z"/></svg></a>查询语句一</h3>
 <p>执行下列语句</p>
@@ -955,8 +955,8 @@
 <pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-sql" data-lang="sql"><span class="k">SELECT</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="k">FROM</span><span class="w"> </span><span class="n">fruit</span><span class="w"> </span><span class="k">ORDER</span><span class="w"> </span><span class="k">BY</span><span class="w"> </span><span class="n">ID</span><span class="w"> </span><span class="k">LIMIT</span><span class="w"> </span><span class="mi">10</span><span class="p">;</span><span class="w"> </span><span class="c1">-- 按序列出前面10个水果
-</span></code></pre></td></tr></table></div>
+<pre tabindex="0" class="chroma"><code class="language-sql" data-lang="sql"><span class="line"><span class="cl"><span class="k">SELECT</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="k">FROM</span><span class="w"> </span><span class="n">fruit</span><span class="w"> </span><span class="k">ORDER</span><span class="w"> </span><span class="k">BY</span><span class="w"> </span><span class="n">ID</span><span class="w"> </span><span class="k">LIMIT</span><span class="w"> </span><span class="mi">10</span><span class="p">;</span><span class="w"> </span><span class="c1">-- 按序列出前面10个水果
+</span></span></span></code></pre></td></tr></table></div>
 </div>
 </div><p>解析过程如下：</p>
 <div class="highlight"><div class="chroma">
@@ -978,22 +978,22 @@
 </span><span class="lnt">15
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="o">==</span> Parsed Logical <span class="nv">Plan</span> <span class="o">==</span>
-<span class="s1">&#39;GlobalLimit 10
-</span><span class="s1">+- &#39;</span>LocalLimit <span class="m">10</span>
-   +- <span class="s1">&#39;Sort [&#39;</span>ID ASC NULLS FIRST<span class="o">]</span>, <span class="nb">true</span>
-      +- <span class="s1">&#39;Project [*]
-</span><span class="s1">         +- &#39;</span>UnresolvedRelation <span class="sb">`</span>fruit<span class="sb">`</span>
-
-<span class="o">==</span> Analyzed Logical <span class="nv">Plan</span> <span class="o">==</span>
-id: int, name: string, price: float, amount: int
-GlobalLimit <span class="m">10</span>
-+- LocalLimit <span class="m">10</span>
-   +- Sort <span class="o">[</span>ID#0 ASC NULLS FIRST<span class="o">]</span>, <span class="nb">true</span>
-      +- Project <span class="o">[</span>id#0, name#1, price#2, amount#3<span class="o">]</span>
-         +- SubqueryAlias <span class="sb">`</span>default<span class="sb">`</span>.<span class="sb">`</span>fruit<span class="sb">`</span>
-            +- HiveTableRelation <span class="sb">`</span>default<span class="sb">`</span>.<span class="sb">`</span>fruit<span class="sb">`</span>, org.apache.hadoop.hive.serde2.lazy.LazySimpleSerDe, <span class="o">[</span>id#0, name#1, price#2, amount#3<span class="o">]</span>
-</code></pre></td></tr></table></div>
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl"><span class="o">==</span> Parsed Logical <span class="nv">Plan</span> <span class="o">==</span>
+</span></span><span class="line"><span class="cl"><span class="s1">&#39;GlobalLimit 10
+</span></span></span><span class="line"><span class="cl"><span class="s1">+- &#39;</span>LocalLimit <span class="m">10</span>
+</span></span><span class="line"><span class="cl">   +- <span class="s1">&#39;Sort [&#39;</span>ID ASC NULLS FIRST<span class="o">]</span>, <span class="nb">true</span>
+</span></span><span class="line"><span class="cl">      +- <span class="s1">&#39;Project [*]
+</span></span></span><span class="line"><span class="cl"><span class="s1">         +- &#39;</span>UnresolvedRelation <span class="sb">`</span>fruit<span class="sb">`</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="o">==</span> Analyzed Logical <span class="nv">Plan</span> <span class="o">==</span>
+</span></span><span class="line"><span class="cl">id: int, name: string, price: float, amount: int
+</span></span><span class="line"><span class="cl">GlobalLimit <span class="m">10</span>
+</span></span><span class="line"><span class="cl">+- LocalLimit <span class="m">10</span>
+</span></span><span class="line"><span class="cl">   +- Sort <span class="o">[</span>ID#0 ASC NULLS FIRST<span class="o">]</span>, <span class="nb">true</span>
+</span></span><span class="line"><span class="cl">      +- Project <span class="o">[</span>id#0, name#1, price#2, amount#3<span class="o">]</span>
+</span></span><span class="line"><span class="cl">         +- SubqueryAlias <span class="sb">`</span>default<span class="sb">`</span>.<span class="sb">`</span>fruit<span class="sb">`</span>
+</span></span><span class="line"><span class="cl">            +- HiveTableRelation <span class="sb">`</span>default<span class="sb">`</span>.<span class="sb">`</span>fruit<span class="sb">`</span>, org.apache.hadoop.hive.serde2.lazy.LazySimpleSerDe, <span class="o">[</span>id#0, name#1, price#2, amount#3<span class="o">]</span>
+</span></span></code></pre></td></tr></table></div>
 </div>
 </div><p>首先看初步生成的结果：</p>
 <p>Limit 语句被解析成了 GlobalLimit 和 LocalLimit 两个节点，LocalLimit 节点表示每个分区的数目限制，GlobalLimit 节点表示总的数目限制。</p>
@@ -1010,8 +1010,8 @@ GlobalLimit <span class="m">10</span>
 <pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-sql" data-lang="sql"><span class="k">SELECT</span><span class="w"> </span><span class="n">fruit</span><span class="p">.</span><span class="n">name</span><span class="p">,</span><span class="w"> </span><span class="n">orders</span><span class="p">.</span><span class="n">create_time</span><span class="p">,</span><span class="w"> </span><span class="n">orderes</span><span class="p">.</span><span class="n">consumer_name</span><span class="w">  </span><span class="k">FROM</span><span class="w"> </span><span class="n">orders</span><span class="w"> </span><span class="k">INNER</span><span class="w"> </span><span class="k">JOIN</span><span class="w">  </span><span class="n">fruit</span><span class="w"> </span><span class="k">ON</span><span class="w"> </span><span class="n">orders</span><span class="p">.</span><span class="n">fruit_id</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">fruit</span><span class="p">.</span><span class="n">id</span><span class="w"> </span><span class="k">WHERE</span><span class="w"> </span><span class="n">create_time</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="s1">&#39;2019-06-17&#39;</span><span class="p">;</span><span class="w">
-</span></code></pre></td></tr></table></div>
+<pre tabindex="0" class="chroma"><code class="language-sql" data-lang="sql"><span class="line"><span class="cl"><span class="k">SELECT</span><span class="w"> </span><span class="n">fruit</span><span class="p">.</span><span class="n">name</span><span class="p">,</span><span class="w"> </span><span class="n">orders</span><span class="p">.</span><span class="n">create_time</span><span class="p">,</span><span class="w"> </span><span class="n">orderes</span><span class="p">.</span><span class="n">consumer_name</span><span class="w">  </span><span class="k">FROM</span><span class="w"> </span><span class="n">orders</span><span class="w"> </span><span class="k">INNER</span><span class="w"> </span><span class="k">JOIN</span><span class="w">  </span><span class="n">fruit</span><span class="w"> </span><span class="k">ON</span><span class="w"> </span><span class="n">orders</span><span class="p">.</span><span class="n">fruit_id</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">fruit</span><span class="p">.</span><span class="n">id</span><span class="w"> </span><span class="k">WHERE</span><span class="w"> </span><span class="n">create_time</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="s1">&#39;2019-06-17&#39;</span><span class="p">;</span><span class="w">
+</span></span></span></code></pre></td></tr></table></div>
 </div>
 </div><p>解析过程如下：</p>
 <div class="highlight"><div class="chroma">
@@ -1033,22 +1033,22 @@ GlobalLimit <span class="m">10</span>
 </span><span class="lnt">15
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="o">==</span> Parsed Logical <span class="nv">Plan</span> <span class="o">==</span>
-<span class="s1">&#39;Project [&#39;</span>fruit.name, <span class="s1">&#39;orders.create_time, &#39;</span>orders.consumer_name<span class="o">]</span>
-+- <span class="s1">&#39;Filter (&#39;</span>create_time &gt; 2019-06-17<span class="o">)</span>
-   +- <span class="s1">&#39;Join Inner, (&#39;</span>orders.fruit_id <span class="o">=</span> <span class="s1">&#39;fruit.id)
-</span><span class="s1">      :- &#39;</span>UnresolvedRelation <span class="sb">`</span>orders<span class="sb">`</span>
-      +- <span class="err">&#39;</span>UnresolvedRelation <span class="sb">`</span>fruit<span class="sb">`</span>
-
-<span class="o">==</span> Analyzed Logical <span class="nv">Plan</span> <span class="o">==</span>
-name: string, create_time: timestamp, consumer_name: string
-Project <span class="o">[</span>name#41, create_time#38, consumer_name#39<span class="o">]</span>
-+- Filter <span class="o">(</span>cast<span class="o">(</span>create_time#38 as string<span class="o">)</span> &gt; 2019-06-17<span class="o">)</span>
-   +- Join Inner, <span class="o">(</span>fruit_id#37 <span class="o">=</span> id#40<span class="o">)</span>
-      :- SubqueryAlias <span class="sb">`</span>default<span class="sb">`</span>.<span class="sb">`</span>orders<span class="sb">`</span>
-      :  +- HiveTableRelation <span class="sb">`</span>default<span class="sb">`</span>.<span class="sb">`</span>orders<span class="sb">`</span>, org.apache.hadoop.hive.serde2.lazy.LazySimpleSerDe, <span class="o">[</span>id#36, fruit_id#37, create_time#38, consumer_name#39<span class="o">]</span>
-      +- SubqueryAlias <span class="sb">`</span>default<span class="sb">`</span>.<span class="sb">`</span>fruit<span class="sb">`</span>...
-</code></pre></td></tr></table></div>
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl"><span class="o">==</span> Parsed Logical <span class="nv">Plan</span> <span class="o">==</span>
+</span></span><span class="line"><span class="cl"><span class="s1">&#39;Project [&#39;</span>fruit.name, <span class="s1">&#39;orders.create_time, &#39;</span>orders.consumer_name<span class="o">]</span>
+</span></span><span class="line"><span class="cl">+- <span class="s1">&#39;Filter (&#39;</span>create_time &gt; 2019-06-17<span class="o">)</span>
+</span></span><span class="line"><span class="cl">   +- <span class="s1">&#39;Join Inner, (&#39;</span>orders.fruit_id <span class="o">=</span> <span class="s1">&#39;fruit.id)
+</span></span></span><span class="line"><span class="cl"><span class="s1">      :- &#39;</span>UnresolvedRelation <span class="sb">`</span>orders<span class="sb">`</span>
+</span></span><span class="line"><span class="cl">      +- <span class="err">&#39;</span>UnresolvedRelation <span class="sb">`</span>fruit<span class="sb">`</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="o">==</span> Analyzed Logical <span class="nv">Plan</span> <span class="o">==</span>
+</span></span><span class="line"><span class="cl">name: string, create_time: timestamp, consumer_name: string
+</span></span><span class="line"><span class="cl">Project <span class="o">[</span>name#41, create_time#38, consumer_name#39<span class="o">]</span>
+</span></span><span class="line"><span class="cl">+- Filter <span class="o">(</span>cast<span class="o">(</span>create_time#38 as string<span class="o">)</span> &gt; 2019-06-17<span class="o">)</span>
+</span></span><span class="line"><span class="cl">   +- Join Inner, <span class="o">(</span>fruit_id#37 <span class="o">=</span> id#40<span class="o">)</span>
+</span></span><span class="line"><span class="cl">      :- SubqueryAlias <span class="sb">`</span>default<span class="sb">`</span>.<span class="sb">`</span>orders<span class="sb">`</span>
+</span></span><span class="line"><span class="cl">      :  +- HiveTableRelation <span class="sb">`</span>default<span class="sb">`</span>.<span class="sb">`</span>orders<span class="sb">`</span>, org.apache.hadoop.hive.serde2.lazy.LazySimpleSerDe, <span class="o">[</span>id#36, fruit_id#37, create_time#38, consumer_name#39<span class="o">]</span>
+</span></span><span class="line"><span class="cl">      +- SubqueryAlias <span class="sb">`</span>default<span class="sb">`</span>.<span class="sb">`</span>fruit<span class="sb">`</span>...
+</span></span></code></pre></td></tr></table></div>
 </div>
 </div><p>WHERE 语句被解析成了 Filter 节点，它包含了过滤的表达式</p>
 <p>INNER JOIN 语句 被解析成了 Join 节点，它包含了 join 的表达式，并且它还有两个 UnresolvedRelation 子节点，代表着 需要 join 的两张表。</p>
@@ -1079,9 +1079,9 @@ Project <span class="o">[</span>name#41, create_time#38, consumer_name#39<span c
 
         
     <div class="updated-badge-container">
-        <span title="Updated @ 2021-10-22 14:44:34 CST" style="cursor:help">
+        <span title="Updated @ 2023-07-02 16:59:09 CST" style="cursor:help">
 
-<svg xmlns="http://www.w3.org/2000/svg" width="130" height="20" class="updated-badge"><linearGradient id="b" x2="0" y2="100%"><stop offset="0" stop-color="#bbb" stop-opacity=".1"/><stop offset="1" stop-opacity=".1"/></linearGradient><clipPath id="a"><rect width="130" height="20" rx="3" fill="#fff"/></clipPath><g clip-path="url(#a)"><path class="updated-badge-left" d="M0 0h55v20H0z"/><path class="updated-badge-right" d="M55 0h75v20H55z"/><path fill="url(#b)" d="M0 0h130v20H0z"/></g><g fill="#fff" text-anchor="middle" font-size="110"><text x="285" y="150" fill="#010101" fill-opacity=".3" textLength="450" transform="scale(.1)">updated</text><text x="285" y="140" textLength="450" transform="scale(.1)">updated</text><text x="915" y="150" fill="#010101" fill-opacity=".3" textLength="650" transform="scale(.1)">2021-10-22</text><text x="915" y="140" textLength="650" transform="scale(.1)">2021-10-22</text></g></svg>
+<svg xmlns="http://www.w3.org/2000/svg" width="130" height="20" class="updated-badge"><linearGradient id="b" x2="0" y2="100%"><stop offset="0" stop-color="#bbb" stop-opacity=".1"/><stop offset="1" stop-opacity=".1"/></linearGradient><clipPath id="a"><rect width="130" height="20" rx="3" fill="#fff"/></clipPath><g clip-path="url(#a)"><path class="updated-badge-left" d="M0 0h55v20H0z"/><path class="updated-badge-right" d="M55 0h75v20H55z"/><path fill="url(#b)" d="M0 0h130v20H0z"/></g><g fill="#fff" text-anchor="middle" font-size="110"><text x="285" y="150" fill="#010101" fill-opacity=".3" textLength="450" transform="scale(.1)">updated</text><text x="285" y="140" textLength="450" transform="scale(.1)">updated</text><text x="915" y="150" fill="#010101" fill-opacity=".3" textLength="650" transform="scale(.1)">2023-07-02</text><text x="915" y="140" textLength="650" transform="scale(.1)">2023-07-02</text></g></svg>
         </span></div>
 
 

@@ -3,7 +3,7 @@
     <head prefix="og: http://ogp.me/ns# article: http://ogp.me/ns/article#">
     <meta charset="UTF-8" />
 
-    <meta name="generator" content="Hugo 0.88.1" /><meta name="theme-color" content="#fff" />
+    <meta name="generator" content="Hugo 0.115.0"><meta name="theme-color" content="#fff" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     
     <meta name="format-detection" content="telephone=no, date=no, address=no, email=no" />
@@ -14,11 +14,11 @@
 
     <title>Kafka Consumer 读取事务消息 | 学习笔记</title>
 
-    <link rel="stylesheet" href="/css/meme.min.2d3e1834af2bc8dda20c7d74aaa1d8134845094441b7a554a5206ccd4b472596.css"/>
+    <link rel="stylesheet" href="/css/meme.min.91e7f58f97e1c60563ef481c38d9684fa8099537801d6f17bbfc724121e7d8f1.css"/>
 
     
     
-        <script src="/js/meme.min.800f61672145711eb3e1f29fcfcc3dbe0139dd459259718b611a0390f74703d1.js"></script>
+        <script src="/js/meme.min.3210a00c2fdcf6f831170b681b8ee40f83f0224663661e986872616aec45407f.js"></script>
 
     
 
@@ -54,7 +54,7 @@
         "@context": "https://schema.org",
         "@type": "BlogPosting",
         "datePublished": "2019-04-20T22:05:15+00:00",
-        "dateModified": "2021-10-22T14:44:34+08:00",
+        "dateModified": "2023-07-02T16:59:09+08:00",
         "url": "https://zhmin.github.io/posts/kafka-consumer-transaction/",
         "headline": "Kafka Consumer 读取事务消息",
         "description": "Kafka Consumer 读取事务消息 Kafka 在每次发送事务消息之后，还需要发送确认消息，才能表示此次事务完成。确认消息可以是事务确认成功的消息，也可以是事务终止的消息。如果是事务终止，那么此次事务需要回滚，所有涉及到该事务之前……",
@@ -98,7 +98,7 @@
 <meta property="og:locale" content="zh" /><meta property="og:image" content="https://zhmin.github.io/kafka-consumer-transcation.svg" />
 <meta property="og:type" content="article" />
     <meta property="article:published_time" content="2019-04-20T22:05:15&#43;00:00" />
-    <meta property="article:modified_time" content="2021-10-22T14:44:34&#43;08:00" />
+    <meta property="article:modified_time" content="2023-07-02T16:59:09&#43;08:00" />
     
     <meta property="article:section" content="posts" />
 
@@ -268,25 +268,25 @@
 </span><span class="lnt">18
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-scala" data-lang="scala"><span class="k">class</span> <span class="nc">TransactionIndex</span><span class="o">(</span><span class="k">val</span> <span class="n">startOffset</span><span class="k">:</span> <span class="kt">Long</span><span class="o">,</span> <span class="nd">@volatile</span> <span class="k">var</span> <span class="n">file</span><span class="k">:</span> <span class="kt">File</span><span class="o">)</span> <span class="k">extends</span> <span class="nc">Logging</span> <span class="o">{</span>
-
-  <span class="c1">// 找到指定范围内的消息，和它有交集的事务，
-</span><span class="c1"></span>  <span class="c1">// fetchOffset为起始位置，upperBoundOffset表示结束位置
-</span><span class="c1"></span>  <span class="k">def</span> <span class="n">collectAbortedTxns</span><span class="o">(</span><span class="n">fetchOffset</span><span class="k">:</span> <span class="kt">Long</span><span class="o">,</span> <span class="n">upperBoundOffset</span><span class="k">:</span> <span class="kt">Long</span><span class="o">)</span><span class="k">:</span> <span class="kt">TxnIndexSearchResult</span> <span class="o">=</span> <span class="o">{</span>
-    <span class="k">val</span> <span class="n">abortedTransactions</span> <span class="k">=</span> <span class="nc">ListBuffer</span><span class="o">.</span><span class="n">empty</span><span class="o">[</span><span class="kt">AbortedTxn</span><span class="o">]</span>
-    <span class="c1">// 遍历事务的Aborted消息
-</span><span class="c1"></span>    <span class="k">for</span> <span class="o">((</span><span class="n">abortedTxn</span><span class="o">,</span> <span class="k">_</span><span class="o">)</span> <span class="k">&lt;-</span> <span class="n">iterator</span><span class="o">())</span> <span class="o">{</span>
-      <span class="c1">// 下面这个if条件，判断是否和这个事务有交集
-</span><span class="c1"></span>      <span class="k">if</span> <span class="o">(</span><span class="n">abortedTxn</span><span class="o">.</span><span class="n">lastOffset</span> <span class="o">&gt;=</span> <span class="n">fetchOffset</span> <span class="o">&amp;&amp;</span> <span class="n">abortedTxn</span><span class="o">.</span><span class="n">firstOffset</span> <span class="o">&lt;</span> <span class="n">upperBoundOffset</span><span class="o">)</span>
-        <span class="n">abortedTransactions</span> <span class="o">+=</span> <span class="n">abortedTxn</span>
-      <span class="c1">// 这个if条件，判断是否结束遍历事务。如果事务的lastStableOffset必须大于结束位置，表示该事务已经和这个范围的消息没有交集了
-</span><span class="c1"></span>      <span class="k">if</span> <span class="o">(</span><span class="n">abortedTxn</span><span class="o">.</span><span class="n">lastStableOffset</span> <span class="o">&gt;=</span> <span class="n">upperBoundOffset</span><span class="o">)</span>
-        <span class="k">return</span> <span class="nc">TxnIndexSearchResult</span><span class="o">(</span><span class="n">abortedTransactions</span><span class="o">.</span><span class="n">toList</span><span class="o">,</span> <span class="n">isComplete</span> <span class="k">=</span> <span class="kc">true</span><span class="o">)</span>
-    <span class="o">}</span>
-    <span class="nc">TxnIndexSearchResult</span><span class="o">(</span><span class="n">abortedTransactions</span><span class="o">.</span><span class="n">toList</span><span class="o">,</span> <span class="n">isComplete</span> <span class="k">=</span> <span class="kc">false</span><span class="o">)</span>
-  <span class="o">}</span>
-<span class="o">}</span>
-</code></pre></td></tr></table></div>
+<pre tabindex="0" class="chroma"><code class="language-scala" data-lang="scala"><span class="line"><span class="cl"><span class="k">class</span> <span class="nc">TransactionIndex</span><span class="o">(</span><span class="k">val</span> <span class="n">startOffset</span><span class="k">:</span> <span class="kt">Long</span><span class="o">,</span> <span class="nd">@volatile</span> <span class="k">var</span> <span class="n">file</span><span class="k">:</span> <span class="kt">File</span><span class="o">)</span> <span class="k">extends</span> <span class="nc">Logging</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="c1">// 找到指定范围内的消息，和它有交集的事务，
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="c1">// fetchOffset为起始位置，upperBoundOffset表示结束位置
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="k">def</span> <span class="n">collectAbortedTxns</span><span class="o">(</span><span class="n">fetchOffset</span><span class="k">:</span> <span class="kt">Long</span><span class="o">,</span> <span class="n">upperBoundOffset</span><span class="k">:</span> <span class="kt">Long</span><span class="o">)</span><span class="k">:</span> <span class="kt">TxnIndexSearchResult</span> <span class="o">=</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">    <span class="k">val</span> <span class="n">abortedTransactions</span> <span class="k">=</span> <span class="nc">ListBuffer</span><span class="o">.</span><span class="n">empty</span><span class="o">[</span><span class="kt">AbortedTxn</span><span class="o">]</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// 遍历事务的Aborted消息
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="k">for</span> <span class="o">((</span><span class="n">abortedTxn</span><span class="o">,</span> <span class="k">_</span><span class="o">)</span> <span class="k">&lt;-</span> <span class="n">iterator</span><span class="o">())</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">      <span class="c1">// 下面这个if条件，判断是否和这个事务有交集
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>      <span class="k">if</span> <span class="o">(</span><span class="n">abortedTxn</span><span class="o">.</span><span class="n">lastOffset</span> <span class="o">&gt;=</span> <span class="n">fetchOffset</span> <span class="o">&amp;&amp;</span> <span class="n">abortedTxn</span><span class="o">.</span><span class="n">firstOffset</span> <span class="o">&lt;</span> <span class="n">upperBoundOffset</span><span class="o">)</span>
+</span></span><span class="line"><span class="cl">        <span class="n">abortedTransactions</span> <span class="o">+=</span> <span class="n">abortedTxn</span>
+</span></span><span class="line"><span class="cl">      <span class="c1">// 这个if条件，判断是否结束遍历事务。如果事务的lastStableOffset必须大于结束位置，表示该事务已经和这个范围的消息没有交集了
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>      <span class="k">if</span> <span class="o">(</span><span class="n">abortedTxn</span><span class="o">.</span><span class="n">lastStableOffset</span> <span class="o">&gt;=</span> <span class="n">upperBoundOffset</span><span class="o">)</span>
+</span></span><span class="line"><span class="cl">        <span class="k">return</span> <span class="nc">TxnIndexSearchResult</span><span class="o">(</span><span class="n">abortedTransactions</span><span class="o">.</span><span class="n">toList</span><span class="o">,</span> <span class="n">isComplete</span> <span class="k">=</span> <span class="kc">true</span><span class="o">)</span>
+</span></span><span class="line"><span class="cl">    <span class="o">}</span>
+</span></span><span class="line"><span class="cl">    <span class="nc">TxnIndexSearchResult</span><span class="o">(</span><span class="n">abortedTransactions</span><span class="o">.</span><span class="n">toList</span><span class="o">,</span> <span class="n">isComplete</span> <span class="k">=</span> <span class="kc">false</span><span class="o">)</span>
+</span></span><span class="line"><span class="cl">  <span class="o">}</span>
+</span></span><span class="line"><span class="cl"><span class="o">}</span>
+</span></span></code></pre></td></tr></table></div>
 </div>
 </div><h2 id="consumer-过滤事务消息"><a href="#consumer-过滤事务消息" class="anchor-link"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon anchor-icon"><path d="M326.612 185.391c59.747 59.809 58.927 155.698.36 214.59-.11.12-.24.25-.36.37l-67.2 67.2c-59.27 59.27-155.699 59.262-214.96 0-59.27-59.26-59.27-155.7 0-214.96l37.106-37.106c9.84-9.84 26.786-3.3 27.294 10.606.648 17.722 3.826 35.527 9.69 52.721 1.986 5.822.567 12.262-3.783 16.612l-13.087 13.087c-28.026 28.026-28.905 73.66-1.155 101.96 28.024 28.579 74.086 28.749 102.325.51l67.2-67.19c28.191-28.191 28.073-73.757 0-101.83-3.701-3.694-7.429-6.564-10.341-8.569a16.037 16.037 0 0 1-6.947-12.606c-.396-10.567 3.348-21.456 11.698-29.806l21.054-21.055c5.521-5.521 14.182-6.199 20.584-1.731a152.482 152.482 0 0 1 20.522 17.197zM467.547 44.449c-59.261-59.262-155.69-59.27-214.96 0l-67.2 67.2c-.12.12-.25.25-.36.37-58.566 58.892-59.387 154.781.36 214.59a152.454 152.454 0 0 0 20.521 17.196c6.402 4.468 15.064 3.789 20.584-1.731l21.054-21.055c8.35-8.35 12.094-19.239 11.698-29.806a16.037 16.037 0 0 0-6.947-12.606c-2.912-2.005-6.64-4.875-10.341-8.569-28.073-28.073-28.191-73.639 0-101.83l67.2-67.19c28.239-28.239 74.3-28.069 102.325.51 27.75 28.3 26.872 73.934-1.155 101.96l-13.087 13.087c-4.35 4.35-5.769 10.79-3.783 16.612 5.864 17.194 9.042 34.999 9.69 52.721.509 13.906 17.454 20.446 27.294 10.606l37.106-37.106c59.271-59.259 59.271-155.699.001-214.959z"/></svg></a>Consumer 过滤事务消息</h2>
 <p>当Consumer收到响应后，会结合Aborted 事务消息，过滤掉因为事务没有成功的消息。过滤原理如下图所示，下面表示服务端返回的响应，有多个消息batch，其中涉及到两个事务，A 和 B。 还有每个事务的起始位置：</p>
@@ -372,75 +372,75 @@
 </span><span class="lnt">68
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="kd">private</span> <span class="kd">class</span> <span class="nc">PartitionRecords</span> <span class="o">{</span>
-    <span class="c1">// 消息batch列表
-</span><span class="c1"></span>    <span class="kd">private</span> <span class="kd">final</span> <span class="n">Iterator</span><span class="o">&lt;?</span> <span class="kd">extends</span> <span class="n">RecordBatch</span><span class="o">&gt;</span> <span class="n">batches</span><span class="o">;</span>
-    <span class="c1">// 保存了那些producer，发送的消息为事务终止
-</span><span class="c1"></span>    <span class="kd">private</span> <span class="kd">final</span> <span class="n">Set</span><span class="o">&lt;</span><span class="n">Long</span><span class="o">&gt;</span> <span class="n">abortedProducerIds</span><span class="o">;</span>
-    <span class="c1">// record结果列表，从batch中生成
-</span><span class="c1"></span>    <span class="kd">private</span> <span class="n">CloseableIterator</span><span class="o">&lt;</span><span class="n">Record</span><span class="o">&gt;</span> <span class="n">records</span><span class="o">;</span>
-    <span class="c1">// 保存了所有了终止事务的信息
-</span><span class="c1"></span>    <span class="kd">private</span> <span class="kd">final</span> <span class="n">PriorityQueue</span><span class="o">&lt;</span><span class="n">FetchResponse</span><span class="o">.</span><span class="na">AbortedTransaction</span><span class="o">&gt;</span> <span class="n">abortedTransactions</span><span class="o">;</span>
-    
-    <span class="kd">private</span> <span class="n">Record</span> <span class="nf">nextFetchedRecord</span><span class="o">()</span> <span class="o">{</span>
-        <span class="k">while</span> <span class="o">(</span><span class="kc">true</span><span class="o">)</span> <span class="o">{</span>
-            <span class="k">if</span> <span class="o">(</span><span class="n">records</span> <span class="o">==</span> <span class="kc">null</span> <span class="o">||</span> <span class="o">!</span><span class="n">records</span><span class="o">.</span><span class="na">hasNext</span><span class="o">())</span> <span class="o">{</span>
-                <span class="o">....</span>
-                <span class="c1">// 如果records遍历完了，需要从下个batch生成
-</span><span class="c1"></span>                <span class="n">currentBatch</span> <span class="o">=</span> <span class="n">batches</span><span class="o">.</span><span class="na">next</span><span class="o">();</span>
-                <span class="c1">// 注意到isolationLevel，它可以设置只读取事务成功的消息，这样就可以过滤掉由于事务终止的废弃消息
-</span><span class="c1"></span>                <span class="k">if</span> <span class="o">(</span><span class="n">isolationLevel</span> <span class="o">==</span> <span class="n">IsolationLevel</span><span class="o">.</span><span class="na">READ_COMMITTED</span> <span class="o">&amp;&amp;</span> <span class="n">currentBatch</span><span class="o">.</span><span class="na">hasProducerId</span><span class="o">())</span> <span class="o">{</span>
-                    <span class="c1">// 更新abortedProducerIds列表
-</span><span class="c1"></span>                    <span class="n">consumeAbortedTransactionsUpTo</span><span class="o">(</span><span class="n">currentBatch</span><span class="o">.</span><span class="na">lastOffset</span><span class="o">());</span>
-
-                    <span class="kt">long</span> <span class="n">producerId</span> <span class="o">=</span> <span class="n">currentBatch</span><span class="o">.</span><span class="na">producerId</span><span class="o">();</span>
-                    <span class="k">if</span> <span class="o">(</span><span class="n">containsAbortMarker</span><span class="o">(</span><span class="n">currentBatch</span><span class="o">))</span> <span class="o">{</span>
-                        <span class="c1">// 如果是终止事务batch，那么就从abortedProducerIds列表中，将对应的produce id删除，
-</span><span class="c1"></span>                        <span class="c1">// 因为该消息表示该事务的终止，表示该producer之后发送的消息，已经不再属于上次终止的事务了。
-</span><span class="c1"></span>                        <span class="n">abortedProducerIds</span><span class="o">.</span><span class="na">remove</span><span class="o">(</span><span class="n">producerId</span><span class="o">);</span>
-                    <span class="o">}</span> <span class="k">else</span> <span class="k">if</span> <span class="o">(</span><span class="n">isBatchAborted</span><span class="o">(</span><span class="n">currentBatch</span><span class="o">))</span> <span class="o">{</span>
-                        <span class="c1">// 如果确定该batch因为事务终止而废弃的，那么跳过
-</span><span class="c1"></span>                        <span class="n">nextFetchOffset</span> <span class="o">=</span> <span class="n">currentBatch</span><span class="o">.</span><span class="na">nextOffset</span><span class="o">();</span>
-                        <span class="k">continue</span><span class="o">;</span>
-                    <span class="o">}</span>
-                <span class="o">}</span>
-                <span class="c1">// 从batch中生成record列表
-</span><span class="c1"></span>                <span class="n">records</span> <span class="o">=</span> <span class="n">currentBatch</span><span class="o">.</span><span class="na">streamingIterator</span><span class="o">(</span><span class="n">decompressionBufferSupplier</span><span class="o">);</span>
-            <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
-                <span class="c1">// 遍历batch里的record
-</span><span class="c1"></span>                <span class="n">Record</span> <span class="n">record</span> <span class="o">=</span> <span class="n">records</span><span class="o">.</span><span class="na">next</span><span class="o">();</span>
-                    <span class="k">if</span> <span class="o">(</span><span class="n">record</span><span class="o">.</span><span class="na">offset</span><span class="o">()</span> <span class="o">&gt;=</span> <span class="n">nextFetchOffset</span><span class="o">)</span> <span class="o">{</span>
-                        <span class="n">maybeEnsureValid</span><span class="o">(</span><span class="n">record</span><span class="o">);</span>
-                        <span class="c1">// 这里如果遇到事务确认成功的消息batch，则需要跳过
-</span><span class="c1"></span>                        <span class="k">if</span> <span class="o">(!</span><span class="n">currentBatch</span><span class="o">.</span><span class="na">isControlBatch</span><span class="o">())</span> <span class="o">{</span>
-                            <span class="k">return</span> <span class="n">record</span><span class="o">;</span>
-                        <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
-                            <span class="c1">// 通过设置nextFetchOffset，跳过这个batch（因为这个batch是只包含一个事务成功的取人消息，）
-</span><span class="c1"></span>                            <span class="n">nextFetchOffset</span> <span class="o">=</span> <span class="n">record</span><span class="o">.</span><span class="na">offset</span><span class="o">()</span> <span class="o">+</span> <span class="n">1</span><span class="o">;</span>
-                        <span class="o">}</span>
-                    <span class="o">}</span>
-                <span class="o">}</span>
-            <span class="o">}</span>
-        <span class="o">}</span>
-    <span class="o">}</span>
-     
-    <span class="kd">private</span> <span class="kt">boolean</span> <span class="nf">isBatchAborted</span><span class="o">(</span><span class="n">RecordBatch</span> <span class="n">batch</span><span class="o">)</span> <span class="o">{</span>
-        <span class="c1">// 如果该batch是事务类型，并且它的produce id 在abortedProducerIds集合里
-</span><span class="c1"></span>        <span class="k">return</span> <span class="n">batch</span><span class="o">.</span><span class="na">isTransactional</span><span class="o">()</span> <span class="o">&amp;&amp;</span> <span class="n">abortedProducerIds</span><span class="o">.</span><span class="na">contains</span><span class="o">(</span><span class="n">batch</span><span class="o">.</span><span class="na">producerId</span><span class="o">());</span>
-    <span class="o">}</span>
-    
-    <span class="kd">private</span> <span class="kt">void</span> <span class="nf">consumeAbortedTransactionsUpTo</span><span class="o">(</span><span class="kt">long</span> <span class="n">offset</span><span class="o">)</span> <span class="o">{</span>
-        <span class="k">if</span> <span class="o">(</span><span class="n">abortedTransactions</span> <span class="o">==</span> <span class="kc">null</span><span class="o">)</span>
-            <span class="k">return</span><span class="o">;</span>
-        <span class="c1">// 找到那些事务，它的跨度包含了当前batch
-</span><span class="c1"></span>        <span class="k">while</span> <span class="o">(!</span><span class="n">abortedTransactions</span><span class="o">.</span><span class="na">isEmpty</span><span class="o">()</span> <span class="o">&amp;&amp;</span> <span class="n">abortedTransactions</span><span class="o">.</span><span class="na">peek</span><span class="o">().</span><span class="na">firstOffset</span> <span class="o">&lt;=</span> <span class="n">offset</span><span class="o">)</span> <span class="o">{</span>           <span class="c1">// 这里会从abortedTransactions提取事务信息
-</span><span class="c1"></span>            <span class="n">FetchResponse</span><span class="o">.</span><span class="na">AbortedTransaction</span> <span class="n">abortedTransaction</span> <span class="o">=</span> <span class="n">abortedTransactions</span><span class="o">.</span><span class="na">poll</span><span class="o">();</span>
-            <span class="c1">// 并且将它的produce id 添加到abortedProducerIds集合里，表示现在produce id发送的消息处于终止事务里
-</span><span class="c1"></span>            <span class="n">abortedProducerIds</span><span class="o">.</span><span class="na">add</span><span class="o">(</span><span class="n">abortedTransaction</span><span class="o">.</span><span class="na">producerId</span><span class="o">);</span>
-        <span class="o">}</span>
-    <span class="o">}</span>   
-<span class="o">}</span>
-</code></pre></td></tr></table></div>
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="kd">private</span> <span class="kd">class</span> <span class="nc">PartitionRecords</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// 消息batch列表
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="kd">private</span> <span class="kd">final</span> <span class="n">Iterator</span><span class="o">&lt;?</span> <span class="kd">extends</span> <span class="n">RecordBatch</span><span class="o">&gt;</span> <span class="n">batches</span><span class="o">;</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// 保存了那些producer，发送的消息为事务终止
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="kd">private</span> <span class="kd">final</span> <span class="n">Set</span><span class="o">&lt;</span><span class="n">Long</span><span class="o">&gt;</span> <span class="n">abortedProducerIds</span><span class="o">;</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// record结果列表，从batch中生成
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="kd">private</span> <span class="n">CloseableIterator</span><span class="o">&lt;</span><span class="n">Record</span><span class="o">&gt;</span> <span class="n">records</span><span class="o">;</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// 保存了所有了终止事务的信息
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="kd">private</span> <span class="kd">final</span> <span class="n">PriorityQueue</span><span class="o">&lt;</span><span class="n">FetchResponse</span><span class="o">.</span><span class="na">AbortedTransaction</span><span class="o">&gt;</span> <span class="n">abortedTransactions</span><span class="o">;</span>
+</span></span><span class="line"><span class="cl">    
+</span></span><span class="line"><span class="cl">    <span class="kd">private</span> <span class="n">Record</span> <span class="nf">nextFetchedRecord</span><span class="o">()</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">        <span class="k">while</span> <span class="o">(</span><span class="kc">true</span><span class="o">)</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">            <span class="k">if</span> <span class="o">(</span><span class="n">records</span> <span class="o">==</span> <span class="kc">null</span> <span class="o">||</span> <span class="o">!</span><span class="n">records</span><span class="o">.</span><span class="na">hasNext</span><span class="o">())</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">                <span class="o">....</span>
+</span></span><span class="line"><span class="cl">                <span class="c1">// 如果records遍历完了，需要从下个batch生成
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>                <span class="n">currentBatch</span> <span class="o">=</span> <span class="n">batches</span><span class="o">.</span><span class="na">next</span><span class="o">();</span>
+</span></span><span class="line"><span class="cl">                <span class="c1">// 注意到isolationLevel，它可以设置只读取事务成功的消息，这样就可以过滤掉由于事务终止的废弃消息
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>                <span class="k">if</span> <span class="o">(</span><span class="n">isolationLevel</span> <span class="o">==</span> <span class="n">IsolationLevel</span><span class="o">.</span><span class="na">READ_COMMITTED</span> <span class="o">&amp;&amp;</span> <span class="n">currentBatch</span><span class="o">.</span><span class="na">hasProducerId</span><span class="o">())</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">                    <span class="c1">// 更新abortedProducerIds列表
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>                    <span class="n">consumeAbortedTransactionsUpTo</span><span class="o">(</span><span class="n">currentBatch</span><span class="o">.</span><span class="na">lastOffset</span><span class="o">());</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">                    <span class="kt">long</span> <span class="n">producerId</span> <span class="o">=</span> <span class="n">currentBatch</span><span class="o">.</span><span class="na">producerId</span><span class="o">();</span>
+</span></span><span class="line"><span class="cl">                    <span class="k">if</span> <span class="o">(</span><span class="n">containsAbortMarker</span><span class="o">(</span><span class="n">currentBatch</span><span class="o">))</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">                        <span class="c1">// 如果是终止事务batch，那么就从abortedProducerIds列表中，将对应的produce id删除，
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>                        <span class="c1">// 因为该消息表示该事务的终止，表示该producer之后发送的消息，已经不再属于上次终止的事务了。
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>                        <span class="n">abortedProducerIds</span><span class="o">.</span><span class="na">remove</span><span class="o">(</span><span class="n">producerId</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">                    <span class="o">}</span> <span class="k">else</span> <span class="k">if</span> <span class="o">(</span><span class="n">isBatchAborted</span><span class="o">(</span><span class="n">currentBatch</span><span class="o">))</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">                        <span class="c1">// 如果确定该batch因为事务终止而废弃的，那么跳过
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>                        <span class="n">nextFetchOffset</span> <span class="o">=</span> <span class="n">currentBatch</span><span class="o">.</span><span class="na">nextOffset</span><span class="o">();</span>
+</span></span><span class="line"><span class="cl">                        <span class="k">continue</span><span class="o">;</span>
+</span></span><span class="line"><span class="cl">                    <span class="o">}</span>
+</span></span><span class="line"><span class="cl">                <span class="o">}</span>
+</span></span><span class="line"><span class="cl">                <span class="c1">// 从batch中生成record列表
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>                <span class="n">records</span> <span class="o">=</span> <span class="n">currentBatch</span><span class="o">.</span><span class="na">streamingIterator</span><span class="o">(</span><span class="n">decompressionBufferSupplier</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">            <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">                <span class="c1">// 遍历batch里的record
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>                <span class="n">Record</span> <span class="n">record</span> <span class="o">=</span> <span class="n">records</span><span class="o">.</span><span class="na">next</span><span class="o">();</span>
+</span></span><span class="line"><span class="cl">                    <span class="k">if</span> <span class="o">(</span><span class="n">record</span><span class="o">.</span><span class="na">offset</span><span class="o">()</span> <span class="o">&gt;=</span> <span class="n">nextFetchOffset</span><span class="o">)</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">                        <span class="n">maybeEnsureValid</span><span class="o">(</span><span class="n">record</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">                        <span class="c1">// 这里如果遇到事务确认成功的消息batch，则需要跳过
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>                        <span class="k">if</span> <span class="o">(!</span><span class="n">currentBatch</span><span class="o">.</span><span class="na">isControlBatch</span><span class="o">())</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">                            <span class="k">return</span> <span class="n">record</span><span class="o">;</span>
+</span></span><span class="line"><span class="cl">                        <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">                            <span class="c1">// 通过设置nextFetchOffset，跳过这个batch（因为这个batch是只包含一个事务成功的取人消息，）
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>                            <span class="n">nextFetchOffset</span> <span class="o">=</span> <span class="n">record</span><span class="o">.</span><span class="na">offset</span><span class="o">()</span> <span class="o">+</span> <span class="mi">1</span><span class="o">;</span>
+</span></span><span class="line"><span class="cl">                        <span class="o">}</span>
+</span></span><span class="line"><span class="cl">                    <span class="o">}</span>
+</span></span><span class="line"><span class="cl">                <span class="o">}</span>
+</span></span><span class="line"><span class="cl">            <span class="o">}</span>
+</span></span><span class="line"><span class="cl">        <span class="o">}</span>
+</span></span><span class="line"><span class="cl">    <span class="o">}</span>
+</span></span><span class="line"><span class="cl">     
+</span></span><span class="line"><span class="cl">    <span class="kd">private</span> <span class="kt">boolean</span> <span class="nf">isBatchAborted</span><span class="o">(</span><span class="n">RecordBatch</span> <span class="n">batch</span><span class="o">)</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">        <span class="c1">// 如果该batch是事务类型，并且它的produce id 在abortedProducerIds集合里
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>        <span class="k">return</span> <span class="n">batch</span><span class="o">.</span><span class="na">isTransactional</span><span class="o">()</span> <span class="o">&amp;&amp;</span> <span class="n">abortedProducerIds</span><span class="o">.</span><span class="na">contains</span><span class="o">(</span><span class="n">batch</span><span class="o">.</span><span class="na">producerId</span><span class="o">());</span>
+</span></span><span class="line"><span class="cl">    <span class="o">}</span>
+</span></span><span class="line"><span class="cl">    
+</span></span><span class="line"><span class="cl">    <span class="kd">private</span> <span class="kt">void</span> <span class="nf">consumeAbortedTransactionsUpTo</span><span class="o">(</span><span class="kt">long</span> <span class="n">offset</span><span class="o">)</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">        <span class="k">if</span> <span class="o">(</span><span class="n">abortedTransactions</span> <span class="o">==</span> <span class="kc">null</span><span class="o">)</span>
+</span></span><span class="line"><span class="cl">            <span class="k">return</span><span class="o">;</span>
+</span></span><span class="line"><span class="cl">        <span class="c1">// 找到那些事务，它的跨度包含了当前batch
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>        <span class="k">while</span> <span class="o">(!</span><span class="n">abortedTransactions</span><span class="o">.</span><span class="na">isEmpty</span><span class="o">()</span> <span class="o">&amp;&amp;</span> <span class="n">abortedTransactions</span><span class="o">.</span><span class="na">peek</span><span class="o">().</span><span class="na">firstOffset</span> <span class="o">&lt;=</span> <span class="n">offset</span><span class="o">)</span> <span class="o">{</span>           <span class="c1">// 这里会从abortedTransactions提取事务信息
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>            <span class="n">FetchResponse</span><span class="o">.</span><span class="na">AbortedTransaction</span> <span class="n">abortedTransaction</span> <span class="o">=</span> <span class="n">abortedTransactions</span><span class="o">.</span><span class="na">poll</span><span class="o">();</span>
+</span></span><span class="line"><span class="cl">            <span class="c1">// 并且将它的produce id 添加到abortedProducerIds集合里，表示现在produce id发送的消息处于终止事务里
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>            <span class="n">abortedProducerIds</span><span class="o">.</span><span class="na">add</span><span class="o">(</span><span class="n">abortedTransaction</span><span class="o">.</span><span class="na">producerId</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">        <span class="o">}</span>
+</span></span><span class="line"><span class="cl">    <span class="o">}</span>   
+</span></span><span class="line"><span class="cl"><span class="o">}</span>
+</span></span></code></pre></td></tr></table></div>
 </div>
 </div><h2 id="参考资料"><a href="#参考资料" class="anchor-link"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon anchor-icon"><path d="M326.612 185.391c59.747 59.809 58.927 155.698.36 214.59-.11.12-.24.25-.36.37l-67.2 67.2c-59.27 59.27-155.699 59.262-214.96 0-59.27-59.26-59.27-155.7 0-214.96l37.106-37.106c9.84-9.84 26.786-3.3 27.294 10.606.648 17.722 3.826 35.527 9.69 52.721 1.986 5.822.567 12.262-3.783 16.612l-13.087 13.087c-28.026 28.026-28.905 73.66-1.155 101.96 28.024 28.579 74.086 28.749 102.325.51l67.2-67.19c28.191-28.191 28.073-73.757 0-101.83-3.701-3.694-7.429-6.564-10.341-8.569a16.037 16.037 0 0 1-6.947-12.606c-.396-10.567 3.348-21.456 11.698-29.806l21.054-21.055c5.521-5.521 14.182-6.199 20.584-1.731a152.482 152.482 0 0 1 20.522 17.197zM467.547 44.449c-59.261-59.262-155.69-59.27-214.96 0l-67.2 67.2c-.12.12-.25.25-.36.37-58.566 58.892-59.387 154.781.36 214.59a152.454 152.454 0 0 0 20.521 17.196c6.402 4.468 15.064 3.789 20.584-1.731l21.054-21.055c8.35-8.35 12.094-19.239 11.698-29.806a16.037 16.037 0 0 0-6.947-12.606c-2.912-2.005-6.64-4.875-10.341-8.569-28.073-28.073-28.191-73.639 0-101.83l67.2-67.19c28.239-28.239 74.3-28.069 102.325.51 27.75 28.3 26.872 73.934-1.155 101.96l-13.087 13.087c-4.35 4.35-5.769 10.79-3.783 16.612 5.864 17.194 9.042 34.999 9.69 52.721.509 13.906 17.454 20.446 27.294 10.606l37.106-37.106c59.271-59.259 59.271-155.699.001-214.959z"/></svg></a>参考资料</h2>
 <p><a href="https://www.confluent.io/blog/transactions-apache-kafka/" target="_blank" rel="noopener">https://www.confluent.io/blog/transactions-apache-kafka/</a></p>
@@ -473,9 +473,9 @@
 
         
     <div class="updated-badge-container">
-        <span title="Updated @ 2021-10-22 14:44:34 CST" style="cursor:help">
+        <span title="Updated @ 2023-07-02 16:59:09 CST" style="cursor:help">
 
-<svg xmlns="http://www.w3.org/2000/svg" width="130" height="20" class="updated-badge"><linearGradient id="b" x2="0" y2="100%"><stop offset="0" stop-color="#bbb" stop-opacity=".1"/><stop offset="1" stop-opacity=".1"/></linearGradient><clipPath id="a"><rect width="130" height="20" rx="3" fill="#fff"/></clipPath><g clip-path="url(#a)"><path class="updated-badge-left" d="M0 0h55v20H0z"/><path class="updated-badge-right" d="M55 0h75v20H55z"/><path fill="url(#b)" d="M0 0h130v20H0z"/></g><g fill="#fff" text-anchor="middle" font-size="110"><text x="285" y="150" fill="#010101" fill-opacity=".3" textLength="450" transform="scale(.1)">updated</text><text x="285" y="140" textLength="450" transform="scale(.1)">updated</text><text x="915" y="150" fill="#010101" fill-opacity=".3" textLength="650" transform="scale(.1)">2021-10-22</text><text x="915" y="140" textLength="650" transform="scale(.1)">2021-10-22</text></g></svg>
+<svg xmlns="http://www.w3.org/2000/svg" width="130" height="20" class="updated-badge"><linearGradient id="b" x2="0" y2="100%"><stop offset="0" stop-color="#bbb" stop-opacity=".1"/><stop offset="1" stop-opacity=".1"/></linearGradient><clipPath id="a"><rect width="130" height="20" rx="3" fill="#fff"/></clipPath><g clip-path="url(#a)"><path class="updated-badge-left" d="M0 0h55v20H0z"/><path class="updated-badge-right" d="M55 0h75v20H55z"/><path fill="url(#b)" d="M0 0h130v20H0z"/></g><g fill="#fff" text-anchor="middle" font-size="110"><text x="285" y="150" fill="#010101" fill-opacity=".3" textLength="450" transform="scale(.1)">updated</text><text x="285" y="140" textLength="450" transform="scale(.1)">updated</text><text x="915" y="150" fill="#010101" fill-opacity=".3" textLength="650" transform="scale(.1)">2023-07-02</text><text x="915" y="140" textLength="650" transform="scale(.1)">2023-07-02</text></g></svg>
         </span></div>
 
 

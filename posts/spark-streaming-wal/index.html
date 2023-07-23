@@ -3,7 +3,7 @@
     <head prefix="og: http://ogp.me/ns# article: http://ogp.me/ns/article#">
     <meta charset="UTF-8" />
 
-    <meta name="generator" content="Hugo 0.88.1" /><meta name="theme-color" content="#fff" />
+    <meta name="generator" content="Hugo 0.115.0"><meta name="theme-color" content="#fff" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     
     <meta name="format-detection" content="telephone=no, date=no, address=no, email=no" />
@@ -14,11 +14,11 @@
 
     <title>Spark Streaming WAL 原理 | 学习笔记</title>
 
-    <link rel="stylesheet" href="/css/meme.min.2d3e1834af2bc8dda20c7d74aaa1d8134845094441b7a554a5206ccd4b472596.css"/>
+    <link rel="stylesheet" href="/css/meme.min.91e7f58f97e1c60563ef481c38d9684fa8099537801d6f17bbfc724121e7d8f1.css"/>
 
     
     
-        <script src="/js/meme.min.800f61672145711eb3e1f29fcfcc3dbe0139dd459259718b611a0390f74703d1.js"></script>
+        <script src="/js/meme.min.3210a00c2fdcf6f831170b681b8ee40f83f0224663661e986872616aec45407f.js"></script>
 
     
 
@@ -54,7 +54,7 @@
         "@context": "https://schema.org",
         "@type": "BlogPosting",
         "datePublished": "2019-02-17T21:29:24+00:00",
-        "dateModified": "2021-10-22T14:44:34+08:00",
+        "dateModified": "2023-07-02T16:59:09+08:00",
         "url": "https://zhmin.github.io/posts/spark-streaming-wal/",
         "headline": "Spark Streaming WAL 原理",
         "description": "Spark Streaming WAL 原理 WAL表示预写日志，经常在数据库中会使用到，在宕机后也能根据WAL恢复数据。Spark Streaming为了提高服务的容错性，也引入了WAL。它会将WAL存到可靠的文件系统 hdfs 里。Spark Streaming……",
@@ -98,7 +98,7 @@
 <meta property="og:locale" content="zh" /><meta property="og:image" content="https://zhmin.github.io/icons/apple-touch-icon.png" />
     <meta property="og:type" content="article" />
     <meta property="article:published_time" content="2019-02-17T21:29:24&#43;00:00" />
-    <meta property="article:modified_time" content="2021-10-22T14:44:34&#43;08:00" />
+    <meta property="article:modified_time" content="2023-07-02T16:59:09&#43;08:00" />
     
     <meta property="article:section" content="posts" />
 
@@ -261,22 +261,22 @@
 </span><span class="lnt">15
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-scala" data-lang="scala"><span class="n">public</span> <span class="k">abstract</span> <span class="k">class</span> <span class="nc">WriteAheadLog</span> <span class="o">{</span>
-  
-  <span class="c1">// 将数据写入到WAL文件，参数record为即将保存的数据，参数time表示数据的结束时间
-</span><span class="c1"></span>  <span class="c1">// 返回WriteAheadLogRecordHandle对象，包含了存储的信息
-</span><span class="c1"></span>  <span class="n">public</span> <span class="k">abstract</span> <span class="nc">WriteAheadLogRecordHandle</span> <span class="n">write</span><span class="o">(</span><span class="nc">ByteBuffer</span> <span class="n">record</span><span class="o">,</span> <span class="n">long</span> <span class="n">time</span><span class="o">);</span>
-  
-  <span class="c1">// 根据write方法返回的信息，来读取对应的数据
-</span><span class="c1"></span>  <span class="n">public</span> <span class="k">abstract</span> <span class="nc">ByteBuffer</span> <span class="n">read</span><span class="o">(</span><span class="nc">WriteAheadLogRecordHandle</span> <span class="n">handle</span><span class="o">);</span>
-
-  <span class="c1">// 读取所有还未过期的数据
-</span><span class="c1"></span>  <span class="n">public</span> <span class="k">abstract</span> <span class="nc">Iterator</span><span class="o">&lt;</span><span class="nc">ByteBuffer</span><span class="o">&gt;</span> <span class="n">readAll</span><span class="o">();</span>
-
-  <span class="c1">// 清除过期的WAL文件，参数threshTime表示截止时间
-</span><span class="c1"></span>  <span class="n">public</span> <span class="k">abstract</span> <span class="n">void</span> <span class="n">clean</span><span class="o">(</span><span class="n">long</span> <span class="n">threshTime</span><span class="o">,</span> <span class="n">boolean</span> <span class="n">waitForCompletion</span><span class="o">);</span>
-<span class="o">}</span>
-</code></pre></td></tr></table></div>
+<pre tabindex="0" class="chroma"><code class="language-scala" data-lang="scala"><span class="line"><span class="cl"><span class="n">public</span> <span class="k">abstract</span> <span class="k">class</span> <span class="nc">WriteAheadLog</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">  
+</span></span><span class="line"><span class="cl">  <span class="c1">// 将数据写入到WAL文件，参数record为即将保存的数据，参数time表示数据的结束时间
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="c1">// 返回WriteAheadLogRecordHandle对象，包含了存储的信息
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="n">public</span> <span class="k">abstract</span> <span class="nc">WriteAheadLogRecordHandle</span> <span class="n">write</span><span class="o">(</span><span class="nc">ByteBuffer</span> <span class="n">record</span><span class="o">,</span> <span class="n">long</span> <span class="n">time</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">  
+</span></span><span class="line"><span class="cl">  <span class="c1">// 根据write方法返回的信息，来读取对应的数据
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="n">public</span> <span class="k">abstract</span> <span class="nc">ByteBuffer</span> <span class="n">read</span><span class="o">(</span><span class="nc">WriteAheadLogRecordHandle</span> <span class="n">handle</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="c1">// 读取所有还未过期的数据
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="n">public</span> <span class="k">abstract</span> <span class="nc">Iterator</span><span class="o">&lt;</span><span class="nc">ByteBuffer</span><span class="o">&gt;</span> <span class="n">readAll</span><span class="o">();</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="c1">// 清除过期的WAL文件，参数threshTime表示截止时间
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="n">public</span> <span class="k">abstract</span> <span class="n">void</span> <span class="n">clean</span><span class="o">(</span><span class="n">long</span> <span class="n">threshTime</span><span class="o">,</span> <span class="n">boolean</span> <span class="n">waitForCompletion</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl"><span class="o">}</span>
+</span></span></code></pre></td></tr></table></div>
 </div>
 </div><p>WriteAheadLog有两个子类，对应不同的存储原理。</p>
 <p>子类FileBasedWriteAheadLog，实现了以文件的方式存储数据。</p>
@@ -296,15 +296,15 @@
 </span><span class="lnt">8
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell">checkpointDir/
-├── receivedData
-│   ├── streamId0
-<span class="p">|</span>   <span class="p">|</span>   <span class="p">|</span>── log-starttime0-endtime0
-<span class="p">|</span>   <span class="p">|</span>   <span class="p">|</span>── log-starttime1-endtime1
-<span class="p">|</span>   <span class="p">|</span>   <span class="p">|</span>── log-starttime1-endtime1
-│   ├── streamId1
-│   └── streamId2
-</code></pre></td></tr></table></div>
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">checkpointDir/
+</span></span><span class="line"><span class="cl">├── receivedData
+</span></span><span class="line"><span class="cl">│   ├── streamId0
+</span></span><span class="line"><span class="cl"><span class="p">|</span>   <span class="p">|</span>   <span class="p">|</span>── log-starttime0-endtime0
+</span></span><span class="line"><span class="cl"><span class="p">|</span>   <span class="p">|</span>   <span class="p">|</span>── log-starttime1-endtime1
+</span></span><span class="line"><span class="cl"><span class="p">|</span>   <span class="p">|</span>   <span class="p">|</span>── log-starttime1-endtime1
+</span></span><span class="line"><span class="cl">│   ├── streamId1
+</span></span><span class="line"><span class="cl">│   └── streamId2
+</span></span></code></pre></td></tr></table></div>
 </div>
 </div><p>wal的根目录是 checkpoint 目录下的 receivedData 目录。</p>
 <p>每个 receiver 都有独立的目录，目录名为它的 id 号。</p>
@@ -348,40 +348,40 @@
 </span><span class="lnt">33
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-scala" data-lang="scala"><span class="k">class</span> <span class="nc">FileBasedWriteAheadLogWriter</span><span class="o">(</span><span class="n">path</span><span class="k">:</span> <span class="kt">String</span><span class="o">,</span> <span class="n">hadoopConf</span><span class="k">:</span> <span class="kt">Configuration</span><span class="o">)</span>
-  <span class="k">extends</span> <span class="nc">Closeable</span> <span class="o">{</span>
-  <span class="c1">// 根据配置，返回hdfs的客户端或者本地文件的客户端，并且创建文件
-</span><span class="c1"></span>  <span class="k">private</span> <span class="k">lazy</span> <span class="k">val</span> <span class="n">stream</span> <span class="k">=</span> <span class="nc">HdfsUtils</span><span class="o">.</span><span class="n">getOutputStream</span><span class="o">(</span><span class="n">path</span><span class="o">,</span> <span class="n">hadoopConf</span><span class="o">)</span>
-
-  <span class="c1">// 获取当前文件的偏移量
-</span><span class="c1"></span>  <span class="k">private</span> <span class="k">var</span> <span class="n">nextOffset</span> <span class="k">=</span> <span class="n">stream</span><span class="o">.</span><span class="n">getPos</span><span class="o">()</span>
-  <span class="k">private</span> <span class="k">var</span> <span class="n">closed</span> <span class="k">=</span> <span class="kc">false</span>
-
-  <span class="cm">/** Write the bytebuffer to the log file */</span>
-  <span class="k">def</span> <span class="n">write</span><span class="o">(</span><span class="n">data</span><span class="k">:</span> <span class="kt">ByteBuffer</span><span class="o">)</span><span class="k">:</span> <span class="kt">FileBasedWriteAheadLogSegment</span> <span class="o">=</span> <span class="n">synchronized</span> <span class="o">{</span>
-    <span class="n">data</span><span class="o">.</span><span class="n">rewind</span><span class="o">()</span> <span class="c1">// 准备读
-</span><span class="c1"></span>    <span class="k">val</span> <span class="n">lengthToWrite</span> <span class="k">=</span> <span class="n">data</span><span class="o">.</span><span class="n">remaining</span><span class="o">()</span>
-    <span class="c1">// 记录本次数据的位置信息，WAL文件路径，起始位置，数据长度
-</span><span class="c1"></span>    <span class="k">val</span> <span class="n">segment</span> <span class="k">=</span> <span class="k">new</span> <span class="nc">FileBasedWriteAheadLogSegment</span><span class="o">(</span><span class="n">path</span><span class="o">,</span> <span class="n">nextOffset</span><span class="o">,</span> <span class="n">lengthToWrite</span><span class="o">)</span>
-    <span class="c1">// 写入数据长度
-</span><span class="c1"></span>    <span class="n">stream</span><span class="o">.</span><span class="n">writeInt</span><span class="o">(</span><span class="n">lengthToWrite</span><span class="o">)</span>
-    <span class="c1">// 将bytebuffer的数据写入到outputstream
-</span><span class="c1"></span>    <span class="nc">Utils</span><span class="o">.</span><span class="n">writeByteBuffer</span><span class="o">(</span><span class="n">data</span><span class="o">,</span> <span class="n">stream</span><span class="k">:</span> <span class="kt">OutputStream</span><span class="o">)</span>
-    <span class="c1">// 刷新缓存
-</span><span class="c1"></span>    <span class="n">flush</span><span class="o">()</span>
-    <span class="c1">// 更新当前文件的偏移量
-</span><span class="c1"></span>    <span class="n">nextOffset</span> <span class="k">=</span> <span class="n">stream</span><span class="o">.</span><span class="n">getPos</span><span class="o">()</span>
-    <span class="c1">// 返回此次数据的信息
-</span><span class="c1"></span>    <span class="n">segment</span>
-  <span class="o">}</span>
-
-  <span class="k">private</span> <span class="k">def</span> <span class="n">flush</span><span class="o">()</span> <span class="o">{</span>
-    <span class="n">stream</span><span class="o">.</span><span class="n">hflush</span><span class="o">()</span>
-    <span class="c1">// Useful for local file system where hflush/sync does not work (HADOOP-7844)
-</span><span class="c1"></span>    <span class="n">stream</span><span class="o">.</span><span class="n">getWrappedStream</span><span class="o">.</span><span class="n">flush</span><span class="o">()</span>
-  <span class="o">}</span>
-<span class="o">}</span>
-</code></pre></td></tr></table></div>
+<pre tabindex="0" class="chroma"><code class="language-scala" data-lang="scala"><span class="line"><span class="cl"><span class="k">class</span> <span class="nc">FileBasedWriteAheadLogWriter</span><span class="o">(</span><span class="n">path</span><span class="k">:</span> <span class="kt">String</span><span class="o">,</span> <span class="n">hadoopConf</span><span class="k">:</span> <span class="kt">Configuration</span><span class="o">)</span>
+</span></span><span class="line"><span class="cl">  <span class="k">extends</span> <span class="nc">Closeable</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">  <span class="c1">// 根据配置，返回hdfs的客户端或者本地文件的客户端，并且创建文件
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="k">private</span> <span class="k">lazy</span> <span class="k">val</span> <span class="n">stream</span> <span class="k">=</span> <span class="nc">HdfsUtils</span><span class="o">.</span><span class="n">getOutputStream</span><span class="o">(</span><span class="n">path</span><span class="o">,</span> <span class="n">hadoopConf</span><span class="o">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="c1">// 获取当前文件的偏移量
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="k">private</span> <span class="k">var</span> <span class="n">nextOffset</span> <span class="k">=</span> <span class="n">stream</span><span class="o">.</span><span class="n">getPos</span><span class="o">()</span>
+</span></span><span class="line"><span class="cl">  <span class="k">private</span> <span class="k">var</span> <span class="n">closed</span> <span class="k">=</span> <span class="kc">false</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="cm">/** Write the bytebuffer to the log file */</span>
+</span></span><span class="line"><span class="cl">  <span class="k">def</span> <span class="n">write</span><span class="o">(</span><span class="n">data</span><span class="k">:</span> <span class="kt">ByteBuffer</span><span class="o">)</span><span class="k">:</span> <span class="kt">FileBasedWriteAheadLogSegment</span> <span class="o">=</span> <span class="n">synchronized</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">    <span class="n">data</span><span class="o">.</span><span class="n">rewind</span><span class="o">()</span> <span class="c1">// 准备读
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="k">val</span> <span class="n">lengthToWrite</span> <span class="k">=</span> <span class="n">data</span><span class="o">.</span><span class="n">remaining</span><span class="o">()</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// 记录本次数据的位置信息，WAL文件路径，起始位置，数据长度
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="k">val</span> <span class="n">segment</span> <span class="k">=</span> <span class="k">new</span> <span class="nc">FileBasedWriteAheadLogSegment</span><span class="o">(</span><span class="n">path</span><span class="o">,</span> <span class="n">nextOffset</span><span class="o">,</span> <span class="n">lengthToWrite</span><span class="o">)</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// 写入数据长度
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="n">stream</span><span class="o">.</span><span class="n">writeInt</span><span class="o">(</span><span class="n">lengthToWrite</span><span class="o">)</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// 将bytebuffer的数据写入到outputstream
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="nc">Utils</span><span class="o">.</span><span class="n">writeByteBuffer</span><span class="o">(</span><span class="n">data</span><span class="o">,</span> <span class="n">stream</span><span class="k">:</span> <span class="kt">OutputStream</span><span class="o">)</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// 刷新缓存
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="n">flush</span><span class="o">()</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// 更新当前文件的偏移量
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="n">nextOffset</span> <span class="k">=</span> <span class="n">stream</span><span class="o">.</span><span class="n">getPos</span><span class="o">()</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// 返回此次数据的信息
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="n">segment</span>
+</span></span><span class="line"><span class="cl">  <span class="o">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="k">private</span> <span class="k">def</span> <span class="n">flush</span><span class="o">()</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">    <span class="n">stream</span><span class="o">.</span><span class="n">hflush</span><span class="o">()</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// Useful for local file system where hflush/sync does not work (HADOOP-7844)
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="n">stream</span><span class="o">.</span><span class="n">getWrappedStream</span><span class="o">.</span><span class="n">flush</span><span class="o">()</span>
+</span></span><span class="line"><span class="cl">  <span class="o">}</span>
+</span></span><span class="line"><span class="cl"><span class="o">}</span>
+</span></span></code></pre></td></tr></table></div>
 </div>
 </div><p>FileBasedWriteAheadLogWriter的write方法返回FileBasedWriteAheadLogSegment结果，表示了此次WAL数据的位置信息。后面的WAL读取，会通过它来找到位置。</p>
 <p>接下来看看FileBasedWriteAheadLog的write方法。它会根据时间范围，存储到不同的文件中。</p>
@@ -456,74 +456,74 @@
 </span><span class="lnt">67
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-scala" data-lang="scala"><span class="k">private</span><span class="o">[</span><span class="kt">streaming</span><span class="o">]</span> <span class="k">class</span> <span class="nc">FileBasedWriteAheadLog</span> <span class="o">{</span>
-  
-  <span class="c1">// 记录当前WAL文件的路径
-</span><span class="c1"></span>  <span class="k">private</span> <span class="k">var</span> <span class="n">currentLogPath</span><span class="k">:</span> <span class="kt">Option</span><span class="o">[</span><span class="kt">String</span><span class="o">]</span> <span class="k">=</span> <span class="nc">None</span>
-  <span class="c1">// 记录当前WAL writer
-</span><span class="c1"></span>  <span class="k">private</span> <span class="k">var</span> <span class="n">currentLogWriter</span><span class="k">:</span> <span class="kt">FileBasedWriteAheadLogWriter</span> <span class="o">=</span> <span class="kc">null</span>
-  <span class="c1">// 当前WAL文件的开始时间
-</span><span class="c1"></span>  <span class="k">private</span> <span class="k">var</span> <span class="n">currentLogWriterStartTime</span><span class="k">:</span> <span class="kt">Long</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1L</span>
-  <span class="c1">// 当前WAL文件的结束时间
-</span><span class="c1"></span>  <span class="k">private</span> <span class="k">var</span> <span class="n">currentLogWriterStopTime</span><span class="k">:</span> <span class="kt">Long</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1L</span>
-  <span class="c1">// 记录完成的WAL文件信息
-</span><span class="c1"></span>  <span class="k">private</span> <span class="k">val</span> <span class="n">pastLogs</span> <span class="k">=</span> <span class="k">new</span> <span class="nc">ArrayBuffer</span><span class="o">[</span><span class="kt">LogInfo</span><span class="o">]</span>
-  
-  <span class="k">def</span> <span class="n">write</span><span class="o">(</span><span class="n">byteBuffer</span><span class="k">:</span> <span class="kt">ByteBuffer</span><span class="o">,</span> <span class="n">time</span><span class="k">:</span> <span class="kt">Long</span><span class="o">)</span><span class="k">:</span> <span class="kt">FileBasedWriteAheadLogSegment</span> <span class="o">=</span> <span class="n">synchronized</span> <span class="o">{</span>
-    <span class="k">var</span> <span class="n">fileSegment</span><span class="k">:</span> <span class="kt">FileBasedWriteAheadLogSegment</span> <span class="o">=</span> <span class="kc">null</span>
-    <span class="k">var</span> <span class="n">failures</span> <span class="k">=</span> <span class="mi">0</span>
-    <span class="k">var</span> <span class="n">lastException</span><span class="k">:</span> <span class="kt">Exception</span> <span class="o">=</span> <span class="kc">null</span>
-    <span class="k">var</span> <span class="n">succeeded</span> <span class="k">=</span> <span class="kc">false</span>
-    <span class="c1">// 尝试最多maxFailures次数
-</span><span class="c1"></span>    <span class="k">while</span> <span class="o">(!</span><span class="n">succeeded</span> <span class="o">&amp;&amp;</span> <span class="n">failures</span> <span class="o">&lt;</span> <span class="n">maxFailures</span><span class="o">)</span> <span class="o">{</span>
-      <span class="k">try</span> <span class="o">{</span>
-        <span class="c1">// 首先调用getLogWriter获取writer，
-</span><span class="c1"></span>        <span class="c1">// 然后通过writer写入数据
-</span><span class="c1"></span>        <span class="n">fileSegment</span> <span class="k">=</span> <span class="n">getLogWriter</span><span class="o">(</span><span class="n">time</span><span class="o">).</span><span class="n">write</span><span class="o">(</span><span class="n">byteBuffer</span><span class="o">)</span>
-        <span class="k">if</span> <span class="o">(</span><span class="n">closeFileAfterWrite</span><span class="o">)</span> <span class="o">{</span>
-          <span class="n">resetWriter</span><span class="o">()</span>
-        <span class="o">}</span>
-        <span class="n">succeeded</span> <span class="k">=</span> <span class="kc">true</span>
-      <span class="o">}</span> <span class="k">catch</span> <span class="o">{</span>
-        <span class="k">case</span> <span class="n">ex</span><span class="k">:</span> <span class="kt">Exception</span> <span class="o">=&gt;</span>
-          <span class="n">lastException</span> <span class="k">=</span> <span class="n">ex</span>
-          <span class="n">logWarning</span><span class="o">(</span><span class="s">&#34;Failed to write to write ahead log&#34;</span><span class="o">)</span>
-          <span class="n">resetWriter</span><span class="o">()</span>
-          <span class="n">failures</span> <span class="o">+=</span> <span class="mi">1</span>
-      <span class="o">}</span>
-    <span class="o">}</span>
-    <span class="k">if</span> <span class="o">(</span><span class="n">fileSegment</span> <span class="o">==</span> <span class="kc">null</span><span class="o">)</span> <span class="o">{</span>
-      <span class="n">logError</span><span class="o">(</span><span class="s">s&#34;Failed to write to write ahead log after </span><span class="si">$failures</span><span class="s"> failures&#34;</span><span class="o">)</span>
-      <span class="k">throw</span> <span class="n">lastException</span>
-    <span class="o">}</span>
-    <span class="n">fileSegment</span>
-  <span class="o">}</span>
-  
-  <span class="k">private</span> <span class="k">def</span> <span class="n">getLogWriter</span><span class="o">(</span><span class="n">currentTime</span><span class="k">:</span> <span class="kt">Long</span><span class="o">)</span><span class="k">:</span> <span class="kt">FileBasedWriteAheadLogWriter</span> <span class="o">=</span> <span class="n">synchronized</span> <span class="o">{</span>
-    <span class="c1">// 每个WAL文件都有对应的时间范围，如果超过了，则需要创建新的WAL文件
-</span><span class="c1"></span>    <span class="k">if</span> <span class="o">(</span><span class="n">currentLogWriter</span> <span class="o">==</span> <span class="kc">null</span> <span class="o">||</span> <span class="n">currentTime</span> <span class="o">&gt;</span> <span class="n">currentLogWriterStopTime</span><span class="o">)</span> <span class="o">{</span>
-      <span class="c1">// 关闭当前writer
-</span><span class="c1"></span>      <span class="n">resetWriter</span><span class="o">()</span>
-      <span class="c1">// 添加当前WAL的信息到currentLogPath列表，
-</span><span class="c1"></span>      <span class="c1">// 相关信息包括起始时间，结束时间，文件路径
-</span><span class="c1"></span>      <span class="n">currentLogPath</span><span class="o">.</span><span class="n">foreach</span> <span class="o">{</span>
-        <span class="n">pastLogs</span> <span class="o">+=</span> <span class="nc">LogInfo</span><span class="o">(</span><span class="n">currentLogWriterStartTime</span><span class="o">,</span> <span class="n">currentLogWriterStopTime</span><span class="o">,</span> <span class="k">_</span><span class="o">)</span>
-      <span class="o">}</span>
-      <span class="c1">// 更新currentLogWriterStartTime为新的WAL文件的开始时间
-</span><span class="c1"></span>      <span class="n">currentLogWriterStartTime</span> <span class="k">=</span> <span class="n">currentTime</span>
-      <span class="c1">// 更新currentLogWriterStopTime为新的WAL文件的结束时间
-</span><span class="c1"></span>      <span class="n">currentLogWriterStopTime</span> <span class="k">=</span> <span class="n">currentTime</span> <span class="o">+</span> <span class="o">(</span><span class="n">rollingIntervalSecs</span> <span class="o">*</span> <span class="mi">1000</span><span class="o">)</span>
-      <span class="c1">// 生成新的WAL文件的路径
-</span><span class="c1"></span>      <span class="k">val</span> <span class="n">newLogPath</span> <span class="k">=</span> <span class="k">new</span> <span class="nc">Path</span><span class="o">(</span><span class="n">logDirectory</span><span class="o">,</span>
-        <span class="n">timeToLogFile</span><span class="o">(</span><span class="n">currentLogWriterStartTime</span><span class="o">,</span> <span class="n">currentLogWriterStopTime</span><span class="o">))</span>
-      <span class="c1">// 更新currentLogPath为新的WAL文件的路径
-</span><span class="c1"></span>      <span class="n">currentLogPath</span> <span class="k">=</span> <span class="nc">Some</span><span class="o">(</span><span class="n">newLogPath</span><span class="o">.</span><span class="n">toString</span><span class="o">)</span>
-      <span class="c1">// 更新currentLogWriter为新的writer
-</span><span class="c1"></span>      <span class="n">currentLogWriter</span> <span class="k">=</span> <span class="k">new</span> <span class="nc">FileBasedWriteAheadLogWriter</span><span class="o">(</span><span class="n">currentLogPath</span><span class="o">.</span><span class="n">get</span><span class="o">,</span> <span class="n">hadoopConf</span><span class="o">)</span>
-    <span class="o">}</span>
-    <span class="n">currentLogWriter</span>
-  <span class="o">}</span>  
-</code></pre></td></tr></table></div>
+<pre tabindex="0" class="chroma"><code class="language-scala" data-lang="scala"><span class="line"><span class="cl"><span class="k">private</span><span class="o">[</span><span class="kt">streaming</span><span class="o">]</span> <span class="k">class</span> <span class="nc">FileBasedWriteAheadLog</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">  
+</span></span><span class="line"><span class="cl">  <span class="c1">// 记录当前WAL文件的路径
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="k">private</span> <span class="k">var</span> <span class="n">currentLogPath</span><span class="k">:</span> <span class="kt">Option</span><span class="o">[</span><span class="kt">String</span><span class="o">]</span> <span class="k">=</span> <span class="nc">None</span>
+</span></span><span class="line"><span class="cl">  <span class="c1">// 记录当前WAL writer
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="k">private</span> <span class="k">var</span> <span class="n">currentLogWriter</span><span class="k">:</span> <span class="kt">FileBasedWriteAheadLogWriter</span> <span class="o">=</span> <span class="kc">null</span>
+</span></span><span class="line"><span class="cl">  <span class="c1">// 当前WAL文件的开始时间
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="k">private</span> <span class="k">var</span> <span class="n">currentLogWriterStartTime</span><span class="k">:</span> <span class="kt">Long</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1L</span>
+</span></span><span class="line"><span class="cl">  <span class="c1">// 当前WAL文件的结束时间
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="k">private</span> <span class="k">var</span> <span class="n">currentLogWriterStopTime</span><span class="k">:</span> <span class="kt">Long</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1L</span>
+</span></span><span class="line"><span class="cl">  <span class="c1">// 记录完成的WAL文件信息
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="k">private</span> <span class="k">val</span> <span class="n">pastLogs</span> <span class="k">=</span> <span class="k">new</span> <span class="nc">ArrayBuffer</span><span class="o">[</span><span class="kt">LogInfo</span><span class="o">]</span>
+</span></span><span class="line"><span class="cl">  
+</span></span><span class="line"><span class="cl">  <span class="k">def</span> <span class="n">write</span><span class="o">(</span><span class="n">byteBuffer</span><span class="k">:</span> <span class="kt">ByteBuffer</span><span class="o">,</span> <span class="n">time</span><span class="k">:</span> <span class="kt">Long</span><span class="o">)</span><span class="k">:</span> <span class="kt">FileBasedWriteAheadLogSegment</span> <span class="o">=</span> <span class="n">synchronized</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">    <span class="k">var</span> <span class="n">fileSegment</span><span class="k">:</span> <span class="kt">FileBasedWriteAheadLogSegment</span> <span class="o">=</span> <span class="kc">null</span>
+</span></span><span class="line"><span class="cl">    <span class="k">var</span> <span class="n">failures</span> <span class="k">=</span> <span class="mi">0</span>
+</span></span><span class="line"><span class="cl">    <span class="k">var</span> <span class="n">lastException</span><span class="k">:</span> <span class="kt">Exception</span> <span class="o">=</span> <span class="kc">null</span>
+</span></span><span class="line"><span class="cl">    <span class="k">var</span> <span class="n">succeeded</span> <span class="k">=</span> <span class="kc">false</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// 尝试最多maxFailures次数
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="k">while</span> <span class="o">(!</span><span class="n">succeeded</span> <span class="o">&amp;&amp;</span> <span class="n">failures</span> <span class="o">&lt;</span> <span class="n">maxFailures</span><span class="o">)</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">      <span class="k">try</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">        <span class="c1">// 首先调用getLogWriter获取writer，
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>        <span class="c1">// 然后通过writer写入数据
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>        <span class="n">fileSegment</span> <span class="k">=</span> <span class="n">getLogWriter</span><span class="o">(</span><span class="n">time</span><span class="o">).</span><span class="n">write</span><span class="o">(</span><span class="n">byteBuffer</span><span class="o">)</span>
+</span></span><span class="line"><span class="cl">        <span class="k">if</span> <span class="o">(</span><span class="n">closeFileAfterWrite</span><span class="o">)</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">          <span class="n">resetWriter</span><span class="o">()</span>
+</span></span><span class="line"><span class="cl">        <span class="o">}</span>
+</span></span><span class="line"><span class="cl">        <span class="n">succeeded</span> <span class="k">=</span> <span class="kc">true</span>
+</span></span><span class="line"><span class="cl">      <span class="o">}</span> <span class="k">catch</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">        <span class="k">case</span> <span class="n">ex</span><span class="k">:</span> <span class="kt">Exception</span> <span class="o">=&gt;</span>
+</span></span><span class="line"><span class="cl">          <span class="n">lastException</span> <span class="k">=</span> <span class="n">ex</span>
+</span></span><span class="line"><span class="cl">          <span class="n">logWarning</span><span class="o">(</span><span class="s">&#34;Failed to write to write ahead log&#34;</span><span class="o">)</span>
+</span></span><span class="line"><span class="cl">          <span class="n">resetWriter</span><span class="o">()</span>
+</span></span><span class="line"><span class="cl">          <span class="n">failures</span> <span class="o">+=</span> <span class="mi">1</span>
+</span></span><span class="line"><span class="cl">      <span class="o">}</span>
+</span></span><span class="line"><span class="cl">    <span class="o">}</span>
+</span></span><span class="line"><span class="cl">    <span class="k">if</span> <span class="o">(</span><span class="n">fileSegment</span> <span class="o">==</span> <span class="kc">null</span><span class="o">)</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">      <span class="n">logError</span><span class="o">(</span><span class="s">s&#34;Failed to write to write ahead log after </span><span class="si">$failures</span><span class="s"> failures&#34;</span><span class="o">)</span>
+</span></span><span class="line"><span class="cl">      <span class="k">throw</span> <span class="n">lastException</span>
+</span></span><span class="line"><span class="cl">    <span class="o">}</span>
+</span></span><span class="line"><span class="cl">    <span class="n">fileSegment</span>
+</span></span><span class="line"><span class="cl">  <span class="o">}</span>
+</span></span><span class="line"><span class="cl">  
+</span></span><span class="line"><span class="cl">  <span class="k">private</span> <span class="k">def</span> <span class="n">getLogWriter</span><span class="o">(</span><span class="n">currentTime</span><span class="k">:</span> <span class="kt">Long</span><span class="o">)</span><span class="k">:</span> <span class="kt">FileBasedWriteAheadLogWriter</span> <span class="o">=</span> <span class="n">synchronized</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// 每个WAL文件都有对应的时间范围，如果超过了，则需要创建新的WAL文件
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="k">if</span> <span class="o">(</span><span class="n">currentLogWriter</span> <span class="o">==</span> <span class="kc">null</span> <span class="o">||</span> <span class="n">currentTime</span> <span class="o">&gt;</span> <span class="n">currentLogWriterStopTime</span><span class="o">)</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">      <span class="c1">// 关闭当前writer
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>      <span class="n">resetWriter</span><span class="o">()</span>
+</span></span><span class="line"><span class="cl">      <span class="c1">// 添加当前WAL的信息到currentLogPath列表，
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>      <span class="c1">// 相关信息包括起始时间，结束时间，文件路径
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>      <span class="n">currentLogPath</span><span class="o">.</span><span class="n">foreach</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">        <span class="n">pastLogs</span> <span class="o">+=</span> <span class="nc">LogInfo</span><span class="o">(</span><span class="n">currentLogWriterStartTime</span><span class="o">,</span> <span class="n">currentLogWriterStopTime</span><span class="o">,</span> <span class="k">_</span><span class="o">)</span>
+</span></span><span class="line"><span class="cl">      <span class="o">}</span>
+</span></span><span class="line"><span class="cl">      <span class="c1">// 更新currentLogWriterStartTime为新的WAL文件的开始时间
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>      <span class="n">currentLogWriterStartTime</span> <span class="k">=</span> <span class="n">currentTime</span>
+</span></span><span class="line"><span class="cl">      <span class="c1">// 更新currentLogWriterStopTime为新的WAL文件的结束时间
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>      <span class="n">currentLogWriterStopTime</span> <span class="k">=</span> <span class="n">currentTime</span> <span class="o">+</span> <span class="o">(</span><span class="n">rollingIntervalSecs</span> <span class="o">*</span> <span class="mi">1000</span><span class="o">)</span>
+</span></span><span class="line"><span class="cl">      <span class="c1">// 生成新的WAL文件的路径
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>      <span class="k">val</span> <span class="n">newLogPath</span> <span class="k">=</span> <span class="k">new</span> <span class="nc">Path</span><span class="o">(</span><span class="n">logDirectory</span><span class="o">,</span>
+</span></span><span class="line"><span class="cl">        <span class="n">timeToLogFile</span><span class="o">(</span><span class="n">currentLogWriterStartTime</span><span class="o">,</span> <span class="n">currentLogWriterStopTime</span><span class="o">))</span>
+</span></span><span class="line"><span class="cl">      <span class="c1">// 更新currentLogPath为新的WAL文件的路径
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>      <span class="n">currentLogPath</span> <span class="k">=</span> <span class="nc">Some</span><span class="o">(</span><span class="n">newLogPath</span><span class="o">.</span><span class="n">toString</span><span class="o">)</span>
+</span></span><span class="line"><span class="cl">      <span class="c1">// 更新currentLogWriter为新的writer
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>      <span class="n">currentLogWriter</span> <span class="k">=</span> <span class="k">new</span> <span class="nc">FileBasedWriteAheadLogWriter</span><span class="o">(</span><span class="n">currentLogPath</span><span class="o">.</span><span class="n">get</span><span class="o">,</span> <span class="n">hadoopConf</span><span class="o">)</span>
+</span></span><span class="line"><span class="cl">    <span class="o">}</span>
+</span></span><span class="line"><span class="cl">    <span class="n">currentLogWriter</span>
+</span></span><span class="line"><span class="cl">  <span class="o">}</span>  
+</span></span></code></pre></td></tr></table></div>
 </div>
 </div><h3 id="wal-读取"><a href="#wal-读取" class="anchor-link"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon anchor-icon"><path d="M326.612 185.391c59.747 59.809 58.927 155.698.36 214.59-.11.12-.24.25-.36.37l-67.2 67.2c-59.27 59.27-155.699 59.262-214.96 0-59.27-59.26-59.27-155.7 0-214.96l37.106-37.106c9.84-9.84 26.786-3.3 27.294 10.606.648 17.722 3.826 35.527 9.69 52.721 1.986 5.822.567 12.262-3.783 16.612l-13.087 13.087c-28.026 28.026-28.905 73.66-1.155 101.96 28.024 28.579 74.086 28.749 102.325.51l67.2-67.19c28.191-28.191 28.073-73.757 0-101.83-3.701-3.694-7.429-6.564-10.341-8.569a16.037 16.037 0 0 1-6.947-12.606c-.396-10.567 3.348-21.456 11.698-29.806l21.054-21.055c5.521-5.521 14.182-6.199 20.584-1.731a152.482 152.482 0 0 1 20.522 17.197zM467.547 44.449c-59.261-59.262-155.69-59.27-214.96 0l-67.2 67.2c-.12.12-.25.25-.36.37-58.566 58.892-59.387 154.781.36 214.59a152.454 152.454 0 0 0 20.521 17.196c6.402 4.468 15.064 3.789 20.584-1.731l21.054-21.055c8.35-8.35 12.094-19.239 11.698-29.806a16.037 16.037 0 0 0-6.947-12.606c-2.912-2.005-6.64-4.875-10.341-8.569-28.073-28.073-28.191-73.639 0-101.83l67.2-67.19c28.239-28.239 74.3-28.069 102.325.51 27.75 28.3 26.872 73.934-1.155 101.96l-13.087 13.087c-4.35 4.35-5.769 10.79-3.783 16.612 5.864 17.194 9.042 34.999 9.69 52.721.509 13.906 17.454 20.446 27.294 10.606l37.106-37.106c59.271-59.259 59.271-155.699.001-214.959z"/></svg></a>WAL 读取</h3>
 <p>WAL的读取由read方法负责，它只是通过FileBasedWriteAheadLogRandomReader来读取。FileBasedWriteAheadLogRandomReader支持seek操作，所以它支持单次数据的读取。</p>
@@ -569,45 +569,45 @@
 </span><span class="lnt">38
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-scala" data-lang="scala"><span class="k">class</span> <span class="nc">FileBasedWriteAheadLog</span> <span class="o">{</span>  
-  <span class="c1">// 参数segment是 write方法返回的FileBasedWriteAheadLogSegment
-</span><span class="c1"></span>  <span class="c1">// 包含了数据的位置信息
-</span><span class="c1"></span>  <span class="k">def</span> <span class="n">read</span><span class="o">(</span><span class="n">segment</span><span class="k">:</span> <span class="kt">WriteAheadLogRecordHandle</span><span class="o">)</span><span class="k">:</span> <span class="kt">ByteBuffer</span> <span class="o">=</span> <span class="o">{</span>
-    <span class="k">val</span> <span class="n">fileSegment</span> <span class="k">=</span> <span class="n">segment</span><span class="o">.</span><span class="n">asInstanceOf</span><span class="o">[</span><span class="kt">FileBasedWriteAheadLogSegment</span><span class="o">]</span>
-    <span class="k">var</span> <span class="n">reader</span><span class="k">:</span> <span class="kt">FileBasedWriteAheadLogRandomReader</span> <span class="o">=</span> <span class="kc">null</span>
-    <span class="k">var</span> <span class="n">byteBuffer</span><span class="k">:</span> <span class="kt">ByteBuffer</span> <span class="o">=</span> <span class="kc">null</span>
-    <span class="k">try</span> <span class="o">{</span>
-      <span class="c1">// 实例化FileBasedWriteAheadLogRandomReader，读取数据
-</span><span class="c1"></span>      <span class="n">reader</span> <span class="k">=</span> <span class="k">new</span> <span class="nc">FileBasedWriteAheadLogRandomReader</span><span class="o">(</span><span class="n">fileSegment</span><span class="o">.</span><span class="n">path</span><span class="o">,</span> <span class="n">hadoopConf</span><span class="o">)</span>
-      <span class="n">byteBuffer</span> <span class="k">=</span> <span class="n">reader</span><span class="o">.</span><span class="n">read</span><span class="o">(</span><span class="n">fileSegment</span><span class="o">)</span>
-    <span class="o">}</span> <span class="k">finally</span> <span class="o">{</span>
-      <span class="n">reader</span><span class="o">.</span><span class="n">close</span><span class="o">()</span>
-    <span class="o">}</span>
-    <span class="n">byteBuffer</span>
-  <span class="o">}</span>
-<span class="o">}</span>
-
-<span class="k">class</span> <span class="nc">FileBasedWriteAheadLogRandomReader</span><span class="o">(</span><span class="n">path</span><span class="k">:</span> <span class="kt">String</span><span class="o">,</span> <span class="n">conf</span><span class="k">:</span> <span class="kt">Configuration</span><span class="o">)</span>
-  <span class="k">extends</span> <span class="nc">Closeable</span> <span class="o">{</span>
-  <span class="c1">// 获取hdfs的读客户端
-</span><span class="c1"></span>  <span class="k">private</span> <span class="k">val</span> <span class="n">instream</span> <span class="k">=</span> <span class="nc">HdfsUtils</span><span class="o">.</span><span class="n">getInputStream</span><span class="o">(</span><span class="n">path</span><span class="o">,</span> <span class="n">conf</span><span class="o">)</span>
-  <span class="k">private</span> <span class="k">var</span> <span class="n">closed</span> <span class="k">=</span> <span class="o">(</span><span class="n">instream</span> <span class="o">==</span> <span class="kc">null</span><span class="o">)</span> <span class="c1">// the file may be deleted as we&#39;re opening the stream
-</span><span class="c1"></span>
-  <span class="k">def</span> <span class="n">read</span><span class="o">(</span><span class="n">segment</span><span class="k">:</span> <span class="kt">FileBasedWriteAheadLogSegment</span><span class="o">)</span><span class="k">:</span> <span class="kt">ByteBuffer</span> <span class="o">=</span> <span class="n">synchronized</span> <span class="o">{</span>
-    <span class="c1">// 获取该数据所在文件中的起始位置
-</span><span class="c1"></span>    <span class="c1">// 调用seek移动文件的读取位置
-</span><span class="c1"></span>    <span class="n">instream</span><span class="o">.</span><span class="n">seek</span><span class="o">(</span><span class="n">segment</span><span class="o">.</span><span class="n">offset</span><span class="o">)</span>
-    <span class="c1">// 读取数据的长度
-</span><span class="c1"></span>    <span class="k">val</span> <span class="n">nextLength</span> <span class="k">=</span> <span class="n">instream</span><span class="o">.</span><span class="n">readInt</span><span class="o">()</span>
-    <span class="c1">// 实例化Byte数组
-</span><span class="c1"></span>    <span class="k">val</span> <span class="n">buffer</span> <span class="k">=</span> <span class="k">new</span> <span class="nc">Array</span><span class="o">[</span><span class="kt">Byte</span><span class="o">](</span><span class="n">nextLength</span><span class="o">)</span>
-    <span class="c1">// 读取数据到数组
-</span><span class="c1"></span>    <span class="n">instream</span><span class="o">.</span><span class="n">readFully</span><span class="o">(</span><span class="n">buffer</span><span class="o">)</span>
-    <span class="c1">// 返回ByteBuffer
-</span><span class="c1"></span>    <span class="nc">ByteBuffer</span><span class="o">.</span><span class="n">wrap</span><span class="o">(</span><span class="n">buffer</span><span class="o">)</span>
-  <span class="o">}</span>
-<span class="o">}</span>
-</code></pre></td></tr></table></div>
+<pre tabindex="0" class="chroma"><code class="language-scala" data-lang="scala"><span class="line"><span class="cl"><span class="k">class</span> <span class="nc">FileBasedWriteAheadLog</span> <span class="o">{</span>  
+</span></span><span class="line"><span class="cl">  <span class="c1">// 参数segment是 write方法返回的FileBasedWriteAheadLogSegment
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="c1">// 包含了数据的位置信息
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="k">def</span> <span class="n">read</span><span class="o">(</span><span class="n">segment</span><span class="k">:</span> <span class="kt">WriteAheadLogRecordHandle</span><span class="o">)</span><span class="k">:</span> <span class="kt">ByteBuffer</span> <span class="o">=</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">    <span class="k">val</span> <span class="n">fileSegment</span> <span class="k">=</span> <span class="n">segment</span><span class="o">.</span><span class="n">asInstanceOf</span><span class="o">[</span><span class="kt">FileBasedWriteAheadLogSegment</span><span class="o">]</span>
+</span></span><span class="line"><span class="cl">    <span class="k">var</span> <span class="n">reader</span><span class="k">:</span> <span class="kt">FileBasedWriteAheadLogRandomReader</span> <span class="o">=</span> <span class="kc">null</span>
+</span></span><span class="line"><span class="cl">    <span class="k">var</span> <span class="n">byteBuffer</span><span class="k">:</span> <span class="kt">ByteBuffer</span> <span class="o">=</span> <span class="kc">null</span>
+</span></span><span class="line"><span class="cl">    <span class="k">try</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">      <span class="c1">// 实例化FileBasedWriteAheadLogRandomReader，读取数据
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>      <span class="n">reader</span> <span class="k">=</span> <span class="k">new</span> <span class="nc">FileBasedWriteAheadLogRandomReader</span><span class="o">(</span><span class="n">fileSegment</span><span class="o">.</span><span class="n">path</span><span class="o">,</span> <span class="n">hadoopConf</span><span class="o">)</span>
+</span></span><span class="line"><span class="cl">      <span class="n">byteBuffer</span> <span class="k">=</span> <span class="n">reader</span><span class="o">.</span><span class="n">read</span><span class="o">(</span><span class="n">fileSegment</span><span class="o">)</span>
+</span></span><span class="line"><span class="cl">    <span class="o">}</span> <span class="k">finally</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">      <span class="n">reader</span><span class="o">.</span><span class="n">close</span><span class="o">()</span>
+</span></span><span class="line"><span class="cl">    <span class="o">}</span>
+</span></span><span class="line"><span class="cl">    <span class="n">byteBuffer</span>
+</span></span><span class="line"><span class="cl">  <span class="o">}</span>
+</span></span><span class="line"><span class="cl"><span class="o">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="k">class</span> <span class="nc">FileBasedWriteAheadLogRandomReader</span><span class="o">(</span><span class="n">path</span><span class="k">:</span> <span class="kt">String</span><span class="o">,</span> <span class="n">conf</span><span class="k">:</span> <span class="kt">Configuration</span><span class="o">)</span>
+</span></span><span class="line"><span class="cl">  <span class="k">extends</span> <span class="nc">Closeable</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">  <span class="c1">// 获取hdfs的读客户端
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="k">private</span> <span class="k">val</span> <span class="n">instream</span> <span class="k">=</span> <span class="nc">HdfsUtils</span><span class="o">.</span><span class="n">getInputStream</span><span class="o">(</span><span class="n">path</span><span class="o">,</span> <span class="n">conf</span><span class="o">)</span>
+</span></span><span class="line"><span class="cl">  <span class="k">private</span> <span class="k">var</span> <span class="n">closed</span> <span class="k">=</span> <span class="o">(</span><span class="n">instream</span> <span class="o">==</span> <span class="kc">null</span><span class="o">)</span> <span class="c1">// the file may be deleted as we&#39;re opening the stream
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>
+</span></span><span class="line"><span class="cl">  <span class="k">def</span> <span class="n">read</span><span class="o">(</span><span class="n">segment</span><span class="k">:</span> <span class="kt">FileBasedWriteAheadLogSegment</span><span class="o">)</span><span class="k">:</span> <span class="kt">ByteBuffer</span> <span class="o">=</span> <span class="n">synchronized</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// 获取该数据所在文件中的起始位置
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="c1">// 调用seek移动文件的读取位置
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="n">instream</span><span class="o">.</span><span class="n">seek</span><span class="o">(</span><span class="n">segment</span><span class="o">.</span><span class="n">offset</span><span class="o">)</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// 读取数据的长度
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="k">val</span> <span class="n">nextLength</span> <span class="k">=</span> <span class="n">instream</span><span class="o">.</span><span class="n">readInt</span><span class="o">()</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// 实例化Byte数组
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="k">val</span> <span class="n">buffer</span> <span class="k">=</span> <span class="k">new</span> <span class="nc">Array</span><span class="o">[</span><span class="kt">Byte</span><span class="o">](</span><span class="n">nextLength</span><span class="o">)</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// 读取数据到数组
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="n">instream</span><span class="o">.</span><span class="n">readFully</span><span class="o">(</span><span class="n">buffer</span><span class="o">)</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// 返回ByteBuffer
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="nc">ByteBuffer</span><span class="o">.</span><span class="n">wrap</span><span class="o">(</span><span class="n">buffer</span><span class="o">)</span>
+</span></span><span class="line"><span class="cl">  <span class="o">}</span>
+</span></span><span class="line"><span class="cl"><span class="o">}</span>
+</span></span></code></pre></td></tr></table></div>
 </div>
 </div><h3 id="wal-删除"><a href="#wal-删除" class="anchor-link"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon anchor-icon"><path d="M326.612 185.391c59.747 59.809 58.927 155.698.36 214.59-.11.12-.24.25-.36.37l-67.2 67.2c-59.27 59.27-155.699 59.262-214.96 0-59.27-59.26-59.27-155.7 0-214.96l37.106-37.106c9.84-9.84 26.786-3.3 27.294 10.606.648 17.722 3.826 35.527 9.69 52.721 1.986 5.822.567 12.262-3.783 16.612l-13.087 13.087c-28.026 28.026-28.905 73.66-1.155 101.96 28.024 28.579 74.086 28.749 102.325.51l67.2-67.19c28.191-28.191 28.073-73.757 0-101.83-3.701-3.694-7.429-6.564-10.341-8.569a16.037 16.037 0 0 1-6.947-12.606c-.396-10.567 3.348-21.456 11.698-29.806l21.054-21.055c5.521-5.521 14.182-6.199 20.584-1.731a152.482 152.482 0 0 1 20.522 17.197zM467.547 44.449c-59.261-59.262-155.69-59.27-214.96 0l-67.2 67.2c-.12.12-.25.25-.36.37-58.566 58.892-59.387 154.781.36 214.59a152.454 152.454 0 0 0 20.521 17.196c6.402 4.468 15.064 3.789 20.584-1.731l21.054-21.055c8.35-8.35 12.094-19.239 11.698-29.806a16.037 16.037 0 0 0-6.947-12.606c-2.912-2.005-6.64-4.875-10.341-8.569-28.073-28.073-28.191-73.639 0-101.83l67.2-67.19c28.239-28.239 74.3-28.069 102.325.51 27.75 28.3 26.872 73.934-1.155 101.96l-13.087 13.087c-4.35 4.35-5.769 10.79-3.783 16.612 5.864 17.194 9.042 34.999 9.69 52.721.509 13.906 17.454 20.446 27.294 10.606l37.106-37.106c59.271-59.259 59.271-155.699.001-214.959z"/></svg></a>WAL 删除</h3>
 <p>spark streaming处理的是流数据，它不可能会将所有的数据都保存下来。所以对于处理过的数据，它会定期删除掉。FileBasedWriteAheadLog同样提供了clean接口，来处理过期的数据</p>
@@ -662,54 +662,54 @@
 </span><span class="lnt">47
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-scala" data-lang="scala"><span class="k">class</span> <span class="nc">FileBasedWriteAheadLog</span> <span class="o">{</span>
-  <span class="c1">// WAL文件信息列表
-</span><span class="c1"></span>  <span class="k">private</span> <span class="k">val</span> <span class="n">pastLogs</span> <span class="k">=</span> <span class="k">new</span> <span class="nc">ArrayBuffer</span><span class="o">[</span><span class="kt">LogInfo</span><span class="o">]</span>
-  
-  <span class="k">def</span> <span class="n">clean</span><span class="o">(</span><span class="n">threshTime</span><span class="k">:</span> <span class="kt">Long</span><span class="o">,</span> <span class="n">waitForCompletion</span><span class="k">:</span> <span class="kt">Boolean</span><span class="o">)</span><span class="k">:</span> <span class="kt">Unit</span> <span class="o">=</span> <span class="o">{</span>
-    <span class="c1">// 找到结束时间小于threshTime的WAL文件
-</span><span class="c1"></span>    <span class="k">val</span> <span class="n">oldLogFiles</span> <span class="k">=</span> <span class="n">synchronized</span> <span class="o">{</span>
-      <span class="k">val</span> <span class="n">expiredLogs</span> <span class="k">=</span> <span class="n">pastLogs</span><span class="o">.</span><span class="n">filter</span> <span class="o">{</span> <span class="k">_</span><span class="o">.</span><span class="n">endTime</span> <span class="o">&lt;</span> <span class="n">threshTime</span> <span class="o">}</span>
-      <span class="n">pastLogs</span> <span class="o">--=</span> <span class="n">expiredLogs</span>
-      <span class="n">expiredLogs</span>
-    <span class="o">}</span>
-  
-    <span class="k">def</span> <span class="n">deleteFile</span><span class="o">(</span><span class="n">walInfo</span><span class="k">:</span> <span class="kt">LogInfo</span><span class="o">)</span><span class="k">:</span> <span class="kt">Unit</span> <span class="o">=</span> <span class="o">{</span>
-      <span class="k">try</span> <span class="o">{</span>
-        <span class="c1">// 获取WAL文件的路径
-</span><span class="c1"></span>        <span class="k">val</span> <span class="n">path</span> <span class="k">=</span> <span class="k">new</span> <span class="nc">Path</span><span class="o">(</span><span class="n">walInfo</span><span class="o">.</span><span class="n">path</span><span class="o">)</span>
-        <span class="c1">// 获取FileSystem
-</span><span class="c1"></span>        <span class="k">val</span> <span class="n">fs</span> <span class="k">=</span> <span class="nc">HdfsUtils</span><span class="o">.</span><span class="n">getFileSystemForPath</span><span class="o">(</span><span class="n">path</span><span class="o">,</span> <span class="n">hadoopConf</span><span class="o">)</span>
-        <span class="c1">// 删除WAL文件
-</span><span class="c1"></span>        <span class="n">fs</span><span class="o">.</span><span class="n">delete</span><span class="o">(</span><span class="n">path</span><span class="o">,</span> <span class="kc">true</span><span class="o">)</span>
-      <span class="o">}</span> <span class="k">catch</span> <span class="o">{</span>
-        <span class="k">case</span> <span class="n">ex</span><span class="k">:</span> <span class="kt">Exception</span> <span class="o">=&gt;</span>
-          <span class="n">logWarning</span><span class="o">(</span><span class="s">s&#34;Error clearing write ahead log file </span><span class="si">$walInfo</span><span class="s">&#34;</span><span class="o">,</span> <span class="n">ex</span><span class="o">)</span>
-      <span class="o">}</span>
-    <span class="o">}</span>
-    
-    <span class="c1">// 遍历需要删除的WAL文件列表，调用deleteFile方法删除
-</span><span class="c1"></span>    <span class="n">oldLogFiles</span><span class="o">.</span><span class="n">foreach</span> <span class="o">{</span> <span class="n">logInfo</span> <span class="k">=&gt;</span>
-      <span class="k">if</span> <span class="o">(!</span><span class="n">executionContext</span><span class="o">.</span><span class="n">isShutdown</span><span class="o">)</span> <span class="o">{</span>
-        <span class="k">try</span> <span class="o">{</span>
-          <span class="c1">// 使用线程池删除文件
-</span><span class="c1"></span>          <span class="k">val</span> <span class="n">f</span> <span class="k">=</span> <span class="nc">Future</span> <span class="o">{</span> <span class="n">deleteFile</span><span class="o">(</span><span class="n">logInfo</span><span class="o">)</span> <span class="o">}(</span><span class="n">executionContext</span><span class="o">)</span>
-          <span class="k">if</span> <span class="o">(</span><span class="n">waitForCompletion</span><span class="o">)</span> <span class="o">{</span>
-            <span class="k">import</span> <span class="nn">scala.concurrent.duration._</span>
-            <span class="c1">// scalastyle:off awaitready
-</span><span class="c1"></span>            <span class="nc">Await</span><span class="o">.</span><span class="n">ready</span><span class="o">(</span><span class="n">f</span><span class="o">,</span> <span class="mi">1</span> <span class="n">second</span><span class="o">)</span>
-            <span class="c1">// scalastyle:on awaitready
-</span><span class="c1"></span>          <span class="o">}</span>
-        <span class="o">}</span> <span class="k">catch</span> <span class="o">{</span>
-          <span class="k">case</span> <span class="n">e</span><span class="k">:</span> <span class="kt">RejectedExecutionException</span> <span class="o">=&gt;</span>
-            <span class="n">logWarning</span><span class="o">(</span><span class="s">&#34;Execution context shutdown before deleting old WriteAheadLogs. &#34;</span> <span class="o">+</span>
-              <span class="s">&#34;This would not affect recovery correctness.&#34;</span><span class="o">,</span> <span class="n">e</span><span class="o">)</span>
-        <span class="o">}</span>
-      <span class="o">}</span>
-    <span class="o">}</span>
-  <span class="o">}</span>
-<span class="o">}</span>
-</code></pre></td></tr></table></div>
+<pre tabindex="0" class="chroma"><code class="language-scala" data-lang="scala"><span class="line"><span class="cl"><span class="k">class</span> <span class="nc">FileBasedWriteAheadLog</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">  <span class="c1">// WAL文件信息列表
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="k">private</span> <span class="k">val</span> <span class="n">pastLogs</span> <span class="k">=</span> <span class="k">new</span> <span class="nc">ArrayBuffer</span><span class="o">[</span><span class="kt">LogInfo</span><span class="o">]</span>
+</span></span><span class="line"><span class="cl">  
+</span></span><span class="line"><span class="cl">  <span class="k">def</span> <span class="n">clean</span><span class="o">(</span><span class="n">threshTime</span><span class="k">:</span> <span class="kt">Long</span><span class="o">,</span> <span class="n">waitForCompletion</span><span class="k">:</span> <span class="kt">Boolean</span><span class="o">)</span><span class="k">:</span> <span class="kt">Unit</span> <span class="o">=</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// 找到结束时间小于threshTime的WAL文件
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="k">val</span> <span class="n">oldLogFiles</span> <span class="k">=</span> <span class="n">synchronized</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">      <span class="k">val</span> <span class="n">expiredLogs</span> <span class="k">=</span> <span class="n">pastLogs</span><span class="o">.</span><span class="n">filter</span> <span class="o">{</span> <span class="k">_</span><span class="o">.</span><span class="n">endTime</span> <span class="o">&lt;</span> <span class="n">threshTime</span> <span class="o">}</span>
+</span></span><span class="line"><span class="cl">      <span class="n">pastLogs</span> <span class="o">--=</span> <span class="n">expiredLogs</span>
+</span></span><span class="line"><span class="cl">      <span class="n">expiredLogs</span>
+</span></span><span class="line"><span class="cl">    <span class="o">}</span>
+</span></span><span class="line"><span class="cl">  
+</span></span><span class="line"><span class="cl">    <span class="k">def</span> <span class="n">deleteFile</span><span class="o">(</span><span class="n">walInfo</span><span class="k">:</span> <span class="kt">LogInfo</span><span class="o">)</span><span class="k">:</span> <span class="kt">Unit</span> <span class="o">=</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">      <span class="k">try</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">        <span class="c1">// 获取WAL文件的路径
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>        <span class="k">val</span> <span class="n">path</span> <span class="k">=</span> <span class="k">new</span> <span class="nc">Path</span><span class="o">(</span><span class="n">walInfo</span><span class="o">.</span><span class="n">path</span><span class="o">)</span>
+</span></span><span class="line"><span class="cl">        <span class="c1">// 获取FileSystem
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>        <span class="k">val</span> <span class="n">fs</span> <span class="k">=</span> <span class="nc">HdfsUtils</span><span class="o">.</span><span class="n">getFileSystemForPath</span><span class="o">(</span><span class="n">path</span><span class="o">,</span> <span class="n">hadoopConf</span><span class="o">)</span>
+</span></span><span class="line"><span class="cl">        <span class="c1">// 删除WAL文件
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>        <span class="n">fs</span><span class="o">.</span><span class="n">delete</span><span class="o">(</span><span class="n">path</span><span class="o">,</span> <span class="kc">true</span><span class="o">)</span>
+</span></span><span class="line"><span class="cl">      <span class="o">}</span> <span class="k">catch</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">        <span class="k">case</span> <span class="n">ex</span><span class="k">:</span> <span class="kt">Exception</span> <span class="o">=&gt;</span>
+</span></span><span class="line"><span class="cl">          <span class="n">logWarning</span><span class="o">(</span><span class="s">s&#34;Error clearing write ahead log file </span><span class="si">$walInfo</span><span class="s">&#34;</span><span class="o">,</span> <span class="n">ex</span><span class="o">)</span>
+</span></span><span class="line"><span class="cl">      <span class="o">}</span>
+</span></span><span class="line"><span class="cl">    <span class="o">}</span>
+</span></span><span class="line"><span class="cl">    
+</span></span><span class="line"><span class="cl">    <span class="c1">// 遍历需要删除的WAL文件列表，调用deleteFile方法删除
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="n">oldLogFiles</span><span class="o">.</span><span class="n">foreach</span> <span class="o">{</span> <span class="n">logInfo</span> <span class="k">=&gt;</span>
+</span></span><span class="line"><span class="cl">      <span class="k">if</span> <span class="o">(!</span><span class="n">executionContext</span><span class="o">.</span><span class="n">isShutdown</span><span class="o">)</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">        <span class="k">try</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">          <span class="c1">// 使用线程池删除文件
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>          <span class="k">val</span> <span class="n">f</span> <span class="k">=</span> <span class="nc">Future</span> <span class="o">{</span> <span class="n">deleteFile</span><span class="o">(</span><span class="n">logInfo</span><span class="o">)</span> <span class="o">}(</span><span class="n">executionContext</span><span class="o">)</span>
+</span></span><span class="line"><span class="cl">          <span class="k">if</span> <span class="o">(</span><span class="n">waitForCompletion</span><span class="o">)</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">            <span class="k">import</span> <span class="nn">scala.concurrent.duration._</span>
+</span></span><span class="line"><span class="cl">            <span class="c1">// scalastyle:off awaitready
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>            <span class="nc">Await</span><span class="o">.</span><span class="n">ready</span><span class="o">(</span><span class="n">f</span><span class="o">,</span> <span class="mi">1</span> <span class="n">second</span><span class="o">)</span>
+</span></span><span class="line"><span class="cl">            <span class="c1">// scalastyle:on awaitready
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>          <span class="o">}</span>
+</span></span><span class="line"><span class="cl">        <span class="o">}</span> <span class="k">catch</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">          <span class="k">case</span> <span class="n">e</span><span class="k">:</span> <span class="kt">RejectedExecutionException</span> <span class="o">=&gt;</span>
+</span></span><span class="line"><span class="cl">            <span class="n">logWarning</span><span class="o">(</span><span class="s">&#34;Execution context shutdown before deleting old WriteAheadLogs. &#34;</span> <span class="o">+</span>
+</span></span><span class="line"><span class="cl">              <span class="s">&#34;This would not affect recovery correctness.&#34;</span><span class="o">,</span> <span class="n">e</span><span class="o">)</span>
+</span></span><span class="line"><span class="cl">        <span class="o">}</span>
+</span></span><span class="line"><span class="cl">      <span class="o">}</span>
+</span></span><span class="line"><span class="cl">    <span class="o">}</span>
+</span></span><span class="line"><span class="cl">  <span class="o">}</span>
+</span></span><span class="line"><span class="cl"><span class="o">}</span>
+</span></span></code></pre></td></tr></table></div>
 </div>
 </div><h2 id="batchedwriteaheadlog"><a href="#batchedwriteaheadlog" class="anchor-link"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon anchor-icon"><path d="M326.612 185.391c59.747 59.809 58.927 155.698.36 214.59-.11.12-.24.25-.36.37l-67.2 67.2c-59.27 59.27-155.699 59.262-214.96 0-59.27-59.26-59.27-155.7 0-214.96l37.106-37.106c9.84-9.84 26.786-3.3 27.294 10.606.648 17.722 3.826 35.527 9.69 52.721 1.986 5.822.567 12.262-3.783 16.612l-13.087 13.087c-28.026 28.026-28.905 73.66-1.155 101.96 28.024 28.579 74.086 28.749 102.325.51l67.2-67.19c28.191-28.191 28.073-73.757 0-101.83-3.701-3.694-7.429-6.564-10.341-8.569a16.037 16.037 0 0 1-6.947-12.606c-.396-10.567 3.348-21.456 11.698-29.806l21.054-21.055c5.521-5.521 14.182-6.199 20.584-1.731a152.482 152.482 0 0 1 20.522 17.197zM467.547 44.449c-59.261-59.262-155.69-59.27-214.96 0l-67.2 67.2c-.12.12-.25.25-.36.37-58.566 58.892-59.387 154.781.36 214.59a152.454 152.454 0 0 0 20.521 17.196c6.402 4.468 15.064 3.789 20.584-1.731l21.054-21.055c8.35-8.35 12.094-19.239 11.698-29.806a16.037 16.037 0 0 0-6.947-12.606c-2.912-2.005-6.64-4.875-10.341-8.569-28.073-28.073-28.191-73.639 0-101.83l67.2-67.19c28.239-28.239 74.3-28.069 102.325.51 27.75 28.3 26.872 73.934-1.155 101.96l-13.087 13.087c-4.35 4.35-5.769 10.79-3.783 16.612 5.864 17.194 9.042 34.999 9.69 52.721.509 13.906 17.454 20.446 27.294 10.606l37.106-37.106c59.271-59.259 59.271-155.699.001-214.959z"/></svg></a>BatchedWriteAheadLog</h2>
 <p>BatchedWriteAheadLog只运行在driver端，还需要spark配置中指定spark.streaming.driver.writeAheadLog.allowBatching选项为true。它会将数据线缓存起来，然后一次取多条数据，封装成一个批次存储到文件中。这样提高了系统的吞吐量。</p>
@@ -736,25 +736,25 @@
 </span><span class="lnt">18
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-scala" data-lang="scala"><span class="k">class</span> <span class="nc">BatchedWriteAheadLog</span><span class="o">(</span><span class="k">val</span> <span class="n">wrappedLog</span><span class="k">:</span> <span class="kt">WriteAheadLog</span><span class="o">,</span> <span class="n">conf</span><span class="k">:</span> <span class="kt">SparkConf</span><span class="o">)</span> <span class="o">{</span>
-  <span class="c1">// WAL数据队列
-</span><span class="c1"></span>  <span class="k">private</span> <span class="k">val</span> <span class="n">walWriteQueue</span> <span class="k">=</span> <span class="k">new</span> <span class="nc">LinkedBlockingQueue</span><span class="o">[</span><span class="kt">Record</span><span class="o">]()</span>
-  
-  <span class="k">override</span> <span class="k">def</span> <span class="n">write</span><span class="o">(</span><span class="n">byteBuffer</span><span class="k">:</span> <span class="kt">ByteBuffer</span><span class="o">,</span> <span class="n">time</span><span class="k">:</span> <span class="kt">Long</span><span class="o">)</span><span class="k">:</span> <span class="kt">WriteAheadLogRecordHandle</span> <span class="o">=</span> <span class="o">{</span>
-    <span class="k">val</span> <span class="n">promise</span> <span class="k">=</span> <span class="nc">Promise</span><span class="o">[</span><span class="kt">WriteAheadLogRecordHandle</span><span class="o">]()</span>
-    <span class="k">val</span> <span class="n">putSuccessfully</span> <span class="k">=</span> <span class="n">synchronized</span> <span class="o">{</span>
-      <span class="k">if</span> <span class="o">(</span><span class="n">active</span><span class="o">)</span> <span class="o">{</span>
-        <span class="c1">// 实例化Record，并且添加到walWriteQueue队列里
-</span><span class="c1"></span>        <span class="n">walWriteQueue</span><span class="o">.</span><span class="n">offer</span><span class="o">(</span><span class="nc">Record</span><span class="o">(</span><span class="n">byteBuffer</span><span class="o">,</span> <span class="n">time</span><span class="o">,</span> <span class="n">promise</span><span class="o">))</span>
-        <span class="kc">true</span>
-      <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
-        <span class="kc">false</span>
-      <span class="o">}</span>
-    <span class="o">}</span>
-    <span class="o">......</span>
-  <span class="o">}</span>    
-<span class="o">}</span>
-</code></pre></td></tr></table></div>
+<pre tabindex="0" class="chroma"><code class="language-scala" data-lang="scala"><span class="line"><span class="cl"><span class="k">class</span> <span class="nc">BatchedWriteAheadLog</span><span class="o">(</span><span class="k">val</span> <span class="n">wrappedLog</span><span class="k">:</span> <span class="kt">WriteAheadLog</span><span class="o">,</span> <span class="n">conf</span><span class="k">:</span> <span class="kt">SparkConf</span><span class="o">)</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">  <span class="c1">// WAL数据队列
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="k">private</span> <span class="k">val</span> <span class="n">walWriteQueue</span> <span class="k">=</span> <span class="k">new</span> <span class="nc">LinkedBlockingQueue</span><span class="o">[</span><span class="kt">Record</span><span class="o">]()</span>
+</span></span><span class="line"><span class="cl">  
+</span></span><span class="line"><span class="cl">  <span class="k">override</span> <span class="k">def</span> <span class="n">write</span><span class="o">(</span><span class="n">byteBuffer</span><span class="k">:</span> <span class="kt">ByteBuffer</span><span class="o">,</span> <span class="n">time</span><span class="k">:</span> <span class="kt">Long</span><span class="o">)</span><span class="k">:</span> <span class="kt">WriteAheadLogRecordHandle</span> <span class="o">=</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">    <span class="k">val</span> <span class="n">promise</span> <span class="k">=</span> <span class="nc">Promise</span><span class="o">[</span><span class="kt">WriteAheadLogRecordHandle</span><span class="o">]()</span>
+</span></span><span class="line"><span class="cl">    <span class="k">val</span> <span class="n">putSuccessfully</span> <span class="k">=</span> <span class="n">synchronized</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">      <span class="k">if</span> <span class="o">(</span><span class="n">active</span><span class="o">)</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">        <span class="c1">// 实例化Record，并且添加到walWriteQueue队列里
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>        <span class="n">walWriteQueue</span><span class="o">.</span><span class="n">offer</span><span class="o">(</span><span class="nc">Record</span><span class="o">(</span><span class="n">byteBuffer</span><span class="o">,</span> <span class="n">time</span><span class="o">,</span> <span class="n">promise</span><span class="o">))</span>
+</span></span><span class="line"><span class="cl">        <span class="kc">true</span>
+</span></span><span class="line"><span class="cl">      <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">        <span class="kc">false</span>
+</span></span><span class="line"><span class="cl">      <span class="o">}</span>
+</span></span><span class="line"><span class="cl">    <span class="o">}</span>
+</span></span><span class="line"><span class="cl">    <span class="o">......</span>
+</span></span><span class="line"><span class="cl">  <span class="o">}</span>    
+</span></span><span class="line"><span class="cl"><span class="o">}</span>
+</span></span></code></pre></td></tr></table></div>
 </div>
 </div><p>BatchedWriteAheadLog还有一个后台线程，会一直从队列中获取数据，然后封装成batch的格式，通过FileBasedWriteAheadLog写入WAL。</p>
 <div class="highlight"><div class="chroma">
@@ -816,62 +816,62 @@
 </span><span class="lnt">55
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-scala" data-lang="scala"><span class="k">class</span> <span class="nc">BatchedWriteAheadLog</span><span class="o">(</span><span class="k">val</span> <span class="n">wrappedLog</span><span class="k">:</span> <span class="kt">WriteAheadLog</span><span class="o">,</span> <span class="n">conf</span><span class="k">:</span> <span class="kt">SparkConf</span><span class="o">)</span> <span class="o">{</span>
-  
-  <span class="c1">// WAL数据队列
-</span><span class="c1"></span>  <span class="k">private</span> <span class="k">val</span> <span class="n">walWriteQueue</span> <span class="k">=</span> <span class="k">new</span> <span class="nc">LinkedBlockingQueue</span><span class="o">[</span><span class="kt">Record</span><span class="o">]()</span>
-  <span class="c1">// 数据缓存，保存即将保存的batch数据
-</span><span class="c1"></span>  <span class="k">private</span> <span class="k">val</span> <span class="n">buffer</span> <span class="k">=</span> <span class="k">new</span> <span class="nc">ArrayBuffer</span><span class="o">[</span><span class="kt">Record</span><span class="o">]()</span>
-  <span class="c1">// batch write 线程
-</span><span class="c1"></span>  <span class="k">private</span> <span class="k">val</span> <span class="n">batchedWriterThread</span> <span class="k">=</span> <span class="n">startBatchedWriterThread</span><span class="o">()</span>
-    
-  <span class="k">private</span> <span class="k">def</span> <span class="n">startBatchedWriterThread</span><span class="o">()</span><span class="k">:</span> <span class="kt">Thread</span> <span class="o">=</span> <span class="o">{</span>
-    <span class="c1">// 循环的调用flushRecords方法
-</span><span class="c1"></span>    <span class="k">val</span> <span class="n">thread</span> <span class="k">=</span> <span class="k">new</span> <span class="nc">Thread</span><span class="o">(</span><span class="k">new</span> <span class="nc">Runnable</span> <span class="o">{</span>
-      <span class="k">override</span> <span class="k">def</span> <span class="n">run</span><span class="o">()</span><span class="k">:</span> <span class="kt">Unit</span> <span class="o">=</span> <span class="o">{</span>
-        <span class="k">while</span> <span class="o">(</span><span class="n">active</span><span class="o">)</span> <span class="o">{</span>
-          <span class="n">flushRecords</span><span class="o">()</span>
-        <span class="o">}</span>
-      <span class="o">}</span>
-    <span class="o">},</span> <span class="s">&#34;BatchedWriteAheadLog Writer&#34;</span><span class="o">)</span>
-    <span class="n">thread</span><span class="o">.</span><span class="n">setDaemon</span><span class="o">(</span><span class="kc">true</span><span class="o">)</span>
-    <span class="n">thread</span><span class="o">.</span><span class="n">start</span><span class="o">()</span>
-    <span class="n">thread</span>
-  <span class="o">}</span>
-
-  <span class="cm">/** Write all the records in the buffer to the write ahead log. */</span>
-  <span class="k">private</span> <span class="k">def</span> <span class="n">flushRecords</span><span class="o">()</span><span class="k">:</span> <span class="kt">Unit</span> <span class="o">=</span> <span class="o">{</span>
-    <span class="k">try</span> <span class="o">{</span>
-      <span class="c1">// 这里调用take会阻塞，一直到队列中有数据
-</span><span class="c1"></span>      <span class="n">buffer</span> <span class="o">+=</span> <span class="n">walWriteQueue</span><span class="o">.</span><span class="n">take</span><span class="o">()</span>
-      <span class="c1">// 调用drainTo能够高效率的导出数据
-</span><span class="c1"></span>      <span class="k">val</span> <span class="n">numBatched</span> <span class="k">=</span> <span class="n">walWriteQueue</span><span class="o">.</span><span class="n">drainTo</span><span class="o">(</span><span class="n">buffer</span><span class="o">.</span><span class="n">asJava</span><span class="o">)</span> <span class="o">+</span> <span class="mi">1</span>
-    <span class="o">}</span> <span class="k">catch</span> <span class="o">{</span>
-      <span class="k">case</span> <span class="k">_:</span> <span class="kt">InterruptedException</span> <span class="o">=&gt;</span>
-        <span class="n">logWarning</span><span class="o">(</span><span class="s">&#34;BatchedWriteAheadLog Writer queue interrupted.&#34;</span><span class="o">)</span>
-    <span class="o">}</span>
-    <span class="k">try</span> <span class="o">{</span>
-      <span class="k">var</span> <span class="n">segment</span><span class="k">:</span> <span class="kt">WriteAheadLogRecordHandle</span> <span class="o">=</span> <span class="kc">null</span>
-      <span class="k">if</span> <span class="o">(</span><span class="n">buffer</span><span class="o">.</span><span class="n">length</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="o">)</span> <span class="o">{</span>
-        <span class="c1">// 依照时间排序
-</span><span class="c1"></span>        <span class="k">val</span> <span class="n">sortedByTime</span> <span class="k">=</span> <span class="n">buffer</span><span class="o">.</span><span class="n">sortBy</span><span class="o">(</span><span class="k">_</span><span class="o">.</span><span class="n">time</span><span class="o">)</span>
-        <span class="c1">// 取WAL列表中最后的时间，作为batch的结束时间
-</span><span class="c1"></span>        <span class="k">val</span> <span class="n">time</span> <span class="k">=</span> <span class="n">sortedByTime</span><span class="o">.</span><span class="n">last</span><span class="o">.</span><span class="n">time</span>
-        <span class="c1">// wrappedLog是FileBasedWriteAheadLog类型，在初始化的时候指定
-</span><span class="c1"></span>        <span class="c1">// aggregate方法将这一批次的数据，汇合到一个ByteBuffer里，
-</span><span class="c1"></span>        <span class="c1">// 然后通过FileBasedWriteAheadLog写入数据
-</span><span class="c1"></span>        <span class="n">segment</span> <span class="k">=</span> <span class="n">wrappedLog</span><span class="o">.</span><span class="n">write</span><span class="o">(</span><span class="n">aggregate</span><span class="o">(</span><span class="n">sortedByTime</span><span class="o">),</span> <span class="n">time</span><span class="o">)</span>
-      <span class="o">}</span>
-      <span class="n">buffer</span><span class="o">.</span><span class="n">foreach</span><span class="o">(</span><span class="k">_</span><span class="o">.</span><span class="n">promise</span><span class="o">.</span><span class="n">success</span><span class="o">(</span><span class="n">segment</span><span class="o">))</span>
-    <span class="o">}</span> <span class="k">catch</span> <span class="o">{</span>
-      <span class="o">......</span>
-    <span class="o">}</span> <span class="k">finally</span> <span class="o">{</span>
-      <span class="c1">// 清空buffer列表  
-</span><span class="c1"></span>      <span class="n">buffer</span><span class="o">.</span><span class="n">clear</span><span class="o">()</span>
-    <span class="o">}</span>
-  <span class="o">}</span>
-<span class="o">}</span>
-</code></pre></td></tr></table></div>
+<pre tabindex="0" class="chroma"><code class="language-scala" data-lang="scala"><span class="line"><span class="cl"><span class="k">class</span> <span class="nc">BatchedWriteAheadLog</span><span class="o">(</span><span class="k">val</span> <span class="n">wrappedLog</span><span class="k">:</span> <span class="kt">WriteAheadLog</span><span class="o">,</span> <span class="n">conf</span><span class="k">:</span> <span class="kt">SparkConf</span><span class="o">)</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">  
+</span></span><span class="line"><span class="cl">  <span class="c1">// WAL数据队列
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="k">private</span> <span class="k">val</span> <span class="n">walWriteQueue</span> <span class="k">=</span> <span class="k">new</span> <span class="nc">LinkedBlockingQueue</span><span class="o">[</span><span class="kt">Record</span><span class="o">]()</span>
+</span></span><span class="line"><span class="cl">  <span class="c1">// 数据缓存，保存即将保存的batch数据
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="k">private</span> <span class="k">val</span> <span class="n">buffer</span> <span class="k">=</span> <span class="k">new</span> <span class="nc">ArrayBuffer</span><span class="o">[</span><span class="kt">Record</span><span class="o">]()</span>
+</span></span><span class="line"><span class="cl">  <span class="c1">// batch write 线程
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="k">private</span> <span class="k">val</span> <span class="n">batchedWriterThread</span> <span class="k">=</span> <span class="n">startBatchedWriterThread</span><span class="o">()</span>
+</span></span><span class="line"><span class="cl">    
+</span></span><span class="line"><span class="cl">  <span class="k">private</span> <span class="k">def</span> <span class="n">startBatchedWriterThread</span><span class="o">()</span><span class="k">:</span> <span class="kt">Thread</span> <span class="o">=</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// 循环的调用flushRecords方法
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="k">val</span> <span class="n">thread</span> <span class="k">=</span> <span class="k">new</span> <span class="nc">Thread</span><span class="o">(</span><span class="k">new</span> <span class="nc">Runnable</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">      <span class="k">override</span> <span class="k">def</span> <span class="n">run</span><span class="o">()</span><span class="k">:</span> <span class="kt">Unit</span> <span class="o">=</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">        <span class="k">while</span> <span class="o">(</span><span class="n">active</span><span class="o">)</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">          <span class="n">flushRecords</span><span class="o">()</span>
+</span></span><span class="line"><span class="cl">        <span class="o">}</span>
+</span></span><span class="line"><span class="cl">      <span class="o">}</span>
+</span></span><span class="line"><span class="cl">    <span class="o">},</span> <span class="s">&#34;BatchedWriteAheadLog Writer&#34;</span><span class="o">)</span>
+</span></span><span class="line"><span class="cl">    <span class="n">thread</span><span class="o">.</span><span class="n">setDaemon</span><span class="o">(</span><span class="kc">true</span><span class="o">)</span>
+</span></span><span class="line"><span class="cl">    <span class="n">thread</span><span class="o">.</span><span class="n">start</span><span class="o">()</span>
+</span></span><span class="line"><span class="cl">    <span class="n">thread</span>
+</span></span><span class="line"><span class="cl">  <span class="o">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="cm">/** Write all the records in the buffer to the write ahead log. */</span>
+</span></span><span class="line"><span class="cl">  <span class="k">private</span> <span class="k">def</span> <span class="n">flushRecords</span><span class="o">()</span><span class="k">:</span> <span class="kt">Unit</span> <span class="o">=</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">    <span class="k">try</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">      <span class="c1">// 这里调用take会阻塞，一直到队列中有数据
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>      <span class="n">buffer</span> <span class="o">+=</span> <span class="n">walWriteQueue</span><span class="o">.</span><span class="n">take</span><span class="o">()</span>
+</span></span><span class="line"><span class="cl">      <span class="c1">// 调用drainTo能够高效率的导出数据
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>      <span class="k">val</span> <span class="n">numBatched</span> <span class="k">=</span> <span class="n">walWriteQueue</span><span class="o">.</span><span class="n">drainTo</span><span class="o">(</span><span class="n">buffer</span><span class="o">.</span><span class="n">asJava</span><span class="o">)</span> <span class="o">+</span> <span class="mi">1</span>
+</span></span><span class="line"><span class="cl">    <span class="o">}</span> <span class="k">catch</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">      <span class="k">case</span> <span class="k">_:</span> <span class="kt">InterruptedException</span> <span class="o">=&gt;</span>
+</span></span><span class="line"><span class="cl">        <span class="n">logWarning</span><span class="o">(</span><span class="s">&#34;BatchedWriteAheadLog Writer queue interrupted.&#34;</span><span class="o">)</span>
+</span></span><span class="line"><span class="cl">    <span class="o">}</span>
+</span></span><span class="line"><span class="cl">    <span class="k">try</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">      <span class="k">var</span> <span class="n">segment</span><span class="k">:</span> <span class="kt">WriteAheadLogRecordHandle</span> <span class="o">=</span> <span class="kc">null</span>
+</span></span><span class="line"><span class="cl">      <span class="k">if</span> <span class="o">(</span><span class="n">buffer</span><span class="o">.</span><span class="n">length</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="o">)</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">        <span class="c1">// 依照时间排序
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>        <span class="k">val</span> <span class="n">sortedByTime</span> <span class="k">=</span> <span class="n">buffer</span><span class="o">.</span><span class="n">sortBy</span><span class="o">(</span><span class="k">_</span><span class="o">.</span><span class="n">time</span><span class="o">)</span>
+</span></span><span class="line"><span class="cl">        <span class="c1">// 取WAL列表中最后的时间，作为batch的结束时间
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>        <span class="k">val</span> <span class="n">time</span> <span class="k">=</span> <span class="n">sortedByTime</span><span class="o">.</span><span class="n">last</span><span class="o">.</span><span class="n">time</span>
+</span></span><span class="line"><span class="cl">        <span class="c1">// wrappedLog是FileBasedWriteAheadLog类型，在初始化的时候指定
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>        <span class="c1">// aggregate方法将这一批次的数据，汇合到一个ByteBuffer里，
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>        <span class="c1">// 然后通过FileBasedWriteAheadLog写入数据
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>        <span class="n">segment</span> <span class="k">=</span> <span class="n">wrappedLog</span><span class="o">.</span><span class="n">write</span><span class="o">(</span><span class="n">aggregate</span><span class="o">(</span><span class="n">sortedByTime</span><span class="o">),</span> <span class="n">time</span><span class="o">)</span>
+</span></span><span class="line"><span class="cl">      <span class="o">}</span>
+</span></span><span class="line"><span class="cl">      <span class="n">buffer</span><span class="o">.</span><span class="n">foreach</span><span class="o">(</span><span class="k">_</span><span class="o">.</span><span class="n">promise</span><span class="o">.</span><span class="n">success</span><span class="o">(</span><span class="n">segment</span><span class="o">))</span>
+</span></span><span class="line"><span class="cl">    <span class="o">}</span> <span class="k">catch</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">      <span class="o">......</span>
+</span></span><span class="line"><span class="cl">    <span class="o">}</span> <span class="k">finally</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">      <span class="c1">// 清空buffer列表  
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>      <span class="n">buffer</span><span class="o">.</span><span class="n">clear</span><span class="o">()</span>
+</span></span><span class="line"><span class="cl">    <span class="o">}</span>
+</span></span><span class="line"><span class="cl">  <span class="o">}</span>
+</span></span><span class="line"><span class="cl"><span class="o">}</span>
+</span></span></code></pre></td></tr></table></div>
 </div>
 </div><p>因为BatchedWriteAheadLog的单位是batch，所以它不支持单次数据的读取。</p>
 <div class="highlight"><div class="chroma">
@@ -880,15 +880,13 @@
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
-</span><span class="lnt">5
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-scala" data-lang="scala"><span class="k">override</span> <span class="k">def</span> <span class="n">read</span><span class="o">(</span><span class="n">segment</span><span class="k">:</span> <span class="kt">WriteAheadLogRecordHandle</span><span class="o">)</span><span class="k">:</span> <span class="kt">ByteBuffer</span> <span class="o">=</span> <span class="o">{</span>
-  <span class="k">throw</span> <span class="k">new</span> <span class="nc">UnsupportedOperationException</span><span class="o">(</span><span class="s">&#34;read() is not supported for BatchedWriteAheadLog &#34;</span> <span class="o">+</span>
-    <span class="s">&#34;as the data may require de-aggregation.&#34;</span><span class="o">)</span>
-<span class="o">}</span>
-
-</code></pre></td></tr></table></div>
+<pre tabindex="0" class="chroma"><code class="language-scala" data-lang="scala"><span class="line"><span class="cl"><span class="k">override</span> <span class="k">def</span> <span class="n">read</span><span class="o">(</span><span class="n">segment</span><span class="k">:</span> <span class="kt">WriteAheadLogRecordHandle</span><span class="o">)</span><span class="k">:</span> <span class="kt">ByteBuffer</span> <span class="o">=</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">  <span class="k">throw</span> <span class="k">new</span> <span class="nc">UnsupportedOperationException</span><span class="o">(</span><span class="s">&#34;read() is not supported for BatchedWriteAheadLog &#34;</span> <span class="o">+</span>
+</span></span><span class="line"><span class="cl">    <span class="s">&#34;as the data may require de-aggregation.&#34;</span><span class="o">)</span>
+</span></span><span class="line"><span class="cl"><span class="o">}</span>
+</span></span></code></pre></td></tr></table></div>
 </div>
 </div><p>BatchedWriteAheadLog的删除操作，也只是转交给了FileBasedWriteAheadLog</p>
 <div class="highlight"><div class="chroma">
@@ -898,10 +896,10 @@
 </span><span class="lnt">3
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-scala" data-lang="scala"><span class="k">override</span> <span class="k">def</span> <span class="n">clean</span><span class="o">(</span><span class="n">threshTime</span><span class="k">:</span> <span class="kt">Long</span><span class="o">,</span> <span class="n">waitForCompletion</span><span class="k">:</span> <span class="kt">Boolean</span><span class="o">)</span><span class="k">:</span> <span class="kt">Unit</span> <span class="o">=</span> <span class="o">{</span>
-  <span class="n">wrappedLog</span><span class="o">.</span><span class="n">clean</span><span class="o">(</span><span class="n">threshTime</span><span class="o">,</span> <span class="n">waitForCompletion</span><span class="o">)</span>
-<span class="o">}</span>
-</code></pre></td></tr></table></div>
+<pre tabindex="0" class="chroma"><code class="language-scala" data-lang="scala"><span class="line"><span class="cl"><span class="k">override</span> <span class="k">def</span> <span class="n">clean</span><span class="o">(</span><span class="n">threshTime</span><span class="k">:</span> <span class="kt">Long</span><span class="o">,</span> <span class="n">waitForCompletion</span><span class="k">:</span> <span class="kt">Boolean</span><span class="o">)</span><span class="k">:</span> <span class="kt">Unit</span> <span class="o">=</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">  <span class="n">wrappedLog</span><span class="o">.</span><span class="n">clean</span><span class="o">(</span><span class="n">threshTime</span><span class="o">,</span> <span class="n">waitForCompletion</span><span class="o">)</span>
+</span></span><span class="line"><span class="cl"><span class="o">}</span>
+</span></span></code></pre></td></tr></table></div>
 </div>
 </div>
             </div>
@@ -930,9 +928,9 @@
 
         
     <div class="updated-badge-container">
-        <span title="Updated @ 2021-10-22 14:44:34 CST" style="cursor:help">
+        <span title="Updated @ 2023-07-02 16:59:09 CST" style="cursor:help">
 
-<svg xmlns="http://www.w3.org/2000/svg" width="130" height="20" class="updated-badge"><linearGradient id="b" x2="0" y2="100%"><stop offset="0" stop-color="#bbb" stop-opacity=".1"/><stop offset="1" stop-opacity=".1"/></linearGradient><clipPath id="a"><rect width="130" height="20" rx="3" fill="#fff"/></clipPath><g clip-path="url(#a)"><path class="updated-badge-left" d="M0 0h55v20H0z"/><path class="updated-badge-right" d="M55 0h75v20H55z"/><path fill="url(#b)" d="M0 0h130v20H0z"/></g><g fill="#fff" text-anchor="middle" font-size="110"><text x="285" y="150" fill="#010101" fill-opacity=".3" textLength="450" transform="scale(.1)">updated</text><text x="285" y="140" textLength="450" transform="scale(.1)">updated</text><text x="915" y="150" fill="#010101" fill-opacity=".3" textLength="650" transform="scale(.1)">2021-10-22</text><text x="915" y="140" textLength="650" transform="scale(.1)">2021-10-22</text></g></svg>
+<svg xmlns="http://www.w3.org/2000/svg" width="130" height="20" class="updated-badge"><linearGradient id="b" x2="0" y2="100%"><stop offset="0" stop-color="#bbb" stop-opacity=".1"/><stop offset="1" stop-opacity=".1"/></linearGradient><clipPath id="a"><rect width="130" height="20" rx="3" fill="#fff"/></clipPath><g clip-path="url(#a)"><path class="updated-badge-left" d="M0 0h55v20H0z"/><path class="updated-badge-right" d="M55 0h75v20H55z"/><path fill="url(#b)" d="M0 0h130v20H0z"/></g><g fill="#fff" text-anchor="middle" font-size="110"><text x="285" y="150" fill="#010101" fill-opacity=".3" textLength="450" transform="scale(.1)">updated</text><text x="285" y="140" textLength="450" transform="scale(.1)">updated</text><text x="915" y="150" fill="#010101" fill-opacity=".3" textLength="650" transform="scale(.1)">2023-07-02</text><text x="915" y="140" textLength="650" transform="scale(.1)">2023-07-02</text></g></svg>
         </span></div>
 
 

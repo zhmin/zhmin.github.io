@@ -3,7 +3,7 @@
     <head prefix="og: http://ogp.me/ns# article: http://ogp.me/ns/article#">
     <meta charset="UTF-8" />
 
-    <meta name="generator" content="Hugo 0.88.1" /><meta name="theme-color" content="#fff" />
+    <meta name="generator" content="Hugo 0.115.0"><meta name="theme-color" content="#fff" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     
     <meta name="format-detection" content="telephone=no, date=no, address=no, email=no" />
@@ -14,11 +14,11 @@
 
     <title>Postgresql slru 缓存和存储 | 学习笔记</title>
 
-    <link rel="stylesheet" href="/css/meme.min.2d3e1834af2bc8dda20c7d74aaa1d8134845094441b7a554a5206ccd4b472596.css"/>
+    <link rel="stylesheet" href="/css/meme.min.91e7f58f97e1c60563ef481c38d9684fa8099537801d6f17bbfc724121e7d8f1.css"/>
 
     
     
-        <script src="/js/meme.min.800f61672145711eb3e1f29fcfcc3dbe0139dd459259718b611a0390f74703d1.js"></script>
+        <script src="/js/meme.min.3210a00c2fdcf6f831170b681b8ee40f83f0224663661e986872616aec45407f.js"></script>
 
     
 
@@ -54,7 +54,7 @@
         "@context": "https://schema.org",
         "@type": "BlogPosting",
         "datePublished": "2019-12-26T20:10:47+00:00",
-        "dateModified": "2021-10-22T14:44:34+08:00",
+        "dateModified": "2023-07-02T16:59:09+08:00",
         "url": "https://zhmin.github.io/posts/postgresql-slru/",
         "headline": "Postgresql slru 缓存和存储",
         "description": "前言 简单的 lru 缓存管理（简称 slru），用于持久化数据并且提供 lru 算法来缓存。slru 在 postgresql 存在着多处使用，比如存储事务状态的 clog 日志，就是使用 slru 来管理的。 缓存和文件的对应关系 文件的数据都是存储在 page 里，每个 page……",
@@ -98,7 +98,7 @@
 <meta property="og:locale" content="zh" /><meta property="og:image" content="https://zhmin.github.io/icons/apple-touch-icon.png" />
     <meta property="og:type" content="article" />
     <meta property="article:published_time" content="2019-12-26T20:10:47&#43;00:00" />
-    <meta property="article:modified_time" content="2021-10-22T14:44:34&#43;08:00" />
+    <meta property="article:modified_time" content="2023-07-02T16:59:09&#43;08:00" />
     
     <meta property="article:section" content="posts" />
 
@@ -255,14 +255,14 @@
 </span><span class="lnt">7
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="k">typedef</span> <span class="k">struct</span> <span class="n">SlruCtlData</span>
-<span class="p">{</span>
-	<span class="n">SlruShared</span>	<span class="n">shared</span><span class="p">;</span>           <span class="c1">// 缓存
-</span><span class="c1"></span>	<span class="kt">bool</span>		<span class="n">do_fsync</span><span class="p">;</span>        <span class="c1">// 写入数据时，是否需要fsync
-</span><span class="c1"></span>	<span class="kt">bool</span>		<span class="p">(</span><span class="o">*</span><span class="n">PagePrecedes</span><span class="p">)</span> <span class="p">(</span><span class="kt">int</span><span class="p">,</span> <span class="kt">int</span><span class="p">);</span>
-	<span class="kt">char</span>		<span class="n">Dir</span><span class="p">[</span><span class="mi">64</span><span class="p">];</span>         <span class="c1">// 数据存储的目录
-</span><span class="c1"></span><span class="p">}</span> <span class="n">SlruCtlData</span><span class="p">;</span>
-</code></pre></td></tr></table></div>
+<pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="line"><span class="cl"><span class="k">typedef</span> <span class="k">struct</span> <span class="n">SlruCtlData</span>
+</span></span><span class="line"><span class="cl"><span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="n">SlruShared</span>	<span class="n">shared</span><span class="p">;</span>           <span class="c1">// 缓存
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="kt">bool</span>		<span class="n">do_fsync</span><span class="p">;</span>        <span class="c1">// 写入数据时，是否需要fsync
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="kt">bool</span>		<span class="p">(</span><span class="o">*</span><span class="n">PagePrecedes</span><span class="p">)</span> <span class="p">(</span><span class="kt">int</span><span class="p">,</span> <span class="kt">int</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">	<span class="kt">char</span>		<span class="n">Dir</span><span class="p">[</span><span class="mi">64</span><span class="p">];</span>         <span class="c1">// 数据存储的目录
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="p">}</span> <span class="n">SlruCtlData</span><span class="p">;</span>
+</span></span></code></pre></td></tr></table></div>
 </div>
 </div><h3 id="缓存配置"><a href="#缓存配置" class="anchor-link"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon anchor-icon"><path d="M326.612 185.391c59.747 59.809 58.927 155.698.36 214.59-.11.12-.24.25-.36.37l-67.2 67.2c-59.27 59.27-155.699 59.262-214.96 0-59.27-59.26-59.27-155.7 0-214.96l37.106-37.106c9.84-9.84 26.786-3.3 27.294 10.606.648 17.722 3.826 35.527 9.69 52.721 1.986 5.822.567 12.262-3.783 16.612l-13.087 13.087c-28.026 28.026-28.905 73.66-1.155 101.96 28.024 28.579 74.086 28.749 102.325.51l67.2-67.19c28.191-28.191 28.073-73.757 0-101.83-3.701-3.694-7.429-6.564-10.341-8.569a16.037 16.037 0 0 1-6.947-12.606c-.396-10.567 3.348-21.456 11.698-29.806l21.054-21.055c5.521-5.521 14.182-6.199 20.584-1.731a152.482 152.482 0 0 1 20.522 17.197zM467.547 44.449c-59.261-59.262-155.69-59.27-214.96 0l-67.2 67.2c-.12.12-.25.25-.36.37-58.566 58.892-59.387 154.781.36 214.59a152.454 152.454 0 0 0 20.521 17.196c6.402 4.468 15.064 3.789 20.584-1.731l21.054-21.055c8.35-8.35 12.094-19.239 11.698-29.806a16.037 16.037 0 0 0-6.947-12.606c-2.912-2.005-6.64-4.875-10.341-8.569-28.073-28.073-28.191-73.639 0-101.83l67.2-67.19c28.239-28.239 74.3-28.069 102.325.51 27.75 28.3 26.872 73.934-1.155 101.96l-13.087 13.087c-4.35 4.35-5.769 10.79-3.783 16.612 5.864 17.194 9.042 34.999 9.69 52.721.509 13.906 17.454 20.446 27.294 10.606l37.106-37.106c59.271-59.259 59.271-155.699.001-214.959z"/></svg></a>缓存配置</h3>
 <div class="highlight"><div class="chroma">
@@ -287,25 +287,25 @@
 </span><span class="lnt">18
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="k">typedef</span> <span class="k">struct</span> <span class="n">SlruSharedData</span>
-<span class="p">{</span>
-	<span class="n">LWLock</span>	   <span class="o">*</span><span class="n">ControlLock</span><span class="p">;</span>        <span class="cm">/* 用于保存成员的锁 */</span>
-	
-	<span class="kt">int</span>			<span class="n">num_slots</span><span class="p">;</span>         <span class="cm">/* buffer数目 */</span>
-	<span class="kt">char</span>	  <span class="o">**</span><span class="n">page_buffer</span><span class="p">;</span>       <span class="cm">/* buffer数组地址 */</span>
-	<span class="n">SlruPageStatus</span> <span class="o">*</span><span class="n">page_status</span><span class="p">;</span>   <span class="cm">/* buffer状态数组*/</span>
-	<span class="kt">bool</span>	   <span class="o">*</span><span class="n">page_dirty</span><span class="p">;</span>       <span class="cm">/* 哪些buffer为脏页 */</span>
-	<span class="kt">int</span>		   <span class="o">*</span><span class="n">page_number</span><span class="p">;</span>      <span class="cm">/* buffer对应的page num */</span>
-	<span class="kt">int</span>		   <span class="o">*</span><span class="n">page_lru_count</span><span class="p">;</span>   <span class="cm">/* 表示buffer的新旧程度，越小表示数据越旧，越有可能被替换 */</span>
-	<span class="n">XLogRecPtr</span> <span class="o">*</span><span class="n">group_lsn</span><span class="p">;</span>   <span class="cm">/* 缓存里的数据对应的xlog日志的位置 */</span>
-	<span class="kt">int</span>			<span class="n">lsn_groups_per_page</span><span class="p">;</span>  <span class="cm">/* 每个缓存包含的xlog日志位置的数量 */</span>
-	<span class="kt">int</span>			<span class="n">cur_lru_count</span><span class="p">;</span>        <span class="cm">/* 用于设置buffer的新旧程度 */</span>
-	<span class="kt">int</span>			<span class="n">latest_page_number</span><span class="p">;</span>   <span class="cm">/* 文件中最新的page num */</span>
-	<span class="kt">int</span>			<span class="n">lwlock_tranche_id</span><span class="p">;</span>
-	<span class="kt">char</span>		<span class="n">lwlock_tranche_name</span><span class="p">[</span><span class="n">SLRU_MAX_NAME_LENGTH</span><span class="p">];</span>
-	<span class="n">LWLockPadded</span> <span class="o">*</span><span class="n">buffer_locks</span><span class="p">;</span>   <span class="cm">/* buffer读写锁数组 */</span>
-<span class="p">}</span> <span class="n">SlruSharedData</span><span class="p">;</span>
-</code></pre></td></tr></table></div>
+<pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="line"><span class="cl"><span class="k">typedef</span> <span class="k">struct</span> <span class="n">SlruSharedData</span>
+</span></span><span class="line"><span class="cl"><span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="n">LWLock</span>	   <span class="o">*</span><span class="n">ControlLock</span><span class="p">;</span>        <span class="cm">/* 用于保存成员的锁 */</span>
+</span></span><span class="line"><span class="cl">	
+</span></span><span class="line"><span class="cl">	<span class="kt">int</span>			<span class="n">num_slots</span><span class="p">;</span>         <span class="cm">/* buffer数目 */</span>
+</span></span><span class="line"><span class="cl">	<span class="kt">char</span>	  <span class="o">**</span><span class="n">page_buffer</span><span class="p">;</span>       <span class="cm">/* buffer数组地址 */</span>
+</span></span><span class="line"><span class="cl">	<span class="n">SlruPageStatus</span> <span class="o">*</span><span class="n">page_status</span><span class="p">;</span>   <span class="cm">/* buffer状态数组*/</span>
+</span></span><span class="line"><span class="cl">	<span class="kt">bool</span>	   <span class="o">*</span><span class="n">page_dirty</span><span class="p">;</span>       <span class="cm">/* 哪些buffer为脏页 */</span>
+</span></span><span class="line"><span class="cl">	<span class="kt">int</span>		   <span class="o">*</span><span class="n">page_number</span><span class="p">;</span>      <span class="cm">/* buffer对应的page num */</span>
+</span></span><span class="line"><span class="cl">	<span class="kt">int</span>		   <span class="o">*</span><span class="n">page_lru_count</span><span class="p">;</span>   <span class="cm">/* 表示buffer的新旧程度，越小表示数据越旧，越有可能被替换 */</span>
+</span></span><span class="line"><span class="cl">	<span class="n">XLogRecPtr</span> <span class="o">*</span><span class="n">group_lsn</span><span class="p">;</span>   <span class="cm">/* 缓存里的数据对应的xlog日志的位置 */</span>
+</span></span><span class="line"><span class="cl">	<span class="kt">int</span>			<span class="n">lsn_groups_per_page</span><span class="p">;</span>  <span class="cm">/* 每个缓存包含的xlog日志位置的数量 */</span>
+</span></span><span class="line"><span class="cl">	<span class="kt">int</span>			<span class="n">cur_lru_count</span><span class="p">;</span>        <span class="cm">/* 用于设置buffer的新旧程度 */</span>
+</span></span><span class="line"><span class="cl">	<span class="kt">int</span>			<span class="n">latest_page_number</span><span class="p">;</span>   <span class="cm">/* 文件中最新的page num */</span>
+</span></span><span class="line"><span class="cl">	<span class="kt">int</span>			<span class="n">lwlock_tranche_id</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">	<span class="kt">char</span>		<span class="n">lwlock_tranche_name</span><span class="p">[</span><span class="n">SLRU_MAX_NAME_LENGTH</span><span class="p">];</span>
+</span></span><span class="line"><span class="cl">	<span class="n">LWLockPadded</span> <span class="o">*</span><span class="n">buffer_locks</span><span class="p">;</span>   <span class="cm">/* buffer读写锁数组 */</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span> <span class="n">SlruSharedData</span><span class="p">;</span>
+</span></span></code></pre></td></tr></table></div>
 </div>
 </div><p>缓存的状态有下面四种，由<code>SlruPageStatus</code>表示</p>
 <div class="highlight"><div class="chroma">
@@ -319,14 +319,14 @@
 </span><span class="lnt">7
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="k">typedef</span> <span class="k">enum</span>
-<span class="p">{</span>
-	<span class="n">SLRU_PAGE_EMPTY</span><span class="p">,</span>			<span class="cm">/* 空闲状态 */</span>
-	<span class="n">SLRU_PAGE_READ_IN_PROGRESS</span><span class="p">,</span> <span class="cm">/* 正在读取数据到缓存 */</span>
-	<span class="n">SLRU_PAGE_VALID</span><span class="p">,</span>			<span class="cm">/* 正常状态，里面包含了数据，没有进行读写操作 */</span>
-	<span class="n">SLRU_PAGE_WRITE_IN_PROGRESS</span> <span class="cm">/* 缓存正在写入文件 */</span>
-<span class="p">}</span> <span class="n">SlruPageStatus</span><span class="p">;</span>
-</code></pre></td></tr></table></div>
+<pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="line"><span class="cl"><span class="k">typedef</span> <span class="k">enum</span>
+</span></span><span class="line"><span class="cl"><span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="n">SLRU_PAGE_EMPTY</span><span class="p">,</span>			<span class="cm">/* 空闲状态 */</span>
+</span></span><span class="line"><span class="cl">	<span class="n">SLRU_PAGE_READ_IN_PROGRESS</span><span class="p">,</span> <span class="cm">/* 正在读取数据到缓存 */</span>
+</span></span><span class="line"><span class="cl">	<span class="n">SLRU_PAGE_VALID</span><span class="p">,</span>			<span class="cm">/* 正常状态，里面包含了数据，没有进行读写操作 */</span>
+</span></span><span class="line"><span class="cl">	<span class="n">SLRU_PAGE_WRITE_IN_PROGRESS</span> <span class="cm">/* 缓存正在写入文件 */</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span> <span class="n">SlruPageStatus</span><span class="p">;</span>
+</span></span></code></pre></td></tr></table></div>
 </div>
 </div><h2 id="设置最新访问"><a href="#设置最新访问" class="anchor-link"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon anchor-icon"><path d="M326.612 185.391c59.747 59.809 58.927 155.698.36 214.59-.11.12-.24.25-.36.37l-67.2 67.2c-59.27 59.27-155.699 59.262-214.96 0-59.27-59.26-59.27-155.7 0-214.96l37.106-37.106c9.84-9.84 26.786-3.3 27.294 10.606.648 17.722 3.826 35.527 9.69 52.721 1.986 5.822.567 12.262-3.783 16.612l-13.087 13.087c-28.026 28.026-28.905 73.66-1.155 101.96 28.024 28.579 74.086 28.749 102.325.51l67.2-67.19c28.191-28.191 28.073-73.757 0-101.83-3.701-3.694-7.429-6.564-10.341-8.569a16.037 16.037 0 0 1-6.947-12.606c-.396-10.567 3.348-21.456 11.698-29.806l21.054-21.055c5.521-5.521 14.182-6.199 20.584-1.731a152.482 152.482 0 0 1 20.522 17.197zM467.547 44.449c-59.261-59.262-155.69-59.27-214.96 0l-67.2 67.2c-.12.12-.25.25-.36.37-58.566 58.892-59.387 154.781.36 214.59a152.454 152.454 0 0 0 20.521 17.196c6.402 4.468 15.064 3.789 20.584-1.731l21.054-21.055c8.35-8.35 12.094-19.239 11.698-29.806a16.037 16.037 0 0 0-6.947-12.606c-2.912-2.005-6.64-4.875-10.341-8.569-28.073-28.073-28.191-73.639 0-101.83l67.2-67.19c28.239-28.239 74.3-28.069 102.325.51 27.75 28.3 26.872 73.934-1.155 101.96l-13.087 13.087c-4.35 4.35-5.769 10.79-3.783 16.612 5.864 17.194 9.042 34.999 9.69 52.721.509 13.906 17.454 20.446 27.294 10.606l37.106-37.106c59.271-59.259 59.271-155.699.001-214.959z"/></svg></a>设置最新访问</h2>
 <p>既然 slru 使用 lru 算法来管理缓存，那么我们需要了解下它是如何实现的。postgresql 提供了 <code>SlruRecentlyUsed</code>宏，来标记缓存为最近被访问了，通过它的定义就可以知道实现原理了。</p>
@@ -346,19 +346,19 @@
 </span><span class="lnt">12
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="c1">// share参数是SlruSharedData类型，slotno参数指明哪个buffer
-</span><span class="c1"></span><span class="cp">#define SlruRecentlyUsed(shared, slotno)	
-</span><span class="cp"></span><span class="k">do</span> <span class="p">{</span> 
-    <span class="c1">// 获取cur_lru_count数值
-</span><span class="c1"></span>    <span class="kt">int</span>		<span class="n">new_lru_count</span> <span class="o">=</span> <span class="p">(</span><span class="n">shared</span><span class="p">)</span><span class="o">-&gt;</span><span class="n">cur_lru_count</span><span class="p">;</span> 
-    <span class="k">if</span> <span class="p">(</span><span class="n">new_lru_count</span> <span class="o">!=</span> <span class="p">(</span><span class="n">shared</span><span class="p">)</span><span class="o">-&gt;</span><span class="n">page_lru_count</span><span class="p">[</span><span class="n">slotno</span><span class="p">])</span> <span class="p">{</span>
-        <span class="c1">// 自增cur_lru_count数值
-</span><span class="c1"></span>        <span class="p">(</span><span class="n">shared</span><span class="p">)</span><span class="o">-&gt;</span><span class="n">cur_lru_count</span> <span class="o">=</span> <span class="o">++</span><span class="n">new_lru_count</span><span class="p">;</span>
-        <span class="c1">// 更新指定buffer的page_lru_count
-</span><span class="c1"></span>        <span class="p">(</span><span class="n">shared</span><span class="p">)</span><span class="o">-&gt;</span><span class="n">page_lru_count</span><span class="p">[</span><span class="n">slotno</span><span class="p">]</span> <span class="o">=</span> <span class="n">new_lru_count</span><span class="p">;</span> 
-    <span class="p">}</span> 
-<span class="p">}</span> <span class="k">while</span> <span class="p">(</span><span class="mi">0</span><span class="p">)</span>
-</code></pre></td></tr></table></div>
+<pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="line"><span class="cl"><span class="c1">// share参数是SlruSharedData类型，slotno参数指明哪个buffer
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="cp">#define SlruRecentlyUsed(shared, slotno)	
+</span></span></span><span class="line"><span class="cl"><span class="cp"></span><span class="k">do</span> <span class="p">{</span> 
+</span></span><span class="line"><span class="cl">    <span class="c1">// 获取cur_lru_count数值
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="kt">int</span>		<span class="n">new_lru_count</span> <span class="o">=</span> <span class="p">(</span><span class="n">shared</span><span class="p">)</span><span class="o">-&gt;</span><span class="n">cur_lru_count</span><span class="p">;</span> 
+</span></span><span class="line"><span class="cl">    <span class="k">if</span> <span class="p">(</span><span class="n">new_lru_count</span> <span class="o">!=</span> <span class="p">(</span><span class="n">shared</span><span class="p">)</span><span class="o">-&gt;</span><span class="n">page_lru_count</span><span class="p">[</span><span class="n">slotno</span><span class="p">])</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="c1">// 自增cur_lru_count数值
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>        <span class="p">(</span><span class="n">shared</span><span class="p">)</span><span class="o">-&gt;</span><span class="n">cur_lru_count</span> <span class="o">=</span> <span class="o">++</span><span class="n">new_lru_count</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">        <span class="c1">// 更新指定buffer的page_lru_count
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>        <span class="p">(</span><span class="n">shared</span><span class="p">)</span><span class="o">-&gt;</span><span class="n">page_lru_count</span><span class="p">[</span><span class="n">slotno</span><span class="p">]</span> <span class="o">=</span> <span class="n">new_lru_count</span><span class="p">;</span> 
+</span></span><span class="line"><span class="cl">    <span class="p">}</span> 
+</span></span><span class="line"><span class="cl"><span class="p">}</span> <span class="k">while</span> <span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+</span></span></code></pre></td></tr></table></div>
 </div>
 </div><p><code>SlruRecentlyUsed</code>宏只是将全局的<code>cur_lru_count</code>自增，然后提高指定 buffer 的<code>page_lru_count</code>。这里需要注意<code>page_lru_count</code>属性，通过它的大小，就可以判断出缓存是否最近被访问了。<code>page_lru_count</code>越大，就代表着数据最近被使用过。当要替换掉长时间不在访问的 buffer 时，就选择<code>page_lru_count</code>值小的。</p>
 <p>当每次读取到缓存时，就会调用<code>SlruRecentlyUsed</code>设置为最近访问。</p>
@@ -410,9 +410,9 @@
 </span><span class="lnt">2
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="o">[</span>root@pt-java data<span class="o">]</span><span class="c1"># ls pg_xact/</span>
-<span class="m">0000</span> <span class="m">0001</span>
-</code></pre></td></tr></table></div>
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl"><span class="o">[</span>root@pt-java data<span class="o">]</span><span class="c1"># ls pg_xact/</span>
+</span></span><span class="line"><span class="cl"><span class="m">0000</span> <span class="m">0001</span>
+</span></span></code></pre></td></tr></table></div>
 </div>
 </div><p>这个目录存在了多个文件，这些文件称作 segment，文件名称表示 segment 的编号，由4 个十六进制数字组成。数据都是存储在<code>page</code>单元里，<code>page</code>的大小是固定的，默认 8KB。多个<code>page</code>组织成了一个 segment 文件，每个 segment 文件的大小也是固定的，它包含了相同数目的<code>page</code>。</p>
 <h3 id="读取数据"><a href="#读取数据" class="anchor-link"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon anchor-icon"><path d="M326.612 185.391c59.747 59.809 58.927 155.698.36 214.59-.11.12-.24.25-.36.37l-67.2 67.2c-59.27 59.27-155.699 59.262-214.96 0-59.27-59.26-59.27-155.7 0-214.96l37.106-37.106c9.84-9.84 26.786-3.3 27.294 10.606.648 17.722 3.826 35.527 9.69 52.721 1.986 5.822.567 12.262-3.783 16.612l-13.087 13.087c-28.026 28.026-28.905 73.66-1.155 101.96 28.024 28.579 74.086 28.749 102.325.51l67.2-67.19c28.191-28.191 28.073-73.757 0-101.83-3.701-3.694-7.429-6.564-10.341-8.569a16.037 16.037 0 0 1-6.947-12.606c-.396-10.567 3.348-21.456 11.698-29.806l21.054-21.055c5.521-5.521 14.182-6.199 20.584-1.731a152.482 152.482 0 0 1 20.522 17.197zM467.547 44.449c-59.261-59.262-155.69-59.27-214.96 0l-67.2 67.2c-.12.12-.25.25-.36.37-58.566 58.892-59.387 154.781.36 214.59a152.454 152.454 0 0 0 20.521 17.196c6.402 4.468 15.064 3.789 20.584-1.731l21.054-21.055c8.35-8.35 12.094-19.239 11.698-29.806a16.037 16.037 0 0 0-6.947-12.606c-2.912-2.005-6.64-4.875-10.341-8.569-28.073-28.073-28.191-73.639 0-101.83l67.2-67.19c28.239-28.239 74.3-28.069 102.325.51 27.75 28.3 26.872 73.934-1.155 101.96l-13.087 13.087c-4.35 4.35-5.769 10.79-3.783 16.612 5.864 17.194 9.042 34.999 9.69 52.721.509 13.906 17.454 20.446 27.294 10.606l37.106-37.106c59.271-59.259 59.271-155.699.001-214.959z"/></svg></a>读取数据</h3>
@@ -442,28 +442,28 @@
 </span><span class="lnt">21
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="cm">/*
-</span><span class="cm"> * 参数pageno指定page的编号
-</span><span class="cm"> * 参数slotno指定读取数据到哪个buffer
-</span><span class="cm"> */</span>
-<span class="k">static</span> <span class="kt">bool</span> <span class="nf">SlruPhysicalReadPage</span><span class="p">(</span><span class="n">SlruCtl</span> <span class="n">ctl</span><span class="p">,</span> <span class="kt">int</span> <span class="n">pageno</span><span class="p">,</span> <span class="kt">int</span> <span class="n">slotno</span><span class="p">)</span>
-<span class="p">{</span>
-    <span class="c1">// SLRU_PAGES_PER_SEGMENT表示segment文件包含的page数目，默认为32
-</span><span class="c1"></span>    <span class="c1">// 计算属于哪个segment文件
-</span><span class="c1"></span>    <span class="kt">int</span>			<span class="n">segno</span> <span class="o">=</span> <span class="n">pageno</span> <span class="o">/</span> <span class="n">SLRU_PAGES_PER_SEGMENT</span><span class="p">;</span>
-    <span class="c1">// 计算属于文件内的第几个page
-</span><span class="c1"></span>    <span class="kt">int</span>			<span class="n">rpageno</span> <span class="o">=</span> <span class="n">pageno</span> <span class="o">%</span> <span class="n">SLRU_PAGES_PER_SEGMENT</span><span class="p">;</span>
-    <span class="c1">// BLCKSZ表示page的大小，默认8K
-</span><span class="c1"></span>    <span class="kt">int</span>			<span class="n">offset</span> <span class="o">=</span> <span class="n">rpageno</span> <span class="o">*</span> <span class="n">BLCKSZ</span><span class="p">;</span>
-    
-    <span class="c1">// 生成segment文件路径，文件目录等于SlruCtl的Dir成员，文件名格式为segno的16进制数
-</span><span class="c1"></span>    <span class="n">SlruFileName</span><span class="p">(</span><span class="n">ctl</span><span class="p">,</span> <span class="n">path</span><span class="p">,</span> <span class="n">segno</span><span class="p">);</span>
-    <span class="c1">// 打开文件，并且移动读取位置，然后读取到缓存
-</span><span class="c1"></span>    <span class="n">fd</span> <span class="o">=</span> <span class="n">OpenTransientFile</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">O_RDONLY</span> <span class="o">|</span> <span class="n">PG_BINARY</span><span class="p">);</span>
-    <span class="n">lseek</span><span class="p">(</span><span class="n">fd</span><span class="p">,</span> <span class="p">(</span><span class="n">off_t</span><span class="p">)</span> <span class="n">offset</span><span class="p">,</span> <span class="n">SEEK_SET</span><span class="p">);</span>
-    <span class="n">read</span><span class="p">(</span><span class="n">fd</span><span class="p">,</span> <span class="n">shared</span><span class="o">-&gt;</span><span class="n">page_buffer</span><span class="p">[</span><span class="n">slotno</span><span class="p">],</span> <span class="n">BLCKSZ</span><span class="p">);</span>
-<span class="p">}</span>
-</code></pre></td></tr></table></div>
+<pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="line"><span class="cl"><span class="cm">/*
+</span></span></span><span class="line"><span class="cl"><span class="cm"> * 参数pageno指定page的编号
+</span></span></span><span class="line"><span class="cl"><span class="cm"> * 参数slotno指定读取数据到哪个buffer
+</span></span></span><span class="line"><span class="cl"><span class="cm"> */</span>
+</span></span><span class="line"><span class="cl"><span class="k">static</span> <span class="kt">bool</span> <span class="nf">SlruPhysicalReadPage</span><span class="p">(</span><span class="n">SlruCtl</span> <span class="n">ctl</span><span class="p">,</span> <span class="kt">int</span> <span class="n">pageno</span><span class="p">,</span> <span class="kt">int</span> <span class="n">slotno</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// SLRU_PAGES_PER_SEGMENT表示segment文件包含的page数目，默认为32
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="c1">// 计算属于哪个segment文件
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="kt">int</span>			<span class="n">segno</span> <span class="o">=</span> <span class="n">pageno</span> <span class="o">/</span> <span class="n">SLRU_PAGES_PER_SEGMENT</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// 计算属于文件内的第几个page
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="kt">int</span>			<span class="n">rpageno</span> <span class="o">=</span> <span class="n">pageno</span> <span class="o">%</span> <span class="n">SLRU_PAGES_PER_SEGMENT</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// BLCKSZ表示page的大小，默认8K
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="kt">int</span>			<span class="n">offset</span> <span class="o">=</span> <span class="n">rpageno</span> <span class="o">*</span> <span class="n">BLCKSZ</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    
+</span></span><span class="line"><span class="cl">    <span class="c1">// 生成segment文件路径，文件目录等于SlruCtl的Dir成员，文件名格式为segno的16进制数
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="nf">SlruFileName</span><span class="p">(</span><span class="n">ctl</span><span class="p">,</span> <span class="n">path</span><span class="p">,</span> <span class="n">segno</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// 打开文件，并且移动读取位置，然后读取到缓存
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="n">fd</span> <span class="o">=</span> <span class="nf">OpenTransientFile</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">O_RDONLY</span> <span class="o">|</span> <span class="n">PG_BINARY</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">    <span class="nf">lseek</span><span class="p">(</span><span class="n">fd</span><span class="p">,</span> <span class="p">(</span><span class="kt">off_t</span><span class="p">)</span> <span class="n">offset</span><span class="p">,</span> <span class="n">SEEK_SET</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">    <span class="nf">read</span><span class="p">(</span><span class="n">fd</span><span class="p">,</span> <span class="n">shared</span><span class="o">-&gt;</span><span class="n">page_buffer</span><span class="p">[</span><span class="n">slotno</span><span class="p">],</span> <span class="n">BLCKSZ</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table></div>
 </div>
 </div><h3 id="写入数据"><a href="#写入数据" class="anchor-link"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon anchor-icon"><path d="M326.612 185.391c59.747 59.809 58.927 155.698.36 214.59-.11.12-.24.25-.36.37l-67.2 67.2c-59.27 59.27-155.699 59.262-214.96 0-59.27-59.26-59.27-155.7 0-214.96l37.106-37.106c9.84-9.84 26.786-3.3 27.294 10.606.648 17.722 3.826 35.527 9.69 52.721 1.986 5.822.567 12.262-3.783 16.612l-13.087 13.087c-28.026 28.026-28.905 73.66-1.155 101.96 28.024 28.579 74.086 28.749 102.325.51l67.2-67.19c28.191-28.191 28.073-73.757 0-101.83-3.701-3.694-7.429-6.564-10.341-8.569a16.037 16.037 0 0 1-6.947-12.606c-.396-10.567 3.348-21.456 11.698-29.806l21.054-21.055c5.521-5.521 14.182-6.199 20.584-1.731a152.482 152.482 0 0 1 20.522 17.197zM467.547 44.449c-59.261-59.262-155.69-59.27-214.96 0l-67.2 67.2c-.12.12-.25.25-.36.37-58.566 58.892-59.387 154.781.36 214.59a152.454 152.454 0 0 0 20.521 17.196c6.402 4.468 15.064 3.789 20.584-1.731l21.054-21.055c8.35-8.35 12.094-19.239 11.698-29.806a16.037 16.037 0 0 0-6.947-12.606c-2.912-2.005-6.64-4.875-10.341-8.569-28.073-28.073-28.191-73.639 0-101.83l67.2-67.19c28.239-28.239 74.3-28.069 102.325.51 27.75 28.3 26.872 73.934-1.155 101.96l-13.087 13.087c-4.35 4.35-5.769 10.79-3.783 16.612 5.864 17.194 9.042 34.999 9.69 52.721.509 13.906 17.454 20.446 27.294 10.606l37.106-37.106c59.271-59.259 59.271-155.699.001-214.959z"/></svg></a>写入数据</h3>
 <p><code>SlruPhysicalWritePage</code>负责将刷新指定缓存到磁盘。它的原理同读取数据相同，也是先定位文件的位置，然后打开文件写入。这里多了一个参数<code>SlruFlush</code>，用于一次性刷新所有脏页时，避免重复打开相同文件。</p>
@@ -472,8 +472,8 @@
 <pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="k">static</span> <span class="kt">bool</span> <span class="nf">SlruPhysicalWritePage</span><span class="p">(</span><span class="n">SlruCtl</span> <span class="n">ctl</span><span class="p">,</span> <span class="kt">int</span> <span class="n">pageno</span><span class="p">,</span> <span class="kt">int</span> <span class="n">slotno</span><span class="p">,</span> <span class="n">SlruFlush</span> <span class="n">fdata</span><span class="p">);</span> 
-</code></pre></td></tr></table></div>
+<pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="line"><span class="cl"><span class="k">static</span> <span class="kt">bool</span> <span class="nf">SlruPhysicalWritePage</span><span class="p">(</span><span class="n">SlruCtl</span> <span class="n">ctl</span><span class="p">,</span> <span class="kt">int</span> <span class="n">pageno</span><span class="p">,</span> <span class="kt">int</span> <span class="n">slotno</span><span class="p">,</span> <span class="n">SlruFlush</span> <span class="n">fdata</span><span class="p">);</span> 
+</span></span></code></pre></td></tr></table></div>
 </div>
 </div><p>在写入磁盘之前，会将这个缓存里所有数据，对应的 xlog 刷新文件中。最简单的一种实现方式，就是找到 xlog 位置最大的值，然后调用<code>XLogFlush</code>函数，将指定位置之前的 xlog 都刷新。</p>
 <h2 id="读写锁"><a href="#读写锁" class="anchor-link"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon anchor-icon"><path d="M326.612 185.391c59.747 59.809 58.927 155.698.36 214.59-.11.12-.24.25-.36.37l-67.2 67.2c-59.27 59.27-155.699 59.262-214.96 0-59.27-59.26-59.27-155.7 0-214.96l37.106-37.106c9.84-9.84 26.786-3.3 27.294 10.606.648 17.722 3.826 35.527 9.69 52.721 1.986 5.822.567 12.262-3.783 16.612l-13.087 13.087c-28.026 28.026-28.905 73.66-1.155 101.96 28.024 28.579 74.086 28.749 102.325.51l67.2-67.19c28.191-28.191 28.073-73.757 0-101.83-3.701-3.694-7.429-6.564-10.341-8.569a16.037 16.037 0 0 1-6.947-12.606c-.396-10.567 3.348-21.456 11.698-29.806l21.054-21.055c5.521-5.521 14.182-6.199 20.584-1.731a152.482 152.482 0 0 1 20.522 17.197zM467.547 44.449c-59.261-59.262-155.69-59.27-214.96 0l-67.2 67.2c-.12.12-.25.25-.36.37-58.566 58.892-59.387 154.781.36 214.59a152.454 152.454 0 0 0 20.521 17.196c6.402 4.468 15.064 3.789 20.584-1.731l21.054-21.055c8.35-8.35 12.094-19.239 11.698-29.806a16.037 16.037 0 0 0-6.947-12.606c-2.912-2.005-6.64-4.875-10.341-8.569-28.073-28.073-28.191-73.639 0-101.83l67.2-67.19c28.239-28.239 74.3-28.069 102.325.51 27.75 28.3 26.872 73.934-1.155 101.96l-13.087 13.087c-4.35 4.35-5.769 10.79-3.783 16.612 5.864 17.194 9.042 34.999 9.69 52.721.509 13.906 17.454 20.446 27.294 10.606l37.106-37.106c59.271-59.259 59.271-155.699.001-214.959z"/></svg></a>读写锁</h2>
@@ -553,9 +553,9 @@
 
         
     <div class="updated-badge-container">
-        <span title="Updated @ 2021-10-22 14:44:34 CST" style="cursor:help">
+        <span title="Updated @ 2023-07-02 16:59:09 CST" style="cursor:help">
 
-<svg xmlns="http://www.w3.org/2000/svg" width="130" height="20" class="updated-badge"><linearGradient id="b" x2="0" y2="100%"><stop offset="0" stop-color="#bbb" stop-opacity=".1"/><stop offset="1" stop-opacity=".1"/></linearGradient><clipPath id="a"><rect width="130" height="20" rx="3" fill="#fff"/></clipPath><g clip-path="url(#a)"><path class="updated-badge-left" d="M0 0h55v20H0z"/><path class="updated-badge-right" d="M55 0h75v20H55z"/><path fill="url(#b)" d="M0 0h130v20H0z"/></g><g fill="#fff" text-anchor="middle" font-size="110"><text x="285" y="150" fill="#010101" fill-opacity=".3" textLength="450" transform="scale(.1)">updated</text><text x="285" y="140" textLength="450" transform="scale(.1)">updated</text><text x="915" y="150" fill="#010101" fill-opacity=".3" textLength="650" transform="scale(.1)">2021-10-22</text><text x="915" y="140" textLength="650" transform="scale(.1)">2021-10-22</text></g></svg>
+<svg xmlns="http://www.w3.org/2000/svg" width="130" height="20" class="updated-badge"><linearGradient id="b" x2="0" y2="100%"><stop offset="0" stop-color="#bbb" stop-opacity=".1"/><stop offset="1" stop-opacity=".1"/></linearGradient><clipPath id="a"><rect width="130" height="20" rx="3" fill="#fff"/></clipPath><g clip-path="url(#a)"><path class="updated-badge-left" d="M0 0h55v20H0z"/><path class="updated-badge-right" d="M55 0h75v20H55z"/><path fill="url(#b)" d="M0 0h130v20H0z"/></g><g fill="#fff" text-anchor="middle" font-size="110"><text x="285" y="150" fill="#010101" fill-opacity=".3" textLength="450" transform="scale(.1)">updated</text><text x="285" y="140" textLength="450" transform="scale(.1)">updated</text><text x="915" y="150" fill="#010101" fill-opacity=".3" textLength="650" transform="scale(.1)">2023-07-02</text><text x="915" y="140" textLength="650" transform="scale(.1)">2023-07-02</text></g></svg>
         </span></div>
 
 

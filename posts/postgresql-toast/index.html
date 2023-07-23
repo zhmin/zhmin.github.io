@@ -3,7 +3,7 @@
     <head prefix="og: http://ogp.me/ns# article: http://ogp.me/ns/article#">
     <meta charset="UTF-8" />
 
-    <meta name="generator" content="Hugo 0.88.1" /><meta name="theme-color" content="#fff" />
+    <meta name="generator" content="Hugo 0.115.0"><meta name="theme-color" content="#fff" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     
     <meta name="format-detection" content="telephone=no, date=no, address=no, email=no" />
@@ -14,11 +14,11 @@
 
     <title>Postgresql Toast 原理 | 学习笔记</title>
 
-    <link rel="stylesheet" href="/css/meme.min.2d3e1834af2bc8dda20c7d74aaa1d8134845094441b7a554a5206ccd4b472596.css"/>
+    <link rel="stylesheet" href="/css/meme.min.91e7f58f97e1c60563ef481c38d9684fa8099537801d6f17bbfc724121e7d8f1.css"/>
 
     
     
-        <script src="/js/meme.min.800f61672145711eb3e1f29fcfcc3dbe0139dd459259718b611a0390f74703d1.js"></script>
+        <script src="/js/meme.min.3210a00c2fdcf6f831170b681b8ee40f83f0224663661e986872616aec45407f.js"></script>
 
     
 
@@ -54,13 +54,13 @@
         "@context": "https://schema.org",
         "@type": "BlogPosting",
         "datePublished": "2020-08-30T22:23:22+00:00",
-        "dateModified": "2021-10-22T14:44:34+08:00",
+        "dateModified": "2023-07-02T16:59:09+08:00",
         "url": "https://zhmin.github.io/posts/postgresql-toast/",
         "headline": "Postgresql Toast 原理",
         "description": "前言 上篇博客讲述了 postgresql 如何存储变长数据，它的应用主要是在 toast 。Toast 在存储大型数据时，会将它存储在单独的表中（称为 toast 表）。因为 postgresql 的 tuple（行数据）是存在在 Page 中的，Page 的大小默认为 8KB。pos……",
         "inLanguage" : "zh-CN",
         "articleSection": "posts",
-        "wordCount":  1857 ,
+        "wordCount":  1967 ,
         "image": ["https://zhmin.github.io/pg-toast.svg"],
         "author": {
             "@type": "Person",
@@ -98,7 +98,7 @@
 <meta property="og:locale" content="zh" /><meta property="og:image" content="https://zhmin.github.io/pg-toast.svg" />
 <meta property="og:type" content="article" />
     <meta property="article:published_time" content="2020-08-30T22:23:22&#43;00:00" />
-    <meta property="article:modified_time" content="2021-10-22T14:44:34&#43;08:00" />
+    <meta property="article:modified_time" content="2023-07-02T16:59:09&#43;08:00" />
     
     <meta property="article:section" content="posts" />
 
@@ -223,7 +223,7 @@
     
     
         
-        <span class="post-meta-item wordcount"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon post-meta-icon"><path d="M497.9 142.1l-46.1 46.1c-4.7 4.7-12.3 4.7-17 0l-111-111c-4.7-4.7-4.7-12.3 0-17l46.1-46.1c18.7-18.7 49.1-18.7 67.9 0l60.1 60.1c18.8 18.7 18.8 49.1 0 67.9zM284.2 99.8L21.6 362.4.4 483.9c-2.9 16.4 11.4 30.6 27.8 27.8l121.5-21.3 262.6-262.6c4.7-4.7 4.7-12.3 0-17l-111-111c-4.8-4.7-12.4-4.7-17.1 0zM124.1 339.9c-5.5-5.5-5.5-14.3 0-19.8l154-154c5.5-5.5 14.3-5.5 19.8 0s5.5 14.3 0 19.8l-154 154c-5.5 5.5-14.3 5.5-19.8 0zM88 424h48v36.3l-64.5 11.3-31.1-31.1L51.7 376H88v48z"/></svg>&nbsp;1857</span>
+        <span class="post-meta-item wordcount"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon post-meta-icon"><path d="M497.9 142.1l-46.1 46.1c-4.7 4.7-12.3 4.7-17 0l-111-111c-4.7-4.7-4.7-12.3 0-17l46.1-46.1c18.7-18.7 49.1-18.7 67.9 0l60.1 60.1c18.8 18.7 18.8 49.1 0 67.9zM284.2 99.8L21.6 362.4.4 483.9c-2.9 16.4 11.4 30.6 27.8 27.8l121.5-21.3 262.6-262.6c4.7-4.7 4.7-12.3 0-17l-111-111c-4.8-4.7-12.4-4.7-17.1 0zM124.1 339.9c-5.5-5.5-5.5-14.3 0-19.8l154-154c5.5-5.5 14.3-5.5 19.8 0s5.5 14.3 0 19.8l-154 154c-5.5 5.5-14.3 5.5-19.8 0zM88 424h48v36.3l-64.5 11.3-31.1-31.1L51.7 376H88v48z"/></svg>&nbsp;1967</span>
     
     
         
@@ -252,15 +252,15 @@
 </span><span class="lnt">8
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-sql" data-lang="sql"><span class="n">test</span><span class="o">=#</span><span class="w"> </span><span class="err">\</span><span class="n">d</span><span class="w"> </span><span class="n">mytable</span><span class="w">
-</span><span class="w">              </span><span class="k">Table</span><span class="w"> </span><span class="s2">&#34;public.mytable&#34;</span><span class="w">
-</span><span class="w"> </span><span class="k">Column</span><span class="w"> </span><span class="o">|</span><span class="w">  </span><span class="k">Type</span><span class="w">   </span><span class="o">|</span><span class="w"> </span><span class="k">Collation</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="k">Nullable</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="k">Default</span><span class="w"> 
-</span><span class="w"></span><span class="c1">--------+---------+-----------+----------+---------
-</span><span class="c1"></span><span class="w"> </span><span class="n">id</span><span class="w">     </span><span class="o">|</span><span class="w"> </span><span class="nb">integer</span><span class="w"> </span><span class="o">|</span><span class="w">           </span><span class="o">|</span><span class="w"> </span><span class="k">not</span><span class="w"> </span><span class="k">null</span><span class="w"> </span><span class="o">|</span><span class="w"> 
-</span><span class="w"> </span><span class="n">name</span><span class="w">   </span><span class="o">|</span><span class="w"> </span><span class="nb">text</span><span class="w">    </span><span class="o">|</span><span class="w">           </span><span class="o">|</span><span class="w">          </span><span class="o">|</span><span class="w"> 
-</span><span class="w"></span><span class="n">Indexes</span><span class="p">:</span><span class="w">
-</span><span class="w">    </span><span class="s2">&#34;mytable_pkey&#34;</span><span class="w"> </span><span class="k">PRIMARY</span><span class="w"> </span><span class="k">KEY</span><span class="p">,</span><span class="w"> </span><span class="n">btree</span><span class="w"> </span><span class="p">(</span><span class="n">id</span><span class="p">)</span><span class="w">
-</span></code></pre></td></tr></table></div>
+<pre tabindex="0" class="chroma"><code class="language-sql" data-lang="sql"><span class="line"><span class="cl"><span class="n">test</span><span class="o">=#</span><span class="w"> </span><span class="err">\</span><span class="n">d</span><span class="w"> </span><span class="n">mytable</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">              </span><span class="k">Table</span><span class="w"> </span><span class="s2">&#34;public.mytable&#34;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"> </span><span class="k">Column</span><span class="w"> </span><span class="o">|</span><span class="w">  </span><span class="k">Type</span><span class="w">   </span><span class="o">|</span><span class="w"> </span><span class="k">Collation</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="k">Nullable</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="k">Default</span><span class="w"> 
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="c1">--------+---------+-----------+----------+---------
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="w"> </span><span class="n">id</span><span class="w">     </span><span class="o">|</span><span class="w"> </span><span class="nb">integer</span><span class="w"> </span><span class="o">|</span><span class="w">           </span><span class="o">|</span><span class="w"> </span><span class="k">not</span><span class="w"> </span><span class="k">null</span><span class="w"> </span><span class="o">|</span><span class="w"> 
+</span></span></span><span class="line"><span class="cl"><span class="w"> </span><span class="n">name</span><span class="w">   </span><span class="o">|</span><span class="w"> </span><span class="nb">text</span><span class="w">    </span><span class="o">|</span><span class="w">           </span><span class="o">|</span><span class="w">          </span><span class="o">|</span><span class="w"> 
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">Indexes</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="s2">&#34;mytable_pkey&#34;</span><span class="w"> </span><span class="k">PRIMARY</span><span class="w"> </span><span class="k">KEY</span><span class="p">,</span><span class="w"> </span><span class="n">btree</span><span class="w"> </span><span class="p">(</span><span class="n">id</span><span class="p">)</span><span class="w">
+</span></span></span></code></pre></td></tr></table></div>
 </div>
 </div><p>可以看见 mytable 有个变长数据类型的列 name。然后我们来看看表对应的 oid。</p>
 <div class="highlight"><div class="chroma">
@@ -272,12 +272,12 @@
 </span><span class="lnt">5
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-sql" data-lang="sql"><span class="n">test</span><span class="o">=#</span><span class="w"> </span><span class="k">select</span><span class="w"> </span><span class="n">oid</span><span class="w"> </span><span class="k">from</span><span class="w"> </span><span class="n">pg_class</span><span class="w"> </span><span class="k">where</span><span class="w"> </span><span class="n">relname</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">&#39;mytable&#39;</span><span class="p">;</span><span class="w">
-</span><span class="w">  </span><span class="n">oid</span><span class="w">   
-</span><span class="w"></span><span class="c1">--------
-</span><span class="c1"></span><span class="w"> </span><span class="mi">127295</span><span class="w">
-</span><span class="w"></span><span class="p">(</span><span class="mi">1</span><span class="w"> </span><span class="k">row</span><span class="p">)</span><span class="w">
-</span></code></pre></td></tr></table></div>
+<pre tabindex="0" class="chroma"><code class="language-sql" data-lang="sql"><span class="line"><span class="cl"><span class="n">test</span><span class="o">=#</span><span class="w"> </span><span class="k">select</span><span class="w"> </span><span class="n">oid</span><span class="w"> </span><span class="k">from</span><span class="w"> </span><span class="n">pg_class</span><span class="w"> </span><span class="k">where</span><span class="w"> </span><span class="n">relname</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">&#39;mytable&#39;</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="n">oid</span><span class="w">   
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="c1">--------
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="w"> </span><span class="mi">127295</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="p">(</span><span class="mi">1</span><span class="w"> </span><span class="k">row</span><span class="p">)</span><span class="w">
+</span></span></span></code></pre></td></tr></table></div>
 </div>
 </div><p>可以看到 mytable 表的 oid 为 127295，那么可以推断出它的 toast 表名称为 pg_toast_127295，其对应的 oid 仍然可以通过上述语句查出来（在此省略了），或者</p>
 <div class="highlight"><div class="chroma">
@@ -289,12 +289,12 @@
 </span><span class="lnt">5
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-sql" data-lang="sql"><span class="n">test</span><span class="o">=#</span><span class="w"> </span><span class="k">select</span><span class="w"> </span><span class="n">reltoastrelid</span><span class="w"> </span><span class="k">from</span><span class="w"> </span><span class="n">pg_class</span><span class="w"> </span><span class="k">where</span><span class="w"> </span><span class="n">relname</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">&#39;mytable&#39;</span><span class="p">;</span><span class="w">
-</span><span class="w"> </span><span class="n">reltoastrelid</span><span class="w"> 
-</span><span class="w"></span><span class="c1">---------------
-</span><span class="c1"></span><span class="w">        </span><span class="mi">127298</span><span class="w">
-</span><span class="w"></span><span class="p">(</span><span class="mi">1</span><span class="w"> </span><span class="k">row</span><span class="p">)</span><span class="w">
-</span></code></pre></td></tr></table></div>
+<pre tabindex="0" class="chroma"><code class="language-sql" data-lang="sql"><span class="line"><span class="cl"><span class="n">test</span><span class="o">=#</span><span class="w"> </span><span class="k">select</span><span class="w"> </span><span class="n">reltoastrelid</span><span class="w"> </span><span class="k">from</span><span class="w"> </span><span class="n">pg_class</span><span class="w"> </span><span class="k">where</span><span class="w"> </span><span class="n">relname</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">&#39;mytable&#39;</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"> </span><span class="n">reltoastrelid</span><span class="w"> 
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="c1">---------------
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="w">        </span><span class="mi">127298</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="p">(</span><span class="mi">1</span><span class="w"> </span><span class="k">row</span><span class="p">)</span><span class="w">
+</span></span></span></code></pre></td></tr></table></div>
 </div>
 </div><p>我们继续来看看 pg_toast_127295 表有哪些列</p>
 <div class="highlight"><div class="chroma">
@@ -314,20 +314,20 @@
 </span><span class="lnt">13
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-sql" data-lang="sql"><span class="n">test</span><span class="o">=#</span><span class="w"> </span><span class="k">select</span><span class="w"> </span><span class="n">attname</span><span class="p">,</span><span class="w"> </span><span class="n">typname</span><span class="w"> </span><span class="k">from</span><span class="w"> </span><span class="n">pg_attribute</span><span class="w"> </span><span class="k">inner</span><span class="w"> </span><span class="k">join</span><span class="w"> </span><span class="n">pg_type</span><span class="w"> </span><span class="k">ON</span><span class="w"> </span><span class="n">pg_type</span><span class="p">.</span><span class="n">oid</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">pg_attribute</span><span class="p">.</span><span class="n">atttypid</span><span class="w"> </span><span class="k">where</span><span class="w"> </span><span class="n">pg_attribute</span><span class="p">.</span><span class="n">attrelid</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">127298</span><span class="p">;</span><span class="w">
-</span><span class="w">  </span><span class="n">attname</span><span class="w">   </span><span class="o">|</span><span class="w"> </span><span class="n">typname</span><span class="w"> 
-</span><span class="w"></span><span class="c1">------------+---------
-</span><span class="c1"></span><span class="w"> </span><span class="n">chunk_data</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="n">bytea</span><span class="w">
-</span><span class="w"> </span><span class="n">chunk_seq</span><span class="w">  </span><span class="o">|</span><span class="w"> </span><span class="n">int4</span><span class="w">
-</span><span class="w"> </span><span class="n">chunk_id</span><span class="w">   </span><span class="o">|</span><span class="w"> </span><span class="n">oid</span><span class="w">
-</span><span class="w"> </span><span class="n">tableoid</span><span class="w">   </span><span class="o">|</span><span class="w"> </span><span class="n">oid</span><span class="w">
-</span><span class="w"> </span><span class="n">ctid</span><span class="w">       </span><span class="o">|</span><span class="w"> </span><span class="n">tid</span><span class="w">
-</span><span class="w"> </span><span class="n">xmin</span><span class="w">       </span><span class="o">|</span><span class="w"> </span><span class="n">xid</span><span class="w">
-</span><span class="w"> </span><span class="n">xmax</span><span class="w">       </span><span class="o">|</span><span class="w"> </span><span class="n">xid</span><span class="w">
-</span><span class="w"> </span><span class="n">cmin</span><span class="w">       </span><span class="o">|</span><span class="w"> </span><span class="n">cid</span><span class="w">
-</span><span class="w"> </span><span class="n">cmax</span><span class="w">       </span><span class="o">|</span><span class="w"> </span><span class="n">cid</span><span class="w">
-</span><span class="w"></span><span class="p">(</span><span class="mi">9</span><span class="w"> </span><span class="k">rows</span><span class="p">)</span><span class="w">
-</span></code></pre></td></tr></table></div>
+<pre tabindex="0" class="chroma"><code class="language-sql" data-lang="sql"><span class="line"><span class="cl"><span class="n">test</span><span class="o">=#</span><span class="w"> </span><span class="k">select</span><span class="w"> </span><span class="n">attname</span><span class="p">,</span><span class="w"> </span><span class="n">typname</span><span class="w"> </span><span class="k">from</span><span class="w"> </span><span class="n">pg_attribute</span><span class="w"> </span><span class="k">inner</span><span class="w"> </span><span class="k">join</span><span class="w"> </span><span class="n">pg_type</span><span class="w"> </span><span class="k">ON</span><span class="w"> </span><span class="n">pg_type</span><span class="p">.</span><span class="n">oid</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">pg_attribute</span><span class="p">.</span><span class="n">atttypid</span><span class="w"> </span><span class="k">where</span><span class="w"> </span><span class="n">pg_attribute</span><span class="p">.</span><span class="n">attrelid</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">127298</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="n">attname</span><span class="w">   </span><span class="o">|</span><span class="w"> </span><span class="n">typname</span><span class="w"> 
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="c1">------------+---------
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="w"> </span><span class="n">chunk_data</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="n">bytea</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"> </span><span class="n">chunk_seq</span><span class="w">  </span><span class="o">|</span><span class="w"> </span><span class="n">int4</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"> </span><span class="n">chunk_id</span><span class="w">   </span><span class="o">|</span><span class="w"> </span><span class="n">oid</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"> </span><span class="n">tableoid</span><span class="w">   </span><span class="o">|</span><span class="w"> </span><span class="n">oid</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"> </span><span class="n">ctid</span><span class="w">       </span><span class="o">|</span><span class="w"> </span><span class="n">tid</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"> </span><span class="n">xmin</span><span class="w">       </span><span class="o">|</span><span class="w"> </span><span class="n">xid</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"> </span><span class="n">xmax</span><span class="w">       </span><span class="o">|</span><span class="w"> </span><span class="n">xid</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"> </span><span class="n">cmin</span><span class="w">       </span><span class="o">|</span><span class="w"> </span><span class="n">cid</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"> </span><span class="n">cmax</span><span class="w">       </span><span class="o">|</span><span class="w"> </span><span class="n">cid</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="p">(</span><span class="mi">9</span><span class="w"> </span><span class="k">rows</span><span class="p">)</span><span class="w">
+</span></span></span></code></pre></td></tr></table></div>
 </div>
 </div><p>除去下面的通用属性，它只定义了三列</p>
 <div class="table-container"><table>
@@ -380,8 +380,8 @@
 <pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-sql" data-lang="sql"><span class="k">INSERT</span><span class="w"> </span><span class="k">INTO</span><span class="w"> </span><span class="n">mytable</span><span class="w"> </span><span class="p">(</span><span class="n">name</span><span class="p">)</span><span class="w"> </span><span class="k">values</span><span class="w"> </span><span class="p">(</span><span class="s1">&#39;j7161gnb1u23 ...... 972bh6==&#39;</span><span class="p">);</span><span class="w">
-</span></code></pre></td></tr></table></div>
+<pre tabindex="0" class="chroma"><code class="language-sql" data-lang="sql"><span class="line"><span class="cl"><span class="k">INSERT</span><span class="w"> </span><span class="k">INTO</span><span class="w"> </span><span class="n">mytable</span><span class="w"> </span><span class="p">(</span><span class="n">name</span><span class="p">)</span><span class="w"> </span><span class="k">values</span><span class="w"> </span><span class="p">(</span><span class="s1">&#39;j7161gnb1u23 ...... 972bh6==&#39;</span><span class="p">);</span><span class="w">
+</span></span></span></code></pre></td></tr></table></div>
 </div>
 </div><p>postgresql 在处理这条请求时，发现 name 是 text 类型，并且这次插入的数据过大。那么首先它会被压缩，假设被压缩成 1MB，压缩后仍然不满足大小，然后按照指定的大小（默认为 2048 byte）切分成 512 份。每一份切片对应 toast 表的一行数据，它们的 chunk_id 都是相同的，因为属于同一个数据，只是 chunk_seq 不同，对应着切片位置。chunk_data 列就是存储着切片的数据。</p>
 <h2 id="数据结构"><a href="#数据结构" class="anchor-link"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon anchor-icon"><path d="M326.612 185.391c59.747 59.809 58.927 155.698.36 214.59-.11.12-.24.25-.36.37l-67.2 67.2c-59.27 59.27-155.699 59.262-214.96 0-59.27-59.26-59.27-155.7 0-214.96l37.106-37.106c9.84-9.84 26.786-3.3 27.294 10.606.648 17.722 3.826 35.527 9.69 52.721 1.986 5.822.567 12.262-3.783 16.612l-13.087 13.087c-28.026 28.026-28.905 73.66-1.155 101.96 28.024 28.579 74.086 28.749 102.325.51l67.2-67.19c28.191-28.191 28.073-73.757 0-101.83-3.701-3.694-7.429-6.564-10.341-8.569a16.037 16.037 0 0 1-6.947-12.606c-.396-10.567 3.348-21.456 11.698-29.806l21.054-21.055c5.521-5.521 14.182-6.199 20.584-1.731a152.482 152.482 0 0 1 20.522 17.197zM467.547 44.449c-59.261-59.262-155.69-59.27-214.96 0l-67.2 67.2c-.12.12-.25.25-.36.37-58.566 58.892-59.387 154.781.36 214.59a152.454 152.454 0 0 0 20.521 17.196c6.402 4.468 15.064 3.789 20.584-1.731l21.054-21.055c8.35-8.35 12.094-19.239 11.698-29.806a16.037 16.037 0 0 0-6.947-12.606c-2.912-2.005-6.64-4.875-10.341-8.569-28.073-28.073-28.191-73.639 0-101.83l67.2-67.19c28.239-28.239 74.3-28.069 102.325.51 27.75 28.3 26.872 73.934-1.155 101.96l-13.087 13.087c-4.35 4.35-5.769 10.79-3.783 16.612 5.864 17.194 9.042 34.999 9.69 52.721.509 13.906 17.454 20.446 27.294 10.606l37.106-37.106c59.271-59.259 59.271-155.699.001-214.959z"/></svg></a>数据结构</h2>
@@ -398,13 +398,13 @@
 </span><span class="lnt">6
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="k">typedef</span> <span class="k">struct</span>
-<span class="p">{</span>
-	<span class="n">uint8</span>		<span class="n">va_header</span><span class="p">;</span>		
-	<span class="n">uint8</span>		<span class="n">va_tag</span><span class="p">;</span>			<span class="cm">/* 类型 */</span>
-	<span class="kt">char</span>		<span class="n">va_data</span><span class="p">[</span><span class="n">FLEXIBLE_ARRAY_MEMBER</span><span class="p">];</span>
-<span class="p">}</span> <span class="n">varattrib_1b_e</span><span class="p">;</span>
-</code></pre></td></tr></table></div>
+<pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="line"><span class="cl"><span class="k">typedef</span> <span class="k">struct</span>
+</span></span><span class="line"><span class="cl"><span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="n">uint8</span>		<span class="n">va_header</span><span class="p">;</span>		
+</span></span><span class="line"><span class="cl">	<span class="n">uint8</span>		<span class="n">va_tag</span><span class="p">;</span>			<span class="cm">/* 类型 */</span>
+</span></span><span class="line"><span class="cl">	<span class="kt">char</span>		<span class="n">va_data</span><span class="p">[</span><span class="n">FLEXIBLE_ARRAY_MEMBER</span><span class="p">];</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span> <span class="n">varattrib_1b_e</span><span class="p">;</span>
+</span></span></code></pre></td></tr></table></div>
 </div>
 </div><p>它的 va_tag 类型为 <code>VARTAG_ONDISK </code>，后面的 <code>va_data</code>数据格式如下：</p>
 <div class="highlight"><div class="chroma">
@@ -418,14 +418,14 @@
 </span><span class="lnt">7
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="k">typedef</span> <span class="k">struct</span> <span class="n">varatt_external</span>
-<span class="p">{</span>
-	<span class="n">int32</span>		<span class="n">va_rawsize</span><span class="p">;</span>		<span class="cm">/* Original data size (includes header) */</span>
-	<span class="n">int32</span>		<span class="n">va_extsize</span><span class="p">;</span>		<span class="cm">/* External saved size (doesn&#39;t) */</span>
-	<span class="n">Oid</span>			<span class="n">va_valueid</span><span class="p">;</span>		<span class="cm">/* Unique ID of value within TOAST table */</span>
-	<span class="n">Oid</span>			<span class="n">va_toastrelid</span><span class="p">;</span>	<span class="cm">/* RelID of TOAST table containing it */</span>
-<span class="p">}</span>			<span class="n">varatt_external</span><span class="p">;</span>
-</code></pre></td></tr></table></div>
+<pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="line"><span class="cl"><span class="k">typedef</span> <span class="k">struct</span> <span class="n">varatt_external</span>
+</span></span><span class="line"><span class="cl"><span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="n">int32</span>		<span class="n">va_rawsize</span><span class="p">;</span>		<span class="cm">/* Original data size (includes header) */</span>
+</span></span><span class="line"><span class="cl">	<span class="n">int32</span>		<span class="n">va_extsize</span><span class="p">;</span>		<span class="cm">/* External saved size (doesn&#39;t) */</span>
+</span></span><span class="line"><span class="cl">	<span class="n">Oid</span>			<span class="n">va_valueid</span><span class="p">;</span>		<span class="cm">/* Unique ID of value within TOAST table */</span>
+</span></span><span class="line"><span class="cl">	<span class="n">Oid</span>			<span class="n">va_toastrelid</span><span class="p">;</span>	<span class="cm">/* RelID of TOAST table containing it */</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>			<span class="n">varatt_external</span><span class="p">;</span>
+</span></span></code></pre></td></tr></table></div>
 </div>
 </div><p><code>src/backend/access/common/toast_internals.c</code>文件中的<code>toast_save_datum</code>函数实现了如何将数据存储到 toast 表，下面的程序经过简化处理了。</p>
 <div class="highlight"><div class="chroma">
@@ -477,52 +477,52 @@
 </span><span class="lnt">45
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="cm">/*
-</span><span class="cm">	rel: 普通表
-</span><span class="cm">	value: 该列数据
-</span><span class="cm">	oldexternal: 用于更新用的
-</span><span class="cm">*/</span>
-<span class="n">Datum</span> <span class="nf">toast_save_datum</span><span class="p">(</span><span class="n">Relation</span> <span class="n">rel</span><span class="p">,</span> <span class="n">Datum</span> <span class="n">value</span><span class="p">,</span> <span class="k">struct</span> <span class="n">varlena</span> <span class="o">*</span><span class="n">oldexternal</span><span class="p">,</span> <span class="kt">int</span> <span class="n">options</span><span class="p">)</span> <span class="p">{</span>
-    
-    <span class="k">struct</span> <span class="n">varatt_external</span> <span class="n">toast_pointer</span><span class="p">;</span>
-    
-    <span class="n">Datum</span>		<span class="n">t_values</span><span class="p">[</span><span class="mi">3</span><span class="p">];</span>
-    <span class="n">t_values</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">ObjectIdGetDatum</span><span class="p">(</span><span class="n">toast_pointer</span><span class="p">.</span><span class="n">va_valueid</span><span class="p">);</span>
-	<span class="n">t_values</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">=</span> <span class="n">PointerGetDatum</span><span class="p">(</span><span class="o">&amp;</span><span class="n">chunk_data</span><span class="p">);</span>
-    
-    <span class="n">int32</span>		<span class="n">chunk_seq</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>  <span class="c1">// 切片索引
-</span><span class="c1"></span>    <span class="c1">// 开始切分数据，data_todo 是剩余数据的长度
-</span><span class="c1"></span>	<span class="k">while</span> <span class="p">(</span><span class="n">data_todo</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">)</span>
-	<span class="p">{</span>
-		<span class="kt">int</span>			<span class="n">i</span><span class="p">;</span>
-        <span class="c1">// 计算切片长度
-</span><span class="c1"></span>		<span class="n">chunk_size</span> <span class="o">=</span> <span class="n">Min</span><span class="p">(</span><span class="n">TOAST_MAX_CHUNK_SIZE</span><span class="p">,</span> <span class="n">data_todo</span><span class="p">);</span>
-        <span class="c1">// 记录 chunk_seq 列值
-</span><span class="c1"></span>		<span class="n">t_values</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">Int32GetDatum</span><span class="p">(</span><span class="n">chunk_seq</span><span class="o">++</span><span class="p">);</span>
-        <span class="c1">// 记录切片数据, data_p 记录了写入的数据位置
-</span><span class="c1"></span>		<span class="n">SET_VARSIZE</span><span class="p">(</span><span class="o">&amp;</span><span class="n">chunk_data</span><span class="p">,</span> <span class="n">chunk_size</span> <span class="o">+</span> <span class="n">VARHDRSZ</span><span class="p">);</span>
-		<span class="n">memcpy</span><span class="p">(</span><span class="n">VARDATA</span><span class="p">(</span><span class="o">&amp;</span><span class="n">chunk_data</span><span class="p">),</span> <span class="n">data_p</span><span class="p">,</span> <span class="n">chunk_size</span><span class="p">);</span>
-        <span class="c1">// 插入 toast 表
-</span><span class="c1"></span>		<span class="n">toasttup</span> <span class="o">=</span> <span class="n">heap_form_tuple</span><span class="p">(</span><span class="n">toasttupDesc</span><span class="p">,</span> <span class="n">t_values</span><span class="p">,</span> <span class="n">t_isnull</span><span class="p">);</span>
-		<span class="n">heap_insert</span><span class="p">(</span><span class="n">toastrel</span><span class="p">,</span> <span class="n">toasttup</span><span class="p">,</span> <span class="n">mycid</span><span class="p">,</span> <span class="n">options</span><span class="p">,</span> <span class="nb">NULL</span><span class="p">);</span>
-        
-        <span class="c1">// toast 表设置了 chunk_id 和 chunk_seq 的符合唯一索引
-</span><span class="c1"></span>		<span class="k">for</span> <span class="p">(</span><span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">num_indexes</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span>
-		<span class="p">{</span>
-			<span class="k">if</span> <span class="p">(</span><span class="n">toastidxs</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">-&gt;</span><span class="n">rd_index</span><span class="o">-&gt;</span><span class="n">indisready</span><span class="p">)</span>
-				<span class="n">index_insert</span><span class="p">(</span><span class="n">toastidxs</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">t_values</span><span class="p">,</span> <span class="n">t_isnull</span><span class="p">,</span>
-							 <span class="o">&amp;</span><span class="p">(</span><span class="n">toasttup</span><span class="o">-&gt;</span><span class="n">t_self</span><span class="p">),</span>
-							 <span class="n">toastrel</span><span class="p">,</span>
-							 <span class="n">toastidxs</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">-&gt;</span><span class="n">rd_index</span><span class="o">-&gt;</span><span class="n">indisunique</span> <span class="o">?</span>
-							 <span class="nl">UNIQUE_CHECK_YES</span> <span class="p">:</span> <span class="n">UNIQUE_CHECK_NO</span><span class="p">,</span>
-							 <span class="nb">NULL</span><span class="p">);</span>
-		<span class="p">}</span>
-		<span class="n">data_todo</span> <span class="o">-=</span> <span class="n">chunk_size</span><span class="p">;</span>
-		<span class="n">data_p</span> <span class="o">+=</span> <span class="n">chunk_size</span><span class="p">;</span>
-	<span class="p">}</span>
-    
-<span class="p">}</span>
-</code></pre></td></tr></table></div>
+<pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="line"><span class="cl"><span class="cm">/*
+</span></span></span><span class="line"><span class="cl"><span class="cm">	rel: 普通表
+</span></span></span><span class="line"><span class="cl"><span class="cm">	value: 该列数据
+</span></span></span><span class="line"><span class="cl"><span class="cm">	oldexternal: 用于更新用的
+</span></span></span><span class="line"><span class="cl"><span class="cm">*/</span>
+</span></span><span class="line"><span class="cl"><span class="n">Datum</span> <span class="nf">toast_save_datum</span><span class="p">(</span><span class="n">Relation</span> <span class="n">rel</span><span class="p">,</span> <span class="n">Datum</span> <span class="n">value</span><span class="p">,</span> <span class="k">struct</span> <span class="n">varlena</span> <span class="o">*</span><span class="n">oldexternal</span><span class="p">,</span> <span class="kt">int</span> <span class="n">options</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    
+</span></span><span class="line"><span class="cl">    <span class="k">struct</span> <span class="n">varatt_external</span> <span class="n">toast_pointer</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    
+</span></span><span class="line"><span class="cl">    <span class="n">Datum</span>		<span class="n">t_values</span><span class="p">[</span><span class="mi">3</span><span class="p">];</span>
+</span></span><span class="line"><span class="cl">    <span class="n">t_values</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="nf">ObjectIdGetDatum</span><span class="p">(</span><span class="n">toast_pointer</span><span class="p">.</span><span class="n">va_valueid</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">	<span class="n">t_values</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">=</span> <span class="nf">PointerGetDatum</span><span class="p">(</span><span class="o">&amp;</span><span class="n">chunk_data</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">    
+</span></span><span class="line"><span class="cl">    <span class="n">int32</span>		<span class="n">chunk_seq</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>  <span class="c1">// 切片索引
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="c1">// 开始切分数据，data_todo 是剩余数据的长度
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="k">while</span> <span class="p">(</span><span class="n">data_todo</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">	<span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="kt">int</span>			<span class="n">i</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">        <span class="c1">// 计算切片长度
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>		<span class="n">chunk_size</span> <span class="o">=</span> <span class="nf">Min</span><span class="p">(</span><span class="n">TOAST_MAX_CHUNK_SIZE</span><span class="p">,</span> <span class="n">data_todo</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">        <span class="c1">// 记录 chunk_seq 列值
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>		<span class="n">t_values</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="nf">Int32GetDatum</span><span class="p">(</span><span class="n">chunk_seq</span><span class="o">++</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">        <span class="c1">// 记录切片数据, data_p 记录了写入的数据位置
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>		<span class="nf">SET_VARSIZE</span><span class="p">(</span><span class="o">&amp;</span><span class="n">chunk_data</span><span class="p">,</span> <span class="n">chunk_size</span> <span class="o">+</span> <span class="n">VARHDRSZ</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">		<span class="nf">memcpy</span><span class="p">(</span><span class="nf">VARDATA</span><span class="p">(</span><span class="o">&amp;</span><span class="n">chunk_data</span><span class="p">),</span> <span class="n">data_p</span><span class="p">,</span> <span class="n">chunk_size</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">        <span class="c1">// 插入 toast 表
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>		<span class="n">toasttup</span> <span class="o">=</span> <span class="nf">heap_form_tuple</span><span class="p">(</span><span class="n">toasttupDesc</span><span class="p">,</span> <span class="n">t_values</span><span class="p">,</span> <span class="n">t_isnull</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">		<span class="nf">heap_insert</span><span class="p">(</span><span class="n">toastrel</span><span class="p">,</span> <span class="n">toasttup</span><span class="p">,</span> <span class="n">mycid</span><span class="p">,</span> <span class="n">options</span><span class="p">,</span> <span class="nb">NULL</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">        
+</span></span><span class="line"><span class="cl">        <span class="c1">// toast 表设置了 chunk_id 和 chunk_seq 的符合唯一索引
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>		<span class="k">for</span> <span class="p">(</span><span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">num_indexes</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">		<span class="p">{</span>
+</span></span><span class="line"><span class="cl">			<span class="k">if</span> <span class="p">(</span><span class="n">toastidxs</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">-&gt;</span><span class="n">rd_index</span><span class="o">-&gt;</span><span class="n">indisready</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">				<span class="nf">index_insert</span><span class="p">(</span><span class="n">toastidxs</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">t_values</span><span class="p">,</span> <span class="n">t_isnull</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">							 <span class="o">&amp;</span><span class="p">(</span><span class="n">toasttup</span><span class="o">-&gt;</span><span class="n">t_self</span><span class="p">),</span>
+</span></span><span class="line"><span class="cl">							 <span class="n">toastrel</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">							 <span class="n">toastidxs</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">-&gt;</span><span class="n">rd_index</span><span class="o">-&gt;</span><span class="n">indisunique</span> <span class="o">?</span>
+</span></span><span class="line"><span class="cl">							 <span class="nl">UNIQUE_CHECK_YES</span> <span class="p">:</span> <span class="n">UNIQUE_CHECK_NO</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">							 <span class="nb">NULL</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">		<span class="p">}</span>
+</span></span><span class="line"><span class="cl">		<span class="n">data_todo</span> <span class="o">-=</span> <span class="n">chunk_size</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">		<span class="n">data_p</span> <span class="o">+=</span> <span class="n">chunk_size</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">	<span class="p">}</span>
+</span></span><span class="line"><span class="cl">    
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table></div>
 </div>
 </div><h2 id="切片策略"><a href="#切片策略" class="anchor-link"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon anchor-icon"><path d="M326.612 185.391c59.747 59.809 58.927 155.698.36 214.59-.11.12-.24.25-.36.37l-67.2 67.2c-59.27 59.27-155.699 59.262-214.96 0-59.27-59.26-59.27-155.7 0-214.96l37.106-37.106c9.84-9.84 26.786-3.3 27.294 10.606.648 17.722 3.826 35.527 9.69 52.721 1.986 5.822.567 12.262-3.783 16.612l-13.087 13.087c-28.026 28.026-28.905 73.66-1.155 101.96 28.024 28.579 74.086 28.749 102.325.51l67.2-67.19c28.191-28.191 28.073-73.757 0-101.83-3.701-3.694-7.429-6.564-10.341-8.569a16.037 16.037 0 0 1-6.947-12.606c-.396-10.567 3.348-21.456 11.698-29.806l21.054-21.055c5.521-5.521 14.182-6.199 20.584-1.731a152.482 152.482 0 0 1 20.522 17.197zM467.547 44.449c-59.261-59.262-155.69-59.27-214.96 0l-67.2 67.2c-.12.12-.25.25-.36.37-58.566 58.892-59.387 154.781.36 214.59a152.454 152.454 0 0 0 20.521 17.196c6.402 4.468 15.064 3.789 20.584-1.731l21.054-21.055c8.35-8.35 12.094-19.239 11.698-29.806a16.037 16.037 0 0 0-6.947-12.606c-2.912-2.005-6.64-4.875-10.341-8.569-28.073-28.073-28.191-73.639 0-101.83l67.2-67.19c28.239-28.239 74.3-28.069 102.325.51 27.75 28.3 26.872 73.934-1.155 101.96l-13.087 13.087c-4.35 4.35-5.769 10.79-3.783 16.612 5.864 17.194 9.042 34.999 9.69 52.721.509 13.906 17.454 20.446 27.294 10.606l37.106-37.106c59.271-59.259 59.271-155.699.001-214.959z"/></svg></a>切片策略</h2>
 <p>上面展示了 postgresql 对变长数据的默认切片策略，其实它还提供了别的策略。总共支持四种，如下所示：</p>
@@ -562,9 +562,9 @@
 
         
     <div class="updated-badge-container">
-        <span title="Updated @ 2021-10-22 14:44:34 CST" style="cursor:help">
+        <span title="Updated @ 2023-07-02 16:59:09 CST" style="cursor:help">
 
-<svg xmlns="http://www.w3.org/2000/svg" width="130" height="20" class="updated-badge"><linearGradient id="b" x2="0" y2="100%"><stop offset="0" stop-color="#bbb" stop-opacity=".1"/><stop offset="1" stop-opacity=".1"/></linearGradient><clipPath id="a"><rect width="130" height="20" rx="3" fill="#fff"/></clipPath><g clip-path="url(#a)"><path class="updated-badge-left" d="M0 0h55v20H0z"/><path class="updated-badge-right" d="M55 0h75v20H55z"/><path fill="url(#b)" d="M0 0h130v20H0z"/></g><g fill="#fff" text-anchor="middle" font-size="110"><text x="285" y="150" fill="#010101" fill-opacity=".3" textLength="450" transform="scale(.1)">updated</text><text x="285" y="140" textLength="450" transform="scale(.1)">updated</text><text x="915" y="150" fill="#010101" fill-opacity=".3" textLength="650" transform="scale(.1)">2021-10-22</text><text x="915" y="140" textLength="650" transform="scale(.1)">2021-10-22</text></g></svg>
+<svg xmlns="http://www.w3.org/2000/svg" width="130" height="20" class="updated-badge"><linearGradient id="b" x2="0" y2="100%"><stop offset="0" stop-color="#bbb" stop-opacity=".1"/><stop offset="1" stop-opacity=".1"/></linearGradient><clipPath id="a"><rect width="130" height="20" rx="3" fill="#fff"/></clipPath><g clip-path="url(#a)"><path class="updated-badge-left" d="M0 0h55v20H0z"/><path class="updated-badge-right" d="M55 0h75v20H55z"/><path fill="url(#b)" d="M0 0h130v20H0z"/></g><g fill="#fff" text-anchor="middle" font-size="110"><text x="285" y="150" fill="#010101" fill-opacity=".3" textLength="450" transform="scale(.1)">updated</text><text x="285" y="140" textLength="450" transform="scale(.1)">updated</text><text x="915" y="150" fill="#010101" fill-opacity=".3" textLength="650" transform="scale(.1)">2023-07-02</text><text x="915" y="140" textLength="650" transform="scale(.1)">2023-07-02</text></g></svg>
         </span></div>
 
 

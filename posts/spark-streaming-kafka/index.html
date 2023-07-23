@@ -3,7 +3,7 @@
     <head prefix="og: http://ogp.me/ns# article: http://ogp.me/ns/article#">
     <meta charset="UTF-8" />
 
-    <meta name="generator" content="Hugo 0.88.1" /><meta name="theme-color" content="#fff" />
+    <meta name="generator" content="Hugo 0.115.0"><meta name="theme-color" content="#fff" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     
     <meta name="format-detection" content="telephone=no, date=no, address=no, email=no" />
@@ -14,11 +14,11 @@
 
     <title>Spark Streaming Kafka 原理 | 学习笔记</title>
 
-    <link rel="stylesheet" href="/css/meme.min.2d3e1834af2bc8dda20c7d74aaa1d8134845094441b7a554a5206ccd4b472596.css"/>
+    <link rel="stylesheet" href="/css/meme.min.91e7f58f97e1c60563ef481c38d9684fa8099537801d6f17bbfc724121e7d8f1.css"/>
 
     
     
-        <script src="/js/meme.min.800f61672145711eb3e1f29fcfcc3dbe0139dd459259718b611a0390f74703d1.js"></script>
+        <script src="/js/meme.min.3210a00c2fdcf6f831170b681b8ee40f83f0224663661e986872616aec45407f.js"></script>
 
     
 
@@ -54,13 +54,13 @@
         "@context": "https://schema.org",
         "@type": "BlogPosting",
         "datePublished": "2019-02-21T21:25:04+00:00",
-        "dateModified": "2021-10-22T14:44:34+08:00",
+        "dateModified": "2023-07-02T16:59:09+08:00",
         "url": "https://zhmin.github.io/posts/spark-streaming-kafka/",
         "headline": "Spark Streaming Kafka 原理",
         "description": "Spark Streaming Kafka 原理 Kafka作为一个消息队列，具有很高的吞吐量，和Spark Streaming结合起来，可以实现高速实时的流处理。Spark Streaming在以前的版本支持两种方式读取Kafka，一种是通过……",
         "inLanguage" : "zh-CN",
         "articleSection": "posts",
-        "wordCount":  3286 ,
+        "wordCount":  3311 ,
         "image": ["https://zhmin.github.io/spark-streaming-kafka-direct.svg"],
         "author": {
             "@type": "Person",
@@ -98,7 +98,7 @@
 <meta property="og:locale" content="zh" /><meta property="og:image" content="https://zhmin.github.io/spark-streaming-kafka-direct.svg" />
 <meta property="og:type" content="article" />
     <meta property="article:published_time" content="2019-02-21T21:25:04&#43;00:00" />
-    <meta property="article:modified_time" content="2021-10-22T14:44:34&#43;08:00" />
+    <meta property="article:modified_time" content="2023-07-02T16:59:09&#43;08:00" />
     
     <meta property="article:section" content="posts" />
 
@@ -223,7 +223,7 @@
     
     
         
-        <span class="post-meta-item wordcount"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon post-meta-icon"><path d="M497.9 142.1l-46.1 46.1c-4.7 4.7-12.3 4.7-17 0l-111-111c-4.7-4.7-4.7-12.3 0-17l46.1-46.1c18.7-18.7 49.1-18.7 67.9 0l60.1 60.1c18.8 18.7 18.8 49.1 0 67.9zM284.2 99.8L21.6 362.4.4 483.9c-2.9 16.4 11.4 30.6 27.8 27.8l121.5-21.3 262.6-262.6c4.7-4.7 4.7-12.3 0-17l-111-111c-4.8-4.7-12.4-4.7-17.1 0zM124.1 339.9c-5.5-5.5-5.5-14.3 0-19.8l154-154c5.5-5.5 14.3-5.5 19.8 0s5.5 14.3 0 19.8l-154 154c-5.5 5.5-14.3 5.5-19.8 0zM88 424h48v36.3l-64.5 11.3-31.1-31.1L51.7 376H88v48z"/></svg>&nbsp;3286</span>
+        <span class="post-meta-item wordcount"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon post-meta-icon"><path d="M497.9 142.1l-46.1 46.1c-4.7 4.7-12.3 4.7-17 0l-111-111c-4.7-4.7-4.7-12.3 0-17l46.1-46.1c18.7-18.7 49.1-18.7 67.9 0l60.1 60.1c18.8 18.7 18.8 49.1 0 67.9zM284.2 99.8L21.6 362.4.4 483.9c-2.9 16.4 11.4 30.6 27.8 27.8l121.5-21.3 262.6-262.6c4.7-4.7 4.7-12.3 0-17l-111-111c-4.8-4.7-12.4-4.7-17.1 0zM124.1 339.9c-5.5-5.5-5.5-14.3 0-19.8l154-154c5.5-5.5 14.3-5.5 19.8 0s5.5 14.3 0 19.8l-154 154c-5.5 5.5-14.3 5.5-19.8 0zM88 424h48v36.3l-64.5 11.3-31.1-31.1L51.7 376H88v48z"/></svg>&nbsp;3311</span>
     
     
         
@@ -276,32 +276,32 @@
 </span><span class="lnt">25
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="c1">// kafka 配置项，这里只列出一些重要项
-</span><span class="c1"></span><span class="n">Map</span><span class="o">&lt;</span><span class="n">String</span><span class="o">,</span> <span class="n">Object</span><span class="o">&gt;</span> <span class="n">kafkaParams</span> <span class="o">=</span> <span class="k">new</span> <span class="n">HashMap</span><span class="o">&lt;&gt;();</span>
-<span class="n">kafkaParams</span><span class="o">.</span><span class="na">put</span><span class="o">(</span><span class="s">&#34;bootstrap.servers&#34;</span><span class="o">,</span> <span class="s">&#34;localhost:9092,anotherhost:9092&#34;</span><span class="o">);</span>
-<span class="n">kafkaParams</span><span class="o">.</span><span class="na">put</span><span class="o">(</span><span class="s">&#34;group.id&#34;</span><span class="o">,</span> <span class="s">&#34;my_consumer_group&#34;</span><span class="o">);</span>
-<span class="n">kafkaParams</span><span class="o">.</span><span class="na">put</span><span class="o">(</span><span class="s">&#34;enable.auto.commit&#34;</span><span class="o">,</span> <span class="kc">false</span><span class="o">);</span>
-
-<span class="n">Collection</span><span class="o">&lt;</span><span class="n">String</span><span class="o">&gt;</span> <span class="n">topics</span> <span class="o">=</span> <span class="n">Arrays</span><span class="o">.</span><span class="na">asList</span><span class="o">(</span><span class="s">&#34;topicA&#34;</span><span class="o">,</span> <span class="s">&#34;topicB&#34;</span><span class="o">);</span>
-
-<span class="c1">// 创建 kafka stream
-</span><span class="c1"></span><span class="n">JavaInputDStream</span><span class="o">&lt;</span><span class="n">ConsumerRecord</span><span class="o">&lt;</span><span class="n">String</span><span class="o">,</span> <span class="n">String</span><span class="o">&gt;&gt;</span> <span class="n">stream</span> <span class="o">=</span>
-  <span class="n">KafkaUtils</span><span class="o">.</span><span class="na">createDirectStream</span><span class="o">(</span>
-    <span class="n">streamingContext</span><span class="o">,</span>
-    <span class="n">LocationStrategies</span><span class="o">.</span><span class="na">PreferConsistent</span><span class="o">(),</span>
-    <span class="n">ConsumerStrategies</span><span class="o">.&lt;</span><span class="n">String</span><span class="o">,</span> <span class="n">String</span><span class="o">&gt;</span><span class="n">Subscribe</span><span class="o">(</span><span class="n">topics</span><span class="o">,</span> <span class="n">kafkaParams</span><span class="o">)</span>
-  <span class="o">);</span>
-
-<span class="c1">// 调用 foreachRDD 来处理
-</span><span class="c1"></span><span class="n">stream</span><span class="o">.</span><span class="na">foreachRDD</span><span class="o">(</span><span class="n">rdd</span> <span class="o">-&gt;</span> <span class="o">{</span>
-  <span class="n">OffsetRange</span><span class="o">[]</span> <span class="n">offsetRanges</span> <span class="o">=</span> <span class="o">((</span><span class="n">HasOffsetRanges</span><span class="o">)</span> <span class="n">rdd</span><span class="o">.</span><span class="na">rdd</span><span class="o">()).</span><span class="na">offsetRanges</span><span class="o">();</span>  <span class="c1">// 在 driver执行
-</span><span class="c1"></span>  <span class="n">rdd</span><span class="o">.</span><span class="na">mapPartitions</span><span class="o">(</span> <span class="n">p</span> <span class="o">-&gt;</span> <span class="o">{</span>
-      <span class="c1">// .... 处理 
-</span><span class="c1"></span>  <span class="o">})</span>
-  <span class="c1">// 等待executor执行完任务，driver 端负责提交offset
-</span><span class="c1"></span>  <span class="o">((</span><span class="n">CanCommitOffsets</span><span class="o">)</span> <span class="n">stream</span><span class="o">.</span><span class="na">inputDStream</span><span class="o">()).</span><span class="na">commitAsync</span><span class="o">(</span><span class="n">offsetRanges</span><span class="o">);</span>
-<span class="o">});</span>
-</code></pre></td></tr></table></div>
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="c1">// kafka 配置项，这里只列出一些重要项
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="n">Map</span><span class="o">&lt;</span><span class="n">String</span><span class="o">,</span> <span class="n">Object</span><span class="o">&gt;</span> <span class="n">kafkaParams</span> <span class="o">=</span> <span class="k">new</span> <span class="n">HashMap</span><span class="o">&lt;&gt;();</span>
+</span></span><span class="line"><span class="cl"><span class="n">kafkaParams</span><span class="o">.</span><span class="na">put</span><span class="o">(</span><span class="s">&#34;bootstrap.servers&#34;</span><span class="o">,</span> <span class="s">&#34;localhost:9092,anotherhost:9092&#34;</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl"><span class="n">kafkaParams</span><span class="o">.</span><span class="na">put</span><span class="o">(</span><span class="s">&#34;group.id&#34;</span><span class="o">,</span> <span class="s">&#34;my_consumer_group&#34;</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl"><span class="n">kafkaParams</span><span class="o">.</span><span class="na">put</span><span class="o">(</span><span class="s">&#34;enable.auto.commit&#34;</span><span class="o">,</span> <span class="kc">false</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">Collection</span><span class="o">&lt;</span><span class="n">String</span><span class="o">&gt;</span> <span class="n">topics</span> <span class="o">=</span> <span class="n">Arrays</span><span class="o">.</span><span class="na">asList</span><span class="o">(</span><span class="s">&#34;topicA&#34;</span><span class="o">,</span> <span class="s">&#34;topicB&#34;</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1">// 创建 kafka stream
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="n">JavaInputDStream</span><span class="o">&lt;</span><span class="n">ConsumerRecord</span><span class="o">&lt;</span><span class="n">String</span><span class="o">,</span> <span class="n">String</span><span class="o">&gt;&gt;</span> <span class="n">stream</span> <span class="o">=</span>
+</span></span><span class="line"><span class="cl">  <span class="n">KafkaUtils</span><span class="o">.</span><span class="na">createDirectStream</span><span class="o">(</span>
+</span></span><span class="line"><span class="cl">    <span class="n">streamingContext</span><span class="o">,</span>
+</span></span><span class="line"><span class="cl">    <span class="n">LocationStrategies</span><span class="o">.</span><span class="na">PreferConsistent</span><span class="o">(),</span>
+</span></span><span class="line"><span class="cl">    <span class="n">ConsumerStrategies</span><span class="o">.&lt;</span><span class="n">String</span><span class="o">,</span> <span class="n">String</span><span class="o">&gt;</span><span class="n">Subscribe</span><span class="o">(</span><span class="n">topics</span><span class="o">,</span> <span class="n">kafkaParams</span><span class="o">)</span>
+</span></span><span class="line"><span class="cl">  <span class="o">);</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1">// 调用 foreachRDD 来处理
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="n">stream</span><span class="o">.</span><span class="na">foreachRDD</span><span class="o">(</span><span class="n">rdd</span> <span class="o">-&gt;</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">  <span class="n">OffsetRange</span><span class="o">[]</span> <span class="n">offsetRanges</span> <span class="o">=</span> <span class="o">((</span><span class="n">HasOffsetRanges</span><span class="o">)</span> <span class="n">rdd</span><span class="o">.</span><span class="na">rdd</span><span class="o">()).</span><span class="na">offsetRanges</span><span class="o">();</span>  <span class="c1">// 在 driver执行
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="n">rdd</span><span class="o">.</span><span class="na">mapPartitions</span><span class="o">(</span> <span class="n">p</span> <span class="o">-&gt;</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">      <span class="c1">// .... 处理 
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="o">})</span>
+</span></span><span class="line"><span class="cl">  <span class="c1">// 等待executor执行完任务，driver 端负责提交offset
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="o">((</span><span class="n">CanCommitOffsets</span><span class="o">)</span> <span class="n">stream</span><span class="o">.</span><span class="na">inputDStream</span><span class="o">()).</span><span class="na">commitAsync</span><span class="o">(</span><span class="n">offsetRanges</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl"><span class="o">});</span>
+</span></span></code></pre></td></tr></table></div>
 </div>
 </div><h2 id="kafka数据流生成rdd"><a href="#kafka数据流生成rdd" class="anchor-link"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon anchor-icon"><path d="M326.612 185.391c59.747 59.809 58.927 155.698.36 214.59-.11.12-.24.25-.36.37l-67.2 67.2c-59.27 59.27-155.699 59.262-214.96 0-59.27-59.26-59.27-155.7 0-214.96l37.106-37.106c9.84-9.84 26.786-3.3 27.294 10.606.648 17.722 3.826 35.527 9.69 52.721 1.986 5.822.567 12.262-3.783 16.612l-13.087 13.087c-28.026 28.026-28.905 73.66-1.155 101.96 28.024 28.579 74.086 28.749 102.325.51l67.2-67.19c28.191-28.191 28.073-73.757 0-101.83-3.701-3.694-7.429-6.564-10.341-8.569a16.037 16.037 0 0 1-6.947-12.606c-.396-10.567 3.348-21.456 11.698-29.806l21.054-21.055c5.521-5.521 14.182-6.199 20.584-1.731a152.482 152.482 0 0 1 20.522 17.197zM467.547 44.449c-59.261-59.262-155.69-59.27-214.96 0l-67.2 67.2c-.12.12-.25.25-.36.37-58.566 58.892-59.387 154.781.36 214.59a152.454 152.454 0 0 0 20.521 17.196c6.402 4.468 15.064 3.789 20.584-1.731l21.054-21.055c8.35-8.35 12.094-19.239 11.698-29.806a16.037 16.037 0 0 0-6.947-12.606c-2.912-2.005-6.64-4.875-10.341-8.569-28.073-28.073-28.191-73.639 0-101.83l67.2-67.19c28.239-28.239 74.3-28.069 102.325.51 27.75 28.3 26.872 73.934-1.155 101.96l-13.087 13.087c-4.35 4.35-5.769 10.79-3.783 16.612 5.864 17.194 9.042 34.999 9.69 52.721.509 13.906 17.454 20.446 27.294 10.606l37.106-37.106c59.271-59.259 59.271-155.699.001-214.959z"/></svg></a>Kafka数据流生成RDD</h2>
 <p>Kafka数据输入流由DirectKafkaInputDStream类表示，它会定期生成RDD。DirectKafkaInputDStream每次生成RDD的数据，都是读取kafka对应的topic所有分区，自从上次提交的offset一直到最新的offset到的数据。</p>
@@ -346,43 +346,43 @@
 </span><span class="lnt">36
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-scala" data-lang="scala"><span class="k">class</span> <span class="nc">DirectKafkaInputDStream</span><span class="o">[</span><span class="kt">K</span>, <span class="kt">V</span><span class="o">](</span>
-    <span class="nc">_ssc</span><span class="k">:</span> <span class="kt">StreamingContext</span><span class="o">,</span>
-    <span class="n">locationStrategy</span><span class="k">:</span> <span class="kt">LocationStrategy</span><span class="o">,</span>
-    <span class="n">consumerStrategy</span><span class="k">:</span> <span class="kt">ConsumerStrategy</span><span class="o">[</span><span class="kt">K</span>, <span class="kt">V</span><span class="o">],</span>
-    <span class="n">ppc</span><span class="k">:</span> <span class="kt">PerPartitionConfig</span>
-  <span class="o">)</span> <span class="k">extends</span> <span class="nc">InputDStream</span><span class="o">[</span><span class="kt">ConsumerRecord</span><span class="o">[</span><span class="kt">K</span>, <span class="kt">V</span><span class="o">]](</span><span class="nc">_ssc</span><span class="o">)</span> <span class="k">with</span> <span class="nc">Logging</span> <span class="k">with</span> <span class="nc">CanCommitOffsets</span> <span class="o">{</span>
-
-  <span class="c1">// 记录上次提交的offset， key为Kafka的topic分区，value为提交的offset
-</span><span class="c1"></span>  <span class="k">protected</span> <span class="k">var</span> <span class="n">currentOffsets</span> <span class="k">=</span> <span class="nc">Map</span><span class="o">[</span><span class="kt">TopicPartition</span>, <span class="kt">Long</span><span class="o">]()</span>
-  
-  <span class="k">override</span> <span class="k">def</span> <span class="n">compute</span><span class="o">(</span><span class="n">validTime</span><span class="k">:</span> <span class="kt">Time</span><span class="o">)</span><span class="k">:</span> <span class="kt">Option</span><span class="o">[</span><span class="kt">KafkaRDD</span><span class="o">[</span><span class="kt">K</span>, <span class="kt">V</span><span class="o">]]</span> <span class="k">=</span> <span class="o">{</span>
-    <span class="c1">// 这里调用了latestOffsets方法，实时获取topic partition的最新offset
-</span><span class="c1"></span>    <span class="c1">// clamp方法增加了限速的功能，计算出限速条件下，允许获取最大数据的offset
-</span><span class="c1"></span>    <span class="k">val</span> <span class="n">untilOffsets</span> <span class="k">=</span> <span class="n">clamp</span><span class="o">(</span><span class="n">latestOffsets</span><span class="o">())</span>
-    <span class="c1">// 为每一个topic partition生成一个OffsetRange
-</span><span class="c1"></span>    <span class="k">val</span> <span class="n">offsetRanges</span> <span class="k">=</span> <span class="n">untilOffsets</span><span class="o">.</span><span class="n">map</span> <span class="o">{</span> <span class="k">case</span> <span class="o">(</span><span class="n">tp</span><span class="o">,</span> <span class="n">uo</span><span class="o">)</span> <span class="k">=&gt;</span>
-      <span class="c1">// 获取上次提交的offset
-</span><span class="c1"></span>      <span class="k">val</span> <span class="n">fo</span> <span class="k">=</span> <span class="n">currentOffsets</span><span class="o">(</span><span class="n">tp</span><span class="o">)</span>
-      <span class="c1">// 这批数据在kafka中的offset范围，是上次提交的offset到现在kafka中最新的offset
-</span><span class="c1"></span>      <span class="nc">OffsetRange</span><span class="o">(</span><span class="n">tp</span><span class="o">.</span><span class="n">topic</span><span class="o">,</span> <span class="n">tp</span><span class="o">.</span><span class="n">partition</span><span class="o">,</span> <span class="n">fo</span><span class="o">,</span> <span class="n">uo</span><span class="o">)</span>
-    <span class="o">}</span>
-    
-    <span class="k">val</span> <span class="n">useConsumerCache</span> <span class="k">=</span> <span class="n">context</span><span class="o">.</span><span class="n">conf</span><span class="o">.</span><span class="n">getBoolean</span><span class="o">(</span><span class="s">&#34;spark.streaming.kafka.consumer.cache.enabled&#34;</span><span class="o">,</span>
-      <span class="kc">true</span><span class="o">)</span>
-    <span class="c1">// 生成KafkaRDD
-</span><span class="c1"></span>    <span class="k">val</span> <span class="n">rdd</span> <span class="k">=</span> <span class="k">new</span> <span class="nc">KafkaRDD</span><span class="o">[</span><span class="kt">K</span>, <span class="kt">V</span><span class="o">](</span><span class="n">context</span><span class="o">.</span><span class="n">sparkContext</span><span class="o">,</span> <span class="n">executorKafkaParams</span><span class="o">,</span> <span class="n">offsetRanges</span><span class="o">.</span><span class="n">toArray</span><span class="o">,</span>
-      <span class="n">getPreferredHosts</span><span class="o">,</span> <span class="n">useConsumerCache</span><span class="o">)</span>
-    <span class="c1">// 更新currentOffsets
-</span><span class="c1"></span>    <span class="n">currentOffsets</span> <span class="k">=</span> <span class="n">untilOffsets</span>
-    <span class="c1">// 这里commitAll会去提交offset，但是DirectKafkaInputDStream是不管理offset，
-</span><span class="c1"></span>    <span class="c1">// 只有用户主动调用了它的commitAsync方法，才会提交
-</span><span class="c1"></span>    <span class="n">commitAll</span><span class="o">()</span>
-    <span class="c1">// 返回 rdd
-</span><span class="c1"></span>    <span class="nc">Some</span><span class="o">(</span><span class="n">rdd</span><span class="o">)</span>
-  <span class="o">}</span>
-<span class="o">}</span>
-</code></pre></td></tr></table></div>
+<pre tabindex="0" class="chroma"><code class="language-scala" data-lang="scala"><span class="line"><span class="cl"><span class="k">class</span> <span class="nc">DirectKafkaInputDStream</span><span class="o">[</span><span class="kt">K</span>, <span class="kt">V</span><span class="o">](</span>
+</span></span><span class="line"><span class="cl">    <span class="nc">_ssc</span><span class="k">:</span> <span class="kt">StreamingContext</span><span class="o">,</span>
+</span></span><span class="line"><span class="cl">    <span class="n">locationStrategy</span><span class="k">:</span> <span class="kt">LocationStrategy</span><span class="o">,</span>
+</span></span><span class="line"><span class="cl">    <span class="n">consumerStrategy</span><span class="k">:</span> <span class="kt">ConsumerStrategy</span><span class="o">[</span><span class="kt">K</span>, <span class="kt">V</span><span class="o">],</span>
+</span></span><span class="line"><span class="cl">    <span class="n">ppc</span><span class="k">:</span> <span class="kt">PerPartitionConfig</span>
+</span></span><span class="line"><span class="cl">  <span class="o">)</span> <span class="k">extends</span> <span class="nc">InputDStream</span><span class="o">[</span><span class="kt">ConsumerRecord</span><span class="o">[</span><span class="kt">K</span>, <span class="kt">V</span><span class="o">]](</span><span class="nc">_ssc</span><span class="o">)</span> <span class="k">with</span> <span class="nc">Logging</span> <span class="k">with</span> <span class="nc">CanCommitOffsets</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="c1">// 记录上次提交的offset， key为Kafka的topic分区，value为提交的offset
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="k">protected</span> <span class="k">var</span> <span class="n">currentOffsets</span> <span class="k">=</span> <span class="nc">Map</span><span class="o">[</span><span class="kt">TopicPartition</span>, <span class="kt">Long</span><span class="o">]()</span>
+</span></span><span class="line"><span class="cl">  
+</span></span><span class="line"><span class="cl">  <span class="k">override</span> <span class="k">def</span> <span class="n">compute</span><span class="o">(</span><span class="n">validTime</span><span class="k">:</span> <span class="kt">Time</span><span class="o">)</span><span class="k">:</span> <span class="kt">Option</span><span class="o">[</span><span class="kt">KafkaRDD</span><span class="o">[</span><span class="kt">K</span>, <span class="kt">V</span><span class="o">]]</span> <span class="k">=</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// 这里调用了latestOffsets方法，实时获取topic partition的最新offset
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="c1">// clamp方法增加了限速的功能，计算出限速条件下，允许获取最大数据的offset
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="k">val</span> <span class="n">untilOffsets</span> <span class="k">=</span> <span class="n">clamp</span><span class="o">(</span><span class="n">latestOffsets</span><span class="o">())</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// 为每一个topic partition生成一个OffsetRange
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="k">val</span> <span class="n">offsetRanges</span> <span class="k">=</span> <span class="n">untilOffsets</span><span class="o">.</span><span class="n">map</span> <span class="o">{</span> <span class="k">case</span> <span class="o">(</span><span class="n">tp</span><span class="o">,</span> <span class="n">uo</span><span class="o">)</span> <span class="k">=&gt;</span>
+</span></span><span class="line"><span class="cl">      <span class="c1">// 获取上次提交的offset
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>      <span class="k">val</span> <span class="n">fo</span> <span class="k">=</span> <span class="n">currentOffsets</span><span class="o">(</span><span class="n">tp</span><span class="o">)</span>
+</span></span><span class="line"><span class="cl">      <span class="c1">// 这批数据在kafka中的offset范围，是上次提交的offset到现在kafka中最新的offset
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>      <span class="nc">OffsetRange</span><span class="o">(</span><span class="n">tp</span><span class="o">.</span><span class="n">topic</span><span class="o">,</span> <span class="n">tp</span><span class="o">.</span><span class="n">partition</span><span class="o">,</span> <span class="n">fo</span><span class="o">,</span> <span class="n">uo</span><span class="o">)</span>
+</span></span><span class="line"><span class="cl">    <span class="o">}</span>
+</span></span><span class="line"><span class="cl">    
+</span></span><span class="line"><span class="cl">    <span class="k">val</span> <span class="n">useConsumerCache</span> <span class="k">=</span> <span class="n">context</span><span class="o">.</span><span class="n">conf</span><span class="o">.</span><span class="n">getBoolean</span><span class="o">(</span><span class="s">&#34;spark.streaming.kafka.consumer.cache.enabled&#34;</span><span class="o">,</span>
+</span></span><span class="line"><span class="cl">      <span class="kc">true</span><span class="o">)</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// 生成KafkaRDD
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="k">val</span> <span class="n">rdd</span> <span class="k">=</span> <span class="k">new</span> <span class="nc">KafkaRDD</span><span class="o">[</span><span class="kt">K</span>, <span class="kt">V</span><span class="o">](</span><span class="n">context</span><span class="o">.</span><span class="n">sparkContext</span><span class="o">,</span> <span class="n">executorKafkaParams</span><span class="o">,</span> <span class="n">offsetRanges</span><span class="o">.</span><span class="n">toArray</span><span class="o">,</span>
+</span></span><span class="line"><span class="cl">      <span class="n">getPreferredHosts</span><span class="o">,</span> <span class="n">useConsumerCache</span><span class="o">)</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// 更新currentOffsets
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="n">currentOffsets</span> <span class="k">=</span> <span class="n">untilOffsets</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// 这里commitAll会去提交offset，但是DirectKafkaInputDStream是不管理offset，
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="c1">// 只有用户主动调用了它的commitAsync方法，才会提交
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="n">commitAll</span><span class="o">()</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// 返回 rdd
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="nc">Some</span><span class="o">(</span><span class="n">rdd</span><span class="o">)</span>
+</span></span><span class="line"><span class="cl">  <span class="o">}</span>
+</span></span><span class="line"><span class="cl"><span class="o">}</span>
+</span></span></code></pre></td></tr></table></div>
 </div>
 </div><h2 id="kafkardd-原理"><a href="#kafkardd-原理" class="anchor-link"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon anchor-icon"><path d="M326.612 185.391c59.747 59.809 58.927 155.698.36 214.59-.11.12-.24.25-.36.37l-67.2 67.2c-59.27 59.27-155.699 59.262-214.96 0-59.27-59.26-59.27-155.7 0-214.96l37.106-37.106c9.84-9.84 26.786-3.3 27.294 10.606.648 17.722 3.826 35.527 9.69 52.721 1.986 5.822.567 12.262-3.783 16.612l-13.087 13.087c-28.026 28.026-28.905 73.66-1.155 101.96 28.024 28.579 74.086 28.749 102.325.51l67.2-67.19c28.191-28.191 28.073-73.757 0-101.83-3.701-3.694-7.429-6.564-10.341-8.569a16.037 16.037 0 0 1-6.947-12.606c-.396-10.567 3.348-21.456 11.698-29.806l21.054-21.055c5.521-5.521 14.182-6.199 20.584-1.731a152.482 152.482 0 0 1 20.522 17.197zM467.547 44.449c-59.261-59.262-155.69-59.27-214.96 0l-67.2 67.2c-.12.12-.25.25-.36.37-58.566 58.892-59.387 154.781.36 214.59a152.454 152.454 0 0 0 20.521 17.196c6.402 4.468 15.064 3.789 20.584-1.731l21.054-21.055c8.35-8.35 12.094-19.239 11.698-29.806a16.037 16.037 0 0 0-6.947-12.606c-2.912-2.005-6.64-4.875-10.341-8.569-28.073-28.073-28.191-73.639 0-101.83l67.2-67.19c28.239-28.239 74.3-28.069 102.325.51 27.75 28.3 26.872 73.934-1.155 101.96l-13.087 13.087c-4.35 4.35-5.769 10.79-3.783 16.612 5.864 17.194 9.042 34.999 9.69 52.721.509 13.906 17.454 20.446 27.294 10.606l37.106-37.106c59.271-59.259 59.271-155.699.001-214.959z"/></svg></a>KafkaRDD 原理</h2>
 <h3 id="kafkardd-分区原理"><a href="#kafkardd-分区原理" class="anchor-link"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon anchor-icon"><path d="M326.612 185.391c59.747 59.809 58.927 155.698.36 214.59-.11.12-.24.25-.36.37l-67.2 67.2c-59.27 59.27-155.699 59.262-214.96 0-59.27-59.26-59.27-155.7 0-214.96l37.106-37.106c9.84-9.84 26.786-3.3 27.294 10.606.648 17.722 3.826 35.527 9.69 52.721 1.986 5.822.567 12.262-3.783 16.612l-13.087 13.087c-28.026 28.026-28.905 73.66-1.155 101.96 28.024 28.579 74.086 28.749 102.325.51l67.2-67.19c28.191-28.191 28.073-73.757 0-101.83-3.701-3.694-7.429-6.564-10.341-8.569a16.037 16.037 0 0 1-6.947-12.606c-.396-10.567 3.348-21.456 11.698-29.806l21.054-21.055c5.521-5.521 14.182-6.199 20.584-1.731a152.482 152.482 0 0 1 20.522 17.197zM467.547 44.449c-59.261-59.262-155.69-59.27-214.96 0l-67.2 67.2c-.12.12-.25.25-.36.37-58.566 58.892-59.387 154.781.36 214.59a152.454 152.454 0 0 0 20.521 17.196c6.402 4.468 15.064 3.789 20.584-1.731l21.054-21.055c8.35-8.35 12.094-19.239 11.698-29.806a16.037 16.037 0 0 0-6.947-12.606c-2.912-2.005-6.64-4.875-10.341-8.569-28.073-28.073-28.191-73.639 0-101.83l67.2-67.19c28.239-28.239 74.3-28.069 102.325.51 27.75 28.3 26.872 73.934-1.155 101.96l-13.087 13.087c-4.35 4.35-5.769 10.79-3.783 16.612 5.864 17.194 9.042 34.999 9.69 52.721.509 13.906 17.454 20.446 27.294 10.606l37.106-37.106c59.271-59.259 59.271-155.699.001-214.959z"/></svg></a>KafkaRDD 分区原理</h3>
@@ -396,12 +396,12 @@
 </span><span class="lnt">5
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-scala" data-lang="scala"><span class="k">final</span> <span class="k">class</span> <span class="nc">OffsetRange</span> <span class="k">private</span><span class="o">(</span>
-    <span class="k">val</span> <span class="n">topic</span><span class="k">:</span> <span class="kt">String</span><span class="o">,</span>   <span class="c1">// Kafka的topic名称
-</span><span class="c1"></span>    <span class="k">val</span> <span class="n">partition</span><span class="k">:</span> <span class="kt">Int</span><span class="o">,</span>  <span class="c1">// 该topic的partition
-</span><span class="c1"></span>    <span class="k">val</span> <span class="n">fromOffset</span><span class="k">:</span> <span class="kt">Long</span><span class="o">,</span>  <span class="c1">// 起始offset
-</span><span class="c1"></span>    <span class="k">val</span> <span class="n">untilOffset</span><span class="k">:</span> <span class="kt">Long</span><span class="o">);</span>  <span class="c1">// 截至offset
-</span></code></pre></td></tr></table></div>
+<pre tabindex="0" class="chroma"><code class="language-scala" data-lang="scala"><span class="line"><span class="cl"><span class="k">final</span> <span class="k">class</span> <span class="nc">OffsetRange</span> <span class="k">private</span><span class="o">(</span>
+</span></span><span class="line"><span class="cl">    <span class="k">val</span> <span class="n">topic</span><span class="k">:</span> <span class="kt">String</span><span class="o">,</span>   <span class="c1">// Kafka的topic名称
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="k">val</span> <span class="n">partition</span><span class="k">:</span> <span class="kt">Int</span><span class="o">,</span>  <span class="c1">// 该topic的partition
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="k">val</span> <span class="n">fromOffset</span><span class="k">:</span> <span class="kt">Long</span><span class="o">,</span>  <span class="c1">// 起始offset
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="k">val</span> <span class="n">untilOffset</span><span class="k">:</span> <span class="kt">Long</span><span class="o">);</span>  <span class="c1">// 截至offset
+</span></span></span></code></pre></td></tr></table></div>
 </div>
 </div><p>KafkaRDD继承RDD，它的getPartitions负责生成分区</p>
 <div class="highlight"><div class="chroma">
@@ -418,17 +418,17 @@
 </span><span class="lnt">10
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-scala" data-lang="scala"><span class="k">private</span><span class="o">[</span><span class="kt">spark</span><span class="o">]</span> <span class="k">class</span> <span class="nc">KafkaRDD</span><span class="o">[</span><span class="kt">K</span>, <span class="kt">V</span><span class="o">](</span>
-    <span class="k">val</span> <span class="n">offsetRanges</span><span class="k">:</span> <span class="kt">Array</span><span class="o">[</span><span class="kt">OffsetRange</span><span class="o">]</span> 
-<span class="o">)</span> <span class="k">extends</span> <span class="nc">RDD</span><span class="o">[</span><span class="kt">ConsumerRecord</span><span class="o">[</span><span class="kt">K</span>, <span class="kt">V</span><span class="o">]](</span><span class="n">sc</span><span class="o">,</span> <span class="nc">Nil</span><span class="o">)</span> <span class="k">with</span> <span class="nc">Logging</span> <span class="k">with</span> <span class="nc">HasOffsetRanges</span> <span class="o">{</span>
-
-  <span class="k">override</span> <span class="k">def</span> <span class="n">getPartitions</span><span class="k">:</span> <span class="kt">Array</span><span class="o">[</span><span class="kt">Partition</span><span class="o">]</span> <span class="k">=</span> <span class="o">{</span>
-    <span class="n">offsetRanges</span><span class="o">.</span><span class="n">zipWithIndex</span><span class="o">.</span><span class="n">map</span> <span class="o">{</span> <span class="k">case</span> <span class="o">(</span><span class="n">o</span><span class="o">,</span> <span class="n">i</span><span class="o">)</span> <span class="k">=&gt;</span>
-        <span class="k">new</span> <span class="nc">KafkaRDDPartition</span><span class="o">(</span><span class="n">i</span><span class="o">,</span> <span class="n">o</span><span class="o">.</span><span class="n">topic</span><span class="o">,</span> <span class="n">o</span><span class="o">.</span><span class="n">partition</span><span class="o">,</span> <span class="n">o</span><span class="o">.</span><span class="n">fromOffset</span><span class="o">,</span> <span class="n">o</span><span class="o">.</span><span class="n">untilOffset</span><span class="o">)</span>
-    <span class="o">}.</span><span class="n">toArray</span>
-  <span class="o">}</span>
-<span class="o">}</span>
-</code></pre></td></tr></table></div>
+<pre tabindex="0" class="chroma"><code class="language-scala" data-lang="scala"><span class="line"><span class="cl"><span class="k">private</span><span class="o">[</span><span class="kt">spark</span><span class="o">]</span> <span class="k">class</span> <span class="nc">KafkaRDD</span><span class="o">[</span><span class="kt">K</span>, <span class="kt">V</span><span class="o">](</span>
+</span></span><span class="line"><span class="cl">    <span class="k">val</span> <span class="n">offsetRanges</span><span class="k">:</span> <span class="kt">Array</span><span class="o">[</span><span class="kt">OffsetRange</span><span class="o">]</span> 
+</span></span><span class="line"><span class="cl"><span class="o">)</span> <span class="k">extends</span> <span class="nc">RDD</span><span class="o">[</span><span class="kt">ConsumerRecord</span><span class="o">[</span><span class="kt">K</span>, <span class="kt">V</span><span class="o">]](</span><span class="n">sc</span><span class="o">,</span> <span class="nc">Nil</span><span class="o">)</span> <span class="k">with</span> <span class="nc">Logging</span> <span class="k">with</span> <span class="nc">HasOffsetRanges</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="k">override</span> <span class="k">def</span> <span class="n">getPartitions</span><span class="k">:</span> <span class="kt">Array</span><span class="o">[</span><span class="kt">Partition</span><span class="o">]</span> <span class="k">=</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">    <span class="n">offsetRanges</span><span class="o">.</span><span class="n">zipWithIndex</span><span class="o">.</span><span class="n">map</span> <span class="o">{</span> <span class="k">case</span> <span class="o">(</span><span class="n">o</span><span class="o">,</span> <span class="n">i</span><span class="o">)</span> <span class="k">=&gt;</span>
+</span></span><span class="line"><span class="cl">        <span class="k">new</span> <span class="nc">KafkaRDDPartition</span><span class="o">(</span><span class="n">i</span><span class="o">,</span> <span class="n">o</span><span class="o">.</span><span class="n">topic</span><span class="o">,</span> <span class="n">o</span><span class="o">.</span><span class="n">partition</span><span class="o">,</span> <span class="n">o</span><span class="o">.</span><span class="n">fromOffset</span><span class="o">,</span> <span class="n">o</span><span class="o">.</span><span class="n">untilOffset</span><span class="o">)</span>
+</span></span><span class="line"><span class="cl">    <span class="o">}.</span><span class="n">toArray</span>
+</span></span><span class="line"><span class="cl">  <span class="o">}</span>
+</span></span><span class="line"><span class="cl"><span class="o">}</span>
+</span></span></code></pre></td></tr></table></div>
 </div>
 </div><p>接下来看看KafkaRDD的分区数据是如何读取的。它使用KafkaRDDIterator遍历数据，而KafkaRDDIterator的原理，是调用CachedKafkaConsumer的get方法获取数据</p>
 <div class="highlight"><div class="chroma">
@@ -493,65 +493,65 @@
 </span><span class="lnt">58
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-scala" data-lang="scala"><span class="k">class</span> <span class="nc">KafkaRDD</span><span class="o">[</span><span class="kt">K</span>, <span class="kt">V</span><span class="o">]</span> <span class="o">{</span>
-  <span class="k">override</span> <span class="k">def</span> <span class="n">compute</span><span class="o">(</span><span class="n">thePart</span><span class="k">:</span> <span class="kt">Partition</span><span class="o">,</span> <span class="n">context</span><span class="k">:</span> <span class="kt">TaskContext</span><span class="o">)</span><span class="k">:</span> <span class="kt">Iterator</span><span class="o">[</span><span class="kt">ConsumerRecord</span><span class="o">[</span><span class="kt">K</span>, <span class="kt">V</span><span class="o">]]</span> <span class="k">=</span>   <span class="o">{</span>
-    <span class="c1">// 向下转型为KafkaRDDPartition
-</span><span class="c1"></span>    <span class="k">val</span> <span class="n">part</span> <span class="k">=</span> <span class="n">thePart</span><span class="o">.</span><span class="n">asInstanceOf</span><span class="o">[</span><span class="kt">KafkaRDDPartition</span><span class="o">]</span>
-    <span class="k">if</span> <span class="o">(</span><span class="n">part</span><span class="o">.</span><span class="n">fromOffset</span> <span class="o">==</span> <span class="n">part</span><span class="o">.</span><span class="n">untilOffset</span><span class="o">)</span> <span class="o">{</span>
-      <span class="nc">Iterator</span><span class="o">.</span><span class="n">empty</span>
-    <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
-      <span class="c1">// 返回迭代器
-</span><span class="c1"></span>      <span class="k">new</span> <span class="nc">KafkaRDDIterator</span><span class="o">(</span><span class="n">part</span><span class="o">,</span> <span class="n">context</span><span class="o">)</span>
-    <span class="o">}</span>
-  <span class="o">}</span>
-
-  <span class="k">class</span> <span class="nc">KafkaRDDIterator</span><span class="o">(</span>
-      <span class="n">part</span><span class="k">:</span> <span class="kt">KafkaRDDPartition</span><span class="o">,</span>
-      <span class="n">context</span><span class="k">:</span> <span class="kt">TaskContext</span><span class="o">)</span> <span class="k">extends</span> <span class="nc">Iterator</span><span class="o">[</span><span class="kt">ConsumerRecord</span><span class="o">[</span><span class="kt">K</span>, <span class="kt">V</span><span class="o">]]</span> <span class="o">{</span>
-
-    <span class="n">logInfo</span><span class="o">(</span><span class="s">s&#34;Computing topic </span><span class="si">${</span><span class="n">part</span><span class="o">.</span><span class="n">topic</span><span class="si">}</span><span class="s">, partition </span><span class="si">${</span><span class="n">part</span><span class="o">.</span><span class="n">partition</span><span class="si">}</span><span class="s"> &#34;</span> <span class="o">+</span>
-      <span class="s">s&#34;offsets </span><span class="si">${</span><span class="n">part</span><span class="o">.</span><span class="n">fromOffset</span><span class="si">}</span><span class="s"> -&gt; </span><span class="si">${</span><span class="n">part</span><span class="o">.</span><span class="n">untilOffset</span><span class="si">}</span><span class="s">&#34;</span><span class="o">)</span>
-
-    <span class="c1">// 获取kafka消费者的groupId
-</span><span class="c1"></span>    <span class="k">val</span> <span class="n">groupId</span> <span class="k">=</span> <span class="n">kafkaParams</span><span class="o">.</span><span class="n">get</span><span class="o">(</span><span class="nc">ConsumerConfig</span><span class="o">.</span><span class="nc">GROUP_ID_CONFIG</span><span class="o">).</span><span class="n">asInstanceOf</span><span class="o">[</span><span class="kt">String</span><span class="o">]</span>
-    <span class="c1">// 当整个spark streaming任务退出时，会调用closeIfNeeded方法关闭 kafka消费者
-</span><span class="c1"></span>    <span class="n">context</span><span class="o">.</span><span class="n">addTaskCompletionListener</span><span class="o">{</span> <span class="n">context</span> <span class="k">=&gt;</span> <span class="n">closeIfNeeded</span><span class="o">()</span> <span class="o">}</span>
-    <span class="c1">// 获取 kafka消费者
-</span><span class="c1"></span>    <span class="k">val</span> <span class="n">consumer</span> <span class="k">=</span> <span class="k">if</span> <span class="o">(</span><span class="n">useConsumerCache</span><span class="o">)</span> <span class="o">{</span>
-      <span class="c1">// 如果支持 kafka消费者缓存，那么实例化CachedKafkaConsumer
-</span><span class="c1"></span>      <span class="nc">CachedKafkaConsumer</span><span class="o">.</span><span class="n">init</span><span class="o">(</span><span class="n">cacheInitialCapacity</span><span class="o">,</span> <span class="n">cacheMaxCapacity</span><span class="o">,</span> <span class="n">cacheLoadFactor</span><span class="o">)</span>
-      <span class="k">if</span> <span class="o">(</span><span class="n">context</span><span class="o">.</span><span class="n">attemptNumber</span> <span class="o">&gt;=</span> <span class="mi">1</span><span class="o">)</span> <span class="o">{</span>
-        <span class="c1">// 如果此次任务失败过，那么删除以前的 kafka 消费者
-</span><span class="c1"></span>        <span class="nc">CachedKafkaConsumer</span><span class="o">.</span><span class="n">remove</span><span class="o">(</span><span class="n">groupId</span><span class="o">,</span> <span class="n">part</span><span class="o">.</span><span class="n">topic</span><span class="o">,</span> <span class="n">part</span><span class="o">.</span><span class="n">partition</span><span class="o">)</span>
-      <span class="o">}</span>
-      <span class="c1">// 返回对应groupId，topic和partition的kafka消费者，如果有缓存则返回缓存的。
-</span><span class="c1"></span>      <span class="nc">CachedKafkaConsumer</span><span class="o">.</span><span class="n">get</span><span class="o">[</span><span class="kt">K</span>, <span class="kt">V</span><span class="o">](</span><span class="n">groupId</span><span class="o">,</span> <span class="n">part</span><span class="o">.</span><span class="n">topic</span><span class="o">,</span> <span class="n">part</span><span class="o">.</span><span class="n">partition</span><span class="o">,</span> <span class="n">kafkaParams</span><span class="o">)</span>
-    <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
-      <span class="c1">// 新建对应groupId，topic和partition的kafka消费者
-</span><span class="c1"></span>      <span class="nc">CachedKafkaConsumer</span><span class="o">.</span><span class="n">getUncached</span><span class="o">[</span><span class="kt">K</span>, <span class="kt">V</span><span class="o">](</span><span class="n">groupId</span><span class="o">,</span> <span class="n">part</span><span class="o">.</span><span class="n">topic</span><span class="o">,</span> <span class="n">part</span><span class="o">.</span><span class="n">partition</span><span class="o">,</span> <span class="n">kafkaParams</span><span class="o">)</span>
-    <span class="o">}</span>
-
-    <span class="c1">// 关闭kafka消费者
-</span><span class="c1"></span>    <span class="k">def</span> <span class="n">closeIfNeeded</span><span class="o">()</span><span class="k">:</span> <span class="kt">Unit</span> <span class="o">=</span> <span class="o">{</span>
-      <span class="k">if</span> <span class="o">(!</span><span class="n">useConsumerCache</span> <span class="o">&amp;&amp;</span> <span class="n">consumer</span> <span class="o">!=</span> <span class="kc">null</span><span class="o">)</span> <span class="o">{</span>
-        <span class="n">consumer</span><span class="o">.</span><span class="n">close</span>
-      <span class="o">}</span>
-    <span class="o">}</span>
-    
-    <span class="c1">// 只返回offset大于fromOffset，小于untilOffset的数据
-</span><span class="c1"></span>    <span class="k">var</span> <span class="n">requestOffset</span> <span class="k">=</span> <span class="n">part</span><span class="o">.</span><span class="n">fromOffset</span>
-    <span class="k">override</span> <span class="k">def</span> <span class="n">hasNext</span><span class="o">()</span><span class="k">:</span> <span class="kt">Boolean</span> <span class="o">=</span> <span class="n">requestOffset</span> <span class="o">&lt;</span> <span class="n">part</span><span class="o">.</span><span class="n">untilOffset</span>
-
-    <span class="k">override</span> <span class="k">def</span> <span class="n">next</span><span class="o">()</span><span class="k">:</span> <span class="kt">ConsumerRecord</span><span class="o">[</span><span class="kt">K</span>, <span class="kt">V</span><span class="o">]</span> <span class="k">=</span> <span class="o">{</span>
-      <span class="n">assert</span><span class="o">(</span><span class="n">hasNext</span><span class="o">(),</span> <span class="s">&#34;Can&#39;t call getNext() once untilOffset has been reached&#34;</span><span class="o">)</span>
-      <span class="c1">// 调用CachedKafkaConsumer的get方法返回一条数据
-</span><span class="c1"></span>      <span class="k">val</span> <span class="n">r</span> <span class="k">=</span> <span class="n">consumer</span><span class="o">.</span><span class="n">get</span><span class="o">(</span><span class="n">requestOffset</span><span class="o">,</span> <span class="n">pollTimeout</span><span class="o">)</span>
-      <span class="n">requestOffset</span> <span class="o">+=</span> <span class="mi">1</span>
-      <span class="n">r</span>
-    <span class="o">}</span>
-  <span class="o">}</span>  
-<span class="o">}</span>
-</code></pre></td></tr></table></div>
+<pre tabindex="0" class="chroma"><code class="language-scala" data-lang="scala"><span class="line"><span class="cl"><span class="k">class</span> <span class="nc">KafkaRDD</span><span class="o">[</span><span class="kt">K</span>, <span class="kt">V</span><span class="o">]</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">  <span class="k">override</span> <span class="k">def</span> <span class="n">compute</span><span class="o">(</span><span class="n">thePart</span><span class="k">:</span> <span class="kt">Partition</span><span class="o">,</span> <span class="n">context</span><span class="k">:</span> <span class="kt">TaskContext</span><span class="o">)</span><span class="k">:</span> <span class="kt">Iterator</span><span class="o">[</span><span class="kt">ConsumerRecord</span><span class="o">[</span><span class="kt">K</span>, <span class="kt">V</span><span class="o">]]</span> <span class="k">=</span>   <span class="o">{</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// 向下转型为KafkaRDDPartition
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="k">val</span> <span class="n">part</span> <span class="k">=</span> <span class="n">thePart</span><span class="o">.</span><span class="n">asInstanceOf</span><span class="o">[</span><span class="kt">KafkaRDDPartition</span><span class="o">]</span>
+</span></span><span class="line"><span class="cl">    <span class="k">if</span> <span class="o">(</span><span class="n">part</span><span class="o">.</span><span class="n">fromOffset</span> <span class="o">==</span> <span class="n">part</span><span class="o">.</span><span class="n">untilOffset</span><span class="o">)</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">      <span class="nc">Iterator</span><span class="o">.</span><span class="n">empty</span>
+</span></span><span class="line"><span class="cl">    <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">      <span class="c1">// 返回迭代器
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>      <span class="k">new</span> <span class="nc">KafkaRDDIterator</span><span class="o">(</span><span class="n">part</span><span class="o">,</span> <span class="n">context</span><span class="o">)</span>
+</span></span><span class="line"><span class="cl">    <span class="o">}</span>
+</span></span><span class="line"><span class="cl">  <span class="o">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="k">class</span> <span class="nc">KafkaRDDIterator</span><span class="o">(</span>
+</span></span><span class="line"><span class="cl">      <span class="n">part</span><span class="k">:</span> <span class="kt">KafkaRDDPartition</span><span class="o">,</span>
+</span></span><span class="line"><span class="cl">      <span class="n">context</span><span class="k">:</span> <span class="kt">TaskContext</span><span class="o">)</span> <span class="k">extends</span> <span class="nc">Iterator</span><span class="o">[</span><span class="kt">ConsumerRecord</span><span class="o">[</span><span class="kt">K</span>, <span class="kt">V</span><span class="o">]]</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="n">logInfo</span><span class="o">(</span><span class="s">s&#34;Computing topic </span><span class="si">${</span><span class="n">part</span><span class="o">.</span><span class="n">topic</span><span class="si">}</span><span class="s">, partition </span><span class="si">${</span><span class="n">part</span><span class="o">.</span><span class="n">partition</span><span class="si">}</span><span class="s"> &#34;</span> <span class="o">+</span>
+</span></span><span class="line"><span class="cl">      <span class="s">s&#34;offsets </span><span class="si">${</span><span class="n">part</span><span class="o">.</span><span class="n">fromOffset</span><span class="si">}</span><span class="s"> -&gt; </span><span class="si">${</span><span class="n">part</span><span class="o">.</span><span class="n">untilOffset</span><span class="si">}</span><span class="s">&#34;</span><span class="o">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="c1">// 获取kafka消费者的groupId
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="k">val</span> <span class="n">groupId</span> <span class="k">=</span> <span class="n">kafkaParams</span><span class="o">.</span><span class="n">get</span><span class="o">(</span><span class="nc">ConsumerConfig</span><span class="o">.</span><span class="nc">GROUP_ID_CONFIG</span><span class="o">).</span><span class="n">asInstanceOf</span><span class="o">[</span><span class="kt">String</span><span class="o">]</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// 当整个spark streaming任务退出时，会调用closeIfNeeded方法关闭 kafka消费者
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="n">context</span><span class="o">.</span><span class="n">addTaskCompletionListener</span><span class="o">{</span> <span class="n">context</span> <span class="k">=&gt;</span> <span class="n">closeIfNeeded</span><span class="o">()</span> <span class="o">}</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// 获取 kafka消费者
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="k">val</span> <span class="n">consumer</span> <span class="k">=</span> <span class="k">if</span> <span class="o">(</span><span class="n">useConsumerCache</span><span class="o">)</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">      <span class="c1">// 如果支持 kafka消费者缓存，那么实例化CachedKafkaConsumer
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>      <span class="nc">CachedKafkaConsumer</span><span class="o">.</span><span class="n">init</span><span class="o">(</span><span class="n">cacheInitialCapacity</span><span class="o">,</span> <span class="n">cacheMaxCapacity</span><span class="o">,</span> <span class="n">cacheLoadFactor</span><span class="o">)</span>
+</span></span><span class="line"><span class="cl">      <span class="k">if</span> <span class="o">(</span><span class="n">context</span><span class="o">.</span><span class="n">attemptNumber</span> <span class="o">&gt;=</span> <span class="mi">1</span><span class="o">)</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">        <span class="c1">// 如果此次任务失败过，那么删除以前的 kafka 消费者
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>        <span class="nc">CachedKafkaConsumer</span><span class="o">.</span><span class="n">remove</span><span class="o">(</span><span class="n">groupId</span><span class="o">,</span> <span class="n">part</span><span class="o">.</span><span class="n">topic</span><span class="o">,</span> <span class="n">part</span><span class="o">.</span><span class="n">partition</span><span class="o">)</span>
+</span></span><span class="line"><span class="cl">      <span class="o">}</span>
+</span></span><span class="line"><span class="cl">      <span class="c1">// 返回对应groupId，topic和partition的kafka消费者，如果有缓存则返回缓存的。
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>      <span class="nc">CachedKafkaConsumer</span><span class="o">.</span><span class="n">get</span><span class="o">[</span><span class="kt">K</span>, <span class="kt">V</span><span class="o">](</span><span class="n">groupId</span><span class="o">,</span> <span class="n">part</span><span class="o">.</span><span class="n">topic</span><span class="o">,</span> <span class="n">part</span><span class="o">.</span><span class="n">partition</span><span class="o">,</span> <span class="n">kafkaParams</span><span class="o">)</span>
+</span></span><span class="line"><span class="cl">    <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">      <span class="c1">// 新建对应groupId，topic和partition的kafka消费者
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>      <span class="nc">CachedKafkaConsumer</span><span class="o">.</span><span class="n">getUncached</span><span class="o">[</span><span class="kt">K</span>, <span class="kt">V</span><span class="o">](</span><span class="n">groupId</span><span class="o">,</span> <span class="n">part</span><span class="o">.</span><span class="n">topic</span><span class="o">,</span> <span class="n">part</span><span class="o">.</span><span class="n">partition</span><span class="o">,</span> <span class="n">kafkaParams</span><span class="o">)</span>
+</span></span><span class="line"><span class="cl">    <span class="o">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="c1">// 关闭kafka消费者
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="k">def</span> <span class="n">closeIfNeeded</span><span class="o">()</span><span class="k">:</span> <span class="kt">Unit</span> <span class="o">=</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">      <span class="k">if</span> <span class="o">(!</span><span class="n">useConsumerCache</span> <span class="o">&amp;&amp;</span> <span class="n">consumer</span> <span class="o">!=</span> <span class="kc">null</span><span class="o">)</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">        <span class="n">consumer</span><span class="o">.</span><span class="n">close</span>
+</span></span><span class="line"><span class="cl">      <span class="o">}</span>
+</span></span><span class="line"><span class="cl">    <span class="o">}</span>
+</span></span><span class="line"><span class="cl">    
+</span></span><span class="line"><span class="cl">    <span class="c1">// 只返回offset大于fromOffset，小于untilOffset的数据
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="k">var</span> <span class="n">requestOffset</span> <span class="k">=</span> <span class="n">part</span><span class="o">.</span><span class="n">fromOffset</span>
+</span></span><span class="line"><span class="cl">    <span class="k">override</span> <span class="k">def</span> <span class="n">hasNext</span><span class="o">()</span><span class="k">:</span> <span class="kt">Boolean</span> <span class="o">=</span> <span class="n">requestOffset</span> <span class="o">&lt;</span> <span class="n">part</span><span class="o">.</span><span class="n">untilOffset</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="k">override</span> <span class="k">def</span> <span class="n">next</span><span class="o">()</span><span class="k">:</span> <span class="kt">ConsumerRecord</span><span class="o">[</span><span class="kt">K</span>, <span class="kt">V</span><span class="o">]</span> <span class="k">=</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">      <span class="n">assert</span><span class="o">(</span><span class="n">hasNext</span><span class="o">(),</span> <span class="s">&#34;Can&#39;t call getNext() once untilOffset has been reached&#34;</span><span class="o">)</span>
+</span></span><span class="line"><span class="cl">      <span class="c1">// 调用CachedKafkaConsumer的get方法返回一条数据
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>      <span class="k">val</span> <span class="n">r</span> <span class="k">=</span> <span class="n">consumer</span><span class="o">.</span><span class="n">get</span><span class="o">(</span><span class="n">requestOffset</span><span class="o">,</span> <span class="n">pollTimeout</span><span class="o">)</span>
+</span></span><span class="line"><span class="cl">      <span class="n">requestOffset</span> <span class="o">+=</span> <span class="mi">1</span>
+</span></span><span class="line"><span class="cl">      <span class="n">r</span>
+</span></span><span class="line"><span class="cl">    <span class="o">}</span>
+</span></span><span class="line"><span class="cl">  <span class="o">}</span>  
+</span></span><span class="line"><span class="cl"><span class="o">}</span>
+</span></span></code></pre></td></tr></table></div>
 </div>
 </div><h3 id="cachedkafkaconsumer原理"><a href="#cachedkafkaconsumer原理" class="anchor-link"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon anchor-icon"><path d="M326.612 185.391c59.747 59.809 58.927 155.698.36 214.59-.11.12-.24.25-.36.37l-67.2 67.2c-59.27 59.27-155.699 59.262-214.96 0-59.27-59.26-59.27-155.7 0-214.96l37.106-37.106c9.84-9.84 26.786-3.3 27.294 10.606.648 17.722 3.826 35.527 9.69 52.721 1.986 5.822.567 12.262-3.783 16.612l-13.087 13.087c-28.026 28.026-28.905 73.66-1.155 101.96 28.024 28.579 74.086 28.749 102.325.51l67.2-67.19c28.191-28.191 28.073-73.757 0-101.83-3.701-3.694-7.429-6.564-10.341-8.569a16.037 16.037 0 0 1-6.947-12.606c-.396-10.567 3.348-21.456 11.698-29.806l21.054-21.055c5.521-5.521 14.182-6.199 20.584-1.731a152.482 152.482 0 0 1 20.522 17.197zM467.547 44.449c-59.261-59.262-155.69-59.27-214.96 0l-67.2 67.2c-.12.12-.25.25-.36.37-58.566 58.892-59.387 154.781.36 214.59a152.454 152.454 0 0 0 20.521 17.196c6.402 4.468 15.064 3.789 20.584-1.731l21.054-21.055c8.35-8.35 12.094-19.239 11.698-29.806a16.037 16.037 0 0 0-6.947-12.606c-2.912-2.005-6.64-4.875-10.341-8.569-28.073-28.073-28.191-73.639 0-101.83l67.2-67.19c28.239-28.239 74.3-28.069 102.325.51 27.75 28.3 26.872 73.934-1.155 101.96l-13.087 13.087c-4.35 4.35-5.769 10.79-3.783 16.612 5.864 17.194 9.042 34.999 9.69 52.721.509 13.906 17.454 20.446 27.294 10.606l37.106-37.106c59.271-59.259 59.271-155.699.001-214.959z"/></svg></a>CachedKafkaConsumer原理</h3>
 <p>CachedKafkaConsumer包含了KafkaConsumer实例，它是Kafka的消费者。CachedKafkaConsumer使用KafkaConsumer的assign模式，这种模式需要客户端自己管理offset。CachedKafkaConsumer是运行在 executor 节点上的，它只负责从kafka中读取指定的一段数据，所以不需要管理offset。</p>
@@ -634,82 +634,82 @@
 </span><span class="lnt">75
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-scala" data-lang="scala"><span class="k">class</span> <span class="nc">CachedKafkaConsumer</span><span class="o">[</span><span class="kt">K</span>, <span class="kt">V</span><span class="o">]</span> <span class="nc">private</span><span class="o">(</span>
-  <span class="k">val</span> <span class="n">groupId</span><span class="k">:</span> <span class="kt">String</span><span class="o">,</span>
-  <span class="k">val</span> <span class="n">topic</span><span class="k">:</span> <span class="kt">String</span><span class="o">,</span>
-  <span class="k">val</span> <span class="n">partition</span><span class="k">:</span> <span class="kt">Int</span><span class="o">,</span>
-  <span class="k">val</span> <span class="n">kafkaParams</span><span class="k">:</span> <span class="kt">ju.Map</span><span class="o">[</span><span class="kt">String</span>, <span class="kt">Object</span><span class="o">])</span> <span class="k">extends</span> <span class="nc">Logging</span> <span class="o">{</span>
-
-  <span class="k">val</span> <span class="n">topicPartition</span> <span class="k">=</span> <span class="k">new</span> <span class="nc">TopicPartition</span><span class="o">(</span><span class="n">topic</span><span class="o">,</span> <span class="n">partition</span><span class="o">)</span>
-  <span class="c1">// 实例化 KafkaConsumer，使用assign模式。这种模式需要自己维护offset
-</span><span class="c1"></span>  <span class="k">protected</span> <span class="k">val</span> <span class="n">consumer</span> <span class="k">=</span> <span class="o">{</span>
-    <span class="k">val</span> <span class="n">c</span> <span class="k">=</span> <span class="k">new</span> <span class="nc">KafkaConsumer</span><span class="o">[</span><span class="kt">K</span>, <span class="kt">V</span><span class="o">](</span><span class="n">kafkaParams</span><span class="o">)</span>
-    <span class="k">val</span> <span class="n">tps</span> <span class="k">=</span> <span class="k">new</span> <span class="n">ju</span><span class="o">.</span><span class="nc">ArrayList</span><span class="o">[</span><span class="kt">TopicPartition</span><span class="o">]()</span>
-    <span class="n">tps</span><span class="o">.</span><span class="n">add</span><span class="o">(</span><span class="n">topicPartition</span><span class="o">)</span>
-    <span class="n">c</span><span class="o">.</span><span class="n">assign</span><span class="o">(</span><span class="n">tps</span><span class="o">)</span>
-    <span class="n">c</span>
-  <span class="o">}</span>
-
-  <span class="c1">// 从kafka一次读取的数据是多条的，这里用buffer缓存读取的数据
-</span><span class="c1"></span>  <span class="k">protected</span> <span class="k">var</span> <span class="n">buffer</span> <span class="k">=</span> <span class="n">ju</span><span class="o">.</span><span class="nc">Collections</span><span class="o">.</span><span class="n">emptyList</span><span class="o">[</span><span class="kt">ConsumerRecord</span><span class="o">[</span><span class="kt">K</span>, <span class="kt">V</span><span class="o">]]().</span><span class="n">iterator</span>
-  <span class="c1">// 下一条数据的offset
-</span><span class="c1"></span>  <span class="k">protected</span> <span class="k">var</span> <span class="n">nextOffset</span> <span class="k">=</span> <span class="o">-</span><span class="mi">2L</span>
-
-  <span class="k">def</span> <span class="n">close</span><span class="o">()</span><span class="k">:</span> <span class="kt">Unit</span> <span class="o">=</span> <span class="n">consumer</span><span class="o">.</span><span class="n">close</span><span class="o">()</span>
-
-  <span class="c1">// 获取offset对应的数据
-</span><span class="c1"></span>  <span class="k">def</span> <span class="n">get</span><span class="o">(</span><span class="n">offset</span><span class="k">:</span> <span class="kt">Long</span><span class="o">,</span> <span class="n">timeout</span><span class="k">:</span> <span class="kt">Long</span><span class="o">)</span><span class="k">:</span> <span class="kt">ConsumerRecord</span><span class="o">[</span><span class="kt">K</span>, <span class="kt">V</span><span class="o">]</span> <span class="k">=</span> <span class="o">{</span>
-    <span class="n">logDebug</span><span class="o">(</span><span class="s">s&#34;Get </span><span class="si">$groupId</span><span class="s"> </span><span class="si">$topic</span><span class="s"> </span><span class="si">$partition</span><span class="s"> nextOffset </span><span class="si">$nextOffset</span><span class="s"> requested </span><span class="si">$offset</span><span class="s">&#34;</span><span class="o">)</span>
-    <span class="c1">// 如果要获取数据的offset不等于下一条数据的offset，则调用seek移动KafKaConsumer的位置
-</span><span class="c1"></span>    <span class="k">if</span> <span class="o">(</span><span class="n">offset</span> <span class="o">!=</span> <span class="n">nextOffset</span><span class="o">)</span> <span class="o">{</span>
-      <span class="n">logInfo</span><span class="o">(</span><span class="s">s&#34;Initial fetch for </span><span class="si">$groupId</span><span class="s"> </span><span class="si">$topic</span><span class="s"> </span><span class="si">$partition</span><span class="s"> </span><span class="si">$offset</span><span class="s">&#34;</span><span class="o">)</span>
-      <span class="c1">// 移动读取位置
-</span><span class="c1"></span>      <span class="n">seek</span><span class="o">(</span><span class="n">offset</span><span class="o">)</span>
-      <span class="c1">// 从kafka获取数据
-</span><span class="c1"></span>      <span class="n">poll</span><span class="o">(</span><span class="n">timeout</span><span class="o">)</span>
-    <span class="o">}</span>
-    <span class="c1">// 如果缓存的数据，已经读完，则调用poll从kafka中读取数据
-</span><span class="c1"></span>    <span class="k">if</span> <span class="o">(!</span><span class="n">buffer</span><span class="o">.</span><span class="n">hasNext</span><span class="o">())</span> <span class="o">{</span> <span class="n">poll</span><span class="o">(</span><span class="n">timeout</span><span class="o">)</span> <span class="o">}</span>
-    <span class="n">assert</span><span class="o">(</span><span class="n">buffer</span><span class="o">.</span><span class="n">hasNext</span><span class="o">(),</span>
-      <span class="s">s&#34;Failed to get records for </span><span class="si">$groupId</span><span class="s"> </span><span class="si">$topic</span><span class="s"> </span><span class="si">$partition</span><span class="s"> </span><span class="si">$offset</span><span class="s"> after polling for </span><span class="si">$timeout</span><span class="s">&#34;</span><span class="o">)</span>
-    <span class="c1">// 获取buffer的数据
-</span><span class="c1"></span>    <span class="k">var</span> <span class="n">record</span> <span class="k">=</span> <span class="n">buffer</span><span class="o">.</span><span class="n">next</span><span class="o">()</span>
-
-    <span class="k">if</span> <span class="o">(</span><span class="n">record</span><span class="o">.</span><span class="n">offset</span> <span class="o">!=</span> <span class="n">offset</span><span class="o">)</span> <span class="o">{</span>
-      <span class="c1">// 如果从buffer中获取的数据有问题，则需要重新从Kafka中读取数据
-</span><span class="c1"></span>      <span class="n">logInfo</span><span class="o">(</span><span class="s">s&#34;Buffer miss for </span><span class="si">$groupId</span><span class="s"> </span><span class="si">$topic</span><span class="s"> </span><span class="si">$partition</span><span class="s"> </span><span class="si">$offset</span><span class="s">&#34;</span><span class="o">)</span>
-      <span class="n">seek</span><span class="o">(</span><span class="n">offset</span><span class="o">)</span>
-      <span class="n">poll</span><span class="o">(</span><span class="n">timeout</span><span class="o">)</span>
-      <span class="n">assert</span><span class="o">(</span><span class="n">buffer</span><span class="o">.</span><span class="n">hasNext</span><span class="o">(),</span>
-        <span class="s">s&#34;Failed to get records for </span><span class="si">$groupId</span><span class="s"> </span><span class="si">$topic</span><span class="s"> </span><span class="si">$partition</span><span class="s"> </span><span class="si">$offset</span><span class="s"> after polling for </span><span class="si">$timeout</span><span class="s">&#34;</span><span class="o">)</span>
-      <span class="c1">// 从buffer中读取数据
-</span><span class="c1"></span>      <span class="n">record</span> <span class="k">=</span> <span class="n">buffer</span><span class="o">.</span><span class="n">next</span><span class="o">()</span>
-      <span class="c1">// 检测该数据的offset是否等于预期
-</span><span class="c1"></span>      <span class="n">assert</span><span class="o">(</span><span class="n">record</span><span class="o">.</span><span class="n">offset</span> <span class="o">==</span> <span class="n">offset</span><span class="o">,</span>
-        <span class="s">s&#34;Got wrong record for </span><span class="si">$groupId</span><span class="s"> </span><span class="si">$topic</span><span class="s"> </span><span class="si">$partition</span><span class="s"> even after seeking to offset </span><span class="si">$offset</span><span class="s">&#34;</span><span class="o">)</span>
-    <span class="o">}</span>
-    <span class="c1">// 更新nextOffset为当前offset+1
-</span><span class="c1"></span>    <span class="n">nextOffset</span> <span class="k">=</span> <span class="n">offset</span> <span class="o">+</span> <span class="mi">1</span>
-    <span class="n">record</span>
-  <span class="o">}</span>
-
-  <span class="k">private</span> <span class="k">def</span> <span class="n">seek</span><span class="o">(</span><span class="n">offset</span><span class="k">:</span> <span class="kt">Long</span><span class="o">)</span><span class="k">:</span> <span class="kt">Unit</span> <span class="o">=</span> <span class="o">{</span>
-    <span class="c1">// 调用KafKaConsumer的seek方法移动读取位置
-</span><span class="c1"></span>    <span class="n">logDebug</span><span class="o">(</span><span class="s">s&#34;Seeking to </span><span class="si">$topicPartition</span><span class="s"> </span><span class="si">$offset</span><span class="s">&#34;</span><span class="o">)</span>
-    <span class="n">consumer</span><span class="o">.</span><span class="n">seek</span><span class="o">(</span><span class="n">topicPartition</span><span class="o">,</span> <span class="n">offset</span><span class="o">)</span>
-  <span class="o">}</span>
-
-  <span class="k">private</span> <span class="k">def</span> <span class="n">poll</span><span class="o">(</span><span class="n">timeout</span><span class="k">:</span> <span class="kt">Long</span><span class="o">)</span><span class="k">:</span> <span class="kt">Unit</span> <span class="o">=</span> <span class="o">{</span>
-    <span class="c1">// 调用poll方法读取数据
-</span><span class="c1"></span>    <span class="k">val</span> <span class="n">p</span> <span class="k">=</span> <span class="n">consumer</span><span class="o">.</span><span class="n">poll</span><span class="o">(</span><span class="n">timeout</span><span class="o">)</span>
-    <span class="c1">// 获取该topic partition的数据
-</span><span class="c1"></span>    <span class="k">val</span> <span class="n">r</span> <span class="k">=</span> <span class="n">p</span><span class="o">.</span><span class="n">records</span><span class="o">(</span><span class="n">topicPartition</span><span class="o">)</span>
-    <span class="n">logDebug</span><span class="o">(</span><span class="s">s&#34;Polled </span><span class="si">${</span><span class="n">p</span><span class="o">.</span><span class="n">partitions</span><span class="o">()</span><span class="si">}</span><span class="s">  </span><span class="si">${</span><span class="n">r</span><span class="o">.</span><span class="n">size</span><span class="si">}</span><span class="s">&#34;</span><span class="o">)</span>
-    <span class="n">buffer</span> <span class="k">=</span> <span class="n">r</span><span class="o">.</span><span class="n">iterator</span>
-  <span class="o">}</span>
-
-<span class="o">}</span>
-</code></pre></td></tr></table></div>
+<pre tabindex="0" class="chroma"><code class="language-scala" data-lang="scala"><span class="line"><span class="cl"><span class="k">class</span> <span class="nc">CachedKafkaConsumer</span><span class="o">[</span><span class="kt">K</span>, <span class="kt">V</span><span class="o">]</span> <span class="nc">private</span><span class="o">(</span>
+</span></span><span class="line"><span class="cl">  <span class="k">val</span> <span class="n">groupId</span><span class="k">:</span> <span class="kt">String</span><span class="o">,</span>
+</span></span><span class="line"><span class="cl">  <span class="k">val</span> <span class="n">topic</span><span class="k">:</span> <span class="kt">String</span><span class="o">,</span>
+</span></span><span class="line"><span class="cl">  <span class="k">val</span> <span class="n">partition</span><span class="k">:</span> <span class="kt">Int</span><span class="o">,</span>
+</span></span><span class="line"><span class="cl">  <span class="k">val</span> <span class="n">kafkaParams</span><span class="k">:</span> <span class="kt">ju.Map</span><span class="o">[</span><span class="kt">String</span>, <span class="kt">Object</span><span class="o">])</span> <span class="k">extends</span> <span class="nc">Logging</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="k">val</span> <span class="n">topicPartition</span> <span class="k">=</span> <span class="k">new</span> <span class="nc">TopicPartition</span><span class="o">(</span><span class="n">topic</span><span class="o">,</span> <span class="n">partition</span><span class="o">)</span>
+</span></span><span class="line"><span class="cl">  <span class="c1">// 实例化 KafkaConsumer，使用assign模式。这种模式需要自己维护offset
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="k">protected</span> <span class="k">val</span> <span class="n">consumer</span> <span class="k">=</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">    <span class="k">val</span> <span class="n">c</span> <span class="k">=</span> <span class="k">new</span> <span class="nc">KafkaConsumer</span><span class="o">[</span><span class="kt">K</span>, <span class="kt">V</span><span class="o">](</span><span class="n">kafkaParams</span><span class="o">)</span>
+</span></span><span class="line"><span class="cl">    <span class="k">val</span> <span class="n">tps</span> <span class="k">=</span> <span class="k">new</span> <span class="n">ju</span><span class="o">.</span><span class="nc">ArrayList</span><span class="o">[</span><span class="kt">TopicPartition</span><span class="o">]()</span>
+</span></span><span class="line"><span class="cl">    <span class="n">tps</span><span class="o">.</span><span class="n">add</span><span class="o">(</span><span class="n">topicPartition</span><span class="o">)</span>
+</span></span><span class="line"><span class="cl">    <span class="n">c</span><span class="o">.</span><span class="n">assign</span><span class="o">(</span><span class="n">tps</span><span class="o">)</span>
+</span></span><span class="line"><span class="cl">    <span class="n">c</span>
+</span></span><span class="line"><span class="cl">  <span class="o">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="c1">// 从kafka一次读取的数据是多条的，这里用buffer缓存读取的数据
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="k">protected</span> <span class="k">var</span> <span class="n">buffer</span> <span class="k">=</span> <span class="n">ju</span><span class="o">.</span><span class="nc">Collections</span><span class="o">.</span><span class="n">emptyList</span><span class="o">[</span><span class="kt">ConsumerRecord</span><span class="o">[</span><span class="kt">K</span>, <span class="kt">V</span><span class="o">]]().</span><span class="n">iterator</span>
+</span></span><span class="line"><span class="cl">  <span class="c1">// 下一条数据的offset
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="k">protected</span> <span class="k">var</span> <span class="n">nextOffset</span> <span class="k">=</span> <span class="o">-</span><span class="mi">2L</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="k">def</span> <span class="n">close</span><span class="o">()</span><span class="k">:</span> <span class="kt">Unit</span> <span class="o">=</span> <span class="n">consumer</span><span class="o">.</span><span class="n">close</span><span class="o">()</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="c1">// 获取offset对应的数据
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="k">def</span> <span class="n">get</span><span class="o">(</span><span class="n">offset</span><span class="k">:</span> <span class="kt">Long</span><span class="o">,</span> <span class="n">timeout</span><span class="k">:</span> <span class="kt">Long</span><span class="o">)</span><span class="k">:</span> <span class="kt">ConsumerRecord</span><span class="o">[</span><span class="kt">K</span>, <span class="kt">V</span><span class="o">]</span> <span class="k">=</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">    <span class="n">logDebug</span><span class="o">(</span><span class="s">s&#34;Get </span><span class="si">$groupId</span><span class="s"> </span><span class="si">$topic</span><span class="s"> </span><span class="si">$partition</span><span class="s"> nextOffset </span><span class="si">$nextOffset</span><span class="s"> requested </span><span class="si">$offset</span><span class="s">&#34;</span><span class="o">)</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// 如果要获取数据的offset不等于下一条数据的offset，则调用seek移动KafKaConsumer的位置
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="k">if</span> <span class="o">(</span><span class="n">offset</span> <span class="o">!=</span> <span class="n">nextOffset</span><span class="o">)</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">      <span class="n">logInfo</span><span class="o">(</span><span class="s">s&#34;Initial fetch for </span><span class="si">$groupId</span><span class="s"> </span><span class="si">$topic</span><span class="s"> </span><span class="si">$partition</span><span class="s"> </span><span class="si">$offset</span><span class="s">&#34;</span><span class="o">)</span>
+</span></span><span class="line"><span class="cl">      <span class="c1">// 移动读取位置
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>      <span class="n">seek</span><span class="o">(</span><span class="n">offset</span><span class="o">)</span>
+</span></span><span class="line"><span class="cl">      <span class="c1">// 从kafka获取数据
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>      <span class="n">poll</span><span class="o">(</span><span class="n">timeout</span><span class="o">)</span>
+</span></span><span class="line"><span class="cl">    <span class="o">}</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// 如果缓存的数据，已经读完，则调用poll从kafka中读取数据
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="k">if</span> <span class="o">(!</span><span class="n">buffer</span><span class="o">.</span><span class="n">hasNext</span><span class="o">())</span> <span class="o">{</span> <span class="n">poll</span><span class="o">(</span><span class="n">timeout</span><span class="o">)</span> <span class="o">}</span>
+</span></span><span class="line"><span class="cl">    <span class="n">assert</span><span class="o">(</span><span class="n">buffer</span><span class="o">.</span><span class="n">hasNext</span><span class="o">(),</span>
+</span></span><span class="line"><span class="cl">      <span class="s">s&#34;Failed to get records for </span><span class="si">$groupId</span><span class="s"> </span><span class="si">$topic</span><span class="s"> </span><span class="si">$partition</span><span class="s"> </span><span class="si">$offset</span><span class="s"> after polling for </span><span class="si">$timeout</span><span class="s">&#34;</span><span class="o">)</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// 获取buffer的数据
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="k">var</span> <span class="n">record</span> <span class="k">=</span> <span class="n">buffer</span><span class="o">.</span><span class="n">next</span><span class="o">()</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="k">if</span> <span class="o">(</span><span class="n">record</span><span class="o">.</span><span class="n">offset</span> <span class="o">!=</span> <span class="n">offset</span><span class="o">)</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">      <span class="c1">// 如果从buffer中获取的数据有问题，则需要重新从Kafka中读取数据
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>      <span class="n">logInfo</span><span class="o">(</span><span class="s">s&#34;Buffer miss for </span><span class="si">$groupId</span><span class="s"> </span><span class="si">$topic</span><span class="s"> </span><span class="si">$partition</span><span class="s"> </span><span class="si">$offset</span><span class="s">&#34;</span><span class="o">)</span>
+</span></span><span class="line"><span class="cl">      <span class="n">seek</span><span class="o">(</span><span class="n">offset</span><span class="o">)</span>
+</span></span><span class="line"><span class="cl">      <span class="n">poll</span><span class="o">(</span><span class="n">timeout</span><span class="o">)</span>
+</span></span><span class="line"><span class="cl">      <span class="n">assert</span><span class="o">(</span><span class="n">buffer</span><span class="o">.</span><span class="n">hasNext</span><span class="o">(),</span>
+</span></span><span class="line"><span class="cl">        <span class="s">s&#34;Failed to get records for </span><span class="si">$groupId</span><span class="s"> </span><span class="si">$topic</span><span class="s"> </span><span class="si">$partition</span><span class="s"> </span><span class="si">$offset</span><span class="s"> after polling for </span><span class="si">$timeout</span><span class="s">&#34;</span><span class="o">)</span>
+</span></span><span class="line"><span class="cl">      <span class="c1">// 从buffer中读取数据
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>      <span class="n">record</span> <span class="k">=</span> <span class="n">buffer</span><span class="o">.</span><span class="n">next</span><span class="o">()</span>
+</span></span><span class="line"><span class="cl">      <span class="c1">// 检测该数据的offset是否等于预期
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>      <span class="n">assert</span><span class="o">(</span><span class="n">record</span><span class="o">.</span><span class="n">offset</span> <span class="o">==</span> <span class="n">offset</span><span class="o">,</span>
+</span></span><span class="line"><span class="cl">        <span class="s">s&#34;Got wrong record for </span><span class="si">$groupId</span><span class="s"> </span><span class="si">$topic</span><span class="s"> </span><span class="si">$partition</span><span class="s"> even after seeking to offset </span><span class="si">$offset</span><span class="s">&#34;</span><span class="o">)</span>
+</span></span><span class="line"><span class="cl">    <span class="o">}</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// 更新nextOffset为当前offset+1
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="n">nextOffset</span> <span class="k">=</span> <span class="n">offset</span> <span class="o">+</span> <span class="mi">1</span>
+</span></span><span class="line"><span class="cl">    <span class="n">record</span>
+</span></span><span class="line"><span class="cl">  <span class="o">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="k">private</span> <span class="k">def</span> <span class="n">seek</span><span class="o">(</span><span class="n">offset</span><span class="k">:</span> <span class="kt">Long</span><span class="o">)</span><span class="k">:</span> <span class="kt">Unit</span> <span class="o">=</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// 调用KafKaConsumer的seek方法移动读取位置
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="n">logDebug</span><span class="o">(</span><span class="s">s&#34;Seeking to </span><span class="si">$topicPartition</span><span class="s"> </span><span class="si">$offset</span><span class="s">&#34;</span><span class="o">)</span>
+</span></span><span class="line"><span class="cl">    <span class="n">consumer</span><span class="o">.</span><span class="n">seek</span><span class="o">(</span><span class="n">topicPartition</span><span class="o">,</span> <span class="n">offset</span><span class="o">)</span>
+</span></span><span class="line"><span class="cl">  <span class="o">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="k">private</span> <span class="k">def</span> <span class="n">poll</span><span class="o">(</span><span class="n">timeout</span><span class="k">:</span> <span class="kt">Long</span><span class="o">)</span><span class="k">:</span> <span class="kt">Unit</span> <span class="o">=</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// 调用poll方法读取数据
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="k">val</span> <span class="n">p</span> <span class="k">=</span> <span class="n">consumer</span><span class="o">.</span><span class="n">poll</span><span class="o">(</span><span class="n">timeout</span><span class="o">)</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// 获取该topic partition的数据
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="k">val</span> <span class="n">r</span> <span class="k">=</span> <span class="n">p</span><span class="o">.</span><span class="n">records</span><span class="o">(</span><span class="n">topicPartition</span><span class="o">)</span>
+</span></span><span class="line"><span class="cl">    <span class="n">logDebug</span><span class="o">(</span><span class="s">s&#34;Polled </span><span class="si">${</span><span class="n">p</span><span class="o">.</span><span class="n">partitions</span><span class="o">()</span><span class="si">}</span><span class="s">  </span><span class="si">${</span><span class="n">r</span><span class="o">.</span><span class="n">size</span><span class="si">}</span><span class="s">&#34;</span><span class="o">)</span>
+</span></span><span class="line"><span class="cl">    <span class="n">buffer</span> <span class="k">=</span> <span class="n">r</span><span class="o">.</span><span class="n">iterator</span>
+</span></span><span class="line"><span class="cl">  <span class="o">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="o">}</span>
+</span></span></code></pre></td></tr></table></div>
 </div>
 </div><p>从上面的代码可以看到，CachedKafkaConsumer会按照offset顺序的读取数据，并且offset还必须是连续的。如果Kafka开启了日志压缩功能，就会将相同key的数据压缩成一条，那么这样消息的offset就不会是连续的。这种情况下，spark streaming就会报错。上面的代码是spark 2.2版本的，后面的版本修复了这个问题，参见 <a href="https://github.com/apache/spark/pull/20572" target="_blank" rel="noopener">pull request</a>，增加了spark.streaming.kafka.allowNonConsecutiveOffsets配置，允许处理这种情况。</p>
 
@@ -739,9 +739,9 @@
 
         
     <div class="updated-badge-container">
-        <span title="Updated @ 2021-10-22 14:44:34 CST" style="cursor:help">
+        <span title="Updated @ 2023-07-02 16:59:09 CST" style="cursor:help">
 
-<svg xmlns="http://www.w3.org/2000/svg" width="130" height="20" class="updated-badge"><linearGradient id="b" x2="0" y2="100%"><stop offset="0" stop-color="#bbb" stop-opacity=".1"/><stop offset="1" stop-opacity=".1"/></linearGradient><clipPath id="a"><rect width="130" height="20" rx="3" fill="#fff"/></clipPath><g clip-path="url(#a)"><path class="updated-badge-left" d="M0 0h55v20H0z"/><path class="updated-badge-right" d="M55 0h75v20H55z"/><path fill="url(#b)" d="M0 0h130v20H0z"/></g><g fill="#fff" text-anchor="middle" font-size="110"><text x="285" y="150" fill="#010101" fill-opacity=".3" textLength="450" transform="scale(.1)">updated</text><text x="285" y="140" textLength="450" transform="scale(.1)">updated</text><text x="915" y="150" fill="#010101" fill-opacity=".3" textLength="650" transform="scale(.1)">2021-10-22</text><text x="915" y="140" textLength="650" transform="scale(.1)">2021-10-22</text></g></svg>
+<svg xmlns="http://www.w3.org/2000/svg" width="130" height="20" class="updated-badge"><linearGradient id="b" x2="0" y2="100%"><stop offset="0" stop-color="#bbb" stop-opacity=".1"/><stop offset="1" stop-opacity=".1"/></linearGradient><clipPath id="a"><rect width="130" height="20" rx="3" fill="#fff"/></clipPath><g clip-path="url(#a)"><path class="updated-badge-left" d="M0 0h55v20H0z"/><path class="updated-badge-right" d="M55 0h75v20H55z"/><path fill="url(#b)" d="M0 0h130v20H0z"/></g><g fill="#fff" text-anchor="middle" font-size="110"><text x="285" y="150" fill="#010101" fill-opacity=".3" textLength="450" transform="scale(.1)">updated</text><text x="285" y="140" textLength="450" transform="scale(.1)">updated</text><text x="915" y="150" fill="#010101" fill-opacity=".3" textLength="650" transform="scale(.1)">2023-07-02</text><text x="915" y="140" textLength="650" transform="scale(.1)">2023-07-02</text></g></svg>
         </span></div>
 
 

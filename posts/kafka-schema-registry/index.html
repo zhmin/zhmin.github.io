@@ -3,7 +3,7 @@
     <head prefix="og: http://ogp.me/ns# article: http://ogp.me/ns/article#">
     <meta charset="UTF-8" />
 
-    <meta name="generator" content="Hugo 0.88.1" /><meta name="theme-color" content="#fff" />
+    <meta name="generator" content="Hugo 0.115.0"><meta name="theme-color" content="#fff" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     
     <meta name="format-detection" content="telephone=no, date=no, address=no, email=no" />
@@ -14,11 +14,11 @@
 
     <title>Kafka Schema Registry 原理 | 学习笔记</title>
 
-    <link rel="stylesheet" href="/css/meme.min.2d3e1834af2bc8dda20c7d74aaa1d8134845094441b7a554a5206ccd4b472596.css"/>
+    <link rel="stylesheet" href="/css/meme.min.91e7f58f97e1c60563ef481c38d9684fa8099537801d6f17bbfc724121e7d8f1.css"/>
 
     
     
-        <script src="/js/meme.min.800f61672145711eb3e1f29fcfcc3dbe0139dd459259718b611a0390f74703d1.js"></script>
+        <script src="/js/meme.min.3210a00c2fdcf6f831170b681b8ee40f83f0224663661e986872616aec45407f.js"></script>
 
     
 
@@ -54,7 +54,7 @@
         "@context": "https://schema.org",
         "@type": "BlogPosting",
         "datePublished": "2019-04-23T21:01:45+00:00",
-        "dateModified": "2021-10-22T14:44:34+08:00",
+        "dateModified": "2023-07-02T16:59:09+08:00",
         "url": "https://zhmin.github.io/posts/kafka-schema-registry/",
         "headline": "Kafka Schema Registry 原理",
         "description": "Kafka Schema Registry 原理 Confluent 公司为了能让 Kafka 支持 Avro 序列化，创建了 Kafka Schema Registry 项目，项目地址为 https://github.com/confluentinc/schema-registry 。对于存储大量数据的 kafka 来说，使用 Avro 序列化，可以减少数据的存储空间提高了存储量，减少了序列化时间提高了性能。 Kafka 有多个topic，里面……",
@@ -98,7 +98,7 @@
 <meta property="og:locale" content="zh" /><meta property="og:image" content="https://zhmin.github.io/kafka-schema-registry.svg" />
 <meta property="og:type" content="article" />
     <meta property="article:published_time" content="2019-04-23T21:01:45&#43;00:00" />
-    <meta property="article:modified_time" content="2021-10-22T14:44:34&#43;08:00" />
+    <meta property="article:modified_time" content="2023-07-02T16:59:09&#43;08:00" />
     
     <meta property="article:section" content="posts" />
 
@@ -255,17 +255,17 @@
 </span><span class="lnt">10
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-json" data-lang="json"><span class="p">{</span>
- <span class="nt">&#34;namespace&#34;</span><span class="p">:</span> <span class="s2">&#34;example.avro&#34;</span><span class="p">,</span>
- <span class="nt">&#34;type&#34;</span><span class="p">:</span> <span class="s2">&#34;record&#34;</span><span class="p">,</span>
- <span class="nt">&#34;name&#34;</span><span class="p">:</span> <span class="s2">&#34;User&#34;</span><span class="p">,</span>
- <span class="nt">&#34;fields&#34;</span><span class="p">:</span> <span class="p">[</span>
-     <span class="p">{</span><span class="nt">&#34;name&#34;</span><span class="p">:</span> <span class="s2">&#34;name&#34;</span><span class="p">,</span> <span class="nt">&#34;type&#34;</span><span class="p">:</span> <span class="s2">&#34;string&#34;</span><span class="p">},</span>
-     <span class="p">{</span><span class="nt">&#34;name&#34;</span><span class="p">:</span> <span class="s2">&#34;favorite_number&#34;</span><span class="p">,</span>  <span class="nt">&#34;type&#34;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&#34;int&#34;</span><span class="p">,</span> <span class="s2">&#34;null&#34;</span><span class="p">]},</span>
-     <span class="p">{</span><span class="nt">&#34;name&#34;</span><span class="p">:</span> <span class="s2">&#34;favorite_color&#34;</span><span class="p">,</span> <span class="nt">&#34;type&#34;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&#34;string&#34;</span><span class="p">,</span> <span class="s2">&#34;null&#34;</span><span class="p">]}</span>
- <span class="p">]</span>
-<span class="p">}</span>
-</code></pre></td></tr></table></div>
+<pre tabindex="0" class="chroma"><code class="language-json" data-lang="json"><span class="line"><span class="cl"><span class="p">{</span>
+</span></span><span class="line"><span class="cl"> <span class="nt">&#34;namespace&#34;</span><span class="p">:</span> <span class="s2">&#34;example.avro&#34;</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl"> <span class="nt">&#34;type&#34;</span><span class="p">:</span> <span class="s2">&#34;record&#34;</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl"> <span class="nt">&#34;name&#34;</span><span class="p">:</span> <span class="s2">&#34;User&#34;</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl"> <span class="nt">&#34;fields&#34;</span><span class="p">:</span> <span class="p">[</span>
+</span></span><span class="line"><span class="cl">     <span class="p">{</span><span class="nt">&#34;name&#34;</span><span class="p">:</span> <span class="s2">&#34;name&#34;</span><span class="p">,</span> <span class="nt">&#34;type&#34;</span><span class="p">:</span> <span class="s2">&#34;string&#34;</span><span class="p">},</span>
+</span></span><span class="line"><span class="cl">     <span class="p">{</span><span class="nt">&#34;name&#34;</span><span class="p">:</span> <span class="s2">&#34;favorite_number&#34;</span><span class="p">,</span>  <span class="nt">&#34;type&#34;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&#34;int&#34;</span><span class="p">,</span> <span class="s2">&#34;null&#34;</span><span class="p">]},</span>
+</span></span><span class="line"><span class="cl">     <span class="p">{</span><span class="nt">&#34;name&#34;</span><span class="p">:</span> <span class="s2">&#34;favorite_color&#34;</span><span class="p">,</span> <span class="nt">&#34;type&#34;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&#34;string&#34;</span><span class="p">,</span> <span class="s2">&#34;null&#34;</span><span class="p">]}</span>
+</span></span><span class="line"><span class="cl"> <span class="p">]</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table></div>
 </div>
 </div><p>序列化生成字节：</p>
 <div class="highlight"><div class="chroma">
@@ -292,27 +292,27 @@
 </span><span class="lnt">20
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="c1">// 解析数据格式文件  
-</span><span class="c1"></span><span class="n">Schema</span> <span class="n">schema</span> <span class="o">=</span> <span class="k">new</span> <span class="n">Schema</span><span class="o">.</span><span class="na">Parser</span><span class="o">().</span><span class="na">parse</span><span class="o">(</span><span class="k">new</span> <span class="n">File</span><span class="o">(</span><span class="s">&#34;user.avsc&#34;</span><span class="o">));</span>
-<span class="c1">// 创建一个实例
-</span><span class="c1"></span><span class="n">GenericRecord</span> <span class="n">user</span> <span class="o">=</span> <span class="k">new</span> <span class="n">GenericData</span><span class="o">.</span><span class="na">Record</span><span class="o">(</span><span class="n">schema</span><span class="o">);</span>
-<span class="n">user</span><span class="o">.</span><span class="na">put</span><span class="o">(</span><span class="s">&#34;name&#34;</span><span class="o">,</span> <span class="s">&#34;Alyssa&#34;</span><span class="o">);</span>
-<span class="n">user</span><span class="o">.</span><span class="na">put</span><span class="o">(</span><span class="s">&#34;favorite_number&#34;</span><span class="o">,</span> <span class="n">256</span><span class="o">);</span>
-
-<span class="c1">// 构建输出流，保存结果
-</span><span class="c1"></span><span class="n">ByteArrayOutputStream</span> <span class="n">out</span> <span class="o">=</span> <span class="k">new</span> <span class="n">ByteArrayOutputStream</span><span class="o">();</span>
-<span class="c1">// BinaryEncoder负责向输出流，写入数据
-</span><span class="c1"></span><span class="n">BinaryEncoder</span> <span class="n">encoder</span> <span class="o">=</span>  <span class="n">EncoderFactory</span><span class="o">.</span><span class="na">get</span><span class="o">().</span><span class="na">directBinaryEncoder</span><span class="o">(</span><span class="n">out</span><span class="o">,</span> <span class="kc">null</span><span class="o">);</span>
-<span class="c1">// DatumWriter负责序列化
-</span><span class="c1"></span><span class="n">DatumWriter</span><span class="o">&lt;</span><span class="n">GenericRecord</span><span class="o">&gt;</span> <span class="n">datumWriter</span> <span class="o">=</span> <span class="k">new</span> <span class="n">GenericDatumWriter</span><span class="o">&lt;</span><span class="n">GenericRecord</span><span class="o">&gt;(</span><span class="n">schema</span><span class="o">);</span>
-<span class="c1">// 调用DatumWriter序列化，并将结果写入到输出流
-</span><span class="c1"></span><span class="n">datumWriter</span><span class="o">.</span><span class="na">write</span><span class="o">(</span><span class="n">user</span><span class="o">,</span> <span class="n">encoder</span><span class="o">);</span>
-<span class="c1">// 刷新缓存
-</span><span class="c1"></span><span class="n">encoder</span><span class="o">.</span><span class="na">flush</span><span class="o">();</span>
-
-<span class="c1">// 获取序列化的结果
-</span><span class="c1"></span><span class="kt">byte</span><span class="o">[]</span> <span class="n">result</span> <span class="o">=</span> <span class="n">out</span><span class="o">.</span><span class="na">toByteArray</span><span class="o">();</span>
-</code></pre></td></tr></table></div>
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="c1">// 解析数据格式文件  
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="n">Schema</span> <span class="n">schema</span> <span class="o">=</span> <span class="k">new</span> <span class="n">Schema</span><span class="o">.</span><span class="na">Parser</span><span class="o">().</span><span class="na">parse</span><span class="o">(</span><span class="k">new</span> <span class="n">File</span><span class="o">(</span><span class="s">&#34;user.avsc&#34;</span><span class="o">));</span>
+</span></span><span class="line"><span class="cl"><span class="c1">// 创建一个实例
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="n">GenericRecord</span> <span class="n">user</span> <span class="o">=</span> <span class="k">new</span> <span class="n">GenericData</span><span class="o">.</span><span class="na">Record</span><span class="o">(</span><span class="n">schema</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl"><span class="n">user</span><span class="o">.</span><span class="na">put</span><span class="o">(</span><span class="s">&#34;name&#34;</span><span class="o">,</span> <span class="s">&#34;Alyssa&#34;</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl"><span class="n">user</span><span class="o">.</span><span class="na">put</span><span class="o">(</span><span class="s">&#34;favorite_number&#34;</span><span class="o">,</span> <span class="mi">256</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1">// 构建输出流，保存结果
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="n">ByteArrayOutputStream</span> <span class="n">out</span> <span class="o">=</span> <span class="k">new</span> <span class="n">ByteArrayOutputStream</span><span class="o">();</span>
+</span></span><span class="line"><span class="cl"><span class="c1">// BinaryEncoder负责向输出流，写入数据
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="n">BinaryEncoder</span> <span class="n">encoder</span> <span class="o">=</span>  <span class="n">EncoderFactory</span><span class="o">.</span><span class="na">get</span><span class="o">().</span><span class="na">directBinaryEncoder</span><span class="o">(</span><span class="n">out</span><span class="o">,</span> <span class="kc">null</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl"><span class="c1">// DatumWriter负责序列化
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="n">DatumWriter</span><span class="o">&lt;</span><span class="n">GenericRecord</span><span class="o">&gt;</span> <span class="n">datumWriter</span> <span class="o">=</span> <span class="k">new</span> <span class="n">GenericDatumWriter</span><span class="o">&lt;</span><span class="n">GenericRecord</span><span class="o">&gt;(</span><span class="n">schema</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl"><span class="c1">// 调用DatumWriter序列化，并将结果写入到输出流
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="n">datumWriter</span><span class="o">.</span><span class="na">write</span><span class="o">(</span><span class="n">user</span><span class="o">,</span> <span class="n">encoder</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl"><span class="c1">// 刷新缓存
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="n">encoder</span><span class="o">.</span><span class="na">flush</span><span class="o">();</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1">// 获取序列化的结果
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="kt">byte</span><span class="o">[]</span> <span class="n">result</span> <span class="o">=</span> <span class="n">out</span><span class="o">.</span><span class="na">toByteArray</span><span class="o">();</span>
+</span></span></code></pre></td></tr></table></div>
 </div>
 </div><p>更多用法可以参见官方文档，<a href="http://avro.apache.org/docs/current/gettingstartedjava.html" target="_blank" rel="noopener">http://avro.apache.org/docs/current/gettingstartedjava.html</a></p>
 <h2 id="kafka-客户端使用原理"><a href="#kafka-客户端使用原理" class="anchor-link"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon anchor-icon"><path d="M326.612 185.391c59.747 59.809 58.927 155.698.36 214.59-.11.12-.24.25-.36.37l-67.2 67.2c-59.27 59.27-155.699 59.262-214.96 0-59.27-59.26-59.27-155.7 0-214.96l37.106-37.106c9.84-9.84 26.786-3.3 27.294 10.606.648 17.722 3.826 35.527 9.69 52.721 1.986 5.822.567 12.262-3.783 16.612l-13.087 13.087c-28.026 28.026-28.905 73.66-1.155 101.96 28.024 28.579 74.086 28.749 102.325.51l67.2-67.19c28.191-28.191 28.073-73.757 0-101.83-3.701-3.694-7.429-6.564-10.341-8.569a16.037 16.037 0 0 1-6.947-12.606c-.396-10.567 3.348-21.456 11.698-29.806l21.054-21.055c5.521-5.521 14.182-6.199 20.584-1.731a152.482 152.482 0 0 1 20.522 17.197zM467.547 44.449c-59.261-59.262-155.69-59.27-214.96 0l-67.2 67.2c-.12.12-.25.25-.36.37-58.566 58.892-59.387 154.781.36 214.59a152.454 152.454 0 0 0 20.521 17.196c6.402 4.468 15.064 3.789 20.584-1.731l21.054-21.055c8.35-8.35 12.094-19.239 11.698-29.806a16.037 16.037 0 0 0-6.947-12.606c-2.912-2.005-6.64-4.875-10.341-8.569-28.073-28.073-28.191-73.639 0-101.83l67.2-67.19c28.239-28.239 74.3-28.069 102.325.51 27.75 28.3 26.872 73.934-1.155 101.96l-13.087 13.087c-4.35 4.35-5.769 10.79-3.783 16.612 5.864 17.194 9.042 34.999 9.69 52.721.509 13.906 17.454 20.446 27.294 10.606l37.106-37.106c59.271-59.259 59.271-155.699.001-214.959z"/></svg></a>Kafka 客户端使用原理</h2>
@@ -357,39 +357,39 @@
 </span><span class="lnt">32
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">SchemaProducer</span> <span class="o">{</span>
-
-    <span class="kd">public</span> <span class="kd">static</span> <span class="kt">void</span> <span class="nf">main</span><span class="o">(</span><span class="n">String</span><span class="o">[]</span> <span class="n">args</span><span class="o">)</span> <span class="kd">throws</span> <span class="n">Exception</span> <span class="o">{</span>
-        
-        <span class="n">String</span> <span class="n">kafkaHost</span> <span class="o">=</span> <span class="s">&#34;xxx.xxx.xxx.xxx:9092&#34;</span><span class="o">;</span>
-        <span class="n">String</span> <span class="n">topic</span> <span class="o">=</span> <span class="s">&#34;schema-tutorial&#34;</span><span class="o">;</span>
-        <span class="n">String</span> <span class="n">schameFilename</span> <span class="o">=</span> <span class="s">&#34;user.json&#34;</span><span class="o">;</span>
-        <span class="n">String</span> <span class="n">registryHost</span> <span class="o">=</span> <span class="s">&#34;http://xxx.xxx.xxx.xxx:8081&#34;</span><span class="o">;</span>
-
-        <span class="n">Properties</span> <span class="n">props</span> <span class="o">=</span> <span class="k">new</span> <span class="n">Properties</span><span class="o">();</span>
-        <span class="n">props</span><span class="o">.</span><span class="na">put</span><span class="o">(</span><span class="n">ProducerConfig</span><span class="o">.</span><span class="na">BOOTSTRAP_SERVERS_CONFIG</span><span class="o">,</span> <span class="n">kafkaHost</span><span class="o">);</span>
-        <span class="n">props</span><span class="o">.</span><span class="na">put</span><span class="o">(</span><span class="n">ProducerConfig</span><span class="o">.</span><span class="na">KEY_SERIALIZER_CLASS_CONFIG</span><span class="o">,</span> <span class="n">StringSerializer</span><span class="o">.</span><span class="na">class</span><span class="o">);</span>
-        <span class="c1">// 指定Value的序列化类，KafkaAvroSerializer
-</span><span class="c1"></span>        <span class="n">props</span><span class="o">.</span><span class="na">put</span><span class="o">(</span><span class="n">ProducerConfig</span><span class="o">.</span><span class="na">VALUE_SERIALIZER_CLASS_CONFIG</span><span class="o">,</span> <span class="n">KafkaAvroSerializer</span><span class="o">.</span><span class="na">class</span><span class="o">);</span>
-        <span class="c1">// 指定 registry 服务的地址
-</span><span class="c1"></span>        <span class="c1">// 如果 Schema Registry 启动了高可用，那么这儿的配置值可以是多个服务地址，以逗号隔开
-</span><span class="c1"></span>        <span class="n">props</span><span class="o">.</span><span class="na">put</span><span class="o">(</span><span class="s">&#34;schema.registry.url&#34;</span><span class="o">,</span> <span class="n">registryHost</span><span class="o">);</span>
-        <span class="n">KafkaProducer</span><span class="o">&lt;</span><span class="n">String</span><span class="o">,</span> <span class="n">GenericRecord</span><span class="o">&gt;</span> <span class="n">producer</span> <span class="o">=</span> <span class="k">new</span> <span class="n">KafkaProducer</span><span class="o">&lt;&gt;(</span><span class="n">props</span><span class="o">);</span>
-
-        <span class="n">String</span> <span class="n">key</span> <span class="o">=</span> <span class="s">&#34;Alyssa key&#34;</span><span class="o">;</span>
-        <span class="n">Schema</span> <span class="n">schema</span> <span class="o">=</span> <span class="k">new</span> <span class="n">Schema</span><span class="o">.</span><span class="na">Parser</span><span class="o">().</span><span class="na">parse</span><span class="o">(</span><span class="k">new</span> <span class="n">File</span><span class="o">(</span><span class="n">schameFilename</span><span class="o">));</span>
-        <span class="n">GenericRecord</span> <span class="n">avroRecord</span> <span class="o">=</span> <span class="k">new</span> <span class="n">GenericData</span><span class="o">.</span><span class="na">Record</span><span class="o">(</span><span class="n">schema</span><span class="o">);</span>
-        <span class="n">avroRecord</span><span class="o">.</span><span class="na">put</span><span class="o">(</span><span class="s">&#34;name&#34;</span><span class="o">,</span> <span class="s">&#34;Alyssa&#34;</span><span class="o">);</span>
-        <span class="n">avroRecord</span><span class="o">.</span><span class="na">put</span><span class="o">(</span><span class="s">&#34;favorite_number&#34;</span><span class="o">,</span> <span class="n">256</span><span class="o">);</span>
-
-        <span class="c1">// 发送消息
-</span><span class="c1"></span>        <span class="n">ProducerRecord</span><span class="o">&lt;</span><span class="n">String</span><span class="o">,</span> <span class="n">GenericRecord</span><span class="o">&gt;</span> <span class="n">record</span> <span class="o">=</span> <span class="k">new</span> <span class="n">ProducerRecord</span><span class="o">&lt;&gt;(</span><span class="n">topic</span><span class="o">,</span> <span class="n">key</span><span class="o">,</span> <span class="n">avroRecord</span><span class="o">);</span>
-        <span class="n">producer</span><span class="o">.</span><span class="na">send</span><span class="o">(</span><span class="n">record</span><span class="o">);</span>
-        <span class="n">producer</span><span class="o">.</span><span class="na">flush</span><span class="o">();</span>
-        <span class="n">producer</span><span class="o">.</span><span class="na">close</span><span class="o">();</span>
-    <span class="o">}</span>
-<span class="o">}</span>
-</code></pre></td></tr></table></div>
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">SchemaProducer</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="kd">public</span> <span class="kd">static</span> <span class="kt">void</span> <span class="nf">main</span><span class="o">(</span><span class="n">String</span><span class="o">[]</span> <span class="n">args</span><span class="o">)</span> <span class="kd">throws</span> <span class="n">Exception</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">        
+</span></span><span class="line"><span class="cl">        <span class="n">String</span> <span class="n">kafkaHost</span> <span class="o">=</span> <span class="s">&#34;xxx.xxx.xxx.xxx:9092&#34;</span><span class="o">;</span>
+</span></span><span class="line"><span class="cl">        <span class="n">String</span> <span class="n">topic</span> <span class="o">=</span> <span class="s">&#34;schema-tutorial&#34;</span><span class="o">;</span>
+</span></span><span class="line"><span class="cl">        <span class="n">String</span> <span class="n">schameFilename</span> <span class="o">=</span> <span class="s">&#34;user.json&#34;</span><span class="o">;</span>
+</span></span><span class="line"><span class="cl">        <span class="n">String</span> <span class="n">registryHost</span> <span class="o">=</span> <span class="s">&#34;http://xxx.xxx.xxx.xxx:8081&#34;</span><span class="o">;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">        <span class="n">Properties</span> <span class="n">props</span> <span class="o">=</span> <span class="k">new</span> <span class="n">Properties</span><span class="o">();</span>
+</span></span><span class="line"><span class="cl">        <span class="n">props</span><span class="o">.</span><span class="na">put</span><span class="o">(</span><span class="n">ProducerConfig</span><span class="o">.</span><span class="na">BOOTSTRAP_SERVERS_CONFIG</span><span class="o">,</span> <span class="n">kafkaHost</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">        <span class="n">props</span><span class="o">.</span><span class="na">put</span><span class="o">(</span><span class="n">ProducerConfig</span><span class="o">.</span><span class="na">KEY_SERIALIZER_CLASS_CONFIG</span><span class="o">,</span> <span class="n">StringSerializer</span><span class="o">.</span><span class="na">class</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">        <span class="c1">// 指定Value的序列化类，KafkaAvroSerializer
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>        <span class="n">props</span><span class="o">.</span><span class="na">put</span><span class="o">(</span><span class="n">ProducerConfig</span><span class="o">.</span><span class="na">VALUE_SERIALIZER_CLASS_CONFIG</span><span class="o">,</span> <span class="n">KafkaAvroSerializer</span><span class="o">.</span><span class="na">class</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">        <span class="c1">// 指定 registry 服务的地址
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>        <span class="c1">// 如果 Schema Registry 启动了高可用，那么这儿的配置值可以是多个服务地址，以逗号隔开
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>        <span class="n">props</span><span class="o">.</span><span class="na">put</span><span class="o">(</span><span class="s">&#34;schema.registry.url&#34;</span><span class="o">,</span> <span class="n">registryHost</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">        <span class="n">KafkaProducer</span><span class="o">&lt;</span><span class="n">String</span><span class="o">,</span> <span class="n">GenericRecord</span><span class="o">&gt;</span> <span class="n">producer</span> <span class="o">=</span> <span class="k">new</span> <span class="n">KafkaProducer</span><span class="o">&lt;&gt;(</span><span class="n">props</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">        <span class="n">String</span> <span class="n">key</span> <span class="o">=</span> <span class="s">&#34;Alyssa key&#34;</span><span class="o">;</span>
+</span></span><span class="line"><span class="cl">        <span class="n">Schema</span> <span class="n">schema</span> <span class="o">=</span> <span class="k">new</span> <span class="n">Schema</span><span class="o">.</span><span class="na">Parser</span><span class="o">().</span><span class="na">parse</span><span class="o">(</span><span class="k">new</span> <span class="n">File</span><span class="o">(</span><span class="n">schameFilename</span><span class="o">));</span>
+</span></span><span class="line"><span class="cl">        <span class="n">GenericRecord</span> <span class="n">avroRecord</span> <span class="o">=</span> <span class="k">new</span> <span class="n">GenericData</span><span class="o">.</span><span class="na">Record</span><span class="o">(</span><span class="n">schema</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">        <span class="n">avroRecord</span><span class="o">.</span><span class="na">put</span><span class="o">(</span><span class="s">&#34;name&#34;</span><span class="o">,</span> <span class="s">&#34;Alyssa&#34;</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">        <span class="n">avroRecord</span><span class="o">.</span><span class="na">put</span><span class="o">(</span><span class="s">&#34;favorite_number&#34;</span><span class="o">,</span> <span class="mi">256</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">        <span class="c1">// 发送消息
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>        <span class="n">ProducerRecord</span><span class="o">&lt;</span><span class="n">String</span><span class="o">,</span> <span class="n">GenericRecord</span><span class="o">&gt;</span> <span class="n">record</span> <span class="o">=</span> <span class="k">new</span> <span class="n">ProducerRecord</span><span class="o">&lt;&gt;(</span><span class="n">topic</span><span class="o">,</span> <span class="n">key</span><span class="o">,</span> <span class="n">avroRecord</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">        <span class="n">producer</span><span class="o">.</span><span class="na">send</span><span class="o">(</span><span class="n">record</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">        <span class="n">producer</span><span class="o">.</span><span class="na">flush</span><span class="o">();</span>
+</span></span><span class="line"><span class="cl">        <span class="n">producer</span><span class="o">.</span><span class="na">close</span><span class="o">();</span>
+</span></span><span class="line"><span class="cl">    <span class="o">}</span>
+</span></span><span class="line"><span class="cl"><span class="o">}</span>
+</span></span></code></pre></td></tr></table></div>
 </div>
 </div><p>上面使用到了 KafkaAvroSerializer 序列化消息，接下来看看 KafkaAvroSerializer 的 原理。我们知道 Kafka 的消息由 Key 和 Value 组成，这两部分的值可以有不同的数据格式。而这些数据格式都会保存在 Registry 服务端，客户端需要指定数据格式的名称（在 Registry 中叫做 subject），才能获取到。如果我们要获取当前消息 Key 这部分的数据格式，它对于的 subject 名称为 <topic>-key，如果要获取 Value 这部分的数据格式，它对应的 subject 名称为 <topic>-value（topic 为该消息所在的 topic 名称）。</p>
 <p>Kafka Schema Registry 还支持修改数据格式，这样对于同一个 topic ，它的消息有多个版本，前面的消息和最新的消息都可能会完全不一样，那么客户怎么区分呢。Registry 会为每种数据格式都会分配一个 id 号，然后发送的每条消息都会附带对应的数据格式 id。</p>
@@ -439,47 +439,47 @@
 </span><span class="lnt">40
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">CachedSchemaRegistryClient</span> <span class="kd">implements</span> <span class="n">SchemaRegistryClient</span> <span class="o">{</span>
-  <span class="c1">// Key 为数据格式的名称， 里面的 Value 为 Map类型，它对于的 Key 为数据格式，Value 为对应的 id 号
-</span><span class="c1"></span>  <span class="kd">private</span> <span class="kd">final</span> <span class="n">Map</span><span class="o">&lt;</span><span class="n">String</span><span class="o">,</span> <span class="n">Map</span><span class="o">&lt;</span><span class="n">Schema</span><span class="o">,</span> <span class="n">Integer</span><span class="o">&gt;&gt;</span> <span class="n">schemaCache</span><span class="o">;</span>
-  <span class="c1">// Key 为数据格式的名称，里面的 Value 为 Map类型，它对于的 Key 为 id 号，Value 为对应的数据格式
-</span><span class="c1"></span>  <span class="c1">// 这个集合比较特殊，当 Key 为 null 时，表示 id 到 数据格式的缓存
-</span><span class="c1"></span>  <span class="kd">private</span> <span class="kd">final</span> <span class="n">Map</span><span class="o">&lt;</span><span class="n">String</span><span class="o">,</span> <span class="n">Map</span><span class="o">&lt;</span><span class="n">Integer</span><span class="o">,</span> <span class="n">Schema</span><span class="o">&gt;&gt;</span> <span class="n">idCache</span><span class="o">;</span>
-        
-  <span class="nd">@Override</span>
-  <span class="kd">public</span> <span class="kd">synchronized</span> <span class="kt">int</span> <span class="nf">register</span><span class="o">(</span><span class="n">String</span> <span class="n">subject</span><span class="o">,</span> <span class="n">Schema</span> <span class="n">schema</span><span class="o">,</span> <span class="kt">int</span> <span class="n">version</span><span class="o">,</span> <span class="kt">int</span> <span class="n">id</span><span class="o">)</span>
-      <span class="kd">throws</span> <span class="n">IOException</span><span class="o">,</span> <span class="n">RestClientException</span> <span class="o">{</span>
-    <span class="c1">// 从schemaCache查找缓存，如果不存在则初始化空的哈希表
-</span><span class="c1"></span>    <span class="kd">final</span> <span class="n">Map</span><span class="o">&lt;</span><span class="n">Schema</span><span class="o">,</span> <span class="n">Integer</span><span class="o">&gt;</span> <span class="n">schemaIdMap</span> <span class="o">=</span>
-        <span class="n">schemaCache</span><span class="o">.</span><span class="na">computeIfAbsent</span><span class="o">(</span><span class="n">subject</span><span class="o">,</span> <span class="n">k</span> <span class="o">-&gt;</span> <span class="k">new</span> <span class="n">HashMap</span><span class="o">&lt;&gt;());</span>
-
-    <span class="c1">// 获取对应的 id 号
-</span><span class="c1"></span>    <span class="kd">final</span> <span class="n">Integer</span> <span class="n">cachedId</span> <span class="o">=</span> <span class="n">schemaIdMap</span><span class="o">.</span><span class="na">get</span><span class="o">(</span><span class="n">schema</span><span class="o">);</span>
-    <span class="k">if</span> <span class="o">(</span><span class="n">cachedId</span> <span class="o">!=</span> <span class="kc">null</span><span class="o">)</span> <span class="o">{</span>
-      <span class="c1">// 检查 id 号是否有冲突
-</span><span class="c1"></span>      <span class="k">if</span> <span class="o">(</span><span class="n">id</span> <span class="o">&gt;=</span> <span class="n">0</span> <span class="o">&amp;&amp;</span> <span class="n">id</span> <span class="o">!=</span> <span class="n">cachedId</span><span class="o">)</span> <span class="o">{</span>
-        <span class="k">throw</span> <span class="k">new</span> <span class="n">IllegalStateException</span><span class="o">(</span><span class="s">&#34;Schema already registered with id &#34;</span>
-            <span class="o">+</span> <span class="n">cachedId</span> <span class="o">+</span> <span class="s">&#34; instead of input id &#34;</span> <span class="o">+</span> <span class="n">id</span><span class="o">);</span>
-      <span class="o">}</span>
-      <span class="c1">// 返回缓存的 id 号
-</span><span class="c1"></span>      <span class="k">return</span> <span class="n">cachedId</span><span class="o">;</span>
-    <span class="o">}</span>
-
-    <span class="k">if</span> <span class="o">(</span><span class="n">schemaIdMap</span><span class="o">.</span><span class="na">size</span><span class="o">()</span> <span class="o">&gt;=</span> <span class="n">identityMapCapacity</span><span class="o">)</span> <span class="o">{</span>
-      <span class="k">throw</span> <span class="k">new</span> <span class="n">IllegalStateException</span><span class="o">(</span><span class="s">&#34;Too many schema objects created for &#34;</span> <span class="o">+</span> <span class="n">subject</span> <span class="o">+</span> <span class="s">&#34;!&#34;</span><span class="o">);</span>
-    <span class="o">}</span>
-      
-    <span class="c1">// 如果缓存没有，则向服务端发送 http 请求 
-</span><span class="c1"></span>    <span class="kd">final</span> <span class="kt">int</span> <span class="n">retrievedId</span> <span class="o">=</span> <span class="n">id</span> <span class="o">&gt;=</span> <span class="n">0</span>
-                            <span class="o">?</span> <span class="n">registerAndGetId</span><span class="o">(</span><span class="n">subject</span><span class="o">,</span> <span class="n">schema</span><span class="o">,</span> <span class="n">version</span><span class="o">,</span> <span class="n">id</span><span class="o">)</span>
-                            <span class="o">:</span> <span class="n">registerAndGetId</span><span class="o">(</span><span class="n">subject</span><span class="o">,</span> <span class="n">schema</span><span class="o">);</span>
-    <span class="c1">// 缓存结果
-</span><span class="c1"></span>    <span class="n">schemaIdMap</span><span class="o">.</span><span class="na">put</span><span class="o">(</span><span class="n">schema</span><span class="o">,</span> <span class="n">retrievedId</span><span class="o">);</span>
-    <span class="n">idCache</span><span class="o">.</span><span class="na">get</span><span class="o">(</span><span class="kc">null</span><span class="o">).</span><span class="na">put</span><span class="o">(</span><span class="n">retrievedId</span><span class="o">,</span> <span class="n">schema</span><span class="o">);</span>
-    <span class="k">return</span> <span class="n">retrievedId</span><span class="o">;</span>
-  <span class="o">}</span>
-<span class="o">}</span>    
-</code></pre></td></tr></table></div>
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">CachedSchemaRegistryClient</span> <span class="kd">implements</span> <span class="n">SchemaRegistryClient</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">  <span class="c1">// Key 为数据格式的名称， 里面的 Value 为 Map类型，它对于的 Key 为数据格式，Value 为对应的 id 号
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="kd">private</span> <span class="kd">final</span> <span class="n">Map</span><span class="o">&lt;</span><span class="n">String</span><span class="o">,</span> <span class="n">Map</span><span class="o">&lt;</span><span class="n">Schema</span><span class="o">,</span> <span class="n">Integer</span><span class="o">&gt;&gt;</span> <span class="n">schemaCache</span><span class="o">;</span>
+</span></span><span class="line"><span class="cl">  <span class="c1">// Key 为数据格式的名称，里面的 Value 为 Map类型，它对于的 Key 为 id 号，Value 为对应的数据格式
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="c1">// 这个集合比较特殊，当 Key 为 null 时，表示 id 到 数据格式的缓存
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="kd">private</span> <span class="kd">final</span> <span class="n">Map</span><span class="o">&lt;</span><span class="n">String</span><span class="o">,</span> <span class="n">Map</span><span class="o">&lt;</span><span class="n">Integer</span><span class="o">,</span> <span class="n">Schema</span><span class="o">&gt;&gt;</span> <span class="n">idCache</span><span class="o">;</span>
+</span></span><span class="line"><span class="cl">        
+</span></span><span class="line"><span class="cl">  <span class="nd">@Override</span>
+</span></span><span class="line"><span class="cl">  <span class="kd">public</span> <span class="kd">synchronized</span> <span class="kt">int</span> <span class="nf">register</span><span class="o">(</span><span class="n">String</span> <span class="n">subject</span><span class="o">,</span> <span class="n">Schema</span> <span class="n">schema</span><span class="o">,</span> <span class="kt">int</span> <span class="n">version</span><span class="o">,</span> <span class="kt">int</span> <span class="n">id</span><span class="o">)</span>
+</span></span><span class="line"><span class="cl">      <span class="kd">throws</span> <span class="n">IOException</span><span class="o">,</span> <span class="n">RestClientException</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// 从schemaCache查找缓存，如果不存在则初始化空的哈希表
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="kd">final</span> <span class="n">Map</span><span class="o">&lt;</span><span class="n">Schema</span><span class="o">,</span> <span class="n">Integer</span><span class="o">&gt;</span> <span class="n">schemaIdMap</span> <span class="o">=</span>
+</span></span><span class="line"><span class="cl">        <span class="n">schemaCache</span><span class="o">.</span><span class="na">computeIfAbsent</span><span class="o">(</span><span class="n">subject</span><span class="o">,</span> <span class="n">k</span> <span class="o">-&gt;</span> <span class="k">new</span> <span class="n">HashMap</span><span class="o">&lt;&gt;());</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="c1">// 获取对应的 id 号
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="kd">final</span> <span class="n">Integer</span> <span class="n">cachedId</span> <span class="o">=</span> <span class="n">schemaIdMap</span><span class="o">.</span><span class="na">get</span><span class="o">(</span><span class="n">schema</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">    <span class="k">if</span> <span class="o">(</span><span class="n">cachedId</span> <span class="o">!=</span> <span class="kc">null</span><span class="o">)</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">      <span class="c1">// 检查 id 号是否有冲突
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>      <span class="k">if</span> <span class="o">(</span><span class="n">id</span> <span class="o">&gt;=</span> <span class="mi">0</span> <span class="o">&amp;&amp;</span> <span class="n">id</span> <span class="o">!=</span> <span class="n">cachedId</span><span class="o">)</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">        <span class="k">throw</span> <span class="k">new</span> <span class="n">IllegalStateException</span><span class="o">(</span><span class="s">&#34;Schema already registered with id &#34;</span>
+</span></span><span class="line"><span class="cl">            <span class="o">+</span> <span class="n">cachedId</span> <span class="o">+</span> <span class="s">&#34; instead of input id &#34;</span> <span class="o">+</span> <span class="n">id</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">      <span class="o">}</span>
+</span></span><span class="line"><span class="cl">      <span class="c1">// 返回缓存的 id 号
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>      <span class="k">return</span> <span class="n">cachedId</span><span class="o">;</span>
+</span></span><span class="line"><span class="cl">    <span class="o">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="k">if</span> <span class="o">(</span><span class="n">schemaIdMap</span><span class="o">.</span><span class="na">size</span><span class="o">()</span> <span class="o">&gt;=</span> <span class="n">identityMapCapacity</span><span class="o">)</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">      <span class="k">throw</span> <span class="k">new</span> <span class="n">IllegalStateException</span><span class="o">(</span><span class="s">&#34;Too many schema objects created for &#34;</span> <span class="o">+</span> <span class="n">subject</span> <span class="o">+</span> <span class="s">&#34;!&#34;</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">    <span class="o">}</span>
+</span></span><span class="line"><span class="cl">      
+</span></span><span class="line"><span class="cl">    <span class="c1">// 如果缓存没有，则向服务端发送 http 请求 
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="kd">final</span> <span class="kt">int</span> <span class="n">retrievedId</span> <span class="o">=</span> <span class="n">id</span> <span class="o">&gt;=</span> <span class="mi">0</span>
+</span></span><span class="line"><span class="cl">                            <span class="o">?</span> <span class="n">registerAndGetId</span><span class="o">(</span><span class="n">subject</span><span class="o">,</span> <span class="n">schema</span><span class="o">,</span> <span class="n">version</span><span class="o">,</span> <span class="n">id</span><span class="o">)</span>
+</span></span><span class="line"><span class="cl">                            <span class="o">:</span> <span class="n">registerAndGetId</span><span class="o">(</span><span class="n">subject</span><span class="o">,</span> <span class="n">schema</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// 缓存结果
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="n">schemaIdMap</span><span class="o">.</span><span class="na">put</span><span class="o">(</span><span class="n">schema</span><span class="o">,</span> <span class="n">retrievedId</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">    <span class="n">idCache</span><span class="o">.</span><span class="na">get</span><span class="o">(</span><span class="kc">null</span><span class="o">).</span><span class="na">put</span><span class="o">(</span><span class="n">retrievedId</span><span class="o">,</span> <span class="n">schema</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">    <span class="k">return</span> <span class="n">retrievedId</span><span class="o">;</span>
+</span></span><span class="line"><span class="cl">  <span class="o">}</span>
+</span></span><span class="line"><span class="cl"><span class="o">}</span>    
+</span></span></code></pre></td></tr></table></div>
 </div>
 </div><h2 id="registry-服务端"><a href="#registry-服务端" class="anchor-link"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon anchor-icon"><path d="M326.612 185.391c59.747 59.809 58.927 155.698.36 214.59-.11.12-.24.25-.36.37l-67.2 67.2c-59.27 59.27-155.699 59.262-214.96 0-59.27-59.26-59.27-155.7 0-214.96l37.106-37.106c9.84-9.84 26.786-3.3 27.294 10.606.648 17.722 3.826 35.527 9.69 52.721 1.986 5.822.567 12.262-3.783 16.612l-13.087 13.087c-28.026 28.026-28.905 73.66-1.155 101.96 28.024 28.579 74.086 28.749 102.325.51l67.2-67.19c28.191-28.191 28.073-73.757 0-101.83-3.701-3.694-7.429-6.564-10.341-8.569a16.037 16.037 0 0 1-6.947-12.606c-.396-10.567 3.348-21.456 11.698-29.806l21.054-21.055c5.521-5.521 14.182-6.199 20.584-1.731a152.482 152.482 0 0 1 20.522 17.197zM467.547 44.449c-59.261-59.262-155.69-59.27-214.96 0l-67.2 67.2c-.12.12-.25.25-.36.37-58.566 58.892-59.387 154.781.36 214.59a152.454 152.454 0 0 0 20.521 17.196c6.402 4.468 15.064 3.789 20.584-1.731l21.054-21.055c8.35-8.35 12.094-19.239 11.698-29.806a16.037 16.037 0 0 0-6.947-12.606c-2.912-2.005-6.64-4.875-10.341-8.569-28.073-28.073-28.191-73.639 0-101.83l67.2-67.19c28.239-28.239 74.3-28.069 102.325.51 27.75 28.3 26.872 73.934-1.155 101.96l-13.087 13.087c-4.35 4.35-5.769 10.79-3.783 16.612 5.864 17.194 9.042 34.999 9.69 52.721.509 13.906 17.454 20.446 27.294 10.606l37.106-37.106c59.271-59.259 59.271-155.699.001-214.959z"/></svg></a>Registry 服务端</h2>
 <h3 id="存储数据"><a href="#存储数据" class="anchor-link"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon anchor-icon"><path d="M326.612 185.391c59.747 59.809 58.927 155.698.36 214.59-.11.12-.24.25-.36.37l-67.2 67.2c-59.27 59.27-155.699 59.262-214.96 0-59.27-59.26-59.27-155.7 0-214.96l37.106-37.106c9.84-9.84 26.786-3.3 27.294 10.606.648 17.722 3.826 35.527 9.69 52.721 1.986 5.822.567 12.262-3.783 16.612l-13.087 13.087c-28.026 28.026-28.905 73.66-1.155 101.96 28.024 28.579 74.086 28.749 102.325.51l67.2-67.19c28.191-28.191 28.073-73.757 0-101.83-3.701-3.694-7.429-6.564-10.341-8.569a16.037 16.037 0 0 1-6.947-12.606c-.396-10.567 3.348-21.456 11.698-29.806l21.054-21.055c5.521-5.521 14.182-6.199 20.584-1.731a152.482 152.482 0 0 1 20.522 17.197zM467.547 44.449c-59.261-59.262-155.69-59.27-214.96 0l-67.2 67.2c-.12.12-.25.25-.36.37-58.566 58.892-59.387 154.781.36 214.59a152.454 152.454 0 0 0 20.521 17.196c6.402 4.468 15.064 3.789 20.584-1.731l21.054-21.055c8.35-8.35 12.094-19.239 11.698-29.806a16.037 16.037 0 0 0-6.947-12.606c-2.912-2.005-6.64-4.875-10.341-8.569-28.073-28.073-28.191-73.639 0-101.83l67.2-67.19c28.239-28.239 74.3-28.069 102.325.51 27.75 28.3 26.872 73.934-1.155 101.96l-13.087 13.087c-4.35 4.35-5.769 10.79-3.783 16.612 5.864 17.194 9.042 34.999 9.69 52.721.509 13.906 17.454 20.446 27.294 10.606l37.106-37.106c59.271-59.259 59.271-155.699.001-214.959z"/></svg></a>存储数据</h3>
@@ -533,39 +533,39 @@
 </span><span class="lnt">32
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">KafkaSchemaRegistry</span> <span class="kd">implements</span> <span class="n">SchemaRegistry</span><span class="o">,</span> <span class="n">MasterAwareSchemaRegistry</span> <span class="o">{</span>
-
-  <span class="kd">public</span> <span class="kt">int</span> <span class="nf">registerOrForward</span><span class="o">(</span><span class="n">String</span> <span class="n">subject</span><span class="o">,</span>
-                               <span class="n">Schema</span> <span class="n">schema</span><span class="o">,</span>
-                               <span class="n">Map</span><span class="o">&lt;</span><span class="n">String</span><span class="o">,</span> <span class="n">String</span><span class="o">&gt;</span> <span class="n">headerProperties</span><span class="o">)</span>
-      <span class="kd">throws</span> <span class="n">SchemaRegistryException</span> <span class="o">{</span>
-    <span class="c1">// 检测这个schema是否之前注册过
-</span><span class="c1"></span>    <span class="n">Schema</span> <span class="n">existingSchema</span> <span class="o">=</span> <span class="n">lookUpSchemaUnderSubject</span><span class="o">(</span><span class="n">subject</span><span class="o">,</span> <span class="n">schema</span><span class="o">,</span> <span class="kc">false</span><span class="o">);</span>
-    <span class="k">if</span> <span class="o">(</span><span class="n">existingSchema</span> <span class="o">!=</span> <span class="kc">null</span><span class="o">)</span> <span class="o">{</span>
-      <span class="k">if</span> <span class="o">(</span><span class="n">schema</span><span class="o">.</span><span class="na">getId</span><span class="o">()</span> <span class="o">!=</span> <span class="kc">null</span> <span class="o">&amp;&amp;</span> <span class="n">schema</span><span class="o">.</span><span class="na">getId</span><span class="o">()</span> <span class="o">&gt;=</span> <span class="n">0</span> <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="n">schema</span><span class="o">.</span><span class="na">getId</span><span class="o">().</span><span class="na">equals</span><span class="o">(</span><span class="n">existingSchema</span><span class="o">.</span><span class="na">getId</span><span class="o">())</span>
-      <span class="o">)</span> <span class="o">{</span>
-        <span class="k">throw</span> <span class="k">new</span> <span class="n">IdDoesNotMatchException</span><span class="o">(</span><span class="n">existingSchema</span><span class="o">.</span><span class="na">getId</span><span class="o">(),</span> <span class="n">schema</span><span class="o">.</span><span class="na">getId</span><span class="o">());</span>
-      <span class="o">}</span>
-      <span class="k">return</span> <span class="n">existingSchema</span><span class="o">.</span><span class="na">getId</span><span class="o">();</span>
-    <span class="o">}</span>
-
-    <span class="kd">synchronized</span> <span class="o">(</span><span class="n">masterLock</span><span class="o">)</span> <span class="o">{</span>
-      <span class="k">if</span> <span class="o">(</span><span class="n">isMaster</span><span class="o">())</span> <span class="o">{</span>
-        <span class="c1">// 如果是leader，那么执行register方法，写schema到kafka
-</span><span class="c1"></span>        <span class="k">return</span> <span class="n">register</span><span class="o">(</span><span class="n">subject</span><span class="o">,</span> <span class="n">schema</span><span class="o">);</span>
-      <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
-        <span class="c1">// 如果是follower，那么转发请求到 leader
-</span><span class="c1"></span>        <span class="k">if</span> <span class="o">(</span><span class="n">masterIdentity</span> <span class="o">!=</span> <span class="kc">null</span><span class="o">)</span> <span class="o">{</span>
-          <span class="k">return</span> <span class="n">forwardRegisterRequestToMaster</span><span class="o">(</span><span class="n">subject</span><span class="o">,</span> <span class="n">schema</span><span class="o">,</span> <span class="n">headerProperties</span><span class="o">);</span>
-        <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
-          <span class="k">throw</span> <span class="k">new</span> <span class="n">UnknownMasterException</span><span class="o">(</span><span class="s">&#34;Register schema request failed since master is &#34;</span>
-                                           <span class="o">+</span> <span class="s">&#34;unknown&#34;</span><span class="o">);</span>
-        <span class="o">}</span>
-      <span class="o">}</span>
-    <span class="o">}</span>
-  <span class="o">}</span>
-<span class="o">}</span>
-</code></pre></td></tr></table></div>
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">KafkaSchemaRegistry</span> <span class="kd">implements</span> <span class="n">SchemaRegistry</span><span class="o">,</span> <span class="n">MasterAwareSchemaRegistry</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="kd">public</span> <span class="kt">int</span> <span class="nf">registerOrForward</span><span class="o">(</span><span class="n">String</span> <span class="n">subject</span><span class="o">,</span>
+</span></span><span class="line"><span class="cl">                               <span class="n">Schema</span> <span class="n">schema</span><span class="o">,</span>
+</span></span><span class="line"><span class="cl">                               <span class="n">Map</span><span class="o">&lt;</span><span class="n">String</span><span class="o">,</span> <span class="n">String</span><span class="o">&gt;</span> <span class="n">headerProperties</span><span class="o">)</span>
+</span></span><span class="line"><span class="cl">      <span class="kd">throws</span> <span class="n">SchemaRegistryException</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// 检测这个schema是否之前注册过
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="n">Schema</span> <span class="n">existingSchema</span> <span class="o">=</span> <span class="n">lookUpSchemaUnderSubject</span><span class="o">(</span><span class="n">subject</span><span class="o">,</span> <span class="n">schema</span><span class="o">,</span> <span class="kc">false</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">    <span class="k">if</span> <span class="o">(</span><span class="n">existingSchema</span> <span class="o">!=</span> <span class="kc">null</span><span class="o">)</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">      <span class="k">if</span> <span class="o">(</span><span class="n">schema</span><span class="o">.</span><span class="na">getId</span><span class="o">()</span> <span class="o">!=</span> <span class="kc">null</span> <span class="o">&amp;&amp;</span> <span class="n">schema</span><span class="o">.</span><span class="na">getId</span><span class="o">()</span> <span class="o">&gt;=</span> <span class="mi">0</span> <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="n">schema</span><span class="o">.</span><span class="na">getId</span><span class="o">().</span><span class="na">equals</span><span class="o">(</span><span class="n">existingSchema</span><span class="o">.</span><span class="na">getId</span><span class="o">())</span>
+</span></span><span class="line"><span class="cl">      <span class="o">)</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">        <span class="k">throw</span> <span class="k">new</span> <span class="n">IdDoesNotMatchException</span><span class="o">(</span><span class="n">existingSchema</span><span class="o">.</span><span class="na">getId</span><span class="o">(),</span> <span class="n">schema</span><span class="o">.</span><span class="na">getId</span><span class="o">());</span>
+</span></span><span class="line"><span class="cl">      <span class="o">}</span>
+</span></span><span class="line"><span class="cl">      <span class="k">return</span> <span class="n">existingSchema</span><span class="o">.</span><span class="na">getId</span><span class="o">();</span>
+</span></span><span class="line"><span class="cl">    <span class="o">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="kd">synchronized</span> <span class="o">(</span><span class="n">masterLock</span><span class="o">)</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">      <span class="k">if</span> <span class="o">(</span><span class="n">isMaster</span><span class="o">())</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">        <span class="c1">// 如果是leader，那么执行register方法，写schema到kafka
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>        <span class="k">return</span> <span class="n">register</span><span class="o">(</span><span class="n">subject</span><span class="o">,</span> <span class="n">schema</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">      <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">        <span class="c1">// 如果是follower，那么转发请求到 leader
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>        <span class="k">if</span> <span class="o">(</span><span class="n">masterIdentity</span> <span class="o">!=</span> <span class="kc">null</span><span class="o">)</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">          <span class="k">return</span> <span class="n">forwardRegisterRequestToMaster</span><span class="o">(</span><span class="n">subject</span><span class="o">,</span> <span class="n">schema</span><span class="o">,</span> <span class="n">headerProperties</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">        <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">          <span class="k">throw</span> <span class="k">new</span> <span class="n">UnknownMasterException</span><span class="o">(</span><span class="s">&#34;Register schema request failed since master is &#34;</span>
+</span></span><span class="line"><span class="cl">                                           <span class="o">+</span> <span class="s">&#34;unknown&#34;</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">        <span class="o">}</span>
+</span></span><span class="line"><span class="cl">      <span class="o">}</span>
+</span></span><span class="line"><span class="cl">    <span class="o">}</span>
+</span></span><span class="line"><span class="cl">  <span class="o">}</span>
+</span></span><span class="line"><span class="cl"><span class="o">}</span>
+</span></span></code></pre></td></tr></table></div>
 </div>
 </div><p>上面调用了 register 方法保存 schema，同时它也为这个 schema 分配了一个 id。这里简单说下自增 id 生成器的算法，目前有两种实现方式。一种是基于内存的方式，自己维护一个计数器。另外一种是基于zookeeper的方式，每次从 zookeeper 获取一个 id 段，然后一个 id，一个 id 的分配出去。</p>
 <p>处理获取 schema 请求</p>
@@ -602,36 +602,36 @@
 </span><span class="lnt">29
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">KafkaSchemaRegistry</span> <span class="kd">implements</span> <span class="n">SchemaRegistry</span><span class="o">,</span> <span class="n">MasterAwareSchemaRegistry</span> <span class="o">{</span>
-  <span class="c1">// 负责读取kafka
-</span><span class="c1"></span>  <span class="kd">final</span> <span class="n">KafkaStore</span><span class="o">&lt;</span><span class="n">SchemaRegistryKey</span><span class="o">,</span> <span class="n">SchemaRegistryValue</span><span class="o">&gt;</span> <span class="n">kafkaStore</span><span class="o">;</span>
-  <span class="c1">// 缓存
-</span><span class="c1"></span>  <span class="kd">private</span> <span class="kd">final</span> <span class="n">LookupCache</span><span class="o">&lt;</span><span class="n">SchemaRegistryKey</span><span class="o">,</span> <span class="n">SchemaRegistryValue</span><span class="o">&gt;</span> <span class="n">lookupCache</span><span class="o">;</span>
-    
-  <span class="nd">@Override</span>
-  <span class="kd">public</span> <span class="n">SchemaString</span> <span class="nf">get</span><span class="o">(</span><span class="kt">int</span> <span class="n">id</span><span class="o">)</span> <span class="kd">throws</span> <span class="n">SchemaRegistryException</span> <span class="o">{</span>
-    <span class="n">SchemaValue</span> <span class="n">schema</span> <span class="o">=</span> <span class="kc">null</span><span class="o">;</span>
-    <span class="k">try</span> <span class="o">{</span>
-      <span class="c1">// 从缓存中查找，根据 id 获取消息的key
-</span><span class="c1"></span>      <span class="n">SchemaKey</span> <span class="n">subjectVersionKey</span> <span class="o">=</span> <span class="n">lookupCache</span><span class="o">.</span><span class="na">schemaKeyById</span><span class="o">(</span><span class="n">id</span><span class="o">);</span>
-      <span class="k">if</span> <span class="o">(</span><span class="n">subjectVersionKey</span> <span class="o">==</span> <span class="kc">null</span><span class="o">)</span> <span class="o">{</span>
-        <span class="k">return</span> <span class="kc">null</span><span class="o">;</span>
-      <span class="o">}</span>
-      <span class="c1">// 从kafka中读取消息的value
-</span><span class="c1"></span>      <span class="n">schema</span> <span class="o">=</span> <span class="o">(</span><span class="n">SchemaValue</span><span class="o">)</span> <span class="n">kafkaStore</span><span class="o">.</span><span class="na">get</span><span class="o">(</span><span class="n">subjectVersionKey</span><span class="o">);</span>
-      <span class="k">if</span> <span class="o">(</span><span class="n">schema</span> <span class="o">==</span> <span class="kc">null</span><span class="o">)</span> <span class="o">{</span>
-        <span class="k">return</span> <span class="kc">null</span><span class="o">;</span>
-      <span class="o">}</span>
-    <span class="o">}</span> <span class="k">catch</span> <span class="o">(</span><span class="n">StoreException</span> <span class="n">e</span><span class="o">)</span> <span class="o">{</span>
-      <span class="k">throw</span> <span class="k">new</span> <span class="n">SchemaRegistryStoreException</span><span class="o">(...);</span>
-    <span class="o">}</span>
-    <span class="c1">// 返回结果
-</span><span class="c1"></span>    <span class="n">SchemaString</span> <span class="n">schemaString</span> <span class="o">=</span> <span class="k">new</span> <span class="n">SchemaString</span><span class="o">();</span>
-    <span class="n">schemaString</span><span class="o">.</span><span class="na">setSchemaString</span><span class="o">(</span><span class="n">schema</span><span class="o">.</span><span class="na">getSchema</span><span class="o">());</span>
-    <span class="k">return</span> <span class="n">schemaString</span><span class="o">;</span>
-  <span class="o">}</span>
-<span class="o">}</span>   
-</code></pre></td></tr></table></div>
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">KafkaSchemaRegistry</span> <span class="kd">implements</span> <span class="n">SchemaRegistry</span><span class="o">,</span> <span class="n">MasterAwareSchemaRegistry</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">  <span class="c1">// 负责读取kafka
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="kd">final</span> <span class="n">KafkaStore</span><span class="o">&lt;</span><span class="n">SchemaRegistryKey</span><span class="o">,</span> <span class="n">SchemaRegistryValue</span><span class="o">&gt;</span> <span class="n">kafkaStore</span><span class="o">;</span>
+</span></span><span class="line"><span class="cl">  <span class="c1">// 缓存
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="kd">private</span> <span class="kd">final</span> <span class="n">LookupCache</span><span class="o">&lt;</span><span class="n">SchemaRegistryKey</span><span class="o">,</span> <span class="n">SchemaRegistryValue</span><span class="o">&gt;</span> <span class="n">lookupCache</span><span class="o">;</span>
+</span></span><span class="line"><span class="cl">    
+</span></span><span class="line"><span class="cl">  <span class="nd">@Override</span>
+</span></span><span class="line"><span class="cl">  <span class="kd">public</span> <span class="n">SchemaString</span> <span class="nf">get</span><span class="o">(</span><span class="kt">int</span> <span class="n">id</span><span class="o">)</span> <span class="kd">throws</span> <span class="n">SchemaRegistryException</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">    <span class="n">SchemaValue</span> <span class="n">schema</span> <span class="o">=</span> <span class="kc">null</span><span class="o">;</span>
+</span></span><span class="line"><span class="cl">    <span class="k">try</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">      <span class="c1">// 从缓存中查找，根据 id 获取消息的key
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>      <span class="n">SchemaKey</span> <span class="n">subjectVersionKey</span> <span class="o">=</span> <span class="n">lookupCache</span><span class="o">.</span><span class="na">schemaKeyById</span><span class="o">(</span><span class="n">id</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">      <span class="k">if</span> <span class="o">(</span><span class="n">subjectVersionKey</span> <span class="o">==</span> <span class="kc">null</span><span class="o">)</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">        <span class="k">return</span> <span class="kc">null</span><span class="o">;</span>
+</span></span><span class="line"><span class="cl">      <span class="o">}</span>
+</span></span><span class="line"><span class="cl">      <span class="c1">// 从kafka中读取消息的value
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>      <span class="n">schema</span> <span class="o">=</span> <span class="o">(</span><span class="n">SchemaValue</span><span class="o">)</span> <span class="n">kafkaStore</span><span class="o">.</span><span class="na">get</span><span class="o">(</span><span class="n">subjectVersionKey</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">      <span class="k">if</span> <span class="o">(</span><span class="n">schema</span> <span class="o">==</span> <span class="kc">null</span><span class="o">)</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">        <span class="k">return</span> <span class="kc">null</span><span class="o">;</span>
+</span></span><span class="line"><span class="cl">      <span class="o">}</span>
+</span></span><span class="line"><span class="cl">    <span class="o">}</span> <span class="k">catch</span> <span class="o">(</span><span class="n">StoreException</span> <span class="n">e</span><span class="o">)</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">      <span class="k">throw</span> <span class="k">new</span> <span class="n">SchemaRegistryStoreException</span><span class="o">(...);</span>
+</span></span><span class="line"><span class="cl">    <span class="o">}</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// 返回结果
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="n">SchemaString</span> <span class="n">schemaString</span> <span class="o">=</span> <span class="k">new</span> <span class="n">SchemaString</span><span class="o">();</span>
+</span></span><span class="line"><span class="cl">    <span class="n">schemaString</span><span class="o">.</span><span class="na">setSchemaString</span><span class="o">(</span><span class="n">schema</span><span class="o">.</span><span class="na">getSchema</span><span class="o">());</span>
+</span></span><span class="line"><span class="cl">    <span class="k">return</span> <span class="n">schemaString</span><span class="o">;</span>
+</span></span><span class="line"><span class="cl">  <span class="o">}</span>
+</span></span><span class="line"><span class="cl"><span class="o">}</span>   
+</span></span></code></pre></td></tr></table></div>
 </div>
 </div><h3 id="高可用"><a href="#高可用" class="anchor-link"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon anchor-icon"><path d="M326.612 185.391c59.747 59.809 58.927 155.698.36 214.59-.11.12-.24.25-.36.37l-67.2 67.2c-59.27 59.27-155.699 59.262-214.96 0-59.27-59.26-59.27-155.7 0-214.96l37.106-37.106c9.84-9.84 26.786-3.3 27.294 10.606.648 17.722 3.826 35.527 9.69 52.721 1.986 5.822.567 12.262-3.783 16.612l-13.087 13.087c-28.026 28.026-28.905 73.66-1.155 101.96 28.024 28.579 74.086 28.749 102.325.51l67.2-67.19c28.191-28.191 28.073-73.757 0-101.83-3.701-3.694-7.429-6.564-10.341-8.569a16.037 16.037 0 0 1-6.947-12.606c-.396-10.567 3.348-21.456 11.698-29.806l21.054-21.055c5.521-5.521 14.182-6.199 20.584-1.731a152.482 152.482 0 0 1 20.522 17.197zM467.547 44.449c-59.261-59.262-155.69-59.27-214.96 0l-67.2 67.2c-.12.12-.25.25-.36.37-58.566 58.892-59.387 154.781.36 214.59a152.454 152.454 0 0 0 20.521 17.196c6.402 4.468 15.064 3.789 20.584-1.731l21.054-21.055c8.35-8.35 12.094-19.239 11.698-29.806a16.037 16.037 0 0 0-6.947-12.606c-2.912-2.005-6.64-4.875-10.341-8.569-28.073-28.073-28.191-73.639 0-101.83l67.2-67.19c28.239-28.239 74.3-28.069 102.325.51 27.75 28.3 26.872 73.934-1.155 101.96l-13.087 13.087c-4.35 4.35-5.769 10.79-3.783 16.612 5.864 17.194 9.042 34.999 9.69 52.721.509 13.906 17.454 20.446 27.294 10.606l37.106-37.106c59.271-59.259 59.271-155.699.001-214.959z"/></svg></a>高可用</h3>
 <p>如果要实现高可用，需要运行多个 Registry 服务，这些服务中必须选择出一个 leader，所有的请求都是最终 由 leader 来负责。当 leader 挂掉之后，就会触发选举操作，来选举出新的 leader。选举的实现有两种方式，基于kafka 和 基于 zookeeper。</p>
@@ -700,66 +700,66 @@
 </span><span class="lnt">59
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">KafkaGroupMasterElector</span> <span class="kd">implements</span> <span class="n">MasterElector</span><span class="o">,</span> <span class="n">SchemaRegistryRebalanceListener</span> <span class="o">{</span>
-
-
-  <span class="kd">public</span> <span class="kt">void</span> <span class="nf">init</span><span class="o">()</span> <span class="kd">throws</span> <span class="n">SchemaRegistryTimeoutException</span><span class="o">,</span> <span class="n">SchemaRegistryStoreException</span> <span class="o">{</span>
-    <span class="c1">// 心跳线程
-</span><span class="c1"></span>    <span class="n">executor</span> <span class="o">=</span> <span class="n">Executors</span><span class="o">.</span><span class="na">newSingleThreadExecutor</span><span class="o">();</span>
-    <span class="n">executor</span><span class="o">.</span><span class="na">submit</span><span class="o">(</span><span class="k">new</span> <span class="n">Runnable</span><span class="o">()</span> <span class="o">{</span>
-      <span class="nd">@Override</span>
-      <span class="kd">public</span> <span class="kt">void</span> <span class="nf">run</span><span class="o">()</span> <span class="o">{</span>
-        <span class="k">try</span> <span class="o">{</span>
-          <span class="k">while</span> <span class="o">(!</span><span class="n">stopped</span><span class="o">.</span><span class="na">get</span><span class="o">())</span> <span class="o">{</span>
-            <span class="c1">// 循环调用poll方法，处理心跳
-</span><span class="c1"></span>            <span class="n">coordinator</span><span class="o">.</span><span class="na">poll</span><span class="o">(</span><span class="n">Integer</span><span class="o">.</span><span class="na">MAX_VALUE</span><span class="o">);</span>
-          <span class="o">}</span>
-        <span class="o">}</span> <span class="k">catch</span> <span class="o">(</span><span class="n">Throwable</span> <span class="n">t</span><span class="o">)</span> <span class="o">{</span>
-          <span class="n">log</span><span class="o">.</span><span class="na">error</span><span class="o">(</span><span class="s">&#34;Unexpected exception in schema registry group processing thread&#34;</span><span class="o">,</span> <span class="n">t</span><span class="o">);</span>
-        <span class="o">}</span>
-      <span class="o">}</span>
-    <span class="o">});</span>
-
-  <span class="kd">public</span> <span class="kt">void</span> <span class="nf">onRevoked</span><span class="o">()</span> <span class="o">{</span>
-    <span class="n">log</span><span class="o">.</span><span class="na">info</span><span class="o">(</span><span class="s">&#34;Rebalance started&#34;</span><span class="o">);</span>
-    <span class="k">try</span> <span class="o">{</span>
-      <span class="c1">// 因为要重新选举，所以将之前的leader清空
-</span><span class="c1"></span>      <span class="n">schemaRegistry</span><span class="o">.</span><span class="na">setMaster</span><span class="o">(</span><span class="kc">null</span><span class="o">);</span>
-    <span class="o">}</span> <span class="k">catch</span> <span class="o">(</span><span class="n">SchemaRegistryException</span> <span class="n">e</span><span class="o">)</span> <span class="o">{</span>
-      <span class="c1">// This shouldn&#39;t be possible with this implementation. The exceptions from setMaster come
-</span><span class="c1"></span>      <span class="c1">// from it calling nextRange in this class, but this implementation doesn&#39;t require doing
-</span><span class="c1"></span>      <span class="c1">// any IO, so the errors that can occur in the ZK implementation should not be possible here.
-</span><span class="c1"></span>      <span class="n">log</span><span class="o">.</span><span class="na">error</span><span class="o">(</span>
-          <span class="s">&#34;Error when updating master, we will not be able to forward requests to the master&#34;</span><span class="o">,</span>
-          <span class="n">e</span>
-      <span class="o">);</span>
-    <span class="o">}</span>
-  <span class="o">}</span>
-  
-  <span class="c1">// assignment为选举结果
-</span><span class="c1"></span>  <span class="kd">public</span> <span class="kt">void</span> <span class="nf">onAssigned</span><span class="o">(</span><span class="n">SchemaRegistryProtocol</span><span class="o">.</span><span class="na">Assignment</span> <span class="n">assignment</span><span class="o">,</span> <span class="kt">int</span> <span class="n">generation</span><span class="o">)</span> <span class="o">{</span>
-    <span class="n">log</span><span class="o">.</span><span class="na">info</span><span class="o">(</span><span class="s">&#34;Finished rebalance with master election result: {}&#34;</span><span class="o">,</span> <span class="n">assignment</span><span class="o">);</span>
-    <span class="k">try</span> <span class="o">{</span>
-      <span class="k">switch</span> <span class="o">(</span><span class="n">assignment</span><span class="o">.</span><span class="na">error</span><span class="o">())</span> <span class="o">{</span>
-        <span class="k">case</span> <span class="n">SchemaRegistryProtocol</span><span class="o">.</span><span class="na">Assignment</span><span class="o">.</span><span class="na">NO_ERROR</span><span class="o">:</span>
-          <span class="k">if</span> <span class="o">(</span><span class="n">assignment</span><span class="o">.</span><span class="na">masterIdentity</span><span class="o">()</span> <span class="o">==</span> <span class="kc">null</span><span class="o">)</span> <span class="o">{</span>
-            <span class="n">log</span><span class="o">.</span><span class="na">error</span><span class="o">(...);</span>
-          <span class="o">}</span>
-          <span class="c1">// 记录分配结果
-</span><span class="c1"></span>          <span class="n">schemaRegistry</span><span class="o">.</span><span class="na">setMaster</span><span class="o">(</span><span class="n">assignment</span><span class="o">.</span><span class="na">masterIdentity</span><span class="o">());</span>
-          <span class="n">joinedLatch</span><span class="o">.</span><span class="na">countDown</span><span class="o">();</span>
-          <span class="k">break</span><span class="o">;</span>
-        <span class="k">case</span> <span class="n">SchemaRegistryProtocol</span><span class="o">.</span><span class="na">Assignment</span><span class="o">.</span><span class="na">DUPLICATE_URLS</span><span class="o">:</span>
-          <span class="k">throw</span> <span class="k">new</span> <span class="n">IllegalStateException</span><span class="o">(...);</span>
-        <span class="k">default</span><span class="o">:</span>
-          <span class="k">throw</span> <span class="k">new</span> <span class="n">IllegalStateException</span><span class="o">(...);</span>
-      <span class="o">}</span>
-    <span class="o">}</span> <span class="k">catch</span> <span class="o">(</span><span class="n">SchemaRegistryException</span> <span class="n">e</span><span class="o">)</span> <span class="o">{</span>
-      <span class="o">......</span>
-    <span class="o">}</span>
-  <span class="o">}</span>
-<span class="o">}</span> 
-</code></pre></td></tr></table></div>
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">KafkaGroupMasterElector</span> <span class="kd">implements</span> <span class="n">MasterElector</span><span class="o">,</span> <span class="n">SchemaRegistryRebalanceListener</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="kd">public</span> <span class="kt">void</span> <span class="nf">init</span><span class="o">()</span> <span class="kd">throws</span> <span class="n">SchemaRegistryTimeoutException</span><span class="o">,</span> <span class="n">SchemaRegistryStoreException</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// 心跳线程
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="n">executor</span> <span class="o">=</span> <span class="n">Executors</span><span class="o">.</span><span class="na">newSingleThreadExecutor</span><span class="o">();</span>
+</span></span><span class="line"><span class="cl">    <span class="n">executor</span><span class="o">.</span><span class="na">submit</span><span class="o">(</span><span class="k">new</span> <span class="n">Runnable</span><span class="o">()</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">      <span class="nd">@Override</span>
+</span></span><span class="line"><span class="cl">      <span class="kd">public</span> <span class="kt">void</span> <span class="nf">run</span><span class="o">()</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">        <span class="k">try</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">          <span class="k">while</span> <span class="o">(!</span><span class="n">stopped</span><span class="o">.</span><span class="na">get</span><span class="o">())</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">            <span class="c1">// 循环调用poll方法，处理心跳
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>            <span class="n">coordinator</span><span class="o">.</span><span class="na">poll</span><span class="o">(</span><span class="n">Integer</span><span class="o">.</span><span class="na">MAX_VALUE</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">          <span class="o">}</span>
+</span></span><span class="line"><span class="cl">        <span class="o">}</span> <span class="k">catch</span> <span class="o">(</span><span class="n">Throwable</span> <span class="n">t</span><span class="o">)</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">          <span class="n">log</span><span class="o">.</span><span class="na">error</span><span class="o">(</span><span class="s">&#34;Unexpected exception in schema registry group processing thread&#34;</span><span class="o">,</span> <span class="n">t</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">        <span class="o">}</span>
+</span></span><span class="line"><span class="cl">      <span class="o">}</span>
+</span></span><span class="line"><span class="cl">    <span class="o">});</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="kd">public</span> <span class="kt">void</span> <span class="nf">onRevoked</span><span class="o">()</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">    <span class="n">log</span><span class="o">.</span><span class="na">info</span><span class="o">(</span><span class="s">&#34;Rebalance started&#34;</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">    <span class="k">try</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">      <span class="c1">// 因为要重新选举，所以将之前的leader清空
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>      <span class="n">schemaRegistry</span><span class="o">.</span><span class="na">setMaster</span><span class="o">(</span><span class="kc">null</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">    <span class="o">}</span> <span class="k">catch</span> <span class="o">(</span><span class="n">SchemaRegistryException</span> <span class="n">e</span><span class="o">)</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">      <span class="c1">// This shouldn&#39;t be possible with this implementation. The exceptions from setMaster come
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>      <span class="c1">// from it calling nextRange in this class, but this implementation doesn&#39;t require doing
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>      <span class="c1">// any IO, so the errors that can occur in the ZK implementation should not be possible here.
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>      <span class="n">log</span><span class="o">.</span><span class="na">error</span><span class="o">(</span>
+</span></span><span class="line"><span class="cl">          <span class="s">&#34;Error when updating master, we will not be able to forward requests to the master&#34;</span><span class="o">,</span>
+</span></span><span class="line"><span class="cl">          <span class="n">e</span>
+</span></span><span class="line"><span class="cl">      <span class="o">);</span>
+</span></span><span class="line"><span class="cl">    <span class="o">}</span>
+</span></span><span class="line"><span class="cl">  <span class="o">}</span>
+</span></span><span class="line"><span class="cl">  
+</span></span><span class="line"><span class="cl">  <span class="c1">// assignment为选举结果
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="kd">public</span> <span class="kt">void</span> <span class="nf">onAssigned</span><span class="o">(</span><span class="n">SchemaRegistryProtocol</span><span class="o">.</span><span class="na">Assignment</span> <span class="n">assignment</span><span class="o">,</span> <span class="kt">int</span> <span class="n">generation</span><span class="o">)</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">    <span class="n">log</span><span class="o">.</span><span class="na">info</span><span class="o">(</span><span class="s">&#34;Finished rebalance with master election result: {}&#34;</span><span class="o">,</span> <span class="n">assignment</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">    <span class="k">try</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">      <span class="k">switch</span> <span class="o">(</span><span class="n">assignment</span><span class="o">.</span><span class="na">error</span><span class="o">())</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">        <span class="k">case</span> <span class="n">SchemaRegistryProtocol</span><span class="o">.</span><span class="na">Assignment</span><span class="o">.</span><span class="na">NO_ERROR</span><span class="o">:</span>
+</span></span><span class="line"><span class="cl">          <span class="k">if</span> <span class="o">(</span><span class="n">assignment</span><span class="o">.</span><span class="na">masterIdentity</span><span class="o">()</span> <span class="o">==</span> <span class="kc">null</span><span class="o">)</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">            <span class="n">log</span><span class="o">.</span><span class="na">error</span><span class="o">(...);</span>
+</span></span><span class="line"><span class="cl">          <span class="o">}</span>
+</span></span><span class="line"><span class="cl">          <span class="c1">// 记录分配结果
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>          <span class="n">schemaRegistry</span><span class="o">.</span><span class="na">setMaster</span><span class="o">(</span><span class="n">assignment</span><span class="o">.</span><span class="na">masterIdentity</span><span class="o">());</span>
+</span></span><span class="line"><span class="cl">          <span class="n">joinedLatch</span><span class="o">.</span><span class="na">countDown</span><span class="o">();</span>
+</span></span><span class="line"><span class="cl">          <span class="k">break</span><span class="o">;</span>
+</span></span><span class="line"><span class="cl">        <span class="k">case</span> <span class="n">SchemaRegistryProtocol</span><span class="o">.</span><span class="na">Assignment</span><span class="o">.</span><span class="na">DUPLICATE_URLS</span><span class="o">:</span>
+</span></span><span class="line"><span class="cl">          <span class="k">throw</span> <span class="k">new</span> <span class="n">IllegalStateException</span><span class="o">(...);</span>
+</span></span><span class="line"><span class="cl">        <span class="k">default</span><span class="o">:</span>
+</span></span><span class="line"><span class="cl">          <span class="k">throw</span> <span class="k">new</span> <span class="n">IllegalStateException</span><span class="o">(...);</span>
+</span></span><span class="line"><span class="cl">      <span class="o">}</span>
+</span></span><span class="line"><span class="cl">    <span class="o">}</span> <span class="k">catch</span> <span class="o">(</span><span class="n">SchemaRegistryException</span> <span class="n">e</span><span class="o">)</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">      <span class="o">......</span>
+</span></span><span class="line"><span class="cl">    <span class="o">}</span>
+</span></span><span class="line"><span class="cl">  <span class="o">}</span>
+</span></span><span class="line"><span class="cl"><span class="o">}</span> 
+</span></span></code></pre></td></tr></table></div>
 </div>
 </div><p>基于 zookeeper 的方式，会更加简单，效率也更高。因为只有 leader 挂掉，zookeeper 才会触发重新选举。而基于 kafka 的方式，只要是有一个成员挂掉，不管它是不是 leader，都会触发重新选举。如果这个成员不是 leader，则会造成不必要的选举。</p>
 <p>使用zookeeper方式的原理是，所有 Registry 服务都会监听一个临时节点，而只有 leader 才会占有这个节点。当 leader 挂掉之后，临时节点会消失。其余的服务发现临时节点不存在，就会立即尝试重新创建，而只有一个服务能够创建成功，成为 leader。</p>
@@ -825,65 +825,65 @@
 </span><span class="lnt">58
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">ZookeeperMasterElector</span> <span class="kd">implements</span> <span class="n">MasterElector</span> <span class="o">{</span>
-  <span class="c1">// 选举使用的临时节点    
-</span><span class="c1"></span>  <span class="kd">private</span> <span class="kd">static</span> <span class="kd">final</span> <span class="n">String</span> <span class="n">MASTER_PATH</span> <span class="o">=</span> <span class="s">&#34;/schema_registry_master&#34;</span><span class="o">;</span>
-    
-  <span class="kd">public</span> <span class="kt">void</span> <span class="nf">electMaster</span><span class="o">()</span> <span class="kd">throws</span>
-      <span class="n">SchemaRegistryStoreException</span><span class="o">,</span> <span class="n">SchemaRegistryTimeoutException</span><span class="o">,</span>
-      <span class="n">SchemaRegistryInitializationException</span><span class="o">,</span> <span class="n">IdGenerationException</span> <span class="o">{</span>
-    <span class="n">SchemaRegistryIdentity</span> <span class="n">masterIdentity</span> <span class="o">=</span> <span class="kc">null</span><span class="o">;</span>
-    <span class="k">try</span> <span class="o">{</span>
-      <span class="c1">// 尝试在zookeeper中，创建临时节点
-</span><span class="c1"></span>      <span class="n">zkUtils</span><span class="o">.</span><span class="na">createEphemeralPathExpectConflict</span><span class="o">(</span><span class="n">MASTER_PATH</span><span class="o">,</span> <span class="n">myIdentityString</span><span class="o">,</span>
-                                                <span class="n">zkUtils</span><span class="o">.</span><span class="na">defaultAcls</span><span class="o">(</span><span class="n">MASTER_PATH</span><span class="o">));</span>
-      <span class="n">log</span><span class="o">.</span><span class="na">info</span><span class="o">(</span><span class="s">&#34;Successfully elected the new master: &#34;</span> <span class="o">+</span> <span class="n">myIdentityString</span><span class="o">);</span>
-      <span class="n">masterIdentity</span> <span class="o">=</span> <span class="n">myIdentity</span><span class="o">;</span>
-      <span class="n">schemaRegistry</span><span class="o">.</span><span class="na">setMaster</span><span class="o">(</span><span class="n">masterIdentity</span><span class="o">);</span>
-    <span class="o">}</span> <span class="k">catch</span> <span class="o">(</span><span class="n">ZkNodeExistsException</span> <span class="n">znee</span><span class="o">)</span> <span class="o">{</span>
-      <span class="c1">// 创建失败
-</span><span class="c1"></span>      <span class="n">readCurrentMaster</span><span class="o">();</span>
-    <span class="o">}</span>
-  <span class="o">}</span>    
-    
-    
-  <span class="kd">private</span> <span class="kd">class</span> <span class="nc">MasterChangeListener</span> <span class="kd">implements</span> <span class="n">IZkDataListener</span> <span class="o">{</span>
-
-    <span class="kd">public</span> <span class="nf">MasterChangeListener</span><span class="o">()</span> <span class="o">{</span>
-    <span class="o">}</span>
-
-    <span class="c1">// 当数据被更改后，触发
-</span><span class="c1"></span>    <span class="nd">@Override</span>
-    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">handleDataChange</span><span class="o">(</span><span class="n">String</span> <span class="n">dataPath</span><span class="o">,</span> <span class="n">Object</span> <span class="n">data</span><span class="o">)</span> <span class="o">{</span>
-      
-      <span class="k">try</span> <span class="o">{</span>
-        <span class="k">if</span> <span class="o">(</span><span class="n">isEligibleForMasterElection</span><span class="o">)</span> <span class="o">{</span>
-          <span class="c1">// 选举
-</span><span class="c1"></span>          <span class="n">electMaster</span><span class="o">();</span>
-        <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
-          <span class="c1">// 从节点中读取leader
-</span><span class="c1"></span>          <span class="n">readCurrentMaster</span><span class="o">();</span>
-        <span class="o">}</span>
-      <span class="o">}</span> <span class="k">catch</span> <span class="o">(</span><span class="n">SchemaRegistryException</span> <span class="n">e</span><span class="o">)</span> <span class="o">{</span>
-        <span class="n">log</span><span class="o">.</span><span class="na">error</span><span class="o">(</span><span class="s">&#34;Error while reading the schema registry master&#34;</span><span class="o">,</span> <span class="n">e</span><span class="o">);</span>
-      <span class="o">}</span>
-    <span class="o">}</span>
-
-    <span class="c1">// leader 挂掉
-</span><span class="c1"></span>    <span class="nd">@Override</span>
-    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">handleDataDeleted</span><span class="o">(</span><span class="n">String</span> <span class="n">dataPath</span><span class="o">)</span> <span class="kd">throws</span> <span class="n">Exception</span> <span class="o">{</span>
-      <span class="k">if</span> <span class="o">(</span><span class="n">isEligibleForMasterElection</span><span class="o">)</span> <span class="o">{</span>
-        <span class="c1">// 如果允许选举，那么立即执行
-</span><span class="c1"></span>        <span class="n">electMaster</span><span class="o">();</span>
-      <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
-        <span class="c1">// 否则设置之前的leader为空
-</span><span class="c1"></span>        <span class="n">schemaRegistry</span><span class="o">.</span><span class="na">setMaster</span><span class="o">(</span><span class="kc">null</span><span class="o">);</span>
-      <span class="o">}</span>
-    <span class="o">}</span>
-  <span class="o">}</span>
-
-<span class="o">}</span>    
-</code></pre></td></tr></table></div>
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">ZookeeperMasterElector</span> <span class="kd">implements</span> <span class="n">MasterElector</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">  <span class="c1">// 选举使用的临时节点    
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="kd">private</span> <span class="kd">static</span> <span class="kd">final</span> <span class="n">String</span> <span class="n">MASTER_PATH</span> <span class="o">=</span> <span class="s">&#34;/schema_registry_master&#34;</span><span class="o">;</span>
+</span></span><span class="line"><span class="cl">    
+</span></span><span class="line"><span class="cl">  <span class="kd">public</span> <span class="kt">void</span> <span class="nf">electMaster</span><span class="o">()</span> <span class="kd">throws</span>
+</span></span><span class="line"><span class="cl">      <span class="n">SchemaRegistryStoreException</span><span class="o">,</span> <span class="n">SchemaRegistryTimeoutException</span><span class="o">,</span>
+</span></span><span class="line"><span class="cl">      <span class="n">SchemaRegistryInitializationException</span><span class="o">,</span> <span class="n">IdGenerationException</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">    <span class="n">SchemaRegistryIdentity</span> <span class="n">masterIdentity</span> <span class="o">=</span> <span class="kc">null</span><span class="o">;</span>
+</span></span><span class="line"><span class="cl">    <span class="k">try</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">      <span class="c1">// 尝试在zookeeper中，创建临时节点
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>      <span class="n">zkUtils</span><span class="o">.</span><span class="na">createEphemeralPathExpectConflict</span><span class="o">(</span><span class="n">MASTER_PATH</span><span class="o">,</span> <span class="n">myIdentityString</span><span class="o">,</span>
+</span></span><span class="line"><span class="cl">                                                <span class="n">zkUtils</span><span class="o">.</span><span class="na">defaultAcls</span><span class="o">(</span><span class="n">MASTER_PATH</span><span class="o">));</span>
+</span></span><span class="line"><span class="cl">      <span class="n">log</span><span class="o">.</span><span class="na">info</span><span class="o">(</span><span class="s">&#34;Successfully elected the new master: &#34;</span> <span class="o">+</span> <span class="n">myIdentityString</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">      <span class="n">masterIdentity</span> <span class="o">=</span> <span class="n">myIdentity</span><span class="o">;</span>
+</span></span><span class="line"><span class="cl">      <span class="n">schemaRegistry</span><span class="o">.</span><span class="na">setMaster</span><span class="o">(</span><span class="n">masterIdentity</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">    <span class="o">}</span> <span class="k">catch</span> <span class="o">(</span><span class="n">ZkNodeExistsException</span> <span class="n">znee</span><span class="o">)</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">      <span class="c1">// 创建失败
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>      <span class="n">readCurrentMaster</span><span class="o">();</span>
+</span></span><span class="line"><span class="cl">    <span class="o">}</span>
+</span></span><span class="line"><span class="cl">  <span class="o">}</span>    
+</span></span><span class="line"><span class="cl">    
+</span></span><span class="line"><span class="cl">    
+</span></span><span class="line"><span class="cl">  <span class="kd">private</span> <span class="kd">class</span> <span class="nc">MasterChangeListener</span> <span class="kd">implements</span> <span class="n">IZkDataListener</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="kd">public</span> <span class="nf">MasterChangeListener</span><span class="o">()</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">    <span class="o">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="c1">// 当数据被更改后，触发
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="nd">@Override</span>
+</span></span><span class="line"><span class="cl">    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">handleDataChange</span><span class="o">(</span><span class="n">String</span> <span class="n">dataPath</span><span class="o">,</span> <span class="n">Object</span> <span class="n">data</span><span class="o">)</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">      
+</span></span><span class="line"><span class="cl">      <span class="k">try</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">        <span class="k">if</span> <span class="o">(</span><span class="n">isEligibleForMasterElection</span><span class="o">)</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">          <span class="c1">// 选举
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>          <span class="n">electMaster</span><span class="o">();</span>
+</span></span><span class="line"><span class="cl">        <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">          <span class="c1">// 从节点中读取leader
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>          <span class="n">readCurrentMaster</span><span class="o">();</span>
+</span></span><span class="line"><span class="cl">        <span class="o">}</span>
+</span></span><span class="line"><span class="cl">      <span class="o">}</span> <span class="k">catch</span> <span class="o">(</span><span class="n">SchemaRegistryException</span> <span class="n">e</span><span class="o">)</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">        <span class="n">log</span><span class="o">.</span><span class="na">error</span><span class="o">(</span><span class="s">&#34;Error while reading the schema registry master&#34;</span><span class="o">,</span> <span class="n">e</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">      <span class="o">}</span>
+</span></span><span class="line"><span class="cl">    <span class="o">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="c1">// leader 挂掉
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="nd">@Override</span>
+</span></span><span class="line"><span class="cl">    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">handleDataDeleted</span><span class="o">(</span><span class="n">String</span> <span class="n">dataPath</span><span class="o">)</span> <span class="kd">throws</span> <span class="n">Exception</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">      <span class="k">if</span> <span class="o">(</span><span class="n">isEligibleForMasterElection</span><span class="o">)</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">        <span class="c1">// 如果允许选举，那么立即执行
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>        <span class="n">electMaster</span><span class="o">();</span>
+</span></span><span class="line"><span class="cl">      <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">        <span class="c1">// 否则设置之前的leader为空
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>        <span class="n">schemaRegistry</span><span class="o">.</span><span class="na">setMaster</span><span class="o">(</span><span class="kc">null</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">      <span class="o">}</span>
+</span></span><span class="line"><span class="cl">    <span class="o">}</span>
+</span></span><span class="line"><span class="cl">  <span class="o">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="o">}</span>    
+</span></span></code></pre></td></tr></table></div>
 </div>
 </div><h2 id="参考资料"><a href="#参考资料" class="anchor-link"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon anchor-icon"><path d="M326.612 185.391c59.747 59.809 58.927 155.698.36 214.59-.11.12-.24.25-.36.37l-67.2 67.2c-59.27 59.27-155.699 59.262-214.96 0-59.27-59.26-59.27-155.7 0-214.96l37.106-37.106c9.84-9.84 26.786-3.3 27.294 10.606.648 17.722 3.826 35.527 9.69 52.721 1.986 5.822.567 12.262-3.783 16.612l-13.087 13.087c-28.026 28.026-28.905 73.66-1.155 101.96 28.024 28.579 74.086 28.749 102.325.51l67.2-67.19c28.191-28.191 28.073-73.757 0-101.83-3.701-3.694-7.429-6.564-10.341-8.569a16.037 16.037 0 0 1-6.947-12.606c-.396-10.567 3.348-21.456 11.698-29.806l21.054-21.055c5.521-5.521 14.182-6.199 20.584-1.731a152.482 152.482 0 0 1 20.522 17.197zM467.547 44.449c-59.261-59.262-155.69-59.27-214.96 0l-67.2 67.2c-.12.12-.25.25-.36.37-58.566 58.892-59.387 154.781.36 214.59a152.454 152.454 0 0 0 20.521 17.196c6.402 4.468 15.064 3.789 20.584-1.731l21.054-21.055c8.35-8.35 12.094-19.239 11.698-29.806a16.037 16.037 0 0 0-6.947-12.606c-2.912-2.005-6.64-4.875-10.341-8.569-28.073-28.073-28.191-73.639 0-101.83l67.2-67.19c28.239-28.239 74.3-28.069 102.325.51 27.75 28.3 26.872 73.934-1.155 101.96l-13.087 13.087c-4.35 4.35-5.769 10.79-3.783 16.612 5.864 17.194 9.042 34.999 9.69 52.721.509 13.906 17.454 20.446 27.294 10.606l37.106-37.106c59.271-59.259 59.271-155.699.001-214.959z"/></svg></a>参考资料</h2>
 <p><a href="https://docs.confluent.io/current/schema-registry/index.html" target="_blank" rel="noopener">https://docs.confluent.io/current/schema-registry/index.html</a></p>
@@ -916,9 +916,9 @@
 
         
     <div class="updated-badge-container">
-        <span title="Updated @ 2021-10-22 14:44:34 CST" style="cursor:help">
+        <span title="Updated @ 2023-07-02 16:59:09 CST" style="cursor:help">
 
-<svg xmlns="http://www.w3.org/2000/svg" width="130" height="20" class="updated-badge"><linearGradient id="b" x2="0" y2="100%"><stop offset="0" stop-color="#bbb" stop-opacity=".1"/><stop offset="1" stop-opacity=".1"/></linearGradient><clipPath id="a"><rect width="130" height="20" rx="3" fill="#fff"/></clipPath><g clip-path="url(#a)"><path class="updated-badge-left" d="M0 0h55v20H0z"/><path class="updated-badge-right" d="M55 0h75v20H55z"/><path fill="url(#b)" d="M0 0h130v20H0z"/></g><g fill="#fff" text-anchor="middle" font-size="110"><text x="285" y="150" fill="#010101" fill-opacity=".3" textLength="450" transform="scale(.1)">updated</text><text x="285" y="140" textLength="450" transform="scale(.1)">updated</text><text x="915" y="150" fill="#010101" fill-opacity=".3" textLength="650" transform="scale(.1)">2021-10-22</text><text x="915" y="140" textLength="650" transform="scale(.1)">2021-10-22</text></g></svg>
+<svg xmlns="http://www.w3.org/2000/svg" width="130" height="20" class="updated-badge"><linearGradient id="b" x2="0" y2="100%"><stop offset="0" stop-color="#bbb" stop-opacity=".1"/><stop offset="1" stop-opacity=".1"/></linearGradient><clipPath id="a"><rect width="130" height="20" rx="3" fill="#fff"/></clipPath><g clip-path="url(#a)"><path class="updated-badge-left" d="M0 0h55v20H0z"/><path class="updated-badge-right" d="M55 0h75v20H55z"/><path fill="url(#b)" d="M0 0h130v20H0z"/></g><g fill="#fff" text-anchor="middle" font-size="110"><text x="285" y="150" fill="#010101" fill-opacity=".3" textLength="450" transform="scale(.1)">updated</text><text x="285" y="140" textLength="450" transform="scale(.1)">updated</text><text x="915" y="150" fill="#010101" fill-opacity=".3" textLength="650" transform="scale(.1)">2023-07-02</text><text x="915" y="140" textLength="650" transform="scale(.1)">2023-07-02</text></g></svg>
         </span></div>
 
 

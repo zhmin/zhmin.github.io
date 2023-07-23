@@ -3,7 +3,7 @@
     <head prefix="og: http://ogp.me/ns# article: http://ogp.me/ns/article#">
     <meta charset="UTF-8" />
 
-    <meta name="generator" content="Hugo 0.88.1" /><meta name="theme-color" content="#fff" />
+    <meta name="generator" content="Hugo 0.115.0"><meta name="theme-color" content="#fff" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     
     <meta name="format-detection" content="telephone=no, date=no, address=no, email=no" />
@@ -14,11 +14,11 @@
 
     <title>Spark Executor 节点运行原理 | 学习笔记</title>
 
-    <link rel="stylesheet" href="/css/meme.min.2d3e1834af2bc8dda20c7d74aaa1d8134845094441b7a554a5206ccd4b472596.css"/>
+    <link rel="stylesheet" href="/css/meme.min.91e7f58f97e1c60563ef481c38d9684fa8099537801d6f17bbfc724121e7d8f1.css"/>
 
     
     
-        <script src="/js/meme.min.800f61672145711eb3e1f29fcfcc3dbe0139dd459259718b611a0390f74703d1.js"></script>
+        <script src="/js/meme.min.3210a00c2fdcf6f831170b681b8ee40f83f0224663661e986872616aec45407f.js"></script>
 
     
 
@@ -54,7 +54,7 @@
         "@context": "https://schema.org",
         "@type": "BlogPosting",
         "datePublished": "2019-01-19T23:28:48+00:00",
-        "dateModified": "2021-10-22T14:44:34+08:00",
+        "dateModified": "2023-07-02T16:59:09+08:00",
         "url": "https://zhmin.github.io/posts/spark-executor/",
         "headline": "Spark Executor 节点运行原理",
         "description": "Spark Executor 节点运行原理 Executor运行流程图 Executor 节点启动 这里讲的spark运行的场景都是在Yarn上。从这边博客 {% post_link spark-on-yarn %} ，可以看到Executor节点的启动函数，是CoarseGrainedExecuto……",
@@ -98,7 +98,7 @@
 <meta property="og:locale" content="zh" /><meta property="og:image" content="https://zhmin.github.io/spark-executor-communicate.svg" />
 <meta property="og:type" content="article" />
     <meta property="article:published_time" content="2019-01-19T23:28:48&#43;00:00" />
-    <meta property="article:modified_time" content="2021-10-22T14:44:34&#43;08:00" />
+    <meta property="article:modified_time" content="2023-07-02T16:59:09&#43;08:00" />
     
     <meta property="article:section" content="posts" />
 
@@ -314,76 +314,76 @@
 </span><span class="lnt">69
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-scala" data-lang="scala"><span class="k">object</span> <span class="nc">CoarseGrainedExecutorBackend</span> <span class="k">extends</span> <span class="nc">Logging</span> <span class="o">{</span>
-  
-  <span class="k">def</span> <span class="n">main</span><span class="o">(</span><span class="n">args</span><span class="k">:</span> <span class="kt">Array</span><span class="o">[</span><span class="kt">String</span><span class="o">])</span> <span class="o">{</span>
-    <span class="c1">// 解析参数
-</span><span class="c1"></span>    <span class="k">var</span> <span class="n">argv</span> <span class="k">=</span> <span class="n">args</span><span class="o">.</span><span class="n">toList</span>
-    <span class="k">while</span> <span class="o">(!</span><span class="n">argv</span><span class="o">.</span><span class="n">isEmpty</span><span class="o">)</span> <span class="o">{</span>
-      <span class="o">.....</span>
-    <span class="o">}</span>
-    
-    <span class="c1">//   调用 run 函数
-</span><span class="c1"></span>    <span class="n">run</span><span class="o">(</span><span class="n">driverUrl</span><span class="o">,</span> <span class="n">executorId</span><span class="o">,</span> <span class="n">hostname</span><span class="o">,</span> <span class="n">cores</span><span class="o">,</span> <span class="n">appId</span><span class="o">,</span> <span class="n">workerUrl</span><span class="o">,</span> <span class="n">userClassPath</span><span class="o">)</span>
-    <span class="nc">System</span><span class="o">.</span><span class="n">exit</span><span class="o">(</span><span class="mi">0</span><span class="o">)</span>
-  <span class="o">}</span>
-  
-  <span class="k">def</span> <span class="n">run</span><span class="o">(</span>
-      <span class="n">driverUrl</span><span class="k">:</span> <span class="kt">String</span><span class="o">,</span>
-      <span class="n">executorId</span><span class="k">:</span> <span class="kt">String</span><span class="o">,</span>
-      <span class="n">hostname</span><span class="k">:</span> <span class="kt">String</span><span class="o">,</span>
-      <span class="n">cores</span><span class="k">:</span> <span class="kt">Int</span><span class="o">,</span>
-      <span class="n">appId</span><span class="k">:</span> <span class="kt">String</span><span class="o">,</span>
-      <span class="n">workerUrl</span><span class="k">:</span> <span class="kt">Option</span><span class="o">[</span><span class="kt">String</span><span class="o">],</span>
-      <span class="n">userClassPath</span><span class="k">:</span> <span class="kt">Seq</span><span class="o">[</span><span class="kt">URL</span><span class="o">])</span> <span class="o">{</span>
-      <span class="c1">// 以hadoop所使用的用户执行程序 
-</span><span class="c1"></span>      <span class="nc">SparkHadoopUtil</span><span class="o">.</span><span class="n">get</span><span class="o">.</span><span class="n">runAsSparkUser</span> <span class="o">{</span> <span class="o">()</span> <span class="k">=&gt;</span>
-        <span class="nc">Utils</span><span class="o">.</span><span class="n">checkHost</span><span class="o">(</span><span class="n">hostname</span><span class="o">)</span>
-
-        <span class="c1">// 实例化executor的默认spark配置
-</span><span class="c1"></span>        <span class="k">val</span> <span class="n">executorConf</span> <span class="k">=</span> <span class="k">new</span> <span class="nc">SparkConf</span>
-        <span class="c1">// 连接driver的客户端使用的端口号
-</span><span class="c1"></span>        <span class="k">val</span> <span class="n">port</span> <span class="k">=</span> <span class="n">executorConf</span><span class="o">.</span><span class="n">getInt</span><span class="o">(</span><span class="s">&#34;spark.executor.port&#34;</span><span class="o">,</span> <span class="mi">0</span><span class="o">)</span>
-        <span class="c1">// 实例化客户模式的RpcEnv
-</span><span class="c1"></span>        <span class="k">val</span> <span class="n">fetcher</span> <span class="k">=</span> <span class="nc">RpcEnv</span><span class="o">.</span><span class="n">create</span><span class="o">(</span>
-          <span class="s">&#34;driverPropsFetcher&#34;</span><span class="o">,</span>
-          <span class="n">hostname</span><span class="o">,</span>
-          <span class="n">port</span><span class="o">,</span>
-          <span class="n">executorConf</span><span class="o">,</span>
-          <span class="k">new</span> <span class="nc">SecurityManager</span><span class="o">(</span><span class="n">executorConf</span><span class="o">),</span>
-          <span class="n">clientMode</span> <span class="k">=</span> <span class="kc">true</span><span class="o">)</span>
-        <span class="c1">// 创建连接driver服务的客户端，
-</span><span class="c1"></span>        <span class="c1">// 这里的driver是指 CoarseGrainedSchedulerBackend类的 DriverEndpoint服务
-</span><span class="c1"></span>        <span class="k">val</span> <span class="n">driver</span> <span class="k">=</span> <span class="n">fetcher</span><span class="o">.</span><span class="n">setupEndpointRefByURI</span><span class="o">(</span><span class="n">driverUrl</span><span class="o">)</span>
-        <span class="c1">// 向driver请求spark配置
-</span><span class="c1"></span>        <span class="k">val</span> <span class="n">cfg</span> <span class="k">=</span> <span class="n">driver</span><span class="o">.</span><span class="n">askSync</span><span class="o">[</span><span class="kt">SparkAppConfig</span><span class="o">](</span><span class="nc">RetrieveSparkAppConfig</span><span class="o">)</span>
-        <span class="k">val</span> <span class="n">props</span> <span class="k">=</span> <span class="n">cfg</span><span class="o">.</span><span class="n">sparkProperties</span> <span class="o">++</span> <span class="nc">Seq</span><span class="o">[(</span><span class="kt">String</span>, <span class="kt">String</span><span class="o">)]((</span><span class="s">&#34;spark.app.id&#34;</span><span class="o">,</span> <span class="n">appId</span><span class="o">))</span>
-        <span class="c1">// 获取完配置后，关闭客户端
-</span><span class="c1"></span>        <span class="n">fetcher</span><span class="o">.</span><span class="n">shutdown</span><span class="o">()</span>
-
-        <span class="c1">// 根据driver获取的配置，生成executor的配置
-</span><span class="c1"></span>        <span class="k">val</span> <span class="n">driverConf</span> <span class="k">=</span> <span class="k">new</span> <span class="nc">SparkConf</span><span class="o">()</span>
-        <span class="k">for</span> <span class="o">((</span><span class="n">key</span><span class="o">,</span> <span class="n">value</span><span class="o">)</span> <span class="k">&lt;-</span> <span class="n">props</span><span class="o">)</span> <span class="o">{</span>
-          <span class="k">if</span> <span class="o">(</span><span class="nc">SparkConf</span><span class="o">.</span><span class="n">isExecutorStartupConf</span><span class="o">(</span><span class="n">key</span><span class="o">))</span> <span class="o">{</span>
-            <span class="n">driverConf</span><span class="o">.</span><span class="n">setIfMissing</span><span class="o">(</span><span class="n">key</span><span class="o">,</span> <span class="n">value</span><span class="o">)</span>
-          <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
-            <span class="n">driverConf</span><span class="o">.</span><span class="n">set</span><span class="o">(</span><span class="n">key</span><span class="o">,</span> <span class="n">value</span><span class="o">)</span>
-          <span class="o">}</span>
-        <span class="o">}</span> 
-
-        <span class="c1">// 创建Executor的SparkEnv
-</span><span class="c1"></span>        <span class="k">val</span> <span class="n">env</span> <span class="k">=</span> <span class="nc">SparkEnv</span><span class="o">.</span><span class="n">createExecutorEnv</span><span class="o">(</span>
-          <span class="n">driverConf</span><span class="o">,</span> <span class="n">executorId</span><span class="o">,</span> <span class="n">hostname</span><span class="o">,</span> <span class="n">port</span><span class="o">,</span> <span class="n">cores</span><span class="o">,</span> <span class="n">cfg</span><span class="o">.</span><span class="n">ioEncryptionKey</span><span class="o">,</span> <span class="n">isLocal</span> <span class="k">=</span> <span class="kc">false</span><span class="o">)</span>
-
-        <span class="c1">// 注册并运行CoarseGrainedExecutorBackend Rpc服务
-</span><span class="c1"></span>        <span class="n">env</span><span class="o">.</span><span class="n">rpcEnv</span><span class="o">.</span><span class="n">setupEndpoint</span><span class="o">(</span><span class="s">&#34;Executor&#34;</span><span class="o">,</span> <span class="k">new</span> <span class="nc">CoarseGrainedExecutorBackend</span><span class="o">(</span>
-          <span class="n">env</span><span class="o">.</span><span class="n">rpcEnv</span><span class="o">,</span> <span class="n">driverUrl</span><span class="o">,</span> <span class="n">executorId</span><span class="o">,</span> <span class="n">hostname</span><span class="o">,</span> <span class="n">cores</span><span class="o">,</span> <span class="n">userClassPath</span><span class="o">,</span> <span class="n">env</span><span class="o">))</span>
-        <span class="c1">// 等待 Rpc服务运行结束
-</span><span class="c1"></span>        <span class="n">env</span><span class="o">.</span><span class="n">rpcEnv</span><span class="o">.</span><span class="n">awaitTermination</span><span class="o">()</span>
-      <span class="o">}</span>
-  <span class="o">}</span>
-<span class="o">}</span> 
-</code></pre></td></tr></table></div>
+<pre tabindex="0" class="chroma"><code class="language-scala" data-lang="scala"><span class="line"><span class="cl"><span class="k">object</span> <span class="nc">CoarseGrainedExecutorBackend</span> <span class="k">extends</span> <span class="nc">Logging</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">  
+</span></span><span class="line"><span class="cl">  <span class="k">def</span> <span class="n">main</span><span class="o">(</span><span class="n">args</span><span class="k">:</span> <span class="kt">Array</span><span class="o">[</span><span class="kt">String</span><span class="o">])</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// 解析参数
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="k">var</span> <span class="n">argv</span> <span class="k">=</span> <span class="n">args</span><span class="o">.</span><span class="n">toList</span>
+</span></span><span class="line"><span class="cl">    <span class="k">while</span> <span class="o">(!</span><span class="n">argv</span><span class="o">.</span><span class="n">isEmpty</span><span class="o">)</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">      <span class="o">.....</span>
+</span></span><span class="line"><span class="cl">    <span class="o">}</span>
+</span></span><span class="line"><span class="cl">    
+</span></span><span class="line"><span class="cl">    <span class="c1">//   调用 run 函数
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="n">run</span><span class="o">(</span><span class="n">driverUrl</span><span class="o">,</span> <span class="n">executorId</span><span class="o">,</span> <span class="n">hostname</span><span class="o">,</span> <span class="n">cores</span><span class="o">,</span> <span class="n">appId</span><span class="o">,</span> <span class="n">workerUrl</span><span class="o">,</span> <span class="n">userClassPath</span><span class="o">)</span>
+</span></span><span class="line"><span class="cl">    <span class="nc">System</span><span class="o">.</span><span class="n">exit</span><span class="o">(</span><span class="mi">0</span><span class="o">)</span>
+</span></span><span class="line"><span class="cl">  <span class="o">}</span>
+</span></span><span class="line"><span class="cl">  
+</span></span><span class="line"><span class="cl">  <span class="k">def</span> <span class="n">run</span><span class="o">(</span>
+</span></span><span class="line"><span class="cl">      <span class="n">driverUrl</span><span class="k">:</span> <span class="kt">String</span><span class="o">,</span>
+</span></span><span class="line"><span class="cl">      <span class="n">executorId</span><span class="k">:</span> <span class="kt">String</span><span class="o">,</span>
+</span></span><span class="line"><span class="cl">      <span class="n">hostname</span><span class="k">:</span> <span class="kt">String</span><span class="o">,</span>
+</span></span><span class="line"><span class="cl">      <span class="n">cores</span><span class="k">:</span> <span class="kt">Int</span><span class="o">,</span>
+</span></span><span class="line"><span class="cl">      <span class="n">appId</span><span class="k">:</span> <span class="kt">String</span><span class="o">,</span>
+</span></span><span class="line"><span class="cl">      <span class="n">workerUrl</span><span class="k">:</span> <span class="kt">Option</span><span class="o">[</span><span class="kt">String</span><span class="o">],</span>
+</span></span><span class="line"><span class="cl">      <span class="n">userClassPath</span><span class="k">:</span> <span class="kt">Seq</span><span class="o">[</span><span class="kt">URL</span><span class="o">])</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">      <span class="c1">// 以hadoop所使用的用户执行程序 
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>      <span class="nc">SparkHadoopUtil</span><span class="o">.</span><span class="n">get</span><span class="o">.</span><span class="n">runAsSparkUser</span> <span class="o">{</span> <span class="o">()</span> <span class="k">=&gt;</span>
+</span></span><span class="line"><span class="cl">        <span class="nc">Utils</span><span class="o">.</span><span class="n">checkHost</span><span class="o">(</span><span class="n">hostname</span><span class="o">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">        <span class="c1">// 实例化executor的默认spark配置
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>        <span class="k">val</span> <span class="n">executorConf</span> <span class="k">=</span> <span class="k">new</span> <span class="nc">SparkConf</span>
+</span></span><span class="line"><span class="cl">        <span class="c1">// 连接driver的客户端使用的端口号
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>        <span class="k">val</span> <span class="n">port</span> <span class="k">=</span> <span class="n">executorConf</span><span class="o">.</span><span class="n">getInt</span><span class="o">(</span><span class="s">&#34;spark.executor.port&#34;</span><span class="o">,</span> <span class="mi">0</span><span class="o">)</span>
+</span></span><span class="line"><span class="cl">        <span class="c1">// 实例化客户模式的RpcEnv
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>        <span class="k">val</span> <span class="n">fetcher</span> <span class="k">=</span> <span class="nc">RpcEnv</span><span class="o">.</span><span class="n">create</span><span class="o">(</span>
+</span></span><span class="line"><span class="cl">          <span class="s">&#34;driverPropsFetcher&#34;</span><span class="o">,</span>
+</span></span><span class="line"><span class="cl">          <span class="n">hostname</span><span class="o">,</span>
+</span></span><span class="line"><span class="cl">          <span class="n">port</span><span class="o">,</span>
+</span></span><span class="line"><span class="cl">          <span class="n">executorConf</span><span class="o">,</span>
+</span></span><span class="line"><span class="cl">          <span class="k">new</span> <span class="nc">SecurityManager</span><span class="o">(</span><span class="n">executorConf</span><span class="o">),</span>
+</span></span><span class="line"><span class="cl">          <span class="n">clientMode</span> <span class="k">=</span> <span class="kc">true</span><span class="o">)</span>
+</span></span><span class="line"><span class="cl">        <span class="c1">// 创建连接driver服务的客户端，
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>        <span class="c1">// 这里的driver是指 CoarseGrainedSchedulerBackend类的 DriverEndpoint服务
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>        <span class="k">val</span> <span class="n">driver</span> <span class="k">=</span> <span class="n">fetcher</span><span class="o">.</span><span class="n">setupEndpointRefByURI</span><span class="o">(</span><span class="n">driverUrl</span><span class="o">)</span>
+</span></span><span class="line"><span class="cl">        <span class="c1">// 向driver请求spark配置
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>        <span class="k">val</span> <span class="n">cfg</span> <span class="k">=</span> <span class="n">driver</span><span class="o">.</span><span class="n">askSync</span><span class="o">[</span><span class="kt">SparkAppConfig</span><span class="o">](</span><span class="nc">RetrieveSparkAppConfig</span><span class="o">)</span>
+</span></span><span class="line"><span class="cl">        <span class="k">val</span> <span class="n">props</span> <span class="k">=</span> <span class="n">cfg</span><span class="o">.</span><span class="n">sparkProperties</span> <span class="o">++</span> <span class="nc">Seq</span><span class="o">[(</span><span class="kt">String</span>, <span class="kt">String</span><span class="o">)]((</span><span class="s">&#34;spark.app.id&#34;</span><span class="o">,</span> <span class="n">appId</span><span class="o">))</span>
+</span></span><span class="line"><span class="cl">        <span class="c1">// 获取完配置后，关闭客户端
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>        <span class="n">fetcher</span><span class="o">.</span><span class="n">shutdown</span><span class="o">()</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">        <span class="c1">// 根据driver获取的配置，生成executor的配置
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>        <span class="k">val</span> <span class="n">driverConf</span> <span class="k">=</span> <span class="k">new</span> <span class="nc">SparkConf</span><span class="o">()</span>
+</span></span><span class="line"><span class="cl">        <span class="k">for</span> <span class="o">((</span><span class="n">key</span><span class="o">,</span> <span class="n">value</span><span class="o">)</span> <span class="k">&lt;-</span> <span class="n">props</span><span class="o">)</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">          <span class="k">if</span> <span class="o">(</span><span class="nc">SparkConf</span><span class="o">.</span><span class="n">isExecutorStartupConf</span><span class="o">(</span><span class="n">key</span><span class="o">))</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">            <span class="n">driverConf</span><span class="o">.</span><span class="n">setIfMissing</span><span class="o">(</span><span class="n">key</span><span class="o">,</span> <span class="n">value</span><span class="o">)</span>
+</span></span><span class="line"><span class="cl">          <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">            <span class="n">driverConf</span><span class="o">.</span><span class="n">set</span><span class="o">(</span><span class="n">key</span><span class="o">,</span> <span class="n">value</span><span class="o">)</span>
+</span></span><span class="line"><span class="cl">          <span class="o">}</span>
+</span></span><span class="line"><span class="cl">        <span class="o">}</span> 
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">        <span class="c1">// 创建Executor的SparkEnv
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>        <span class="k">val</span> <span class="n">env</span> <span class="k">=</span> <span class="nc">SparkEnv</span><span class="o">.</span><span class="n">createExecutorEnv</span><span class="o">(</span>
+</span></span><span class="line"><span class="cl">          <span class="n">driverConf</span><span class="o">,</span> <span class="n">executorId</span><span class="o">,</span> <span class="n">hostname</span><span class="o">,</span> <span class="n">port</span><span class="o">,</span> <span class="n">cores</span><span class="o">,</span> <span class="n">cfg</span><span class="o">.</span><span class="n">ioEncryptionKey</span><span class="o">,</span> <span class="n">isLocal</span> <span class="k">=</span> <span class="kc">false</span><span class="o">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">        <span class="c1">// 注册并运行CoarseGrainedExecutorBackend Rpc服务
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>        <span class="n">env</span><span class="o">.</span><span class="n">rpcEnv</span><span class="o">.</span><span class="n">setupEndpoint</span><span class="o">(</span><span class="s">&#34;Executor&#34;</span><span class="o">,</span> <span class="k">new</span> <span class="nc">CoarseGrainedExecutorBackend</span><span class="o">(</span>
+</span></span><span class="line"><span class="cl">          <span class="n">env</span><span class="o">.</span><span class="n">rpcEnv</span><span class="o">,</span> <span class="n">driverUrl</span><span class="o">,</span> <span class="n">executorId</span><span class="o">,</span> <span class="n">hostname</span><span class="o">,</span> <span class="n">cores</span><span class="o">,</span> <span class="n">userClassPath</span><span class="o">,</span> <span class="n">env</span><span class="o">))</span>
+</span></span><span class="line"><span class="cl">        <span class="c1">// 等待 Rpc服务运行结束
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>        <span class="n">env</span><span class="o">.</span><span class="n">rpcEnv</span><span class="o">.</span><span class="n">awaitTermination</span><span class="o">()</span>
+</span></span><span class="line"><span class="cl">      <span class="o">}</span>
+</span></span><span class="line"><span class="cl">  <span class="o">}</span>
+</span></span><span class="line"><span class="cl"><span class="o">}</span> 
+</span></span></code></pre></td></tr></table></div>
 </div>
 </div><h2 id="coarsegrainedexecutorbackend-服务"><a href="#coarsegrainedexecutorbackend-服务" class="anchor-link"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon anchor-icon"><path d="M326.612 185.391c59.747 59.809 58.927 155.698.36 214.59-.11.12-.24.25-.36.37l-67.2 67.2c-59.27 59.27-155.699 59.262-214.96 0-59.27-59.26-59.27-155.7 0-214.96l37.106-37.106c9.84-9.84 26.786-3.3 27.294 10.606.648 17.722 3.826 35.527 9.69 52.721 1.986 5.822.567 12.262-3.783 16.612l-13.087 13.087c-28.026 28.026-28.905 73.66-1.155 101.96 28.024 28.579 74.086 28.749 102.325.51l67.2-67.19c28.191-28.191 28.073-73.757 0-101.83-3.701-3.694-7.429-6.564-10.341-8.569a16.037 16.037 0 0 1-6.947-12.606c-.396-10.567 3.348-21.456 11.698-29.806l21.054-21.055c5.521-5.521 14.182-6.199 20.584-1.731a152.482 152.482 0 0 1 20.522 17.197zM467.547 44.449c-59.261-59.262-155.69-59.27-214.96 0l-67.2 67.2c-.12.12-.25.25-.36.37-58.566 58.892-59.387 154.781.36 214.59a152.454 152.454 0 0 0 20.521 17.196c6.402 4.468 15.064 3.789 20.584-1.731l21.054-21.055c8.35-8.35 12.094-19.239 11.698-29.806a16.037 16.037 0 0 0-6.947-12.606c-2.912-2.005-6.64-4.875-10.341-8.569-28.073-28.073-28.191-73.639 0-101.83l67.2-67.19c28.239-28.239 74.3-28.069 102.325.51 27.75 28.3 26.872 73.934-1.155 101.96l-13.087 13.087c-4.35 4.35-5.769 10.79-3.783 16.612 5.864 17.194 9.042 34.999 9.69 52.721.509 13.906 17.454 20.446 27.294 10.606l37.106-37.106c59.271-59.259 59.271-155.699.001-214.959z"/></svg></a>CoarseGrainedExecutorBackend 服务</h2>
 <p>CoarseGrainedExecutorBackend继承ThreadSafeRpcEndpoint，包装了Executor类，实现对外提供Rpc服务，支持下列接口：</p>
@@ -455,66 +455,66 @@
 </span><span class="lnt">59
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-scala" data-lang="scala"><span class="k">private</span><span class="o">[</span><span class="kt">spark</span><span class="o">]</span> <span class="k">class</span> <span class="nc">CoarseGrainedExecutorBackend</span>
-  <span class="k">extends</span> <span class="nc">ThreadSafeRpcEndpoint</span> <span class="k">with</span> <span class="nc">ExecutorBackend</span> <span class="k">with</span> <span class="nc">Logging</span> <span class="o">{</span>
-      
-  <span class="k">override</span> <span class="k">def</span> <span class="n">receive</span><span class="k">:</span> <span class="kt">PartialFunction</span><span class="o">[</span><span class="kt">Any</span>, <span class="kt">Unit</span><span class="o">]</span> <span class="k">=</span> <span class="o">{</span>
-    <span class="c1">// 接收从driver发送来的消息，实例化Executor
-</span><span class="c1"></span>    <span class="k">case</span> <span class="nc">RegisteredExecutor</span> <span class="k">=&gt;</span>
-      <span class="n">logInfo</span><span class="o">(</span><span class="s">&#34;Successfully registered with driver&#34;</span><span class="o">)</span>
-      <span class="k">try</span> <span class="o">{</span>
-        <span class="n">executor</span> <span class="k">=</span> <span class="k">new</span> <span class="nc">Executor</span><span class="o">(</span><span class="n">executorId</span><span class="o">,</span> <span class="n">hostname</span><span class="o">,</span> <span class="n">env</span><span class="o">,</span> <span class="n">userClassPath</span><span class="o">,</span> <span class="n">isLocal</span> <span class="k">=</span> <span class="kc">false</span><span class="o">)</span>
-      <span class="o">}</span> <span class="k">catch</span> <span class="o">{</span>
-        <span class="k">case</span> <span class="nc">NonFatal</span><span class="o">(</span><span class="n">e</span><span class="o">)</span> <span class="k">=&gt;</span>
-          <span class="n">exitExecutor</span><span class="o">(</span><span class="mi">1</span><span class="o">,</span> <span class="s">&#34;Unable to create executor due to &#34;</span> <span class="o">+</span> <span class="n">e</span><span class="o">.</span><span class="n">getMessage</span><span class="o">,</span> <span class="n">e</span><span class="o">)</span>
-      <span class="o">}</span>
-
-    <span class="c1">// 接收从driver发来的注册失败的消息
-</span><span class="c1"></span>    <span class="k">case</span> <span class="nc">RegisterExecutorFailed</span><span class="o">(</span><span class="n">message</span><span class="o">)</span> <span class="k">=&gt;</span>
-      <span class="c1">// 退出进程
-</span><span class="c1"></span>      <span class="n">exitExecutor</span><span class="o">(</span><span class="mi">1</span><span class="o">,</span> <span class="s">&#34;Slave registration failed: &#34;</span> <span class="o">+</span> <span class="n">message</span><span class="o">)</span>
-
-    <span class="c1">// 接收从driver发来的task
-</span><span class="c1"></span>    <span class="k">case</span> <span class="nc">LaunchTask</span><span class="o">(</span><span class="n">data</span><span class="o">)</span> <span class="k">=&gt;</span>
-      <span class="k">if</span> <span class="o">(</span><span class="n">executor</span> <span class="o">==</span> <span class="kc">null</span><span class="o">)</span> <span class="o">{</span>
-        <span class="n">exitExecutor</span><span class="o">(</span><span class="mi">1</span><span class="o">,</span> <span class="s">&#34;Received LaunchTask command but executor was null&#34;</span><span class="o">)</span>
-      <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
-        <span class="c1">// 反序列化task
-</span><span class="c1"></span>        <span class="k">val</span> <span class="n">taskDesc</span> <span class="k">=</span> <span class="nc">TaskDescription</span><span class="o">.</span><span class="n">decode</span><span class="o">(</span><span class="n">data</span><span class="o">.</span><span class="n">value</span><span class="o">)</span>
-        <span class="n">logInfo</span><span class="o">(</span><span class="s">&#34;Got assigned task &#34;</span> <span class="o">+</span> <span class="n">taskDesc</span><span class="o">.</span><span class="n">taskId</span><span class="o">)</span>
-        <span class="c1">// 提交task给executor执行
-</span><span class="c1"></span>        <span class="n">executor</span><span class="o">.</span><span class="n">launchTask</span><span class="o">(</span><span class="k">this</span><span class="o">,</span> <span class="n">taskDesc</span><span class="o">)</span>
-      <span class="o">}</span>
-      
-    <span class="k">case</span> <span class="nc">KillTask</span><span class="o">(</span><span class="n">taskId</span><span class="o">,</span> <span class="k">_</span><span class="o">,</span> <span class="n">interruptThread</span><span class="o">,</span> <span class="n">reason</span><span class="o">)</span> <span class="k">=&gt;</span>
-      <span class="k">if</span> <span class="o">(</span><span class="n">executor</span> <span class="o">==</span> <span class="kc">null</span><span class="o">)</span> <span class="o">{</span>
-        <span class="n">exitExecutor</span><span class="o">(</span><span class="mi">1</span><span class="o">,</span> <span class="s">&#34;Received KillTask command but executor was null&#34;</span><span class="o">)</span>
-      <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
-        <span class="c1">// 调用executor杀死任务
-</span><span class="c1"></span>        <span class="n">executor</span><span class="o">.</span><span class="n">killTask</span><span class="o">(</span><span class="n">taskId</span><span class="o">,</span> <span class="n">interruptThread</span><span class="o">,</span> <span class="n">reason</span><span class="o">)</span>
-      <span class="o">}</span>
-
-    <span class="k">case</span> <span class="nc">StopExecutor</span> <span class="k">=&gt;</span>
-      <span class="n">stopping</span><span class="o">.</span><span class="n">set</span><span class="o">(</span><span class="kc">true</span><span class="o">)</span>
-      <span class="n">logInfo</span><span class="o">(</span><span class="s">&#34;Driver commanded a shutdown&#34;</span><span class="o">)</span>
-      <span class="c1">// Cannot shutdown here because an ack may need to be sent back to the caller. So send
-</span><span class="c1"></span>      <span class="c1">// a message to self to actually do the shutdown.
-</span><span class="c1"></span>      <span class="n">self</span><span class="o">.</span><span class="n">send</span><span class="o">(</span><span class="nc">Shutdown</span><span class="o">)</span>
-
-    <span class="k">case</span> <span class="nc">Shutdown</span> <span class="k">=&gt;</span>
-      <span class="n">stopping</span><span class="o">.</span><span class="n">set</span><span class="o">(</span><span class="kc">true</span><span class="o">)</span>
-      <span class="k">new</span> <span class="nc">Thread</span><span class="o">(</span><span class="s">&#34;CoarseGrainedExecutorBackend-stop-executor&#34;</span><span class="o">)</span> <span class="o">{</span>
-        <span class="k">override</span> <span class="k">def</span> <span class="n">run</span><span class="o">()</span><span class="k">:</span> <span class="kt">Unit</span> <span class="o">=</span> <span class="o">{</span>
-          <span class="c1">// executor.stop() will call `SparkEnv.stop()` which waits until RpcEnv stops totally.
-</span><span class="c1"></span>          <span class="c1">// However, if `executor.stop()` runs in some thread of RpcEnv, RpcEnv won&#39;t be able to
-</span><span class="c1"></span>          <span class="c1">// stop until `executor.stop()` returns, which becomes a dead-lock (See SPARK-14180).
-</span><span class="c1"></span>          <span class="c1">// Therefore, we put this line in a new thread.
-</span><span class="c1"></span>          <span class="n">executor</span><span class="o">.</span><span class="n">stop</span><span class="o">()</span>
-        <span class="o">}</span>
-      <span class="o">}.</span><span class="n">start</span><span class="o">()</span>
-  <span class="o">}</span>
-<span class="o">}</span> 
-</code></pre></td></tr></table></div>
+<pre tabindex="0" class="chroma"><code class="language-scala" data-lang="scala"><span class="line"><span class="cl"><span class="k">private</span><span class="o">[</span><span class="kt">spark</span><span class="o">]</span> <span class="k">class</span> <span class="nc">CoarseGrainedExecutorBackend</span>
+</span></span><span class="line"><span class="cl">  <span class="k">extends</span> <span class="nc">ThreadSafeRpcEndpoint</span> <span class="k">with</span> <span class="nc">ExecutorBackend</span> <span class="k">with</span> <span class="nc">Logging</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">      
+</span></span><span class="line"><span class="cl">  <span class="k">override</span> <span class="k">def</span> <span class="n">receive</span><span class="k">:</span> <span class="kt">PartialFunction</span><span class="o">[</span><span class="kt">Any</span>, <span class="kt">Unit</span><span class="o">]</span> <span class="k">=</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// 接收从driver发送来的消息，实例化Executor
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="k">case</span> <span class="nc">RegisteredExecutor</span> <span class="k">=&gt;</span>
+</span></span><span class="line"><span class="cl">      <span class="n">logInfo</span><span class="o">(</span><span class="s">&#34;Successfully registered with driver&#34;</span><span class="o">)</span>
+</span></span><span class="line"><span class="cl">      <span class="k">try</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">        <span class="n">executor</span> <span class="k">=</span> <span class="k">new</span> <span class="nc">Executor</span><span class="o">(</span><span class="n">executorId</span><span class="o">,</span> <span class="n">hostname</span><span class="o">,</span> <span class="n">env</span><span class="o">,</span> <span class="n">userClassPath</span><span class="o">,</span> <span class="n">isLocal</span> <span class="k">=</span> <span class="kc">false</span><span class="o">)</span>
+</span></span><span class="line"><span class="cl">      <span class="o">}</span> <span class="k">catch</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">        <span class="k">case</span> <span class="nc">NonFatal</span><span class="o">(</span><span class="n">e</span><span class="o">)</span> <span class="k">=&gt;</span>
+</span></span><span class="line"><span class="cl">          <span class="n">exitExecutor</span><span class="o">(</span><span class="mi">1</span><span class="o">,</span> <span class="s">&#34;Unable to create executor due to &#34;</span> <span class="o">+</span> <span class="n">e</span><span class="o">.</span><span class="n">getMessage</span><span class="o">,</span> <span class="n">e</span><span class="o">)</span>
+</span></span><span class="line"><span class="cl">      <span class="o">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="c1">// 接收从driver发来的注册失败的消息
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="k">case</span> <span class="nc">RegisterExecutorFailed</span><span class="o">(</span><span class="n">message</span><span class="o">)</span> <span class="k">=&gt;</span>
+</span></span><span class="line"><span class="cl">      <span class="c1">// 退出进程
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>      <span class="n">exitExecutor</span><span class="o">(</span><span class="mi">1</span><span class="o">,</span> <span class="s">&#34;Slave registration failed: &#34;</span> <span class="o">+</span> <span class="n">message</span><span class="o">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="c1">// 接收从driver发来的task
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="k">case</span> <span class="nc">LaunchTask</span><span class="o">(</span><span class="n">data</span><span class="o">)</span> <span class="k">=&gt;</span>
+</span></span><span class="line"><span class="cl">      <span class="k">if</span> <span class="o">(</span><span class="n">executor</span> <span class="o">==</span> <span class="kc">null</span><span class="o">)</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">        <span class="n">exitExecutor</span><span class="o">(</span><span class="mi">1</span><span class="o">,</span> <span class="s">&#34;Received LaunchTask command but executor was null&#34;</span><span class="o">)</span>
+</span></span><span class="line"><span class="cl">      <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">        <span class="c1">// 反序列化task
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>        <span class="k">val</span> <span class="n">taskDesc</span> <span class="k">=</span> <span class="nc">TaskDescription</span><span class="o">.</span><span class="n">decode</span><span class="o">(</span><span class="n">data</span><span class="o">.</span><span class="n">value</span><span class="o">)</span>
+</span></span><span class="line"><span class="cl">        <span class="n">logInfo</span><span class="o">(</span><span class="s">&#34;Got assigned task &#34;</span> <span class="o">+</span> <span class="n">taskDesc</span><span class="o">.</span><span class="n">taskId</span><span class="o">)</span>
+</span></span><span class="line"><span class="cl">        <span class="c1">// 提交task给executor执行
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>        <span class="n">executor</span><span class="o">.</span><span class="n">launchTask</span><span class="o">(</span><span class="k">this</span><span class="o">,</span> <span class="n">taskDesc</span><span class="o">)</span>
+</span></span><span class="line"><span class="cl">      <span class="o">}</span>
+</span></span><span class="line"><span class="cl">      
+</span></span><span class="line"><span class="cl">    <span class="k">case</span> <span class="nc">KillTask</span><span class="o">(</span><span class="n">taskId</span><span class="o">,</span> <span class="k">_</span><span class="o">,</span> <span class="n">interruptThread</span><span class="o">,</span> <span class="n">reason</span><span class="o">)</span> <span class="k">=&gt;</span>
+</span></span><span class="line"><span class="cl">      <span class="k">if</span> <span class="o">(</span><span class="n">executor</span> <span class="o">==</span> <span class="kc">null</span><span class="o">)</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">        <span class="n">exitExecutor</span><span class="o">(</span><span class="mi">1</span><span class="o">,</span> <span class="s">&#34;Received KillTask command but executor was null&#34;</span><span class="o">)</span>
+</span></span><span class="line"><span class="cl">      <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">        <span class="c1">// 调用executor杀死任务
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>        <span class="n">executor</span><span class="o">.</span><span class="n">killTask</span><span class="o">(</span><span class="n">taskId</span><span class="o">,</span> <span class="n">interruptThread</span><span class="o">,</span> <span class="n">reason</span><span class="o">)</span>
+</span></span><span class="line"><span class="cl">      <span class="o">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="k">case</span> <span class="nc">StopExecutor</span> <span class="k">=&gt;</span>
+</span></span><span class="line"><span class="cl">      <span class="n">stopping</span><span class="o">.</span><span class="n">set</span><span class="o">(</span><span class="kc">true</span><span class="o">)</span>
+</span></span><span class="line"><span class="cl">      <span class="n">logInfo</span><span class="o">(</span><span class="s">&#34;Driver commanded a shutdown&#34;</span><span class="o">)</span>
+</span></span><span class="line"><span class="cl">      <span class="c1">// Cannot shutdown here because an ack may need to be sent back to the caller. So send
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>      <span class="c1">// a message to self to actually do the shutdown.
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>      <span class="n">self</span><span class="o">.</span><span class="n">send</span><span class="o">(</span><span class="nc">Shutdown</span><span class="o">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="k">case</span> <span class="nc">Shutdown</span> <span class="k">=&gt;</span>
+</span></span><span class="line"><span class="cl">      <span class="n">stopping</span><span class="o">.</span><span class="n">set</span><span class="o">(</span><span class="kc">true</span><span class="o">)</span>
+</span></span><span class="line"><span class="cl">      <span class="k">new</span> <span class="nc">Thread</span><span class="o">(</span><span class="s">&#34;CoarseGrainedExecutorBackend-stop-executor&#34;</span><span class="o">)</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">        <span class="k">override</span> <span class="k">def</span> <span class="n">run</span><span class="o">()</span><span class="k">:</span> <span class="kt">Unit</span> <span class="o">=</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">          <span class="c1">// executor.stop() will call `SparkEnv.stop()` which waits until RpcEnv stops totally.
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>          <span class="c1">// However, if `executor.stop()` runs in some thread of RpcEnv, RpcEnv won&#39;t be able to
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>          <span class="c1">// stop until `executor.stop()` returns, which becomes a dead-lock (See SPARK-14180).
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>          <span class="c1">// Therefore, we put this line in a new thread.
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>          <span class="n">executor</span><span class="o">.</span><span class="n">stop</span><span class="o">()</span>
+</span></span><span class="line"><span class="cl">        <span class="o">}</span>
+</span></span><span class="line"><span class="cl">      <span class="o">}.</span><span class="n">start</span><span class="o">()</span>
+</span></span><span class="line"><span class="cl">  <span class="o">}</span>
+</span></span><span class="line"><span class="cl"><span class="o">}</span> 
+</span></span></code></pre></td></tr></table></div>
 </div>
 </div><h2 id="执行任务"><a href="#执行任务" class="anchor-link"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon anchor-icon"><path d="M326.612 185.391c59.747 59.809 58.927 155.698.36 214.59-.11.12-.24.25-.36.37l-67.2 67.2c-59.27 59.27-155.699 59.262-214.96 0-59.27-59.26-59.27-155.7 0-214.96l37.106-37.106c9.84-9.84 26.786-3.3 27.294 10.606.648 17.722 3.826 35.527 9.69 52.721 1.986 5.822.567 12.262-3.783 16.612l-13.087 13.087c-28.026 28.026-28.905 73.66-1.155 101.96 28.024 28.579 74.086 28.749 102.325.51l67.2-67.19c28.191-28.191 28.073-73.757 0-101.83-3.701-3.694-7.429-6.564-10.341-8.569a16.037 16.037 0 0 1-6.947-12.606c-.396-10.567 3.348-21.456 11.698-29.806l21.054-21.055c5.521-5.521 14.182-6.199 20.584-1.731a152.482 152.482 0 0 1 20.522 17.197zM467.547 44.449c-59.261-59.262-155.69-59.27-214.96 0l-67.2 67.2c-.12.12-.25.25-.36.37-58.566 58.892-59.387 154.781.36 214.59a152.454 152.454 0 0 0 20.521 17.196c6.402 4.468 15.064 3.789 20.584-1.731l21.054-21.055c8.35-8.35 12.094-19.239 11.698-29.806a16.037 16.037 0 0 0-6.947-12.606c-2.912-2.005-6.64-4.875-10.341-8.569-28.073-28.073-28.191-73.639 0-101.83l67.2-67.19c28.239-28.239 74.3-28.069 102.325.51 27.75 28.3 26.872 73.934-1.155 101.96l-13.087 13.087c-4.35 4.35-5.769 10.79-3.783 16.612 5.864 17.194 9.042 34.999 9.69 52.721.509 13.906 17.454 20.446 27.294 10.606l37.106-37.106c59.271-59.259 59.271-155.699.001-214.959z"/></svg></a>执行任务</h2>
 <p>driver会发送Task给CoarseGrainedExecutorBackend 服务。CoarseGrainedExecutorBackend会转交给Executor类执行。从上面的代码可以看到，是调用了Executor类的launchTask方法。</p>
@@ -546,30 +546,30 @@
 </span><span class="lnt">23
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-scala" data-lang="scala"><span class="k">class</span> <span class="nc">Executor</span><span class="o">()</span> <span class="o">{</span>
-    
-    <span class="k">private</span> <span class="k">val</span> <span class="n">threadPool</span> <span class="k">=</span> <span class="o">{</span>
-    	<span class="k">val</span> <span class="n">threadFactory</span> <span class="k">=</span> <span class="k">new</span> <span class="nc">ThreadFactoryBuilder</span><span class="o">()</span>
-      		<span class="o">.</span><span class="n">setDaemon</span><span class="o">(</span><span class="kc">true</span><span class="o">)</span>
-      		<span class="o">.</span><span class="n">setNameFormat</span><span class="o">(</span><span class="s">&#34;Executor task launch worker-%d&#34;</span><span class="o">)</span>
-      		<span class="o">.</span><span class="n">setThreadFactory</span><span class="o">(</span><span class="k">new</span> <span class="nc">ThreadFactory</span> <span class="o">{</span>
-        		<span class="k">override</span> <span class="k">def</span> <span class="n">newThread</span><span class="o">(</span><span class="n">r</span><span class="k">:</span> <span class="kt">Runnable</span><span class="o">)</span><span class="k">:</span> <span class="kt">Thread</span> <span class="o">=</span>
-          			<span class="k">new</span> <span class="nc">UninterruptibleThread</span><span class="o">(</span><span class="n">r</span><span class="o">,</span> <span class="s">&#34;unused&#34;</span><span class="o">)</span>
-      		<span class="o">})</span>
-      	<span class="o">.</span><span class="n">build</span><span class="o">()</span>
-    	<span class="nc">Executors</span><span class="o">.</span><span class="n">newCachedThreadPool</span><span class="o">(</span><span class="n">threadFactory</span><span class="o">).</span><span class="n">asInstanceOf</span><span class="o">[</span><span class="kt">ThreadPoolExecutor</span><span class="o">]</span>
-    <span class="o">}</span>
-    
-    <span class="c1">// 执行任务
-</span><span class="c1"></span>    <span class="k">def</span> <span class="n">launchTask</span><span class="o">(</span><span class="n">context</span><span class="k">:</span> <span class="kt">ExecutorBackend</span><span class="o">,</span> <span class="n">taskDescription</span><span class="k">:</span> <span class="kt">TaskDescription</span><span class="o">)</span><span class="k">:</span> <span class="kt">Unit</span> <span class="o">=</span> <span class="o">{</span>
-        <span class="c1">// 实例化TaskRunner
-</span><span class="c1"></span>        <span class="k">val</span> <span class="n">tr</span> <span class="k">=</span> <span class="k">new</span> <span class="nc">TaskRunner</span><span class="o">(</span><span class="n">context</span><span class="o">,</span> <span class="n">taskDescription</span><span class="o">)</span>
-        <span class="n">runningTasks</span><span class="o">.</span><span class="n">put</span><span class="o">(</span><span class="n">taskDescription</span><span class="o">.</span><span class="n">taskId</span><span class="o">,</span> <span class="n">tr</span><span class="o">)</span>
-        <span class="c1">// 将TaskRunner丢给线程池执行
-</span><span class="c1"></span>        <span class="n">threadPool</span><span class="o">.</span><span class="n">execute</span><span class="o">(</span><span class="n">tr</span><span class="o">)</span>
-  	<span class="o">}</span>
-<span class="o">}</span>
-</code></pre></td></tr></table></div>
+<pre tabindex="0" class="chroma"><code class="language-scala" data-lang="scala"><span class="line"><span class="cl"><span class="k">class</span> <span class="nc">Executor</span><span class="o">()</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">    
+</span></span><span class="line"><span class="cl">    <span class="k">private</span> <span class="k">val</span> <span class="n">threadPool</span> <span class="k">=</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">    	<span class="k">val</span> <span class="n">threadFactory</span> <span class="k">=</span> <span class="k">new</span> <span class="nc">ThreadFactoryBuilder</span><span class="o">()</span>
+</span></span><span class="line"><span class="cl">      		<span class="o">.</span><span class="n">setDaemon</span><span class="o">(</span><span class="kc">true</span><span class="o">)</span>
+</span></span><span class="line"><span class="cl">      		<span class="o">.</span><span class="n">setNameFormat</span><span class="o">(</span><span class="s">&#34;Executor task launch worker-%d&#34;</span><span class="o">)</span>
+</span></span><span class="line"><span class="cl">      		<span class="o">.</span><span class="n">setThreadFactory</span><span class="o">(</span><span class="k">new</span> <span class="nc">ThreadFactory</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">        		<span class="k">override</span> <span class="k">def</span> <span class="n">newThread</span><span class="o">(</span><span class="n">r</span><span class="k">:</span> <span class="kt">Runnable</span><span class="o">)</span><span class="k">:</span> <span class="kt">Thread</span> <span class="o">=</span>
+</span></span><span class="line"><span class="cl">          			<span class="k">new</span> <span class="nc">UninterruptibleThread</span><span class="o">(</span><span class="n">r</span><span class="o">,</span> <span class="s">&#34;unused&#34;</span><span class="o">)</span>
+</span></span><span class="line"><span class="cl">      		<span class="o">})</span>
+</span></span><span class="line"><span class="cl">      	<span class="o">.</span><span class="n">build</span><span class="o">()</span>
+</span></span><span class="line"><span class="cl">    	<span class="nc">Executors</span><span class="o">.</span><span class="n">newCachedThreadPool</span><span class="o">(</span><span class="n">threadFactory</span><span class="o">).</span><span class="n">asInstanceOf</span><span class="o">[</span><span class="kt">ThreadPoolExecutor</span><span class="o">]</span>
+</span></span><span class="line"><span class="cl">    <span class="o">}</span>
+</span></span><span class="line"><span class="cl">    
+</span></span><span class="line"><span class="cl">    <span class="c1">// 执行任务
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="k">def</span> <span class="n">launchTask</span><span class="o">(</span><span class="n">context</span><span class="k">:</span> <span class="kt">ExecutorBackend</span><span class="o">,</span> <span class="n">taskDescription</span><span class="k">:</span> <span class="kt">TaskDescription</span><span class="o">)</span><span class="k">:</span> <span class="kt">Unit</span> <span class="o">=</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">        <span class="c1">// 实例化TaskRunner
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>        <span class="k">val</span> <span class="n">tr</span> <span class="k">=</span> <span class="k">new</span> <span class="nc">TaskRunner</span><span class="o">(</span><span class="n">context</span><span class="o">,</span> <span class="n">taskDescription</span><span class="o">)</span>
+</span></span><span class="line"><span class="cl">        <span class="n">runningTasks</span><span class="o">.</span><span class="n">put</span><span class="o">(</span><span class="n">taskDescription</span><span class="o">.</span><span class="n">taskId</span><span class="o">,</span> <span class="n">tr</span><span class="o">)</span>
+</span></span><span class="line"><span class="cl">        <span class="c1">// 将TaskRunner丢给线程池执行
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>        <span class="n">threadPool</span><span class="o">.</span><span class="n">execute</span><span class="o">(</span><span class="n">tr</span><span class="o">)</span>
+</span></span><span class="line"><span class="cl">  	<span class="o">}</span>
+</span></span><span class="line"><span class="cl"><span class="o">}</span>
+</span></span></code></pre></td></tr></table></div>
 </div>
 </div><p>接下来看看TaskRunner的实现，代码简化如下</p>
 <div class="highlight"><div class="chroma">
@@ -606,37 +606,37 @@
 </span><span class="lnt">30
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-scala" data-lang="scala"><span class="k">class</span> <span class="nc">TaskRunner</span><span class="o">(</span>
-    <span class="n">execBackend</span><span class="k">:</span> <span class="kt">ExecutorBackend</span><span class="o">,</span>
-    <span class="k">private</span> <span class="k">val</span> <span class="n">taskDescription</span><span class="k">:</span> <span class="kt">TaskDescription</span><span class="o">)</span>
-  <span class="k">extends</span> <span class="nc">Runnable</span> <span class="o">{</span>
-      <span class="k">override</span> <span class="k">def</span> <span class="n">run</span><span class="o">()</span><span class="k">:</span> <span class="kt">Unit</span> <span class="o">=</span> <span class="o">{</span>
-          <span class="c1">//  
-</span><span class="c1"></span>          
-          <span class="c1">// 通过ExecutorBackend向driver汇报task已开始运行
-</span><span class="c1"></span>          <span class="n">execBackend</span><span class="o">.</span><span class="n">statusUpdate</span><span class="o">(</span><span class="n">taskId</span><span class="o">,</span> <span class="nc">TaskState</span><span class="o">.</span><span class="nc">RUNNING</span><span class="o">,</span> <span class="nc">EMPTY_BYTE_BUFFER</span><span class="o">)</span>
-          <span class="c1">// 反序列化task
-</span><span class="c1"></span>          <span class="k">val</span> <span class="n">ser</span> <span class="k">=</span> <span class="n">env</span><span class="o">.</span><span class="n">closureSerializer</span><span class="o">.</span><span class="n">newInstance</span><span class="o">()</span>
-          <span class="n">task</span> <span class="k">=</span> <span class="n">ser</span><span class="o">.</span><span class="n">deserialize</span><span class="o">[</span><span class="kt">Task</span><span class="o">[</span><span class="kt">Any</span><span class="o">]](</span>
-          <span class="n">taskDescription</span><span class="o">.</span><span class="n">serializedTask</span><span class="o">,</span> <span class="nc">Thread</span><span class="o">.</span><span class="n">currentThread</span><span class="o">.</span><span class="n">getContextClassLoader</span><span class="o">)</span>
-          
-          <span class="c1">// 调用Task的run方法
-</span><span class="c1"></span>          <span class="k">val</span> <span class="n">value</span> <span class="k">=</span> <span class="n">task</span><span class="o">.</span><span class="n">run</span><span class="o">(</span>
-            <span class="n">taskAttemptId</span> <span class="k">=</span> <span class="n">taskId</span><span class="o">,</span>
-            <span class="n">attemptNumber</span> <span class="k">=</span> <span class="n">taskDescription</span><span class="o">.</span><span class="n">attemptNumber</span><span class="o">,</span>
-            <span class="n">metricsSystem</span> <span class="k">=</span> <span class="n">env</span><span class="o">.</span><span class="n">metricsSystem</span><span class="o">)</span>
-          
-          <span class="c1">// 结果序列化
-</span><span class="c1"></span>          <span class="k">val</span> <span class="n">resultSer</span> <span class="k">=</span> <span class="n">env</span><span class="o">.</span><span class="n">serializer</span><span class="o">.</span><span class="n">newInstance</span><span class="o">()</span>
-          <span class="k">val</span> <span class="n">valueBytes</span> <span class="k">=</span> <span class="n">resultSer</span><span class="o">.</span><span class="n">serialize</span><span class="o">(</span><span class="n">value</span><span class="o">)</span>
-          
-		 <span class="c1">// 将结果通过ExecutorBackend，发送给driver
-</span><span class="c1"></span>          <span class="n">execBackend</span><span class="o">.</span><span class="n">statusUpdate</span><span class="o">(</span><span class="n">taskId</span><span class="o">,</span> <span class="nc">TaskState</span><span class="o">.</span><span class="nc">FINISHED</span><span class="o">,</span> <span class="n">serializedResult</span><span class="o">)</span>
-      <span class="o">}</span>
-  <span class="o">}</span>
-<span class="o">}</span>
-          
-</code></pre></td></tr></table></div>
+<pre tabindex="0" class="chroma"><code class="language-scala" data-lang="scala"><span class="line"><span class="cl"><span class="k">class</span> <span class="nc">TaskRunner</span><span class="o">(</span>
+</span></span><span class="line"><span class="cl">    <span class="n">execBackend</span><span class="k">:</span> <span class="kt">ExecutorBackend</span><span class="o">,</span>
+</span></span><span class="line"><span class="cl">    <span class="k">private</span> <span class="k">val</span> <span class="n">taskDescription</span><span class="k">:</span> <span class="kt">TaskDescription</span><span class="o">)</span>
+</span></span><span class="line"><span class="cl">  <span class="k">extends</span> <span class="nc">Runnable</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">      <span class="k">override</span> <span class="k">def</span> <span class="n">run</span><span class="o">()</span><span class="k">:</span> <span class="kt">Unit</span> <span class="o">=</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">          <span class="c1">//  
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>          
+</span></span><span class="line"><span class="cl">          <span class="c1">// 通过ExecutorBackend向driver汇报task已开始运行
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>          <span class="n">execBackend</span><span class="o">.</span><span class="n">statusUpdate</span><span class="o">(</span><span class="n">taskId</span><span class="o">,</span> <span class="nc">TaskState</span><span class="o">.</span><span class="nc">RUNNING</span><span class="o">,</span> <span class="nc">EMPTY_BYTE_BUFFER</span><span class="o">)</span>
+</span></span><span class="line"><span class="cl">          <span class="c1">// 反序列化task
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>          <span class="k">val</span> <span class="n">ser</span> <span class="k">=</span> <span class="n">env</span><span class="o">.</span><span class="n">closureSerializer</span><span class="o">.</span><span class="n">newInstance</span><span class="o">()</span>
+</span></span><span class="line"><span class="cl">          <span class="n">task</span> <span class="k">=</span> <span class="n">ser</span><span class="o">.</span><span class="n">deserialize</span><span class="o">[</span><span class="kt">Task</span><span class="o">[</span><span class="kt">Any</span><span class="o">]](</span>
+</span></span><span class="line"><span class="cl">          <span class="n">taskDescription</span><span class="o">.</span><span class="n">serializedTask</span><span class="o">,</span> <span class="nc">Thread</span><span class="o">.</span><span class="n">currentThread</span><span class="o">.</span><span class="n">getContextClassLoader</span><span class="o">)</span>
+</span></span><span class="line"><span class="cl">          
+</span></span><span class="line"><span class="cl">          <span class="c1">// 调用Task的run方法
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>          <span class="k">val</span> <span class="n">value</span> <span class="k">=</span> <span class="n">task</span><span class="o">.</span><span class="n">run</span><span class="o">(</span>
+</span></span><span class="line"><span class="cl">            <span class="n">taskAttemptId</span> <span class="k">=</span> <span class="n">taskId</span><span class="o">,</span>
+</span></span><span class="line"><span class="cl">            <span class="n">attemptNumber</span> <span class="k">=</span> <span class="n">taskDescription</span><span class="o">.</span><span class="n">attemptNumber</span><span class="o">,</span>
+</span></span><span class="line"><span class="cl">            <span class="n">metricsSystem</span> <span class="k">=</span> <span class="n">env</span><span class="o">.</span><span class="n">metricsSystem</span><span class="o">)</span>
+</span></span><span class="line"><span class="cl">          
+</span></span><span class="line"><span class="cl">          <span class="c1">// 结果序列化
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>          <span class="k">val</span> <span class="n">resultSer</span> <span class="k">=</span> <span class="n">env</span><span class="o">.</span><span class="n">serializer</span><span class="o">.</span><span class="n">newInstance</span><span class="o">()</span>
+</span></span><span class="line"><span class="cl">          <span class="k">val</span> <span class="n">valueBytes</span> <span class="k">=</span> <span class="n">resultSer</span><span class="o">.</span><span class="n">serialize</span><span class="o">(</span><span class="n">value</span><span class="o">)</span>
+</span></span><span class="line"><span class="cl">          
+</span></span><span class="line"><span class="cl">		 <span class="c1">// 将结果通过ExecutorBackend，发送给driver
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>          <span class="n">execBackend</span><span class="o">.</span><span class="n">statusUpdate</span><span class="o">(</span><span class="n">taskId</span><span class="o">,</span> <span class="nc">TaskState</span><span class="o">.</span><span class="nc">FINISHED</span><span class="o">,</span> <span class="n">serializedResult</span><span class="o">)</span>
+</span></span><span class="line"><span class="cl">      <span class="o">}</span>
+</span></span><span class="line"><span class="cl">  <span class="o">}</span>
+</span></span><span class="line"><span class="cl"><span class="o">}</span>
+</span></span><span class="line"><span class="cl">          
+</span></span></code></pre></td></tr></table></div>
 </div>
 </div><h2 id="心跳服务"><a href="#心跳服务" class="anchor-link"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon anchor-icon"><path d="M326.612 185.391c59.747 59.809 58.927 155.698.36 214.59-.11.12-.24.25-.36.37l-67.2 67.2c-59.27 59.27-155.699 59.262-214.96 0-59.27-59.26-59.27-155.7 0-214.96l37.106-37.106c9.84-9.84 26.786-3.3 27.294 10.606.648 17.722 3.826 35.527 9.69 52.721 1.986 5.822.567 12.262-3.783 16.612l-13.087 13.087c-28.026 28.026-28.905 73.66-1.155 101.96 28.024 28.579 74.086 28.749 102.325.51l67.2-67.19c28.191-28.191 28.073-73.757 0-101.83-3.701-3.694-7.429-6.564-10.341-8.569a16.037 16.037 0 0 1-6.947-12.606c-.396-10.567 3.348-21.456 11.698-29.806l21.054-21.055c5.521-5.521 14.182-6.199 20.584-1.731a152.482 152.482 0 0 1 20.522 17.197zM467.547 44.449c-59.261-59.262-155.69-59.27-214.96 0l-67.2 67.2c-.12.12-.25.25-.36.37-58.566 58.892-59.387 154.781.36 214.59a152.454 152.454 0 0 0 20.521 17.196c6.402 4.468 15.064 3.789 20.584-1.731l21.054-21.055c8.35-8.35 12.094-19.239 11.698-29.806a16.037 16.037 0 0 0-6.947-12.606c-2.912-2.005-6.64-4.875-10.341-8.569-28.073-28.073-28.191-73.639 0-101.83l67.2-67.19c28.239-28.239 74.3-28.069 102.325.51 27.75 28.3 26.872 73.934-1.155 101.96l-13.087 13.087c-4.35 4.35-5.769 10.79-3.783 16.612 5.864 17.194 9.042 34.999 9.69 52.721.509 13.906 17.454 20.446 27.294 10.606l37.106-37.106c59.271-59.259 59.271-155.699.001-214.959z"/></svg></a>心跳服务</h2>
 <p>Executor节点还需要保持与driver的心跳，否则driver会认为Executor节点异常。Executor类有个线程，专门负责与driver的心跳连接，定时发送给心跳信息。每次心跳都会携带任务的运行信息。</p>
@@ -676,39 +676,39 @@
 </span><span class="lnt">32
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-scala" data-lang="scala"><span class="k">class</span> <span class="nc">Executor</span><span class="o">()</span> <span class="o">{</span>
-    
-    <span class="c1">// 后台单线程
-</span><span class="c1"></span>	<span class="k">private</span> <span class="k">val</span> <span class="n">heartbeater</span> <span class="k">=</span> <span class="nc">ThreadUtils</span><span class="o">.</span><span class="n">newDaemonSingleThreadScheduledExecutor</span><span class="o">(</span><span class="s">&#34;driver-heartbeater&#34;</span><span class="o">)</span>
-    
-    <span class="c1">// 构建Heartbeat的rpc客户端
-</span><span class="c1"></span>    <span class="k">private</span> <span class="k">val</span> <span class="n">heartbeatReceiverRef</span> <span class="k">=</span> <span class="nc">RpcUtils</span><span class="o">.</span><span class="n">makeDriverRef</span><span class="o">(</span><span class="nc">HeartbeatReceiver</span><span class="o">.</span><span class="nc">ENDPOINT_NAME</span><span class="o">,</span> <span class="n">conf</span><span class="o">,</span> <span class="n">env</span><span class="o">.</span><span class="n">rpcEnv</span><span class="o">)</span>
-    
-    <span class="c1">// 启动心跳定时线程
-</span><span class="c1"></span>    <span class="k">private</span> <span class="k">def</span> <span class="n">startDriverHeartbeater</span><span class="o">()</span><span class="k">:</span> <span class="kt">Unit</span> <span class="o">=</span> <span class="o">{</span>
-        <span class="k">val</span> <span class="n">heartbeatTask</span> <span class="k">=</span> <span class="k">new</span> <span class="nc">Runnable</span><span class="o">()</span> <span class="o">{</span>
-            <span class="k">override</span> <span class="k">def</span> <span class="n">run</span><span class="o">()</span><span class="k">:</span> <span class="kt">Unit</span> <span class="o">=</span> <span class="nc">Utils</span><span class="o">.</span><span class="n">logUncaughtExceptions</span><span class="o">(</span><span class="n">reportHeartBeat</span><span class="o">())</span>
-    	<span class="o">}</span>
-        <span class="n">heartbeater</span><span class="o">.</span><span class="n">scheduleAtFixedRate</span><span class="o">(</span><span class="n">heartbeatTask</span><span class="o">,</span> <span class="n">initialDelay</span><span class="o">,</span> <span class="n">intervalMs</span><span class="o">,</span> <span class="nc">TimeUnit</span><span class="o">.</span><span class="nc">MILLISECONDS</span><span class="o">)</span>
-    <span class="o">}</span>
-    
-    <span class="c1">// 向driver汇报心跳
-</span><span class="c1"></span>    <span class="k">private</span> <span class="k">def</span> <span class="n">reportHeartBeat</span><span class="o">()</span><span class="k">:</span> <span class="kt">Unit</span> <span class="o">=</span> <span class="o">{</span>
-        <span class="c1">// 获取所有task运行的信息
-</span><span class="c1"></span>        <span class="k">val</span> <span class="n">accumUpdates</span> <span class="k">=</span> <span class="k">new</span> <span class="nc">ArrayBuffer</span><span class="o">[(</span><span class="kt">Long</span>, <span class="kt">Seq</span><span class="o">[</span><span class="kt">AccumulatorV2</span><span class="o">[</span><span class="k">_</span>, <span class="k">_</span><span class="o">]])]()</span>
-        <span class="k">for</span> <span class="o">(</span><span class="n">taskRunner</span> <span class="k">&lt;-</span> <span class="n">runningTasks</span><span class="o">.</span><span class="n">values</span><span class="o">().</span><span class="n">asScala</span><span class="o">)</span> <span class="o">{</span>
-            <span class="k">if</span> <span class="o">(</span><span class="n">taskRunner</span><span class="o">.</span><span class="n">task</span> <span class="o">!=</span> <span class="kc">null</span><span class="o">)</span> <span class="o">{</span>
-                <span class="n">accumUpdates</span> <span class="o">+=</span> <span class="o">((</span><span class="n">taskRunner</span><span class="o">.</span><span class="n">taskId</span><span class="o">,</span> <span class="n">taskRunner</span><span class="o">.</span><span class="n">task</span><span class="o">.</span><span class="n">metrics</span><span class="o">.</span><span class="n">accumulators</span><span class="o">()))</span>
-            <span class="o">}</span>
-        <span class="o">}</span>
-        <span class="c1">// 构建心跳消息
-</span><span class="c1"></span>        <span class="k">val</span> <span class="n">message</span> <span class="k">=</span> <span class="nc">Heartbeat</span><span class="o">(</span><span class="n">executorId</span><span class="o">,</span> <span class="n">accumUpdates</span><span class="o">.</span><span class="n">toArray</span><span class="o">,</span> <span class="n">env</span><span class="o">.</span><span class="n">blockManager</span><span class="o">.</span><span class="n">blockManagerId</span><span class="o">)</span>
-        <span class="c1">// 向driver发送
-</span><span class="c1"></span>        <span class="k">val</span> <span class="n">response</span> <span class="k">=</span> <span class="n">heartbeatReceiverRef</span><span class="o">.</span><span class="n">askSync</span><span class="o">[</span><span class="kt">HeartbeatResponse</span><span class="o">](</span>
-          <span class="n">message</span><span class="o">,</span> <span class="nc">RpcTimeout</span><span class="o">(</span><span class="n">conf</span><span class="o">,</span> <span class="s">&#34;spark.executor.heartbeatInterval&#34;</span><span class="o">,</span> <span class="s">&#34;10s&#34;</span><span class="o">))</span>
-        
-<span class="o">}</span>
-</code></pre></td></tr></table></div>
+<pre tabindex="0" class="chroma"><code class="language-scala" data-lang="scala"><span class="line"><span class="cl"><span class="k">class</span> <span class="nc">Executor</span><span class="o">()</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">    
+</span></span><span class="line"><span class="cl">    <span class="c1">// 后台单线程
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="k">private</span> <span class="k">val</span> <span class="n">heartbeater</span> <span class="k">=</span> <span class="nc">ThreadUtils</span><span class="o">.</span><span class="n">newDaemonSingleThreadScheduledExecutor</span><span class="o">(</span><span class="s">&#34;driver-heartbeater&#34;</span><span class="o">)</span>
+</span></span><span class="line"><span class="cl">    
+</span></span><span class="line"><span class="cl">    <span class="c1">// 构建Heartbeat的rpc客户端
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="k">private</span> <span class="k">val</span> <span class="n">heartbeatReceiverRef</span> <span class="k">=</span> <span class="nc">RpcUtils</span><span class="o">.</span><span class="n">makeDriverRef</span><span class="o">(</span><span class="nc">HeartbeatReceiver</span><span class="o">.</span><span class="nc">ENDPOINT_NAME</span><span class="o">,</span> <span class="n">conf</span><span class="o">,</span> <span class="n">env</span><span class="o">.</span><span class="n">rpcEnv</span><span class="o">)</span>
+</span></span><span class="line"><span class="cl">    
+</span></span><span class="line"><span class="cl">    <span class="c1">// 启动心跳定时线程
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="k">private</span> <span class="k">def</span> <span class="n">startDriverHeartbeater</span><span class="o">()</span><span class="k">:</span> <span class="kt">Unit</span> <span class="o">=</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">        <span class="k">val</span> <span class="n">heartbeatTask</span> <span class="k">=</span> <span class="k">new</span> <span class="nc">Runnable</span><span class="o">()</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">            <span class="k">override</span> <span class="k">def</span> <span class="n">run</span><span class="o">()</span><span class="k">:</span> <span class="kt">Unit</span> <span class="o">=</span> <span class="nc">Utils</span><span class="o">.</span><span class="n">logUncaughtExceptions</span><span class="o">(</span><span class="n">reportHeartBeat</span><span class="o">())</span>
+</span></span><span class="line"><span class="cl">    	<span class="o">}</span>
+</span></span><span class="line"><span class="cl">        <span class="n">heartbeater</span><span class="o">.</span><span class="n">scheduleAtFixedRate</span><span class="o">(</span><span class="n">heartbeatTask</span><span class="o">,</span> <span class="n">initialDelay</span><span class="o">,</span> <span class="n">intervalMs</span><span class="o">,</span> <span class="nc">TimeUnit</span><span class="o">.</span><span class="nc">MILLISECONDS</span><span class="o">)</span>
+</span></span><span class="line"><span class="cl">    <span class="o">}</span>
+</span></span><span class="line"><span class="cl">    
+</span></span><span class="line"><span class="cl">    <span class="c1">// 向driver汇报心跳
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="k">private</span> <span class="k">def</span> <span class="n">reportHeartBeat</span><span class="o">()</span><span class="k">:</span> <span class="kt">Unit</span> <span class="o">=</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">        <span class="c1">// 获取所有task运行的信息
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>        <span class="k">val</span> <span class="n">accumUpdates</span> <span class="k">=</span> <span class="k">new</span> <span class="nc">ArrayBuffer</span><span class="o">[(</span><span class="kt">Long</span>, <span class="kt">Seq</span><span class="o">[</span><span class="kt">AccumulatorV2</span><span class="o">[</span><span class="k">_</span>, <span class="k">_</span><span class="o">]])]()</span>
+</span></span><span class="line"><span class="cl">        <span class="k">for</span> <span class="o">(</span><span class="n">taskRunner</span> <span class="k">&lt;-</span> <span class="n">runningTasks</span><span class="o">.</span><span class="n">values</span><span class="o">().</span><span class="n">asScala</span><span class="o">)</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">            <span class="k">if</span> <span class="o">(</span><span class="n">taskRunner</span><span class="o">.</span><span class="n">task</span> <span class="o">!=</span> <span class="kc">null</span><span class="o">)</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">                <span class="n">accumUpdates</span> <span class="o">+=</span> <span class="o">((</span><span class="n">taskRunner</span><span class="o">.</span><span class="n">taskId</span><span class="o">,</span> <span class="n">taskRunner</span><span class="o">.</span><span class="n">task</span><span class="o">.</span><span class="n">metrics</span><span class="o">.</span><span class="n">accumulators</span><span class="o">()))</span>
+</span></span><span class="line"><span class="cl">            <span class="o">}</span>
+</span></span><span class="line"><span class="cl">        <span class="o">}</span>
+</span></span><span class="line"><span class="cl">        <span class="c1">// 构建心跳消息
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>        <span class="k">val</span> <span class="n">message</span> <span class="k">=</span> <span class="nc">Heartbeat</span><span class="o">(</span><span class="n">executorId</span><span class="o">,</span> <span class="n">accumUpdates</span><span class="o">.</span><span class="n">toArray</span><span class="o">,</span> <span class="n">env</span><span class="o">.</span><span class="n">blockManager</span><span class="o">.</span><span class="n">blockManagerId</span><span class="o">)</span>
+</span></span><span class="line"><span class="cl">        <span class="c1">// 向driver发送
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>        <span class="k">val</span> <span class="n">response</span> <span class="k">=</span> <span class="n">heartbeatReceiverRef</span><span class="o">.</span><span class="n">askSync</span><span class="o">[</span><span class="kt">HeartbeatResponse</span><span class="o">](</span>
+</span></span><span class="line"><span class="cl">          <span class="n">message</span><span class="o">,</span> <span class="nc">RpcTimeout</span><span class="o">(</span><span class="n">conf</span><span class="o">,</span> <span class="s">&#34;spark.executor.heartbeatInterval&#34;</span><span class="o">,</span> <span class="s">&#34;10s&#34;</span><span class="o">))</span>
+</span></span><span class="line"><span class="cl">        
+</span></span><span class="line"><span class="cl"><span class="o">}</span>
+</span></span></code></pre></td></tr></table></div>
 </div>
 </div>
             </div>
@@ -737,9 +737,9 @@
 
         
     <div class="updated-badge-container">
-        <span title="Updated @ 2021-10-22 14:44:34 CST" style="cursor:help">
+        <span title="Updated @ 2023-07-02 16:59:09 CST" style="cursor:help">
 
-<svg xmlns="http://www.w3.org/2000/svg" width="130" height="20" class="updated-badge"><linearGradient id="b" x2="0" y2="100%"><stop offset="0" stop-color="#bbb" stop-opacity=".1"/><stop offset="1" stop-opacity=".1"/></linearGradient><clipPath id="a"><rect width="130" height="20" rx="3" fill="#fff"/></clipPath><g clip-path="url(#a)"><path class="updated-badge-left" d="M0 0h55v20H0z"/><path class="updated-badge-right" d="M55 0h75v20H55z"/><path fill="url(#b)" d="M0 0h130v20H0z"/></g><g fill="#fff" text-anchor="middle" font-size="110"><text x="285" y="150" fill="#010101" fill-opacity=".3" textLength="450" transform="scale(.1)">updated</text><text x="285" y="140" textLength="450" transform="scale(.1)">updated</text><text x="915" y="150" fill="#010101" fill-opacity=".3" textLength="650" transform="scale(.1)">2021-10-22</text><text x="915" y="140" textLength="650" transform="scale(.1)">2021-10-22</text></g></svg>
+<svg xmlns="http://www.w3.org/2000/svg" width="130" height="20" class="updated-badge"><linearGradient id="b" x2="0" y2="100%"><stop offset="0" stop-color="#bbb" stop-opacity=".1"/><stop offset="1" stop-opacity=".1"/></linearGradient><clipPath id="a"><rect width="130" height="20" rx="3" fill="#fff"/></clipPath><g clip-path="url(#a)"><path class="updated-badge-left" d="M0 0h55v20H0z"/><path class="updated-badge-right" d="M55 0h75v20H55z"/><path fill="url(#b)" d="M0 0h130v20H0z"/></g><g fill="#fff" text-anchor="middle" font-size="110"><text x="285" y="150" fill="#010101" fill-opacity=".3" textLength="450" transform="scale(.1)">updated</text><text x="285" y="140" textLength="450" transform="scale(.1)">updated</text><text x="915" y="150" fill="#010101" fill-opacity=".3" textLength="650" transform="scale(.1)">2023-07-02</text><text x="915" y="140" textLength="650" transform="scale(.1)">2023-07-02</text></g></svg>
         </span></div>
 
 

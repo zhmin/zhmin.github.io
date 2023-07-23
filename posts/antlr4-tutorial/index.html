@@ -3,7 +3,7 @@
     <head prefix="og: http://ogp.me/ns# article: http://ogp.me/ns/article#">
     <meta charset="UTF-8" />
 
-    <meta name="generator" content="Hugo 0.88.1" /><meta name="theme-color" content="#fff" />
+    <meta name="generator" content="Hugo 0.115.0"><meta name="theme-color" content="#fff" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     
     <meta name="format-detection" content="telephone=no, date=no, address=no, email=no" />
@@ -14,11 +14,11 @@
 
     <title>antlr4 使用原理 | 学习笔记</title>
 
-    <link rel="stylesheet" href="/css/meme.min.2d3e1834af2bc8dda20c7d74aaa1d8134845094441b7a554a5206ccd4b472596.css"/>
+    <link rel="stylesheet" href="/css/meme.min.91e7f58f97e1c60563ef481c38d9684fa8099537801d6f17bbfc724121e7d8f1.css"/>
 
     
     
-        <script src="/js/meme.min.800f61672145711eb3e1f29fcfcc3dbe0139dd459259718b611a0390f74703d1.js"></script>
+        <script src="/js/meme.min.3210a00c2fdcf6f831170b681b8ee40f83f0224663661e986872616aec45407f.js"></script>
 
     
 
@@ -54,7 +54,7 @@
         "@context": "https://schema.org",
         "@type": "BlogPosting",
         "datePublished": "2019-04-26T21:39:45+00:00",
-        "dateModified": "2021-10-22T14:44:34+08:00",
+        "dateModified": "2023-07-02T16:59:09+08:00",
         "url": "https://zhmin.github.io/posts/antlr4-tutorial/",
         "headline": "antlr4 使用原理",
         "description": "antlr4 使用原理 Antlr4 是一款开源的框架，用来分析语法。使用者可以自己创建语法规则文件，然后使用 antlr4 生成类文件。这些类实现了将语句按照关键字分词，然后将分词构造成一棵树。使用者在这些类之上封装代码，就可以实现自己的……",
@@ -98,7 +98,7 @@
 <meta property="og:locale" content="zh" /><meta property="og:image" content="https://zhmin.github.io/calculator-parse-tree.png" />
 <meta property="og:type" content="article" />
     <meta property="article:published_time" content="2019-04-26T21:39:45&#43;00:00" />
-    <meta property="article:modified_time" content="2021-10-22T14:44:34&#43;08:00" />
+    <meta property="article:modified_time" content="2023-07-02T16:59:09&#43;08:00" />
     
     <meta property="article:section" content="posts" />
 
@@ -247,26 +247,26 @@ prog : stat+;
 
 stat:
   expr NEWLINE          # print
-  | ID '=' expr NEWLINE   # assign
+  | ID &#39;=&#39; expr NEWLINE   # assign
   | NEWLINE               # blank
   ;
 
 expr:
-  expr op=('*'|'/') expr    # MulDiv
-  | expr op=('+'|'-') expr        # AddSub
+  expr op=(&#39;*&#39;|&#39;/&#39;) expr    # MulDiv
+  | expr op=(&#39;+&#39;|&#39;-&#39;) expr        # AddSub
   | INT                           # int
   | ID                            # id
-  | '(' expr ')'                  # parenthese
+  | &#39;(&#39; expr &#39;)&#39;                  # parenthese
   ;
 
-MUL : '*' ;
-DIV : '/' ;
-ADD : '+' ;
-SUB : '-' ;
+MUL : &#39;*&#39; ;
+DIV : &#39;/&#39; ;
+ADD : &#39;+&#39; ;
+SUB : &#39;-&#39; ;
 ID : [a-zA-Z]+ ;
 INT : [0-9]+ ;
-NEWLINE :'\r'? '\n' ;
-DELIMITER : ';';
+NEWLINE :&#39;\r&#39;? &#39;\n&#39; ;
+DELIMITER : &#39;;&#39;;
 WS : [ \t]+ -&gt; skip;
 </code></pre><p>prog是整个语法的入口，它表示可以有多行 stat 语句。</p>
 <p>stat就是一行语句的格式，它有三种情形，对应于打印语句，赋值语句 和 空行。</p>
@@ -280,10 +280,10 @@ WS : [ \t]+ -&gt; skip;
 </span><span class="lnt">3
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-javascript" data-lang="javascript"><span class="nx">a</span> <span class="o">=</span> <span class="mi">12</span>
-<span class="nx">b</span> <span class="o">=</span> <span class="nx">a</span> <span class="o">*</span> <span class="mi">2</span>
-<span class="nx">a</span> <span class="o">+</span> <span class="nx">b</span>
-</code></pre></td></tr></table></div>
+<pre tabindex="0" class="chroma"><code class="language-javascript" data-lang="javascript"><span class="line"><span class="cl"><span class="nx">a</span> <span class="o">=</span> <span class="mi">12</span>
+</span></span><span class="line"><span class="cl"><span class="nx">b</span> <span class="o">=</span> <span class="nx">a</span> <span class="o">*</span> <span class="mi">2</span>
+</span></span><span class="line"><span class="cl"><span class="nx">a</span> <span class="o">+</span> <span class="nx">b</span>
+</span></span></code></pre></td></tr></table></div>
 </div>
 </div><p>它会被解析成一棵树</p>
 <img src="calculator-parse-tree.png">
@@ -362,71 +362,71 @@ WS : [ \t]+ -&gt; skip;
 </span><span class="lnt">64
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">CalculatorVisitorImp</span> <span class="kd">extends</span> <span class="n">CalculatorBaseVisitor</span><span class="o">&lt;</span><span class="n">Integer</span><span class="o">&gt;</span> <span class="o">{</span>
-
-    <span class="c1">// 存储变量的值
-</span><span class="c1"></span>    <span class="kd">private</span> <span class="n">Map</span><span class="o">&lt;</span><span class="n">String</span><span class="o">,</span> <span class="n">Integer</span><span class="o">&gt;</span> <span class="n">variable</span><span class="o">;</span>
-
-    <span class="kd">public</span> <span class="nf">CalculatorVisitorImp</span><span class="o">()</span> <span class="o">{</span>
-        <span class="n">variable</span> <span class="o">=</span> <span class="k">new</span> <span class="n">HashMap</span><span class="o">&lt;&gt;();</span>
-    <span class="o">}</span>
-
-    <span class="c1">// 当遇到print节点，计算出exrp的值，然后打印出来
-</span><span class="c1"></span>    <span class="nd">@Override</span>
-    <span class="kd">public</span> <span class="n">Integer</span> <span class="nf">visitPrint</span><span class="o">(</span><span class="n">CalculatorParser</span><span class="o">.</span><span class="na">PrintContext</span> <span class="n">ctx</span><span class="o">)</span> <span class="o">{</span>
-        <span class="n">Integer</span> <span class="n">result</span>  <span class="o">=</span> <span class="n">ctx</span><span class="o">.</span><span class="na">expr</span><span class="o">().</span><span class="na">accept</span><span class="o">(</span><span class="k">this</span><span class="o">);</span>
-        <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="n">result</span><span class="o">);</span>
-        <span class="k">return</span> <span class="kc">null</span><span class="o">;</span>
-    <span class="o">}</span>
-
-    <span class="c1">// 分别获取子节点expr的值，然后做加减运算
-</span><span class="c1"></span>    <span class="nd">@Override</span>
-    <span class="kd">public</span> <span class="n">Integer</span> <span class="nf">visitAddSub</span><span class="o">(</span><span class="n">CalculatorParser</span><span class="o">.</span><span class="na">AddSubContext</span> <span class="n">ctx</span><span class="o">)</span> <span class="o">{</span>
-        <span class="n">Integer</span> <span class="n">param1</span> <span class="o">=</span> <span class="n">ctx</span><span class="o">.</span><span class="na">expr</span><span class="o">(</span><span class="n">0</span><span class="o">).</span><span class="na">accept</span><span class="o">(</span><span class="k">this</span><span class="o">);</span>
-        <span class="n">Integer</span> <span class="n">param2</span> <span class="o">=</span> <span class="n">ctx</span><span class="o">.</span><span class="na">expr</span><span class="o">(</span><span class="n">1</span><span class="o">).</span><span class="na">accept</span><span class="o">(</span><span class="k">this</span><span class="o">);</span>
-        <span class="k">if</span> <span class="o">(</span><span class="n">ctx</span><span class="o">.</span><span class="na">op</span><span class="o">.</span><span class="na">getType</span><span class="o">()</span> <span class="o">==</span> <span class="n">CalculatorParser</span><span class="o">.</span><span class="na">ADD</span><span class="o">)</span> <span class="o">{</span>
-            <span class="k">return</span> <span class="n">param1</span> <span class="o">+</span> <span class="n">param2</span><span class="o">;</span>
-        <span class="o">}</span>
-        <span class="k">else</span> <span class="o">{</span>
-            <span class="k">return</span> <span class="n">param1</span> <span class="o">-</span> <span class="n">param2</span><span class="o">;</span>
-        <span class="o">}</span>
-    <span class="o">}</span>
-
-    <span class="c1">// 分别获取子节点expr的值，然后做乘除运算
-</span><span class="c1"></span>    <span class="nd">@Override</span>
-    <span class="kd">public</span> <span class="n">Integer</span> <span class="nf">visitMulDiv</span><span class="o">(</span><span class="n">CalculatorParser</span><span class="o">.</span><span class="na">MulDivContext</span> <span class="n">ctx</span><span class="o">)</span> <span class="o">{</span>
-        <span class="n">Integer</span> <span class="n">param1</span> <span class="o">=</span> <span class="n">ctx</span><span class="o">.</span><span class="na">expr</span><span class="o">(</span><span class="n">0</span><span class="o">).</span><span class="na">accept</span><span class="o">(</span><span class="k">this</span><span class="o">);</span>
-        <span class="n">Integer</span> <span class="n">param2</span> <span class="o">=</span> <span class="n">ctx</span><span class="o">.</span><span class="na">expr</span><span class="o">(</span><span class="n">1</span><span class="o">).</span><span class="na">accept</span><span class="o">(</span><span class="k">this</span><span class="o">);</span>
-        <span class="k">if</span> <span class="o">(</span><span class="n">ctx</span><span class="o">.</span><span class="na">op</span><span class="o">.</span><span class="na">getType</span><span class="o">()</span> <span class="o">==</span> <span class="n">CalculatorParser</span><span class="o">.</span><span class="na">MUL</span><span class="o">)</span> <span class="o">{</span>
-            <span class="k">return</span> <span class="n">param1</span> <span class="o">*</span> <span class="n">param2</span><span class="o">;</span>
-        <span class="o">}</span>
-        <span class="k">else</span> <span class="o">{</span>
-            <span class="k">return</span> <span class="n">param1</span> <span class="o">/</span> <span class="n">param2</span><span class="o">;</span>
-        <span class="o">}</span>
-    <span class="o">}</span>
-
-    <span class="c1">// 当遇到int节点，直接返回数据
-</span><span class="c1"></span>    <span class="nd">@Override</span>
-    <span class="kd">public</span> <span class="n">Integer</span> <span class="nf">visitInt</span><span class="o">(</span><span class="n">CalculatorParser</span><span class="o">.</span><span class="na">IntContext</span> <span class="n">ctx</span><span class="o">)</span> <span class="o">{</span>
-        <span class="k">return</span> <span class="n">Integer</span><span class="o">.</span><span class="na">parseInt</span><span class="o">(</span><span class="n">ctx</span><span class="o">.</span><span class="na">getText</span><span class="o">());</span>
-    <span class="o">}</span>
-
-    <span class="c1">// 当遇到Id节点，从变量表获取值
-</span><span class="c1"></span>    <span class="nd">@Override</span>
-    <span class="kd">public</span> <span class="n">Integer</span> <span class="nf">visitId</span><span class="o">(</span><span class="n">CalculatorParser</span><span class="o">.</span><span class="na">IdContext</span> <span class="n">ctx</span><span class="o">)</span> <span class="o">{</span>
-        <span class="k">return</span> <span class="n">variable</span><span class="o">.</span><span class="na">get</span><span class="o">(</span><span class="n">ctx</span><span class="o">.</span><span class="na">getText</span><span class="o">());</span>
-    <span class="o">}</span>
-
-    <span class="c1">// 当遇到赋值语句，获取右边expr的值，然后将变量的值保存到variable集合
-</span><span class="c1"></span>    <span class="nd">@Override</span>
-    <span class="kd">public</span> <span class="n">Integer</span> <span class="nf">visitAssign</span><span class="o">(</span><span class="n">CalculatorParser</span><span class="o">.</span><span class="na">AssignContext</span> <span class="n">ctx</span><span class="o">)</span> <span class="o">{</span>   
-        <span class="n">String</span> <span class="n">name</span> <span class="o">=</span> <span class="n">ctx</span><span class="o">.</span><span class="na">ID</span><span class="o">().</span><span class="na">getText</span><span class="o">();</span>
-        <span class="n">Integer</span> <span class="n">value</span> <span class="o">=</span> <span class="n">ctx</span><span class="o">.</span><span class="na">expr</span><span class="o">().</span><span class="na">accept</span><span class="o">(</span><span class="k">this</span><span class="o">);</span>
-        <span class="n">variable</span><span class="o">.</span><span class="na">put</span><span class="o">(</span><span class="n">name</span><span class="o">,</span> <span class="n">value</span><span class="o">);</span>
-        <span class="k">return</span> <span class="kc">null</span><span class="o">;</span>
-    <span class="o">}</span>
-<span class="o">}</span>
-</code></pre></td></tr></table></div>
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">CalculatorVisitorImp</span> <span class="kd">extends</span> <span class="n">CalculatorBaseVisitor</span><span class="o">&lt;</span><span class="n">Integer</span><span class="o">&gt;</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="c1">// 存储变量的值
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="kd">private</span> <span class="n">Map</span><span class="o">&lt;</span><span class="n">String</span><span class="o">,</span> <span class="n">Integer</span><span class="o">&gt;</span> <span class="n">variable</span><span class="o">;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="kd">public</span> <span class="nf">CalculatorVisitorImp</span><span class="o">()</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">        <span class="n">variable</span> <span class="o">=</span> <span class="k">new</span> <span class="n">HashMap</span><span class="o">&lt;&gt;();</span>
+</span></span><span class="line"><span class="cl">    <span class="o">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="c1">// 当遇到print节点，计算出exrp的值，然后打印出来
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="nd">@Override</span>
+</span></span><span class="line"><span class="cl">    <span class="kd">public</span> <span class="n">Integer</span> <span class="nf">visitPrint</span><span class="o">(</span><span class="n">CalculatorParser</span><span class="o">.</span><span class="na">PrintContext</span> <span class="n">ctx</span><span class="o">)</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">        <span class="n">Integer</span> <span class="n">result</span>  <span class="o">=</span> <span class="n">ctx</span><span class="o">.</span><span class="na">expr</span><span class="o">().</span><span class="na">accept</span><span class="o">(</span><span class="k">this</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">        <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="n">result</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">        <span class="k">return</span> <span class="kc">null</span><span class="o">;</span>
+</span></span><span class="line"><span class="cl">    <span class="o">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="c1">// 分别获取子节点expr的值，然后做加减运算
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="nd">@Override</span>
+</span></span><span class="line"><span class="cl">    <span class="kd">public</span> <span class="n">Integer</span> <span class="nf">visitAddSub</span><span class="o">(</span><span class="n">CalculatorParser</span><span class="o">.</span><span class="na">AddSubContext</span> <span class="n">ctx</span><span class="o">)</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">        <span class="n">Integer</span> <span class="n">param1</span> <span class="o">=</span> <span class="n">ctx</span><span class="o">.</span><span class="na">expr</span><span class="o">(</span><span class="mi">0</span><span class="o">).</span><span class="na">accept</span><span class="o">(</span><span class="k">this</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">        <span class="n">Integer</span> <span class="n">param2</span> <span class="o">=</span> <span class="n">ctx</span><span class="o">.</span><span class="na">expr</span><span class="o">(</span><span class="mi">1</span><span class="o">).</span><span class="na">accept</span><span class="o">(</span><span class="k">this</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">        <span class="k">if</span> <span class="o">(</span><span class="n">ctx</span><span class="o">.</span><span class="na">op</span><span class="o">.</span><span class="na">getType</span><span class="o">()</span> <span class="o">==</span> <span class="n">CalculatorParser</span><span class="o">.</span><span class="na">ADD</span><span class="o">)</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">            <span class="k">return</span> <span class="n">param1</span> <span class="o">+</span> <span class="n">param2</span><span class="o">;</span>
+</span></span><span class="line"><span class="cl">        <span class="o">}</span>
+</span></span><span class="line"><span class="cl">        <span class="k">else</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">            <span class="k">return</span> <span class="n">param1</span> <span class="o">-</span> <span class="n">param2</span><span class="o">;</span>
+</span></span><span class="line"><span class="cl">        <span class="o">}</span>
+</span></span><span class="line"><span class="cl">    <span class="o">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="c1">// 分别获取子节点expr的值，然后做乘除运算
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="nd">@Override</span>
+</span></span><span class="line"><span class="cl">    <span class="kd">public</span> <span class="n">Integer</span> <span class="nf">visitMulDiv</span><span class="o">(</span><span class="n">CalculatorParser</span><span class="o">.</span><span class="na">MulDivContext</span> <span class="n">ctx</span><span class="o">)</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">        <span class="n">Integer</span> <span class="n">param1</span> <span class="o">=</span> <span class="n">ctx</span><span class="o">.</span><span class="na">expr</span><span class="o">(</span><span class="mi">0</span><span class="o">).</span><span class="na">accept</span><span class="o">(</span><span class="k">this</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">        <span class="n">Integer</span> <span class="n">param2</span> <span class="o">=</span> <span class="n">ctx</span><span class="o">.</span><span class="na">expr</span><span class="o">(</span><span class="mi">1</span><span class="o">).</span><span class="na">accept</span><span class="o">(</span><span class="k">this</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">        <span class="k">if</span> <span class="o">(</span><span class="n">ctx</span><span class="o">.</span><span class="na">op</span><span class="o">.</span><span class="na">getType</span><span class="o">()</span> <span class="o">==</span> <span class="n">CalculatorParser</span><span class="o">.</span><span class="na">MUL</span><span class="o">)</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">            <span class="k">return</span> <span class="n">param1</span> <span class="o">*</span> <span class="n">param2</span><span class="o">;</span>
+</span></span><span class="line"><span class="cl">        <span class="o">}</span>
+</span></span><span class="line"><span class="cl">        <span class="k">else</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">            <span class="k">return</span> <span class="n">param1</span> <span class="o">/</span> <span class="n">param2</span><span class="o">;</span>
+</span></span><span class="line"><span class="cl">        <span class="o">}</span>
+</span></span><span class="line"><span class="cl">    <span class="o">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="c1">// 当遇到int节点，直接返回数据
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="nd">@Override</span>
+</span></span><span class="line"><span class="cl">    <span class="kd">public</span> <span class="n">Integer</span> <span class="nf">visitInt</span><span class="o">(</span><span class="n">CalculatorParser</span><span class="o">.</span><span class="na">IntContext</span> <span class="n">ctx</span><span class="o">)</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">        <span class="k">return</span> <span class="n">Integer</span><span class="o">.</span><span class="na">parseInt</span><span class="o">(</span><span class="n">ctx</span><span class="o">.</span><span class="na">getText</span><span class="o">());</span>
+</span></span><span class="line"><span class="cl">    <span class="o">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="c1">// 当遇到Id节点，从变量表获取值
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="nd">@Override</span>
+</span></span><span class="line"><span class="cl">    <span class="kd">public</span> <span class="n">Integer</span> <span class="nf">visitId</span><span class="o">(</span><span class="n">CalculatorParser</span><span class="o">.</span><span class="na">IdContext</span> <span class="n">ctx</span><span class="o">)</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">        <span class="k">return</span> <span class="n">variable</span><span class="o">.</span><span class="na">get</span><span class="o">(</span><span class="n">ctx</span><span class="o">.</span><span class="na">getText</span><span class="o">());</span>
+</span></span><span class="line"><span class="cl">    <span class="o">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="c1">// 当遇到赋值语句，获取右边expr的值，然后将变量的值保存到variable集合
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="nd">@Override</span>
+</span></span><span class="line"><span class="cl">    <span class="kd">public</span> <span class="n">Integer</span> <span class="nf">visitAssign</span><span class="o">(</span><span class="n">CalculatorParser</span><span class="o">.</span><span class="na">AssignContext</span> <span class="n">ctx</span><span class="o">)</span> <span class="o">{</span>   
+</span></span><span class="line"><span class="cl">        <span class="n">String</span> <span class="n">name</span> <span class="o">=</span> <span class="n">ctx</span><span class="o">.</span><span class="na">ID</span><span class="o">().</span><span class="na">getText</span><span class="o">();</span>
+</span></span><span class="line"><span class="cl">        <span class="n">Integer</span> <span class="n">value</span> <span class="o">=</span> <span class="n">ctx</span><span class="o">.</span><span class="na">expr</span><span class="o">().</span><span class="na">accept</span><span class="o">(</span><span class="k">this</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">        <span class="n">variable</span><span class="o">.</span><span class="na">put</span><span class="o">(</span><span class="n">name</span><span class="o">,</span> <span class="n">value</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">        <span class="k">return</span> <span class="kc">null</span><span class="o">;</span>
+</span></span><span class="line"><span class="cl">    <span class="o">}</span>
+</span></span><span class="line"><span class="cl"><span class="o">}</span>
+</span></span></code></pre></td></tr></table></div>
 </div>
 </div><p>遍历语法树的顺序为</p>
 <img src="calculator-visit-tree.png">
@@ -450,22 +450,22 @@ WS : [ \t]+ -&gt; skip;
 </span><span class="lnt">15
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">Main</span> <span class="o">{</span>
-
-    <span class="kd">public</span> <span class="kd">static</span> <span class="kt">void</span> <span class="nf">main</span><span class="o">(</span><span class="n">String</span><span class="o">[]</span> <span class="n">args</span><span class="o">)</span> <span class="kd">throws</span> <span class="n">IOException</span> <span class="o">{</span>
-        <span class="n">String</span> <span class="n">expression</span> <span class="o">=</span> <span class="s">&#34;a = 12\n&#34;</span> <span class="o">+</span>
-                <span class="s">&#34;b = a * 2\n&#34;</span> <span class="o">+</span>
-                <span class="s">&#34;a + b\n&#34;</span><span class="o">;</span>
-        <span class="n">CalculatorLexer</span> <span class="n">lexer</span> <span class="o">=</span> <span class="k">new</span> <span class="n">CalculatorLexer</span><span class="o">(</span><span class="n">CharStreams</span><span class="o">.</span><span class="na">fromString</span><span class="o">(</span><span class="n">expression</span><span class="o">));</span>
-        <span class="n">CommonTokenStream</span> <span class="n">tokens</span> <span class="o">=</span> <span class="k">new</span> <span class="n">CommonTokenStream</span><span class="o">(</span><span class="n">lexer</span><span class="o">);</span>
-        <span class="n">CalculatorParser</span> <span class="n">parser</span> <span class="o">=</span> <span class="k">new</span> <span class="n">CalculatorParser</span><span class="o">(</span><span class="n">tokens</span><span class="o">);</span>
-        <span class="n">parser</span><span class="o">.</span><span class="na">setBuildParseTree</span><span class="o">(</span><span class="kc">true</span><span class="o">);</span>
-        <span class="n">ParseTree</span> <span class="n">root</span> <span class="o">=</span> <span class="n">parser</span><span class="o">.</span><span class="na">prog</span><span class="o">();</span>
-        <span class="n">CalculatorVisitor</span><span class="o">&lt;</span><span class="n">Integer</span><span class="o">&gt;</span> <span class="n">visitor</span> <span class="o">=</span> <span class="k">new</span> <span class="n">CalculatorVisitorImp</span><span class="o">();</span>
-        <span class="n">root</span><span class="o">.</span><span class="na">accept</span><span class="o">(</span><span class="n">visitor</span><span class="o">);</span>
-    <span class="o">}</span>
-<span class="o">}</span>
-</code></pre></td></tr></table></div>
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">Main</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="kd">public</span> <span class="kd">static</span> <span class="kt">void</span> <span class="nf">main</span><span class="o">(</span><span class="n">String</span><span class="o">[]</span> <span class="n">args</span><span class="o">)</span> <span class="kd">throws</span> <span class="n">IOException</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">        <span class="n">String</span> <span class="n">expression</span> <span class="o">=</span> <span class="s">&#34;a = 12\n&#34;</span> <span class="o">+</span>
+</span></span><span class="line"><span class="cl">                <span class="s">&#34;b = a * 2\n&#34;</span> <span class="o">+</span>
+</span></span><span class="line"><span class="cl">                <span class="s">&#34;a + b\n&#34;</span><span class="o">;</span>
+</span></span><span class="line"><span class="cl">        <span class="n">CalculatorLexer</span> <span class="n">lexer</span> <span class="o">=</span> <span class="k">new</span> <span class="n">CalculatorLexer</span><span class="o">(</span><span class="n">CharStreams</span><span class="o">.</span><span class="na">fromString</span><span class="o">(</span><span class="n">expression</span><span class="o">));</span>
+</span></span><span class="line"><span class="cl">        <span class="n">CommonTokenStream</span> <span class="n">tokens</span> <span class="o">=</span> <span class="k">new</span> <span class="n">CommonTokenStream</span><span class="o">(</span><span class="n">lexer</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">        <span class="n">CalculatorParser</span> <span class="n">parser</span> <span class="o">=</span> <span class="k">new</span> <span class="n">CalculatorParser</span><span class="o">(</span><span class="n">tokens</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">        <span class="n">parser</span><span class="o">.</span><span class="na">setBuildParseTree</span><span class="o">(</span><span class="kc">true</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">        <span class="n">ParseTree</span> <span class="n">root</span> <span class="o">=</span> <span class="n">parser</span><span class="o">.</span><span class="na">prog</span><span class="o">();</span>
+</span></span><span class="line"><span class="cl">        <span class="n">CalculatorVisitor</span><span class="o">&lt;</span><span class="n">Integer</span><span class="o">&gt;</span> <span class="n">visitor</span> <span class="o">=</span> <span class="k">new</span> <span class="n">CalculatorVisitorImp</span><span class="o">();</span>
+</span></span><span class="line"><span class="cl">        <span class="n">root</span><span class="o">.</span><span class="na">accept</span><span class="o">(</span><span class="n">visitor</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">    <span class="o">}</span>
+</span></span><span class="line"><span class="cl"><span class="o">}</span>
+</span></span></code></pre></td></tr></table></div>
 </div>
 </div><p>结果输出为：36</p>
 <h2 id="antlr4-基础类"><a href="#antlr4-基础类" class="anchor-link"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon anchor-icon"><path d="M326.612 185.391c59.747 59.809 58.927 155.698.36 214.59-.11.12-.24.25-.36.37l-67.2 67.2c-59.27 59.27-155.699 59.262-214.96 0-59.27-59.26-59.27-155.7 0-214.96l37.106-37.106c9.84-9.84 26.786-3.3 27.294 10.606.648 17.722 3.826 35.527 9.69 52.721 1.986 5.822.567 12.262-3.783 16.612l-13.087 13.087c-28.026 28.026-28.905 73.66-1.155 101.96 28.024 28.579 74.086 28.749 102.325.51l67.2-67.19c28.191-28.191 28.073-73.757 0-101.83-3.701-3.694-7.429-6.564-10.341-8.569a16.037 16.037 0 0 1-6.947-12.606c-.396-10.567 3.348-21.456 11.698-29.806l21.054-21.055c5.521-5.521 14.182-6.199 20.584-1.731a152.482 152.482 0 0 1 20.522 17.197zM467.547 44.449c-59.261-59.262-155.69-59.27-214.96 0l-67.2 67.2c-.12.12-.25.25-.36.37-58.566 58.892-59.387 154.781.36 214.59a152.454 152.454 0 0 0 20.521 17.196c6.402 4.468 15.064 3.789 20.584-1.731l21.054-21.055c8.35-8.35 12.094-19.239 11.698-29.806a16.037 16.037 0 0 0-6.947-12.606c-2.912-2.005-6.64-4.875-10.341-8.569-28.073-28.073-28.191-73.639 0-101.83l67.2-67.19c28.239-28.239 74.3-28.069 102.325.51 27.75 28.3 26.872 73.934-1.155 101.96l-13.087 13.087c-4.35 4.35-5.769 10.79-3.783 16.612 5.864 17.194 9.042 34.999 9.69 52.721.509 13.906 17.454 20.446 27.294 10.606l37.106-37.106c59.271-59.259 59.271-155.699.001-214.959z"/></svg></a>antlr4 基础类</h2>
@@ -520,10 +520,10 @@ ParserRuleContext &lt;|-- RuleContextWithAltNum</p>
 </span><span class="lnt">3
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">interface</span> <span class="nc">ParseTree</span> <span class="kd">extends</span> <span class="n">SyntaxTree</span> <span class="o">{</span>
-	<span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span> <span class="n">T</span> <span class="nf">accept</span><span class="o">(</span><span class="n">ParseTreeVisitor</span><span class="o">&lt;?</span> <span class="kd">extends</span> <span class="n">T</span><span class="o">&gt;</span> <span class="n">visitor</span><span class="o">);</span>
-<span class="o">}</span>
-</code></pre></td></tr></table></div>
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="kd">public</span> <span class="kd">interface</span> <span class="nc">ParseTree</span> <span class="kd">extends</span> <span class="n">SyntaxTree</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">	<span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span> <span class="n">T</span> <span class="nf">accept</span><span class="o">(</span><span class="n">ParseTreeVisitor</span><span class="o">&lt;?</span> <span class="kd">extends</span> <span class="n">T</span><span class="o">&gt;</span> <span class="n">visitor</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl"><span class="o">}</span>
+</span></span></code></pre></td></tr></table></div>
 </div>
 </div><p>ParseTree的子类会实现 accept 方法，比如叶子节点 TerminalNodeImpl，它是调用了访问者的 visitTerminal 方法。非叶子节点，调用了访问者的 visitChildren 方法。</p>
 <div class="highlight"><div class="chroma">
@@ -543,20 +543,20 @@ ParserRuleContext &lt;|-- RuleContextWithAltNum</p>
 </span><span class="lnt">13
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">TerminalNodeImpl</span> <span class="kd">implements</span> <span class="n">TerminalNode</span> <span class="o">{</span>
-	<span class="nd">@Override</span>
-	<span class="kd">public</span> <span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span> <span class="n">T</span> <span class="nf">accept</span><span class="o">(</span><span class="n">ParseTreeVisitor</span><span class="o">&lt;?</span> <span class="kd">extends</span> <span class="n">T</span><span class="o">&gt;</span> <span class="n">visitor</span><span class="o">)</span> <span class="o">{</span>
-		<span class="k">return</span> <span class="n">visitor</span><span class="o">.</span><span class="na">visitTerminal</span><span class="o">(</span><span class="k">this</span><span class="o">);</span>
-	<span class="o">}</span>
-<span class="o">}</span>
-
-<span class="kd">public</span> <span class="kd">class</span> <span class="nc">RuleContext</span> <span class="kd">implements</span> <span class="n">RuleNode</span> <span class="o">{</span>
-	<span class="nd">@Override</span>
-	<span class="kd">public</span> <span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span> <span class="n">T</span> <span class="nf">accept</span><span class="o">(</span><span class="n">ParseTreeVisitor</span><span class="o">&lt;?</span> <span class="kd">extends</span> <span class="n">T</span><span class="o">&gt;</span> <span class="n">visitor</span><span class="o">)</span> <span class="o">{</span>
-        <span class="k">return</span> <span class="n">visitor</span><span class="o">.</span><span class="na">visitChildren</span><span class="o">(</span><span class="k">this</span><span class="o">);</span>
-    <span class="o">}</span>
-<span class="o">}</span>
-</code></pre></td></tr></table></div>
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">TerminalNodeImpl</span> <span class="kd">implements</span> <span class="n">TerminalNode</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">	<span class="nd">@Override</span>
+</span></span><span class="line"><span class="cl">	<span class="kd">public</span> <span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span> <span class="n">T</span> <span class="nf">accept</span><span class="o">(</span><span class="n">ParseTreeVisitor</span><span class="o">&lt;?</span> <span class="kd">extends</span> <span class="n">T</span><span class="o">&gt;</span> <span class="n">visitor</span><span class="o">)</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">		<span class="k">return</span> <span class="n">visitor</span><span class="o">.</span><span class="na">visitTerminal</span><span class="o">(</span><span class="k">this</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">	<span class="o">}</span>
+</span></span><span class="line"><span class="cl"><span class="o">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">RuleContext</span> <span class="kd">implements</span> <span class="n">RuleNode</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">	<span class="nd">@Override</span>
+</span></span><span class="line"><span class="cl">	<span class="kd">public</span> <span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span> <span class="n">T</span> <span class="nf">accept</span><span class="o">(</span><span class="n">ParseTreeVisitor</span><span class="o">&lt;?</span> <span class="kd">extends</span> <span class="n">T</span><span class="o">&gt;</span> <span class="n">visitor</span><span class="o">)</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">        <span class="k">return</span> <span class="n">visitor</span><span class="o">.</span><span class="na">visitChildren</span><span class="o">(</span><span class="k">this</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">    <span class="o">}</span>
+</span></span><span class="line"><span class="cl"><span class="o">}</span>
+</span></span></code></pre></td></tr></table></div>
 </div>
 </div><p>ParseTreeVisitor 接口，定义了对于不同类型节点的访问接口。</p>
 <div class="highlight"><div class="chroma">
@@ -573,17 +573,17 @@ ParserRuleContext &lt;|-- RuleContextWithAltNum</p>
 </span><span class="lnt">10
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">interface</span> <span class="nc">ParseTreeVisitor</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span> <span class="o">{</span>
-    <span class="c1">// 访问数据节点，不区分类型
-</span><span class="c1"></span>	<span class="n">T</span> <span class="nf">visit</span><span class="o">(</span><span class="n">ParseTree</span> <span class="n">tree</span><span class="o">);</span>
-    <span class="c1">// 访问非叶子节点
-</span><span class="c1"></span>	<span class="n">T</span> <span class="nf">visitChildren</span><span class="o">(</span><span class="n">RuleNode</span> <span class="n">node</span><span class="o">);</span>
-    <span class="c1">// 访问叶子节点
-</span><span class="c1"></span>	<span class="n">T</span> <span class="nf">visitTerminal</span><span class="o">(</span><span class="n">TerminalNode</span> <span class="n">node</span><span class="o">);</span>
-    <span class="c1">// 访问出错节点
-</span><span class="c1"></span>	<span class="n">T</span> <span class="nf">visitErrorNode</span><span class="o">(</span><span class="n">ErrorNode</span> <span class="n">node</span><span class="o">);</span>
-<span class="o">}</span>
-</code></pre></td></tr></table></div>
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="kd">public</span> <span class="kd">interface</span> <span class="nc">ParseTreeVisitor</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// 访问数据节点，不区分类型
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="n">T</span> <span class="nf">visit</span><span class="o">(</span><span class="n">ParseTree</span> <span class="n">tree</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// 访问非叶子节点
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="n">T</span> <span class="nf">visitChildren</span><span class="o">(</span><span class="n">RuleNode</span> <span class="n">node</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// 访问叶子节点
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="n">T</span> <span class="nf">visitTerminal</span><span class="o">(</span><span class="n">TerminalNode</span> <span class="n">node</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// 访问出错节点
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="n">T</span> <span class="nf">visitErrorNode</span><span class="o">(</span><span class="n">ErrorNode</span> <span class="n">node</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl"><span class="o">}</span>
+</span></span></code></pre></td></tr></table></div>
 </div>
 </div><p>AbstractParseTreeVisitor 类实现了上述接口，它的 visit 方法，只是简单的调用了节点的 accept 方法</p>
 <div class="highlight"><div class="chroma">
@@ -597,14 +597,14 @@ ParserRuleContext &lt;|-- RuleContextWithAltNum</p>
 </span><span class="lnt">7
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">abstract</span> <span class="kd">class</span> <span class="nc">AbstractParseTreeVisitor</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span> <span class="kd">implements</span> <span class="n">ParseTreeVisitor</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span> <span class="o">{</span>
-
-   <span class="kd">public</span> <span class="n">T</span> <span class="nf">visit</span><span class="o">(</span><span class="n">ParseTree</span> <span class="n">tree</span><span class="o">)</span> <span class="o">{</span>
-      <span class="c1">// 节点的accept方法会根据节点的类型，调用visitor的不同方法
-</span><span class="c1"></span>      <span class="k">return</span> <span class="n">tree</span><span class="o">.</span><span class="na">accept</span><span class="o">(</span><span class="k">this</span><span class="o">);</span>
-   <span class="o">}</span>
-<span class="o">}</span>
-</code></pre></td></tr></table></div>
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="kd">public</span> <span class="kd">abstract</span> <span class="kd">class</span> <span class="nc">AbstractParseTreeVisitor</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span> <span class="kd">implements</span> <span class="n">ParseTreeVisitor</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">   <span class="kd">public</span> <span class="n">T</span> <span class="nf">visit</span><span class="o">(</span><span class="n">ParseTree</span> <span class="n">tree</span><span class="o">)</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">      <span class="c1">// 节点的accept方法会根据节点的类型，调用visitor的不同方法
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>      <span class="k">return</span> <span class="n">tree</span><span class="o">.</span><span class="na">accept</span><span class="o">(</span><span class="k">this</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">   <span class="o">}</span>
+</span></span><span class="line"><span class="cl"><span class="o">}</span>
+</span></span></code></pre></td></tr></table></div>
 </div>
 </div><p>对于叶子节点和出错节点，仅仅是返回一个默认值。</p>
 <div class="highlight"><div class="chroma">
@@ -625,21 +625,21 @@ ParserRuleContext &lt;|-- RuleContextWithAltNum</p>
 </span><span class="lnt">14
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">abstract</span> <span class="kd">class</span> <span class="nc">AbstractParseTreeVisitor</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span> <span class="kd">implements</span> <span class="n">ParseTreeVisitor</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span> <span class="o">{</span>
-
-    <span class="kd">public</span> <span class="n">T</span> <span class="nf">visitTerminal</span><span class="o">(</span><span class="n">TerminalNode</span> <span class="n">node</span><span class="o">)</span> <span class="o">{</span>
-        <span class="k">return</span> <span class="n">defaultResult</span><span class="o">();</span>
-    <span class="o">}</span>
-    
-	<span class="kd">public</span> <span class="n">T</span> <span class="nf">visitTerminal</span><span class="o">(</span><span class="n">TerminalNode</span> <span class="n">node</span><span class="o">)</span> <span class="o">{</span>
-		<span class="k">return</span> <span class="n">defaultResult</span><span class="o">();</span>
-	<span class="o">}</span>    
-    
-	<span class="kd">protected</span> <span class="n">T</span> <span class="nf">defaultResult</span><span class="o">()</span> <span class="o">{</span>
-		<span class="k">return</span> <span class="kc">null</span><span class="o">;</span>
-	<span class="o">}</span>    
-<span class="o">}</span>
-</code></pre></td></tr></table></div>
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="kd">public</span> <span class="kd">abstract</span> <span class="kd">class</span> <span class="nc">AbstractParseTreeVisitor</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span> <span class="kd">implements</span> <span class="n">ParseTreeVisitor</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="kd">public</span> <span class="n">T</span> <span class="nf">visitTerminal</span><span class="o">(</span><span class="n">TerminalNode</span> <span class="n">node</span><span class="o">)</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">        <span class="k">return</span> <span class="n">defaultResult</span><span class="o">();</span>
+</span></span><span class="line"><span class="cl">    <span class="o">}</span>
+</span></span><span class="line"><span class="cl">    
+</span></span><span class="line"><span class="cl">	<span class="kd">public</span> <span class="n">T</span> <span class="nf">visitTerminal</span><span class="o">(</span><span class="n">TerminalNode</span> <span class="n">node</span><span class="o">)</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">		<span class="k">return</span> <span class="n">defaultResult</span><span class="o">();</span>
+</span></span><span class="line"><span class="cl">	<span class="o">}</span>    
+</span></span><span class="line"><span class="cl">    
+</span></span><span class="line"><span class="cl">	<span class="kd">protected</span> <span class="n">T</span> <span class="nf">defaultResult</span><span class="o">()</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">		<span class="k">return</span> <span class="kc">null</span><span class="o">;</span>
+</span></span><span class="line"><span class="cl">	<span class="o">}</span>    
+</span></span><span class="line"><span class="cl"><span class="o">}</span>
+</span></span></code></pre></td></tr></table></div>
 </div>
 </div><p>对于非叶子节点，会遍历各个子节点，然后将结果聚合整理。访问非叶子节点涉及到递归，它是依照深度优先遍历。</p>
 <div class="highlight"><div class="chroma">
@@ -682,43 +682,43 @@ ParserRuleContext &lt;|-- RuleContextWithAltNum</p>
 </span><span class="lnt">36
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">abstract</span> <span class="kd">class</span> <span class="nc">AbstractParseTreeVisitor</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span> <span class="kd">implements</span> <span class="n">ParseTreeVisitor</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span> <span class="o">{</span>
-    
-    <span class="kd">public</span> <span class="n">T</span> <span class="nf">visitChildren</span><span class="o">(</span><span class="n">RuleNode</span> <span class="n">node</span><span class="o">)</span> <span class="o">{</span>
-        <span class="c1">// 生成默认值
-</span><span class="c1"></span>        <span class="n">T</span> <span class="n">result</span> <span class="o">=</span> <span class="n">defaultResult</span><span class="o">();</span>
-        <span class="kt">int</span> <span class="n">n</span> <span class="o">=</span> <span class="n">node</span><span class="o">.</span><span class="na">getChildCount</span><span class="o">();</span>
-        <span class="k">for</span> <span class="o">(</span><span class="kt">int</span> <span class="n">i</span><span class="o">=</span><span class="n">0</span><span class="o">;</span> <span class="n">i</span><span class="o">&lt;</span><span class="n">n</span><span class="o">;</span> <span class="n">i</span><span class="o">++)</span> <span class="o">{</span>
-            <span class="c1">// 检测是否继续遍历子节点
-</span><span class="c1"></span>            <span class="k">if</span> <span class="o">(!</span><span class="n">shouldVisitNextChild</span><span class="o">(</span><span class="n">node</span><span class="o">,</span> <span class="n">result</span><span class="o">))</span> <span class="o">{</span>
-                <span class="k">break</span><span class="o">;</span>
-            <span class="o">}</span>
-            <span class="c1">// 获取子节点
-</span><span class="c1"></span>            <span class="n">ParseTree</span> <span class="n">c</span> <span class="o">=</span> <span class="n">node</span><span class="o">.</span><span class="na">getChild</span><span class="o">(</span><span class="n">i</span><span class="o">);</span>
-            <span class="c1">// 遍历子节点，返回子节点的结果
-</span><span class="c1"></span>            <span class="n">T</span> <span class="n">childResult</span> <span class="o">=</span> <span class="n">c</span><span class="o">.</span><span class="na">accept</span><span class="o">(</span><span class="k">this</span><span class="o">);</span>
-            <span class="c1">// 合并子节点的结果
-</span><span class="c1"></span>            <span class="n">result</span> <span class="o">=</span> <span class="n">aggregateResult</span><span class="o">(</span><span class="n">result</span><span class="o">,</span> <span class="n">childResult</span><span class="o">);</span>
-        <span class="o">}</span>
-        <span class="k">return</span> <span class="n">result</span><span class="o">;</span>
-    <span class="o">}</span>
-
-    <span class="c1">// 默认值为null
-</span><span class="c1"></span>    <span class="kd">protected</span> <span class="n">T</span> <span class="nf">defaultResult</span><span class="o">()</span> <span class="o">{</span>
-        <span class="k">return</span> <span class="kc">null</span><span class="o">;</span>
-    <span class="o">}</span>
-
-    <span class="c1">// 合并结果，这里只是返回子节点的结果
-</span><span class="c1"></span>    <span class="kd">protected</span> <span class="n">T</span> <span class="nf">aggregateResult</span><span class="o">(</span><span class="n">T</span> <span class="n">aggregate</span><span class="o">,</span> <span class="n">T</span> <span class="n">nextResult</span><span class="o">)</span> <span class="o">{</span>
-        <span class="k">return</span> <span class="n">nextResult</span><span class="o">;</span>
-    <span class="o">}</span>
-
-    <span class="c1">// 默认允许继续访问
-</span><span class="c1"></span>    <span class="kd">protected</span> <span class="kt">boolean</span> <span class="nf">shouldVisitNextChild</span><span class="o">(</span><span class="n">RuleNode</span> <span class="n">node</span><span class="o">,</span> <span class="n">T</span> <span class="n">currentResult</span><span class="o">)</span> <span class="o">{</span>
-        <span class="k">return</span> <span class="kc">true</span><span class="o">;</span>
-    <span class="o">}</span>
-<span class="o">}</span>
-</code></pre></td></tr></table></div>
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="kd">public</span> <span class="kd">abstract</span> <span class="kd">class</span> <span class="nc">AbstractParseTreeVisitor</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span> <span class="kd">implements</span> <span class="n">ParseTreeVisitor</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">    
+</span></span><span class="line"><span class="cl">    <span class="kd">public</span> <span class="n">T</span> <span class="nf">visitChildren</span><span class="o">(</span><span class="n">RuleNode</span> <span class="n">node</span><span class="o">)</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">        <span class="c1">// 生成默认值
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>        <span class="n">T</span> <span class="n">result</span> <span class="o">=</span> <span class="n">defaultResult</span><span class="o">();</span>
+</span></span><span class="line"><span class="cl">        <span class="kt">int</span> <span class="n">n</span> <span class="o">=</span> <span class="n">node</span><span class="o">.</span><span class="na">getChildCount</span><span class="o">();</span>
+</span></span><span class="line"><span class="cl">        <span class="k">for</span> <span class="o">(</span><span class="kt">int</span> <span class="n">i</span><span class="o">=</span><span class="mi">0</span><span class="o">;</span> <span class="n">i</span><span class="o">&lt;</span><span class="n">n</span><span class="o">;</span> <span class="n">i</span><span class="o">++)</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">            <span class="c1">// 检测是否继续遍历子节点
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>            <span class="k">if</span> <span class="o">(!</span><span class="n">shouldVisitNextChild</span><span class="o">(</span><span class="n">node</span><span class="o">,</span> <span class="n">result</span><span class="o">))</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">                <span class="k">break</span><span class="o">;</span>
+</span></span><span class="line"><span class="cl">            <span class="o">}</span>
+</span></span><span class="line"><span class="cl">            <span class="c1">// 获取子节点
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>            <span class="n">ParseTree</span> <span class="n">c</span> <span class="o">=</span> <span class="n">node</span><span class="o">.</span><span class="na">getChild</span><span class="o">(</span><span class="n">i</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">            <span class="c1">// 遍历子节点，返回子节点的结果
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>            <span class="n">T</span> <span class="n">childResult</span> <span class="o">=</span> <span class="n">c</span><span class="o">.</span><span class="na">accept</span><span class="o">(</span><span class="k">this</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">            <span class="c1">// 合并子节点的结果
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>            <span class="n">result</span> <span class="o">=</span> <span class="n">aggregateResult</span><span class="o">(</span><span class="n">result</span><span class="o">,</span> <span class="n">childResult</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">        <span class="o">}</span>
+</span></span><span class="line"><span class="cl">        <span class="k">return</span> <span class="n">result</span><span class="o">;</span>
+</span></span><span class="line"><span class="cl">    <span class="o">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="c1">// 默认值为null
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="kd">protected</span> <span class="n">T</span> <span class="nf">defaultResult</span><span class="o">()</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">        <span class="k">return</span> <span class="kc">null</span><span class="o">;</span>
+</span></span><span class="line"><span class="cl">    <span class="o">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="c1">// 合并结果，这里只是返回子节点的结果
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="kd">protected</span> <span class="n">T</span> <span class="nf">aggregateResult</span><span class="o">(</span><span class="n">T</span> <span class="n">aggregate</span><span class="o">,</span> <span class="n">T</span> <span class="n">nextResult</span><span class="o">)</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">        <span class="k">return</span> <span class="n">nextResult</span><span class="o">;</span>
+</span></span><span class="line"><span class="cl">    <span class="o">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="c1">// 默认允许继续访问
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="kd">protected</span> <span class="kt">boolean</span> <span class="nf">shouldVisitNextChild</span><span class="o">(</span><span class="n">RuleNode</span> <span class="n">node</span><span class="o">,</span> <span class="n">T</span> <span class="n">currentResult</span><span class="o">)</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">        <span class="k">return</span> <span class="kc">true</span><span class="o">;</span>
+</span></span><span class="line"><span class="cl">    <span class="o">}</span>
+</span></span><span class="line"><span class="cl"><span class="o">}</span>
+</span></span></code></pre></td></tr></table></div>
 </div>
 </div><h2 id="生成的节点类"><a href="#生成的节点类" class="anchor-link"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon anchor-icon"><path d="M326.612 185.391c59.747 59.809 58.927 155.698.36 214.59-.11.12-.24.25-.36.37l-67.2 67.2c-59.27 59.27-155.699 59.262-214.96 0-59.27-59.26-59.27-155.7 0-214.96l37.106-37.106c9.84-9.84 26.786-3.3 27.294 10.606.648 17.722 3.826 35.527 9.69 52.721 1.986 5.822.567 12.262-3.783 16.612l-13.087 13.087c-28.026 28.026-28.905 73.66-1.155 101.96 28.024 28.579 74.086 28.749 102.325.51l67.2-67.19c28.191-28.191 28.073-73.757 0-101.83-3.701-3.694-7.429-6.564-10.341-8.569a16.037 16.037 0 0 1-6.947-12.606c-.396-10.567 3.348-21.456 11.698-29.806l21.054-21.055c5.521-5.521 14.182-6.199 20.584-1.731a152.482 152.482 0 0 1 20.522 17.197zM467.547 44.449c-59.261-59.262-155.69-59.27-214.96 0l-67.2 67.2c-.12.12-.25.25-.36.37-58.566 58.892-59.387 154.781.36 214.59a152.454 152.454 0 0 0 20.521 17.196c6.402 4.468 15.064 3.789 20.584-1.731l21.054-21.055c8.35-8.35 12.094-19.239 11.698-29.806a16.037 16.037 0 0 0-6.947-12.606c-2.912-2.005-6.64-4.875-10.341-8.569-28.073-28.073-28.191-73.639 0-101.83l67.2-67.19c28.239-28.239 74.3-28.069 102.325.51 27.75 28.3 26.872 73.934-1.155 101.96l-13.087 13.087c-4.35 4.35-5.769 10.79-3.783 16.612 5.864 17.194 9.042 34.999 9.69 52.721.509 13.906 17.454 20.446 27.294 10.606l37.106-37.106c59.271-59.259 59.271-155.699.001-214.959z"/></svg></a>生成的节点类</h2>
 <p>回忆一下上面的计算器语法，里面定义了三条语法规则，prog，stat，expr。antlr4 会为每条规则，生成一个 ParserRuleContext  的子类。如果这个语法规则添加了标签，那么为每个标签也生成一个 ParserRuleContext 的子类。这些类之间的关系，如下图所示：</p>
@@ -771,24 +771,24 @@ ExprContext &lt;|-- IntContext</p>
 </span><span class="lnt">17
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">CalculatorParser</span> <span class="kd">extends</span> <span class="n">Parser</span> <span class="o">{</span>
-    
-	<span class="kd">public</span> <span class="kd">static</span> <span class="kd">class</span> <span class="nc">ProgContext</span> <span class="kd">extends</span> <span class="n">ParserRuleContext</span> <span class="o">{</span>
-         <span class="c1">// 返回子节点 stat 列表
-</span><span class="c1"></span>		<span class="kd">public</span> <span class="n">List</span><span class="o">&lt;</span><span class="n">StatContext</span><span class="o">&gt;</span> <span class="nf">stat</span><span class="o">()</span> <span class="o">{</span>
-			<span class="k">return</span> <span class="n">getRuleContexts</span><span class="o">(</span><span class="n">StatContext</span><span class="o">.</span><span class="na">class</span><span class="o">);</span>
-		<span class="o">}</span>
-         <span class="c1">// 返回第几个stat规则
-</span><span class="c1"></span>		<span class="kd">public</span> <span class="n">StatContext</span> <span class="nf">stat</span><span class="o">(</span><span class="kt">int</span> <span class="n">i</span><span class="o">)</span> <span class="o">{</span>
-			<span class="k">return</span> <span class="n">getRuleContext</span><span class="o">(</span><span class="n">StatContext</span><span class="o">.</span><span class="na">class</span><span class="o">,</span><span class="n">i</span><span class="o">);</span>
-		<span class="o">}</span>
-
-	    <span class="c1">// 返回该规则的 id 号， RULE_prog是一个常量
-</span><span class="c1"></span>        <span class="kd">public</span> <span class="kt">int</span> <span class="nf">getRuleIndex</span><span class="o">()</span> <span class="o">{</span> <span class="k">return</span> <span class="n">RULE_prog</span><span class="o">;</span> <span class="o">}</span>
-		
-	<span class="o">}</span>
-<span class="o">}</span>
-</code></pre></td></tr></table></div>
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">CalculatorParser</span> <span class="kd">extends</span> <span class="n">Parser</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">    
+</span></span><span class="line"><span class="cl">	<span class="kd">public</span> <span class="kd">static</span> <span class="kd">class</span> <span class="nc">ProgContext</span> <span class="kd">extends</span> <span class="n">ParserRuleContext</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">         <span class="c1">// 返回子节点 stat 列表
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>		<span class="kd">public</span> <span class="n">List</span><span class="o">&lt;</span><span class="n">StatContext</span><span class="o">&gt;</span> <span class="nf">stat</span><span class="o">()</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">			<span class="k">return</span> <span class="n">getRuleContexts</span><span class="o">(</span><span class="n">StatContext</span><span class="o">.</span><span class="na">class</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">		<span class="o">}</span>
+</span></span><span class="line"><span class="cl">         <span class="c1">// 返回第几个stat规则
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>		<span class="kd">public</span> <span class="n">StatContext</span> <span class="nf">stat</span><span class="o">(</span><span class="kt">int</span> <span class="n">i</span><span class="o">)</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">			<span class="k">return</span> <span class="n">getRuleContext</span><span class="o">(</span><span class="n">StatContext</span><span class="o">.</span><span class="na">class</span><span class="o">,</span><span class="n">i</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">		<span class="o">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">	    <span class="c1">// 返回该规则的 id 号， RULE_prog是一个常量
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>        <span class="kd">public</span> <span class="kt">int</span> <span class="nf">getRuleIndex</span><span class="o">()</span> <span class="o">{</span> <span class="k">return</span> <span class="n">RULE_prog</span><span class="o">;</span> <span class="o">}</span>
+</span></span><span class="line"><span class="cl">		
+</span></span><span class="line"><span class="cl">	<span class="o">}</span>
+</span></span><span class="line"><span class="cl"><span class="o">}</span>
+</span></span></code></pre></td></tr></table></div>
 </div>
 </div><p>继续看 stat 规则，它对应着 StatContext 类。 因为它为每种情况添加了标签，所以也为每个标签生成了对应的类，这些类都是 StatContext 的子类。</p>
 <p>StatContext 类的定义很简单，它只是实现了返回规则 id。</p>
@@ -821,31 +821,31 @@ ExprContext &lt;|-- IntContext</p>
 </span><span class="lnt">24
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">CalculatorParser</span> <span class="kd">extends</span> <span class="n">Parser</span> <span class="o">{</span>
-	
-    <span class="kd">public</span> <span class="kd">static</span> <span class="kd">class</span> <span class="nc">StatContext</span> <span class="kd">extends</span> <span class="n">ParserRuleContext</span> <span class="o">{</span>
-        <span class="c1">// 返回该规则的 id
-</span><span class="c1"></span>        <span class="kd">public</span> <span class="kt">int</span> <span class="nf">getRuleIndex</span><span class="o">()</span> <span class="o">{</span> <span class="k">return</span> <span class="n">RULE_stat</span><span class="o">;</span> <span class="o">}</span>
-	<span class="o">}</span>
-    
-	<span class="kd">public</span> <span class="kd">static</span> <span class="kd">class</span> <span class="nc">PrintContext</span> <span class="kd">extends</span> <span class="n">StatContext</span> <span class="o">{</span>
-         <span class="c1">// 返回 expr 节点
-</span><span class="c1"></span>		<span class="kd">public</span> <span class="n">ExprContext</span> <span class="nf">expr</span><span class="o">()</span> <span class="o">{</span>
-			<span class="k">return</span> <span class="n">getRuleContext</span><span class="o">(</span><span class="n">ExprContext</span><span class="o">.</span><span class="na">class</span><span class="o">,</span><span class="n">0</span><span class="o">);</span>
-		<span class="o">}</span>
-         <span class="c1">// 返回NEWLINE 叶子节点。
-</span><span class="c1"></span>		<span class="kd">public</span> <span class="n">TerminalNode</span> <span class="nf">NEWLINE</span><span class="o">()</span> <span class="o">{</span> <span class="k">return</span> <span class="n">getToken</span><span class="o">(</span><span class="n">CalculatorParser</span><span class="o">.</span><span class="na">NEWLINE</span><span class="o">,</span> <span class="n">0</span><span class="o">);</span> <span class="o">}</span>
-	<span class="o">}</span>    
-    
-    <span class="kd">public</span> <span class="kd">static</span> <span class="kd">class</span> <span class="nc">BlankContext</span> <span class="kd">extends</span> <span class="n">StatContext</span> <span class="o">{</span>
-        <span class="o">.....</span><span class="c1">// 原理类似
-</span><span class="c1"></span>    <span class="o">}</span>
-    
-    <span class="kd">public</span> <span class="kd">static</span> <span class="kd">class</span> <span class="nc">AssignContext</span> <span class="kd">extends</span> <span class="n">StatContext</span> <span class="o">{</span>
-        <span class="o">.....</span><span class="c1">// 原理类似
-</span><span class="c1"></span>    <span class="o">}</span>
-<span class="o">}</span>
-</code></pre></td></tr></table></div>
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">CalculatorParser</span> <span class="kd">extends</span> <span class="n">Parser</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">	
+</span></span><span class="line"><span class="cl">    <span class="kd">public</span> <span class="kd">static</span> <span class="kd">class</span> <span class="nc">StatContext</span> <span class="kd">extends</span> <span class="n">ParserRuleContext</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">        <span class="c1">// 返回该规则的 id
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>        <span class="kd">public</span> <span class="kt">int</span> <span class="nf">getRuleIndex</span><span class="o">()</span> <span class="o">{</span> <span class="k">return</span> <span class="n">RULE_stat</span><span class="o">;</span> <span class="o">}</span>
+</span></span><span class="line"><span class="cl">	<span class="o">}</span>
+</span></span><span class="line"><span class="cl">    
+</span></span><span class="line"><span class="cl">	<span class="kd">public</span> <span class="kd">static</span> <span class="kd">class</span> <span class="nc">PrintContext</span> <span class="kd">extends</span> <span class="n">StatContext</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">         <span class="c1">// 返回 expr 节点
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>		<span class="kd">public</span> <span class="n">ExprContext</span> <span class="nf">expr</span><span class="o">()</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">			<span class="k">return</span> <span class="n">getRuleContext</span><span class="o">(</span><span class="n">ExprContext</span><span class="o">.</span><span class="na">class</span><span class="o">,</span><span class="mi">0</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">		<span class="o">}</span>
+</span></span><span class="line"><span class="cl">         <span class="c1">// 返回NEWLINE 叶子节点。
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>		<span class="kd">public</span> <span class="n">TerminalNode</span> <span class="nf">NEWLINE</span><span class="o">()</span> <span class="o">{</span> <span class="k">return</span> <span class="n">getToken</span><span class="o">(</span><span class="n">CalculatorParser</span><span class="o">.</span><span class="na">NEWLINE</span><span class="o">,</span> <span class="mi">0</span><span class="o">);</span> <span class="o">}</span>
+</span></span><span class="line"><span class="cl">	<span class="o">}</span>    
+</span></span><span class="line"><span class="cl">    
+</span></span><span class="line"><span class="cl">    <span class="kd">public</span> <span class="kd">static</span> <span class="kd">class</span> <span class="nc">BlankContext</span> <span class="kd">extends</span> <span class="n">StatContext</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">        <span class="o">.....</span><span class="c1">// 原理类似
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="o">}</span>
+</span></span><span class="line"><span class="cl">    
+</span></span><span class="line"><span class="cl">    <span class="kd">public</span> <span class="kd">static</span> <span class="kd">class</span> <span class="nc">AssignContext</span> <span class="kd">extends</span> <span class="n">StatContext</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">        <span class="o">.....</span><span class="c1">// 原理类似
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="o">}</span>
+</span></span><span class="line"><span class="cl"><span class="o">}</span>
+</span></span></code></pre></td></tr></table></div>
 </div>
 </div><p>上面虽然只分析了 prog 和 stat 规则，但其余规则的原理是一样的。</p>
 <h2 id="节点的访问方法"><a href="#节点的访问方法" class="anchor-link"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon anchor-icon"><path d="M326.612 185.391c59.747 59.809 58.927 155.698.36 214.59-.11.12-.24.25-.36.37l-67.2 67.2c-59.27 59.27-155.699 59.262-214.96 0-59.27-59.26-59.27-155.7 0-214.96l37.106-37.106c9.84-9.84 26.786-3.3 27.294 10.606.648 17.722 3.826 35.527 9.69 52.721 1.986 5.822.567 12.262-3.783 16.612l-13.087 13.087c-28.026 28.026-28.905 73.66-1.155 101.96 28.024 28.579 74.086 28.749 102.325.51l67.2-67.19c28.191-28.191 28.073-73.757 0-101.83-3.701-3.694-7.429-6.564-10.341-8.569a16.037 16.037 0 0 1-6.947-12.606c-.396-10.567 3.348-21.456 11.698-29.806l21.054-21.055c5.521-5.521 14.182-6.199 20.584-1.731a152.482 152.482 0 0 1 20.522 17.197zM467.547 44.449c-59.261-59.262-155.69-59.27-214.96 0l-67.2 67.2c-.12.12-.25.25-.36.37-58.566 58.892-59.387 154.781.36 214.59a152.454 152.454 0 0 0 20.521 17.196c6.402 4.468 15.064 3.789 20.584-1.731l21.054-21.055c8.35-8.35 12.094-19.239 11.698-29.806a16.037 16.037 0 0 0-6.947-12.606c-2.912-2.005-6.64-4.875-10.341-8.569-28.073-28.073-28.191-73.639 0-101.83l67.2-67.19c28.239-28.239 74.3-28.069 102.325.51 27.75 28.3 26.872 73.934-1.155 101.96l-13.087 13.087c-4.35 4.35-5.769 10.79-3.783 16.612 5.864 17.194 9.042 34.999 9.69 52.721.509 13.906 17.454 20.446 27.294 10.606l37.106-37.106c59.271-59.259 59.271-155.699.001-214.959z"/></svg></a>节点的访问方法</h2>
@@ -875,28 +875,28 @@ ExprContext &lt;|-- IntContext</p>
 </span><span class="lnt">21
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">static</span> <span class="kd">class</span> <span class="nc">ProgContext</span> <span class="kd">extends</span> <span class="n">ParserRuleContext</span> <span class="o">{</span>
-    <span class="nd">@Override</span>
-    <span class="kd">public</span> <span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span> <span class="n">T</span> <span class="nf">accept</span><span class="o">(</span><span class="n">ParseTreeVisitor</span><span class="o">&lt;?</span> <span class="kd">extends</span> <span class="n">T</span><span class="o">&gt;</span> <span class="n">visitor</span><span class="o">)</span> <span class="o">{</span>
-        <span class="k">if</span> <span class="o">(</span> <span class="n">visitor</span> <span class="k">instanceof</span> <span class="n">CalculatorVisitor</span> <span class="o">)</span>
-            <span class="c1">// 调用了visitor的visitProg方法
-</span><span class="c1"></span>            <span class="k">return</span> <span class="o">((</span><span class="n">CalculatorVisitor</span><span class="o">&lt;?</span><span class="kd">extends</span> <span class="n">T</span><span class="o">&gt;)</span><span class="n">visitor</span><span class="o">).</span><span class="na">visitProg</span><span class="o">(</span><span class="k">this</span><span class="o">);</span>
-        <span class="k">else</span>
-            <span class="k">return</span> <span class="n">visitor</span><span class="o">.</span><span class="na">visitChildren</span><span class="o">(</span><span class="k">this</span><span class="o">);</span>
-    <span class="o">}</span>
-<span class="o">}</span>
-
-<span class="kd">public</span> <span class="kd">static</span> <span class="kd">class</span> <span class="nc">PrintContext</span> <span class="kd">extends</span> <span class="n">StatContext</span> <span class="o">{</span>
-    <span class="nd">@Override</span>
-    <span class="kd">public</span> <span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span> <span class="n">T</span> <span class="nf">accept</span><span class="o">(</span><span class="n">ParseTreeVisitor</span><span class="o">&lt;?</span> <span class="kd">extends</span> <span class="n">T</span><span class="o">&gt;</span> <span class="n">visitor</span><span class="o">)</span> <span class="o">{</span>
-        <span class="k">if</span> <span class="o">(</span> <span class="n">visitor</span> <span class="k">instanceof</span> <span class="n">CalculatorVisitor</span> <span class="o">)</span> 
-            <span class="c1">// 调用 visitPrint 方法
-</span><span class="c1"></span>            <span class="k">return</span> <span class="o">((</span><span class="n">CalculatorVisitor</span><span class="o">&lt;?</span> <span class="kd">extends</span> <span class="n">T</span><span class="o">&gt;)</span><span class="n">visitor</span><span class="o">).</span><span class="na">visitPrint</span><span class="o">(</span><span class="k">this</span><span class="o">);</span>
-        <span class="k">else</span> 
-            <span class="k">return</span> <span class="n">visitor</span><span class="o">.</span><span class="na">visitChildren</span><span class="o">(</span><span class="k">this</span><span class="o">);</span>
-    <span class="o">}</span>    
-<span class="o">}</span>
-</code></pre></td></tr></table></div>
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="kd">public</span> <span class="kd">static</span> <span class="kd">class</span> <span class="nc">ProgContext</span> <span class="kd">extends</span> <span class="n">ParserRuleContext</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">    <span class="nd">@Override</span>
+</span></span><span class="line"><span class="cl">    <span class="kd">public</span> <span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span> <span class="n">T</span> <span class="nf">accept</span><span class="o">(</span><span class="n">ParseTreeVisitor</span><span class="o">&lt;?</span> <span class="kd">extends</span> <span class="n">T</span><span class="o">&gt;</span> <span class="n">visitor</span><span class="o">)</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">        <span class="k">if</span> <span class="o">(</span> <span class="n">visitor</span> <span class="k">instanceof</span> <span class="n">CalculatorVisitor</span> <span class="o">)</span>
+</span></span><span class="line"><span class="cl">            <span class="c1">// 调用了visitor的visitProg方法
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>            <span class="k">return</span> <span class="o">((</span><span class="n">CalculatorVisitor</span><span class="o">&lt;?</span><span class="kd">extends</span> <span class="n">T</span><span class="o">&gt;)</span><span class="n">visitor</span><span class="o">).</span><span class="na">visitProg</span><span class="o">(</span><span class="k">this</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">        <span class="k">else</span>
+</span></span><span class="line"><span class="cl">            <span class="k">return</span> <span class="n">visitor</span><span class="o">.</span><span class="na">visitChildren</span><span class="o">(</span><span class="k">this</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">    <span class="o">}</span>
+</span></span><span class="line"><span class="cl"><span class="o">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kd">public</span> <span class="kd">static</span> <span class="kd">class</span> <span class="nc">PrintContext</span> <span class="kd">extends</span> <span class="n">StatContext</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">    <span class="nd">@Override</span>
+</span></span><span class="line"><span class="cl">    <span class="kd">public</span> <span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span> <span class="n">T</span> <span class="nf">accept</span><span class="o">(</span><span class="n">ParseTreeVisitor</span><span class="o">&lt;?</span> <span class="kd">extends</span> <span class="n">T</span><span class="o">&gt;</span> <span class="n">visitor</span><span class="o">)</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">        <span class="k">if</span> <span class="o">(</span> <span class="n">visitor</span> <span class="k">instanceof</span> <span class="n">CalculatorVisitor</span> <span class="o">)</span> 
+</span></span><span class="line"><span class="cl">            <span class="c1">// 调用 visitPrint 方法
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>            <span class="k">return</span> <span class="o">((</span><span class="n">CalculatorVisitor</span><span class="o">&lt;?</span> <span class="kd">extends</span> <span class="n">T</span><span class="o">&gt;)</span><span class="n">visitor</span><span class="o">).</span><span class="na">visitPrint</span><span class="o">(</span><span class="k">this</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">        <span class="k">else</span> 
+</span></span><span class="line"><span class="cl">            <span class="k">return</span> <span class="n">visitor</span><span class="o">.</span><span class="na">visitChildren</span><span class="o">(</span><span class="k">this</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">    <span class="o">}</span>    
+</span></span><span class="line"><span class="cl"><span class="o">}</span>
+</span></span></code></pre></td></tr></table></div>
 </div>
 </div><p>CalculatorBaseVisitor 提供了访问不同节点的方法，默认实现都是调用 visitChildren 方法。它的泛型 T 表示返回的结果类型。使用者一般继承 CalculatorBaseVisitor 类，复写一些方法，来实现自定义的功能（比如上面的四则运算例子）。</p>
 <div class="highlight"><div class="chroma">
@@ -912,16 +912,16 @@ ExprContext &lt;|-- IntContext</p>
 </span><span class="lnt">9
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">CalculatorBaseVisitor</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span> <span class="kd">extends</span> <span class="n">AbstractParseTreeVisitor</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span> <span class="kd">implements</span> <span class="n">CalculatorVisitor</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span> <span class="o">{</span>
-
-	<span class="nd">@Override</span>
-    <span class="kd">public</span> <span class="n">T</span> <span class="nf">visitAssign</span> <span class="o">(</span><span class="n">CalculatorParser</span><span class="o">.</span><span class="na">AssignContext</span> <span class="n">ctx</span><span class="o">)</span> <span class="o">{</span> <span class="k">return</span> <span class="n">visitChildren</span><span class="o">(</span><span class="n">ctx</span><span class="o">);</span> 
-    <span class="o">}</span>
-	
-	<span class="nd">@Override</span> <span class="kd">public</span> <span class="n">T</span> <span class="nf">visitInt</span><span class="o">(</span><span class="n">CalculatorParser</span><span class="o">.</span><span class="na">IntContext</span> <span class="n">ctx</span><span class="o">)</span> <span class="o">{</span> <span class="k">return</span> <span class="n">visitChildren</span><span class="o">(</span><span class="n">ctx</span><span class="o">);</span> <span class="o">}</span>
-    <span class="o">......</span>
-<span class="o">}</span>
-</code></pre></td></tr></table></div>
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">CalculatorBaseVisitor</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span> <span class="kd">extends</span> <span class="n">AbstractParseTreeVisitor</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span> <span class="kd">implements</span> <span class="n">CalculatorVisitor</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">	<span class="nd">@Override</span>
+</span></span><span class="line"><span class="cl">    <span class="kd">public</span> <span class="n">T</span> <span class="nf">visitAssign</span> <span class="o">(</span><span class="n">CalculatorParser</span><span class="o">.</span><span class="na">AssignContext</span> <span class="n">ctx</span><span class="o">)</span> <span class="o">{</span> <span class="k">return</span> <span class="n">visitChildren</span><span class="o">(</span><span class="n">ctx</span><span class="o">);</span> 
+</span></span><span class="line"><span class="cl">    <span class="o">}</span>
+</span></span><span class="line"><span class="cl">	
+</span></span><span class="line"><span class="cl">	<span class="nd">@Override</span> <span class="kd">public</span> <span class="n">T</span> <span class="nf">visitInt</span><span class="o">(</span><span class="n">CalculatorParser</span><span class="o">.</span><span class="na">IntContext</span> <span class="n">ctx</span><span class="o">)</span> <span class="o">{</span> <span class="k">return</span> <span class="n">visitChildren</span><span class="o">(</span><span class="n">ctx</span><span class="o">);</span> <span class="o">}</span>
+</span></span><span class="line"><span class="cl">    <span class="o">......</span>
+</span></span><span class="line"><span class="cl"><span class="o">}</span>
+</span></span></code></pre></td></tr></table></div>
 </div>
 </div><h2 id="参考资料"><a href="#参考资料" class="anchor-link"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon anchor-icon"><path d="M326.612 185.391c59.747 59.809 58.927 155.698.36 214.59-.11.12-.24.25-.36.37l-67.2 67.2c-59.27 59.27-155.699 59.262-214.96 0-59.27-59.26-59.27-155.7 0-214.96l37.106-37.106c9.84-9.84 26.786-3.3 27.294 10.606.648 17.722 3.826 35.527 9.69 52.721 1.986 5.822.567 12.262-3.783 16.612l-13.087 13.087c-28.026 28.026-28.905 73.66-1.155 101.96 28.024 28.579 74.086 28.749 102.325.51l67.2-67.19c28.191-28.191 28.073-73.757 0-101.83-3.701-3.694-7.429-6.564-10.341-8.569a16.037 16.037 0 0 1-6.947-12.606c-.396-10.567 3.348-21.456 11.698-29.806l21.054-21.055c5.521-5.521 14.182-6.199 20.584-1.731a152.482 152.482 0 0 1 20.522 17.197zM467.547 44.449c-59.261-59.262-155.69-59.27-214.96 0l-67.2 67.2c-.12.12-.25.25-.36.37-58.566 58.892-59.387 154.781.36 214.59a152.454 152.454 0 0 0 20.521 17.196c6.402 4.468 15.064 3.789 20.584-1.731l21.054-21.055c8.35-8.35 12.094-19.239 11.698-29.806a16.037 16.037 0 0 0-6.947-12.606c-2.912-2.005-6.64-4.875-10.341-8.569-28.073-28.073-28.191-73.639 0-101.83l67.2-67.19c28.239-28.239 74.3-28.069 102.325.51 27.75 28.3 26.872 73.934-1.155 101.96l-13.087 13.087c-4.35 4.35-5.769 10.79-3.783 16.612 5.864 17.194 9.042 34.999 9.69 52.721.509 13.906 17.454 20.446 27.294 10.606l37.106-37.106c59.271-59.259 59.271-155.699.001-214.959z"/></svg></a>参考资料</h2>
 <p><a href="https://github.com/antlr/antlr4/blob/master/doc/getting-started.md" target="_blank" rel="noopener">https://github.com/antlr/antlr4/blob/master/doc/getting-started.md</a></p>
@@ -954,9 +954,9 @@ ExprContext &lt;|-- IntContext</p>
 
         
     <div class="updated-badge-container">
-        <span title="Updated @ 2021-10-22 14:44:34 CST" style="cursor:help">
+        <span title="Updated @ 2023-07-02 16:59:09 CST" style="cursor:help">
 
-<svg xmlns="http://www.w3.org/2000/svg" width="130" height="20" class="updated-badge"><linearGradient id="b" x2="0" y2="100%"><stop offset="0" stop-color="#bbb" stop-opacity=".1"/><stop offset="1" stop-opacity=".1"/></linearGradient><clipPath id="a"><rect width="130" height="20" rx="3" fill="#fff"/></clipPath><g clip-path="url(#a)"><path class="updated-badge-left" d="M0 0h55v20H0z"/><path class="updated-badge-right" d="M55 0h75v20H55z"/><path fill="url(#b)" d="M0 0h130v20H0z"/></g><g fill="#fff" text-anchor="middle" font-size="110"><text x="285" y="150" fill="#010101" fill-opacity=".3" textLength="450" transform="scale(.1)">updated</text><text x="285" y="140" textLength="450" transform="scale(.1)">updated</text><text x="915" y="150" fill="#010101" fill-opacity=".3" textLength="650" transform="scale(.1)">2021-10-22</text><text x="915" y="140" textLength="650" transform="scale(.1)">2021-10-22</text></g></svg>
+<svg xmlns="http://www.w3.org/2000/svg" width="130" height="20" class="updated-badge"><linearGradient id="b" x2="0" y2="100%"><stop offset="0" stop-color="#bbb" stop-opacity=".1"/><stop offset="1" stop-opacity=".1"/></linearGradient><clipPath id="a"><rect width="130" height="20" rx="3" fill="#fff"/></clipPath><g clip-path="url(#a)"><path class="updated-badge-left" d="M0 0h55v20H0z"/><path class="updated-badge-right" d="M55 0h75v20H55z"/><path fill="url(#b)" d="M0 0h130v20H0z"/></g><g fill="#fff" text-anchor="middle" font-size="110"><text x="285" y="150" fill="#010101" fill-opacity=".3" textLength="450" transform="scale(.1)">updated</text><text x="285" y="140" textLength="450" transform="scale(.1)">updated</text><text x="915" y="150" fill="#010101" fill-opacity=".3" textLength="650" transform="scale(.1)">2023-07-02</text><text x="915" y="140" textLength="650" transform="scale(.1)">2023-07-02</text></g></svg>
         </span></div>
 
 

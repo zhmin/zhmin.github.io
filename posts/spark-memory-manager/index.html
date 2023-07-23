@@ -3,7 +3,7 @@
     <head prefix="og: http://ogp.me/ns# article: http://ogp.me/ns/article#">
     <meta charset="UTF-8" />
 
-    <meta name="generator" content="Hugo 0.88.1" /><meta name="theme-color" content="#fff" />
+    <meta name="generator" content="Hugo 0.115.0"><meta name="theme-color" content="#fff" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     
     <meta name="format-detection" content="telephone=no, date=no, address=no, email=no" />
@@ -14,11 +14,11 @@
 
     <title>Spark 内存管理 | 学习笔记</title>
 
-    <link rel="stylesheet" href="/css/meme.min.2d3e1834af2bc8dda20c7d74aaa1d8134845094441b7a554a5206ccd4b472596.css"/>
+    <link rel="stylesheet" href="/css/meme.min.91e7f58f97e1c60563ef481c38d9684fa8099537801d6f17bbfc724121e7d8f1.css"/>
 
     
     
-        <script src="/js/meme.min.800f61672145711eb3e1f29fcfcc3dbe0139dd459259718b611a0390f74703d1.js"></script>
+        <script src="/js/meme.min.3210a00c2fdcf6f831170b681b8ee40f83f0224663661e986872616aec45407f.js"></script>
 
     
 
@@ -54,7 +54,7 @@
         "@context": "https://schema.org",
         "@type": "BlogPosting",
         "datePublished": "2019-01-15T22:50:44+00:00",
-        "dateModified": "2021-10-22T14:44:34+08:00",
+        "dateModified": "2023-07-02T16:59:09+08:00",
         "url": "https://zhmin.github.io/posts/spark-memory-manager/",
         "headline": "Spark 内存管理",
         "description": "前言 spark自己实现了一套内存的管理，为了精准的控制内存。因为JVM的垃圾回收不可控制，尤其是大内存的回收，会造成程序暂停长时间。spark为了避免这种情况，实现了内存的管理，尤其是针对大内存。对于……",
@@ -98,7 +98,7 @@
 <meta property="og:locale" content="zh" /><meta property="og:image" content="https://zhmin.github.io/icons/apple-touch-icon.png" />
     <meta property="og:type" content="article" />
     <meta property="article:published_time" content="2019-01-15T22:50:44&#43;00:00" />
-    <meta property="article:modified_time" content="2021-10-22T14:44:34&#43;08:00" />
+    <meta property="article:modified_time" content="2023-07-02T16:59:09&#43;08:00" />
     
     <meta property="article:section" content="posts" />
 
@@ -248,10 +248,10 @@
 </span><span class="lnt">3
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">MemoryBlock</span> <span class="kd">extends</span> <span class="n">MemoryLocation</span> <span class="o">{</span>
-  <span class="kd">private</span> <span class="kd">final</span> <span class="kt">long</span> <span class="n">length</span><span class="o">;</span>     <span class="c1">//  内存中的数据大小
-</span><span class="c1"></span><span class="o">}</span>
-</code></pre></td></tr></table></div>
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">MemoryBlock</span> <span class="kd">extends</span> <span class="n">MemoryLocation</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">  <span class="kd">private</span> <span class="kd">final</span> <span class="kt">long</span> <span class="n">length</span><span class="o">;</span>     <span class="c1">//  内存中的数据大小
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="o">}</span>
+</span></span></code></pre></td></tr></table></div>
 </div>
 </div><p><code>MemoryLocation</code>表示内存地址，当需要遍历存储的字节数据时，是从<code>obj</code>的位置加上 <code>offset</code>偏移量的位置</p>
 <div class="highlight"><div class="chroma">
@@ -265,14 +265,14 @@
 </span><span class="lnt">7
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">MemoryLocation</span> <span class="o">{</span>
-
-  <span class="nd">@Nullable</span>
-  <span class="n">Object</span> <span class="n">obj</span><span class="o">;</span>       <span class="c1">// 内存的起始地址
-</span><span class="c1"></span>
-  <span class="kt">long</span> <span class="n">offset</span><span class="o">;</span>     <span class="c1">// 数据的起始偏移位置
-</span><span class="c1"></span><span class="o">}</span>
-</code></pre></td></tr></table></div>
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">MemoryLocation</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="nd">@Nullable</span>
+</span></span><span class="line"><span class="cl">  <span class="n">Object</span> <span class="n">obj</span><span class="o">;</span>       <span class="c1">// 内存的起始地址
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>
+</span></span><span class="line"><span class="cl">  <span class="kt">long</span> <span class="n">offset</span><span class="o">;</span>     <span class="c1">// 数据的起始偏移位置
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="o">}</span>
+</span></span></code></pre></td></tr></table></div>
 </div>
 </div><h3 id="内存分配方式"><a href="#内存分配方式" class="anchor-link"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon anchor-icon"><path d="M326.612 185.391c59.747 59.809 58.927 155.698.36 214.59-.11.12-.24.25-.36.37l-67.2 67.2c-59.27 59.27-155.699 59.262-214.96 0-59.27-59.26-59.27-155.7 0-214.96l37.106-37.106c9.84-9.84 26.786-3.3 27.294 10.606.648 17.722 3.826 35.527 9.69 52.721 1.986 5.822.567 12.262-3.783 16.612l-13.087 13.087c-28.026 28.026-28.905 73.66-1.155 101.96 28.024 28.579 74.086 28.749 102.325.51l67.2-67.19c28.191-28.191 28.073-73.757 0-101.83-3.701-3.694-7.429-6.564-10.341-8.569a16.037 16.037 0 0 1-6.947-12.606c-.396-10.567 3.348-21.456 11.698-29.806l21.054-21.055c5.521-5.521 14.182-6.199 20.584-1.731a152.482 152.482 0 0 1 20.522 17.197zM467.547 44.449c-59.261-59.262-155.69-59.27-214.96 0l-67.2 67.2c-.12.12-.25.25-.36.37-58.566 58.892-59.387 154.781.36 214.59a152.454 152.454 0 0 0 20.521 17.196c6.402 4.468 15.064 3.789 20.584-1.731l21.054-21.055c8.35-8.35 12.094-19.239 11.698-29.806a16.037 16.037 0 0 0-6.947-12.606c-2.912-2.005-6.64-4.875-10.341-8.569-28.073-28.073-28.191-73.639 0-101.83l67.2-67.19c28.239-28.239 74.3-28.069 102.325.51 27.75 28.3 26.872 73.934-1.155 101.96l-13.087 13.087c-4.35 4.35-5.769 10.79-3.783 16.612 5.864 17.194 9.042 34.999 9.69 52.721.509 13.906 17.454 20.446 27.294 10.606l37.106-37.106c59.271-59.259 59.271-155.699.001-214.959z"/></svg></a>内存分配方式</h3>
 <p>Spark 根据分配的内存位置（堆内，堆外），分为两种方式。</p>
@@ -300,21 +300,21 @@
 </span><span class="lnt">14
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">HeapMemoryAllocator</span> <span class="kd">implements</span> <span class="n">MemoryAllocator</span> <span class="o">{</span>
-  
-  <span class="c1">// 缓存池，Key的内存块的大小，Value为内存块的弱引用
-</span><span class="c1"></span>  <span class="nd">@GuardedBy</span><span class="o">(</span><span class="s">&#34;this&#34;</span><span class="o">)</span>
-  <span class="kd">private</span> <span class="kd">final</span> <span class="n">Map</span><span class="o">&lt;</span><span class="n">Long</span><span class="o">,</span> <span class="n">LinkedList</span><span class="o">&lt;</span><span class="n">WeakReference</span><span class="o">&lt;</span><span class="n">MemoryBlock</span><span class="o">&gt;&gt;&gt;</span> <span class="n">bufferPoolsBySize</span> <span class="o">=</span>
-    <span class="k">new</span> <span class="n">HashMap</span><span class="o">&lt;&gt;();</span>
-    
-  <span class="kd">private</span> <span class="kd">static</span> <span class="kd">final</span> <span class="kt">int</span> <span class="n">POOLING_THRESHOLD_BYTES</span> <span class="o">=</span> <span class="n">1024</span> <span class="o">*</span> <span class="n">1024</span><span class="o">;</span>
-    
-  <span class="c1">// 这里倾向于缓存大的内存块，因为大的内存块回收，会很影响jvm的性能
-</span><span class="c1"></span>  <span class="kd">private</span> <span class="kt">boolean</span> <span class="nf">shouldPool</span><span class="o">(</span><span class="kt">long</span> <span class="n">size</span><span class="o">)</span> <span class="o">{</span>
-    <span class="k">return</span> <span class="n">size</span> <span class="o">&gt;=</span> <span class="n">POOLING_THRESHOLD_BYTES</span><span class="o">;</span>
-  <span class="o">}</span>
-<span class="o">}</span>
-</code></pre></td></tr></table></div>
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">HeapMemoryAllocator</span> <span class="kd">implements</span> <span class="n">MemoryAllocator</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">  
+</span></span><span class="line"><span class="cl">  <span class="c1">// 缓存池，Key的内存块的大小，Value为内存块的弱引用
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="nd">@GuardedBy</span><span class="o">(</span><span class="s">&#34;this&#34;</span><span class="o">)</span>
+</span></span><span class="line"><span class="cl">  <span class="kd">private</span> <span class="kd">final</span> <span class="n">Map</span><span class="o">&lt;</span><span class="n">Long</span><span class="o">,</span> <span class="n">LinkedList</span><span class="o">&lt;</span><span class="n">WeakReference</span><span class="o">&lt;</span><span class="n">MemoryBlock</span><span class="o">&gt;&gt;&gt;</span> <span class="n">bufferPoolsBySize</span> <span class="o">=</span>
+</span></span><span class="line"><span class="cl">    <span class="k">new</span> <span class="n">HashMap</span><span class="o">&lt;&gt;();</span>
+</span></span><span class="line"><span class="cl">    
+</span></span><span class="line"><span class="cl">  <span class="kd">private</span> <span class="kd">static</span> <span class="kd">final</span> <span class="kt">int</span> <span class="n">POOLING_THRESHOLD_BYTES</span> <span class="o">=</span> <span class="mi">1024</span> <span class="o">*</span> <span class="mi">1024</span><span class="o">;</span>
+</span></span><span class="line"><span class="cl">    
+</span></span><span class="line"><span class="cl">  <span class="c1">// 这里倾向于缓存大的内存块，因为大的内存块回收，会很影响jvm的性能
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="kd">private</span> <span class="kt">boolean</span> <span class="nf">shouldPool</span><span class="o">(</span><span class="kt">long</span> <span class="n">size</span><span class="o">)</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">    <span class="k">return</span> <span class="n">size</span> <span class="o">&gt;=</span> <span class="n">POOLING_THRESHOLD_BYTES</span><span class="o">;</span>
+</span></span><span class="line"><span class="cl">  <span class="o">}</span>
+</span></span><span class="line"><span class="cl"><span class="o">}</span>
+</span></span></code></pre></td></tr></table></div>
 </div>
 </div><p>这里还需要注意到缓存池，它使用弱引用来保存<code>MemoryBlock</code>。这样的好处时，当内存不足时，jvm 会自动清除那些没有用的<code>MemoryBlock</code>，而不需要我们额外的处理。</p>
 <p><code>HeapMemoryAllocator</code>使用<code>long</code>数组来表示<code>MemoryBlock</code>的，所以分配内存时，会计算long的数组大小。</p>
@@ -334,17 +334,17 @@
 </span><span class="lnt">10
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">UnsafeMemoryAllocator</span> <span class="kd">implements</span> <span class="n">MemoryAllocator</span> <span class="o">{</span>
-
-  <span class="nd">@Override</span>
-  <span class="kd">public</span> <span class="n">MemoryBlock</span> <span class="nf">allocate</span><span class="o">(</span><span class="kt">long</span> <span class="n">size</span><span class="o">)</span> <span class="kd">throws</span> <span class="n">OutOfMemoryError</span> <span class="o">{</span>
-    <span class="c1">// Platform 使用 unsafe分配堆外内存， 返回内存地址
-</span><span class="c1"></span>    <span class="kt">long</span> <span class="n">address</span> <span class="o">=</span> <span class="n">Platform</span><span class="o">.</span><span class="na">allocateMemory</span><span class="o">(</span><span class="n">size</span><span class="o">);</span>
-    <span class="n">MemoryBlock</span> <span class="n">memory</span> <span class="o">=</span> <span class="k">new</span> <span class="n">MemoryBlock</span><span class="o">(</span><span class="kc">null</span><span class="o">,</span> <span class="n">address</span><span class="o">,</span> <span class="n">size</span><span class="o">);</span>
-    <span class="k">return</span> <span class="n">memory</span><span class="o">;</span>
-  <span class="o">}</span>
-<span class="o">}</span>
-</code></pre></td></tr></table></div>
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">UnsafeMemoryAllocator</span> <span class="kd">implements</span> <span class="n">MemoryAllocator</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="nd">@Override</span>
+</span></span><span class="line"><span class="cl">  <span class="kd">public</span> <span class="n">MemoryBlock</span> <span class="nf">allocate</span><span class="o">(</span><span class="kt">long</span> <span class="n">size</span><span class="o">)</span> <span class="kd">throws</span> <span class="n">OutOfMemoryError</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// Platform 使用 unsafe分配堆外内存， 返回内存地址
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="kt">long</span> <span class="n">address</span> <span class="o">=</span> <span class="n">Platform</span><span class="o">.</span><span class="na">allocateMemory</span><span class="o">(</span><span class="n">size</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">    <span class="n">MemoryBlock</span> <span class="n">memory</span> <span class="o">=</span> <span class="k">new</span> <span class="n">MemoryBlock</span><span class="o">(</span><span class="kc">null</span><span class="o">,</span> <span class="n">address</span><span class="o">,</span> <span class="n">size</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">    <span class="k">return</span> <span class="n">memory</span><span class="o">;</span>
+</span></span><span class="line"><span class="cl">  <span class="o">}</span>
+</span></span><span class="line"><span class="cl"><span class="o">}</span>
+</span></span></code></pre></td></tr></table></div>
 </div>
 </div><h2 id="内存池"><a href="#内存池" class="anchor-link"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon anchor-icon"><path d="M326.612 185.391c59.747 59.809 58.927 155.698.36 214.59-.11.12-.24.25-.36.37l-67.2 67.2c-59.27 59.27-155.699 59.262-214.96 0-59.27-59.26-59.27-155.7 0-214.96l37.106-37.106c9.84-9.84 26.786-3.3 27.294 10.606.648 17.722 3.826 35.527 9.69 52.721 1.986 5.822.567 12.262-3.783 16.612l-13.087 13.087c-28.026 28.026-28.905 73.66-1.155 101.96 28.024 28.579 74.086 28.749 102.325.51l67.2-67.19c28.191-28.191 28.073-73.757 0-101.83-3.701-3.694-7.429-6.564-10.341-8.569a16.037 16.037 0 0 1-6.947-12.606c-.396-10.567 3.348-21.456 11.698-29.806l21.054-21.055c5.521-5.521 14.182-6.199 20.584-1.731a152.482 152.482 0 0 1 20.522 17.197zM467.547 44.449c-59.261-59.262-155.69-59.27-214.96 0l-67.2 67.2c-.12.12-.25.25-.36.37-58.566 58.892-59.387 154.781.36 214.59a152.454 152.454 0 0 0 20.521 17.196c6.402 4.468 15.064 3.789 20.584-1.731l21.054-21.055c8.35-8.35 12.094-19.239 11.698-29.806a16.037 16.037 0 0 0-6.947-12.606c-2.912-2.005-6.64-4.875-10.341-8.569-28.073-28.073-28.191-73.639 0-101.83l67.2-67.19c28.239-28.239 74.3-28.069 102.325.51 27.75 28.3 26.872 73.934-1.155 101.96l-13.087 13.087c-4.35 4.35-5.769 10.79-3.783 16.612 5.864 17.194 9.042 34.999 9.69 52.721.509 13.906 17.454 20.446 27.294 10.606l37.106-37.106c59.271-59.259 59.271-155.699.001-214.959z"/></svg></a>内存池</h2>
 <p>内存池负责管理内存的使用量，它只负责管理内存总大小，已使用内存的大小这些数值，由抽象类<code>MemoryPool</code>表示。</p>
@@ -387,23 +387,23 @@
 </span><span class="lnt">16
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-scala" data-lang="scala"><span class="k">private</span><span class="o">[</span><span class="kt">spark</span><span class="o">]</span> <span class="k">abstract</span> <span class="k">class</span> <span class="nc">MemoryManager</span><span class="o">(</span>
-    <span class="n">conf</span><span class="k">:</span> <span class="kt">SparkConf</span><span class="o">,</span>
-    <span class="n">numCores</span><span class="k">:</span> <span class="kt">Int</span><span class="o">,</span>
-    <span class="n">onHeapStorageMemory</span><span class="k">:</span> <span class="kt">Long</span><span class="o">,</span>
-    <span class="n">onHeapExecutionMemory</span><span class="k">:</span> <span class="kt">Long</span><span class="o">)</span> <span class="k">extends</span> <span class="nc">Logging</span> <span class="o">{</span>
-
-  <span class="nd">@GuardedBy</span><span class="o">(</span><span class="s">&#34;this&#34;</span><span class="o">)</span>
-  <span class="k">protected</span> <span class="k">val</span> <span class="n">onHeapStorageMemoryPool</span> <span class="k">=</span> <span class="k">new</span> <span class="nc">StorageMemoryPool</span><span class="o">(</span><span class="k">this</span><span class="o">,</span> <span class="nc">MemoryMode</span><span class="o">.</span><span class="nc">ON_HEAP</span><span class="o">)</span>  <span class="c1">// 堆内数据存储
-</span><span class="c1"></span>  <span class="nd">@GuardedBy</span><span class="o">(</span><span class="s">&#34;this&#34;</span><span class="o">)</span>
-  <span class="k">protected</span> <span class="k">val</span> <span class="n">offHeapStorageMemoryPool</span> <span class="k">=</span> <span class="k">new</span> <span class="nc">StorageMemoryPool</span><span class="o">(</span><span class="k">this</span><span class="o">,</span> <span class="nc">MemoryMode</span><span class="o">.</span><span class="nc">OFF_HEAP</span><span class="o">)</span>  <span class="c1">// 堆外数据存储
-</span><span class="c1"></span>  <span class="nd">@GuardedBy</span><span class="o">(</span><span class="s">&#34;this&#34;</span><span class="o">)</span>
-  <span class="k">protected</span> <span class="k">val</span> <span class="n">onHeapExecutionMemoryPool</span> <span class="k">=</span> <span class="k">new</span> <span class="nc">ExecutionMemoryPool</span><span class="o">(</span><span class="k">this</span><span class="o">,</span> <span class="nc">MemoryMode</span><span class="o">.</span><span class="nc">ON_HEAP</span><span class="o">)</span>  <span class="c1">// 堆内任务执行
-</span><span class="c1"></span>  <span class="nd">@GuardedBy</span><span class="o">(</span><span class="s">&#34;this&#34;</span><span class="o">)</span>
-  <span class="k">protected</span> <span class="k">val</span> <span class="n">offHeapExecutionMemoryPool</span> <span class="k">=</span> <span class="k">new</span> <span class="nc">ExecutionMemoryPool</span><span class="o">(</span><span class="k">this</span><span class="o">,</span> <span class="nc">MemoryMode</span><span class="o">.</span><span class="nc">OFF_HEAP</span><span class="o">)</span>  <span class="c1">// 堆外任务执行
-</span><span class="c1"></span>    
-<span class="o">}</span>
-</code></pre></td></tr></table></div>
+<pre tabindex="0" class="chroma"><code class="language-scala" data-lang="scala"><span class="line"><span class="cl"><span class="k">private</span><span class="o">[</span><span class="kt">spark</span><span class="o">]</span> <span class="k">abstract</span> <span class="k">class</span> <span class="nc">MemoryManager</span><span class="o">(</span>
+</span></span><span class="line"><span class="cl">    <span class="n">conf</span><span class="k">:</span> <span class="kt">SparkConf</span><span class="o">,</span>
+</span></span><span class="line"><span class="cl">    <span class="n">numCores</span><span class="k">:</span> <span class="kt">Int</span><span class="o">,</span>
+</span></span><span class="line"><span class="cl">    <span class="n">onHeapStorageMemory</span><span class="k">:</span> <span class="kt">Long</span><span class="o">,</span>
+</span></span><span class="line"><span class="cl">    <span class="n">onHeapExecutionMemory</span><span class="k">:</span> <span class="kt">Long</span><span class="o">)</span> <span class="k">extends</span> <span class="nc">Logging</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="nd">@GuardedBy</span><span class="o">(</span><span class="s">&#34;this&#34;</span><span class="o">)</span>
+</span></span><span class="line"><span class="cl">  <span class="k">protected</span> <span class="k">val</span> <span class="n">onHeapStorageMemoryPool</span> <span class="k">=</span> <span class="k">new</span> <span class="nc">StorageMemoryPool</span><span class="o">(</span><span class="k">this</span><span class="o">,</span> <span class="nc">MemoryMode</span><span class="o">.</span><span class="nc">ON_HEAP</span><span class="o">)</span>  <span class="c1">// 堆内数据存储
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="nd">@GuardedBy</span><span class="o">(</span><span class="s">&#34;this&#34;</span><span class="o">)</span>
+</span></span><span class="line"><span class="cl">  <span class="k">protected</span> <span class="k">val</span> <span class="n">offHeapStorageMemoryPool</span> <span class="k">=</span> <span class="k">new</span> <span class="nc">StorageMemoryPool</span><span class="o">(</span><span class="k">this</span><span class="o">,</span> <span class="nc">MemoryMode</span><span class="o">.</span><span class="nc">OFF_HEAP</span><span class="o">)</span>  <span class="c1">// 堆外数据存储
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="nd">@GuardedBy</span><span class="o">(</span><span class="s">&#34;this&#34;</span><span class="o">)</span>
+</span></span><span class="line"><span class="cl">  <span class="k">protected</span> <span class="k">val</span> <span class="n">onHeapExecutionMemoryPool</span> <span class="k">=</span> <span class="k">new</span> <span class="nc">ExecutionMemoryPool</span><span class="o">(</span><span class="k">this</span><span class="o">,</span> <span class="nc">MemoryMode</span><span class="o">.</span><span class="nc">ON_HEAP</span><span class="o">)</span>  <span class="c1">// 堆内任务执行
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="nd">@GuardedBy</span><span class="o">(</span><span class="s">&#34;this&#34;</span><span class="o">)</span>
+</span></span><span class="line"><span class="cl">  <span class="k">protected</span> <span class="k">val</span> <span class="n">offHeapExecutionMemoryPool</span> <span class="k">=</span> <span class="k">new</span> <span class="nc">ExecutionMemoryPool</span><span class="o">(</span><span class="k">this</span><span class="o">,</span> <span class="nc">MemoryMode</span><span class="o">.</span><span class="nc">OFF_HEAP</span><span class="o">)</span>  <span class="c1">// 堆外任务执行
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    
+</span></span><span class="line"><span class="cl"><span class="o">}</span>
+</span></span></code></pre></td></tr></table></div>
 </div>
 </div><p><code>MemoryManager</code>的构造函数，指定了堆内数据存储内存池的大小，和堆内任务执行内存池的大小。至于堆外的内存池大小如下所示：</p>
 <div class="highlight"><div class="chroma">
@@ -417,14 +417,14 @@
 </span><span class="lnt">7
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-scala" data-lang="scala"><span class="c1">// MEMORY_OFFHEAP_SIZE 表示 spark.memory.offHeap.size 配置，表示堆外的总大小
-</span><span class="c1"></span><span class="k">protected</span><span class="o">[</span><span class="kt">this</span><span class="o">]</span> <span class="k">val</span> <span class="n">maxOffHeapMemory</span> <span class="k">=</span> <span class="n">conf</span><span class="o">.</span><span class="n">get</span><span class="o">(</span><span class="nc">MEMORY_OFFHEAP_SIZE</span><span class="o">)</span>
-<span class="c1">// spark.memory.storageFraction 指定存储占用的比例
-</span><span class="c1"></span><span class="k">protected</span><span class="o">[</span><span class="kt">this</span><span class="o">]</span> <span class="k">val</span> <span class="n">offHeapStorageMemory</span> <span class="k">=</span> <span class="o">(</span><span class="n">maxOffHeapMemory</span> <span class="o">*</span> <span class="n">conf</span><span class="o">.</span><span class="n">getDouble</span><span class="o">(</span><span class="s">&#34;spark.memory.storageFraction&#34;</span><span class="o">,</span> <span class="mf">0.5</span><span class="o">)).</span><span class="n">toLong</span>
-<span class="c1">// 设置堆外内存池的大小
-</span><span class="c1"></span><span class="n">offHeapExecutionMemoryPool</span><span class="o">.</span><span class="n">incrementPoolSize</span><span class="o">(</span><span class="n">maxOffHeapMemory</span> <span class="o">-</span> <span class="n">offHeapStorageMemory</span><span class="o">)</span>
-<span class="n">offHeapStorageMemoryPool</span><span class="o">.</span><span class="n">incrementPoolSize</span><span class="o">(</span><span class="n">offHeapStorageMemory</span><span class="o">)</span>
-</code></pre></td></tr></table></div>
+<pre tabindex="0" class="chroma"><code class="language-scala" data-lang="scala"><span class="line"><span class="cl"><span class="c1">// MEMORY_OFFHEAP_SIZE 表示 spark.memory.offHeap.size 配置，表示堆外的总大小
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="k">protected</span><span class="o">[</span><span class="kt">this</span><span class="o">]</span> <span class="k">val</span> <span class="n">maxOffHeapMemory</span> <span class="k">=</span> <span class="n">conf</span><span class="o">.</span><span class="n">get</span><span class="o">(</span><span class="nc">MEMORY_OFFHEAP_SIZE</span><span class="o">)</span>
+</span></span><span class="line"><span class="cl"><span class="c1">// spark.memory.storageFraction 指定存储占用的比例
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="k">protected</span><span class="o">[</span><span class="kt">this</span><span class="o">]</span> <span class="k">val</span> <span class="n">offHeapStorageMemory</span> <span class="k">=</span> <span class="o">(</span><span class="n">maxOffHeapMemory</span> <span class="o">*</span> <span class="n">conf</span><span class="o">.</span><span class="n">getDouble</span><span class="o">(</span><span class="s">&#34;spark.memory.storageFraction&#34;</span><span class="o">,</span> <span class="mf">0.5</span><span class="o">)).</span><span class="n">toLong</span>
+</span></span><span class="line"><span class="cl"><span class="c1">// 设置堆外内存池的大小
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="n">offHeapExecutionMemoryPool</span><span class="o">.</span><span class="n">incrementPoolSize</span><span class="o">(</span><span class="n">maxOffHeapMemory</span> <span class="o">-</span> <span class="n">offHeapStorageMemory</span><span class="o">)</span>
+</span></span><span class="line"><span class="cl"><span class="n">offHeapStorageMemoryPool</span><span class="o">.</span><span class="n">incrementPoolSize</span><span class="o">(</span><span class="n">offHeapStorageMemory</span><span class="o">)</span>
+</span></span></code></pre></td></tr></table></div>
 </div>
 </div><p>Spark 支持两种管理策略来平衡各个内存池的大小，静态资源管理和动态资源管理。</p>
 <h3 id="静态资源管理"><a href="#静态资源管理" class="anchor-link"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon anchor-icon"><path d="M326.612 185.391c59.747 59.809 58.927 155.698.36 214.59-.11.12-.24.25-.36.37l-67.2 67.2c-59.27 59.27-155.699 59.262-214.96 0-59.27-59.26-59.27-155.7 0-214.96l37.106-37.106c9.84-9.84 26.786-3.3 27.294 10.606.648 17.722 3.826 35.527 9.69 52.721 1.986 5.822.567 12.262-3.783 16.612l-13.087 13.087c-28.026 28.026-28.905 73.66-1.155 101.96 28.024 28.579 74.086 28.749 102.325.51l67.2-67.19c28.191-28.191 28.073-73.757 0-101.83-3.701-3.694-7.429-6.564-10.341-8.569a16.037 16.037 0 0 1-6.947-12.606c-.396-10.567 3.348-21.456 11.698-29.806l21.054-21.055c5.521-5.521 14.182-6.199 20.584-1.731a152.482 152.482 0 0 1 20.522 17.197zM467.547 44.449c-59.261-59.262-155.69-59.27-214.96 0l-67.2 67.2c-.12.12-.25.25-.36.37-58.566 58.892-59.387 154.781.36 214.59a152.454 152.454 0 0 0 20.521 17.196c6.402 4.468 15.064 3.789 20.584-1.731l21.054-21.055c8.35-8.35 12.094-19.239 11.698-29.806a16.037 16.037 0 0 0-6.947-12.606c-2.912-2.005-6.64-4.875-10.341-8.569-28.073-28.073-28.191-73.639 0-101.83l67.2-67.19c28.239-28.239 74.3-28.069 102.325.51 27.75 28.3 26.872 73.934-1.155 101.96l-13.087 13.087c-4.35 4.35-5.769 10.79-3.783 16.612 5.864 17.194 9.042 34.999 9.69 52.721.509 13.906 17.454 20.446 27.294 10.606l37.106-37.106c59.271-59.259 59.271-155.699.001-214.959z"/></svg></a>静态资源管理</h3>
@@ -453,27 +453,27 @@
 </span><span class="lnt">20
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-scala" data-lang="scala"><span class="k">private</span><span class="o">[</span><span class="kt">spark</span><span class="o">]</span> <span class="k">object</span> <span class="nc">StaticMemoryManager</span> <span class="o">{</span>
-
-  <span class="k">private</span> <span class="k">val</span> <span class="nc">MIN_MEMORY_BYTES</span> <span class="k">=</span> <span class="mi">32</span> <span class="o">*</span> <span class="mi">1024</span> <span class="o">*</span> <span class="mi">1024</span>  <span class="c1">// 32MB
-</span><span class="c1"></span>
-  <span class="c1">// 返回堆内存储数据的内存池容量
-</span><span class="c1"></span>  <span class="k">private</span> <span class="k">def</span> <span class="n">getMaxStorageMemory</span><span class="o">(</span><span class="n">conf</span><span class="k">:</span> <span class="kt">SparkConf</span><span class="o">)</span><span class="k">:</span> <span class="kt">Long</span> <span class="o">=</span> <span class="o">{</span>
-    <span class="k">val</span> <span class="n">systemMaxMemory</span> <span class="k">=</span> <span class="n">conf</span><span class="o">.</span><span class="n">getLong</span><span class="o">(</span><span class="s">&#34;spark.testing.memory&#34;</span><span class="o">,</span> <span class="nc">Runtime</span><span class="o">.</span><span class="n">getRuntime</span><span class="o">.</span><span class="n">maxMemory</span><span class="o">)</span>
-    <span class="k">val</span> <span class="n">memoryFraction</span> <span class="k">=</span> <span class="n">conf</span><span class="o">.</span><span class="n">getDouble</span><span class="o">(</span><span class="s">&#34;spark.storage.memoryFraction&#34;</span><span class="o">,</span> <span class="mf">0.6</span><span class="o">)</span>
-    <span class="k">val</span> <span class="n">safetyFraction</span> <span class="k">=</span> <span class="n">conf</span><span class="o">.</span><span class="n">getDouble</span><span class="o">(</span><span class="s">&#34;spark.storage.safetyFraction&#34;</span><span class="o">,</span> <span class="mf">0.9</span><span class="o">)</span>
-    <span class="o">(</span><span class="n">systemMaxMemory</span> <span class="o">*</span> <span class="n">memoryFraction</span> <span class="o">*</span> <span class="n">safetyFraction</span><span class="o">).</span><span class="n">toLong</span>
-  <span class="o">}</span>
-
-  <span class="c1">// 返回堆内执行任务使用的内存池容量
-</span><span class="c1"></span>  <span class="k">private</span> <span class="k">def</span> <span class="n">getMaxExecutionMemory</span><span class="o">(</span><span class="n">conf</span><span class="k">:</span> <span class="kt">SparkConf</span><span class="o">)</span><span class="k">:</span> <span class="kt">Long</span> <span class="o">=</span> <span class="o">{</span>
-    <span class="k">val</span> <span class="n">systemMaxMemory</span> <span class="k">=</span> <span class="n">conf</span><span class="o">.</span><span class="n">getLong</span><span class="o">(</span><span class="s">&#34;spark.testing.memory&#34;</span><span class="o">,</span> <span class="nc">Runtime</span><span class="o">.</span><span class="n">getRuntime</span><span class="o">.</span><span class="n">maxMemory</span><span class="o">)</span>
-    <span class="k">val</span> <span class="n">memoryFraction</span> <span class="k">=</span> <span class="n">conf</span><span class="o">.</span><span class="n">getDouble</span><span class="o">(</span><span class="s">&#34;spark.shuffle.memoryFraction&#34;</span><span class="o">,</span> <span class="mf">0.2</span><span class="o">)</span>
-    <span class="k">val</span> <span class="n">safetyFraction</span> <span class="k">=</span> <span class="n">conf</span><span class="o">.</span><span class="n">getDouble</span><span class="o">(</span><span class="s">&#34;spark.shuffle.safetyFraction&#34;</span><span class="o">,</span> <span class="mf">0.8</span><span class="o">)</span>
-    <span class="o">(</span><span class="n">systemMaxMemory</span> <span class="o">*</span> <span class="n">memoryFraction</span> <span class="o">*</span> <span class="n">safetyFraction</span><span class="o">).</span><span class="n">toLong</span>
-  <span class="o">}</span>
-<span class="o">}</span>
-</code></pre></td></tr></table></div>
+<pre tabindex="0" class="chroma"><code class="language-scala" data-lang="scala"><span class="line"><span class="cl"><span class="k">private</span><span class="o">[</span><span class="kt">spark</span><span class="o">]</span> <span class="k">object</span> <span class="nc">StaticMemoryManager</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="k">private</span> <span class="k">val</span> <span class="nc">MIN_MEMORY_BYTES</span> <span class="k">=</span> <span class="mi">32</span> <span class="o">*</span> <span class="mi">1024</span> <span class="o">*</span> <span class="mi">1024</span>  <span class="c1">// 32MB
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>
+</span></span><span class="line"><span class="cl">  <span class="c1">// 返回堆内存储数据的内存池容量
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="k">private</span> <span class="k">def</span> <span class="n">getMaxStorageMemory</span><span class="o">(</span><span class="n">conf</span><span class="k">:</span> <span class="kt">SparkConf</span><span class="o">)</span><span class="k">:</span> <span class="kt">Long</span> <span class="o">=</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">    <span class="k">val</span> <span class="n">systemMaxMemory</span> <span class="k">=</span> <span class="n">conf</span><span class="o">.</span><span class="n">getLong</span><span class="o">(</span><span class="s">&#34;spark.testing.memory&#34;</span><span class="o">,</span> <span class="nc">Runtime</span><span class="o">.</span><span class="n">getRuntime</span><span class="o">.</span><span class="n">maxMemory</span><span class="o">)</span>
+</span></span><span class="line"><span class="cl">    <span class="k">val</span> <span class="n">memoryFraction</span> <span class="k">=</span> <span class="n">conf</span><span class="o">.</span><span class="n">getDouble</span><span class="o">(</span><span class="s">&#34;spark.storage.memoryFraction&#34;</span><span class="o">,</span> <span class="mf">0.6</span><span class="o">)</span>
+</span></span><span class="line"><span class="cl">    <span class="k">val</span> <span class="n">safetyFraction</span> <span class="k">=</span> <span class="n">conf</span><span class="o">.</span><span class="n">getDouble</span><span class="o">(</span><span class="s">&#34;spark.storage.safetyFraction&#34;</span><span class="o">,</span> <span class="mf">0.9</span><span class="o">)</span>
+</span></span><span class="line"><span class="cl">    <span class="o">(</span><span class="n">systemMaxMemory</span> <span class="o">*</span> <span class="n">memoryFraction</span> <span class="o">*</span> <span class="n">safetyFraction</span><span class="o">).</span><span class="n">toLong</span>
+</span></span><span class="line"><span class="cl">  <span class="o">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="c1">// 返回堆内执行任务使用的内存池容量
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="k">private</span> <span class="k">def</span> <span class="n">getMaxExecutionMemory</span><span class="o">(</span><span class="n">conf</span><span class="k">:</span> <span class="kt">SparkConf</span><span class="o">)</span><span class="k">:</span> <span class="kt">Long</span> <span class="o">=</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">    <span class="k">val</span> <span class="n">systemMaxMemory</span> <span class="k">=</span> <span class="n">conf</span><span class="o">.</span><span class="n">getLong</span><span class="o">(</span><span class="s">&#34;spark.testing.memory&#34;</span><span class="o">,</span> <span class="nc">Runtime</span><span class="o">.</span><span class="n">getRuntime</span><span class="o">.</span><span class="n">maxMemory</span><span class="o">)</span>
+</span></span><span class="line"><span class="cl">    <span class="k">val</span> <span class="n">memoryFraction</span> <span class="k">=</span> <span class="n">conf</span><span class="o">.</span><span class="n">getDouble</span><span class="o">(</span><span class="s">&#34;spark.shuffle.memoryFraction&#34;</span><span class="o">,</span> <span class="mf">0.2</span><span class="o">)</span>
+</span></span><span class="line"><span class="cl">    <span class="k">val</span> <span class="n">safetyFraction</span> <span class="k">=</span> <span class="n">conf</span><span class="o">.</span><span class="n">getDouble</span><span class="o">(</span><span class="s">&#34;spark.shuffle.safetyFraction&#34;</span><span class="o">,</span> <span class="mf">0.8</span><span class="o">)</span>
+</span></span><span class="line"><span class="cl">    <span class="o">(</span><span class="n">systemMaxMemory</span> <span class="o">*</span> <span class="n">memoryFraction</span> <span class="o">*</span> <span class="n">safetyFraction</span><span class="o">).</span><span class="n">toLong</span>
+</span></span><span class="line"><span class="cl">  <span class="o">}</span>
+</span></span><span class="line"><span class="cl"><span class="o">}</span>
+</span></span></code></pre></td></tr></table></div>
 </div>
 </div><p>因为静态资源管理不支持堆外数据存储，所以它会将堆外的内存都放入到堆外的执行内存池里。</p>
 <h3 id="动态资源管理"><a href="#动态资源管理" class="anchor-link"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon anchor-icon"><path d="M326.612 185.391c59.747 59.809 58.927 155.698.36 214.59-.11.12-.24.25-.36.37l-67.2 67.2c-59.27 59.27-155.699 59.262-214.96 0-59.27-59.26-59.27-155.7 0-214.96l37.106-37.106c9.84-9.84 26.786-3.3 27.294 10.606.648 17.722 3.826 35.527 9.69 52.721 1.986 5.822.567 12.262-3.783 16.612l-13.087 13.087c-28.026 28.026-28.905 73.66-1.155 101.96 28.024 28.579 74.086 28.749 102.325.51l67.2-67.19c28.191-28.191 28.073-73.757 0-101.83-3.701-3.694-7.429-6.564-10.341-8.569a16.037 16.037 0 0 1-6.947-12.606c-.396-10.567 3.348-21.456 11.698-29.806l21.054-21.055c5.521-5.521 14.182-6.199 20.584-1.731a152.482 152.482 0 0 1 20.522 17.197zM467.547 44.449c-59.261-59.262-155.69-59.27-214.96 0l-67.2 67.2c-.12.12-.25.25-.36.37-58.566 58.892-59.387 154.781.36 214.59a152.454 152.454 0 0 0 20.521 17.196c6.402 4.468 15.064 3.789 20.584-1.731l21.054-21.055c8.35-8.35 12.094-19.239 11.698-29.806a16.037 16.037 0 0 0-6.947-12.606c-2.912-2.005-6.64-4.875-10.341-8.569-28.073-28.073-28.191-73.639 0-101.83l67.2-67.19c28.239-28.239 74.3-28.069 102.325.51 27.75 28.3 26.872 73.934-1.155 101.96l-13.087 13.087c-4.35 4.35-5.769 10.79-3.783 16.612 5.864 17.194 9.042 34.999 9.69 52.721.509 13.906 17.454 20.446 27.294 10.606l37.106-37.106c59.271-59.259 59.271-155.699.001-214.959z"/></svg></a>动态资源管理</h3>
@@ -489,14 +489,14 @@
 </span><span class="lnt">7
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-scala" data-lang="scala"><span class="k">private</span> <span class="k">val</span> <span class="nc">RESERVED_SYSTEM_MEMORY_BYTES</span> <span class="k">=</span> <span class="mi">300</span> <span class="o">*</span> <span class="mi">1024</span> <span class="o">*</span> <span class="mi">1024</span>  <span class="c1">// 300MB 的保留内存
-</span><span class="c1"></span><span class="k">val</span> <span class="n">systemMemory</span> <span class="k">=</span> <span class="nc">Runtime</span><span class="o">.</span><span class="n">getRuntime</span><span class="o">.</span><span class="n">maxMemory</span> <span class="c1">// 计算Jvm的内存总量
-</span><span class="c1"></span><span class="k">val</span> <span class="n">usableMemory</span> <span class="k">=</span> <span class="n">systemMemory</span> <span class="o">-</span> <span class="nc">RESERVED_SYSTEM_MEMORY_BYTES</span>  <span class="c1">// 出去保留内存，可以使用的内存大小
-</span><span class="c1"></span><span class="k">val</span> <span class="n">memoryFraction</span> <span class="k">=</span> <span class="n">conf</span><span class="o">.</span><span class="n">getDouble</span><span class="o">(</span><span class="s">&#34;spark.memory.fraction&#34;</span><span class="o">,</span> <span class="mf">0.6</span><span class="o">)</span>
-<span class="k">val</span> <span class="n">maxMemory</span> <span class="k">=</span> <span class="o">(</span><span class="n">usableMemory</span> <span class="o">*</span> <span class="n">memoryFraction</span><span class="o">).</span><span class="n">toLong</span> <span class="c1">// 用于堆内内存池的大小，为60%
-</span><span class="c1"></span><span class="k">val</span> <span class="n">onHeapStorageRegionSize</span> <span class="k">=</span> <span class="o">(</span><span class="n">maxMemory</span> <span class="o">*</span> <span class="n">conf</span><span class="o">.</span><span class="n">getDouble</span><span class="o">(</span><span class="s">&#34;spark.memory.storageFraction&#34;</span><span class="o">,</span> <span class="mf">0.5</span><span class="o">)).</span><span class="n">toLong</span> <span class="c1">// 堆内存储内存为50%
-</span><span class="c1"></span><span class="k">val</span> <span class="n">onHeapExecutionMemory</span> <span class="k">=</span> <span class="n">maxMemory</span> <span class="o">-</span> <span class="n">onHeapStorageRegionSize</span>
-</code></pre></td></tr></table></div>
+<pre tabindex="0" class="chroma"><code class="language-scala" data-lang="scala"><span class="line"><span class="cl"><span class="k">private</span> <span class="k">val</span> <span class="nc">RESERVED_SYSTEM_MEMORY_BYTES</span> <span class="k">=</span> <span class="mi">300</span> <span class="o">*</span> <span class="mi">1024</span> <span class="o">*</span> <span class="mi">1024</span>  <span class="c1">// 300MB 的保留内存
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="k">val</span> <span class="n">systemMemory</span> <span class="k">=</span> <span class="nc">Runtime</span><span class="o">.</span><span class="n">getRuntime</span><span class="o">.</span><span class="n">maxMemory</span> <span class="c1">// 计算Jvm的内存总量
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="k">val</span> <span class="n">usableMemory</span> <span class="k">=</span> <span class="n">systemMemory</span> <span class="o">-</span> <span class="nc">RESERVED_SYSTEM_MEMORY_BYTES</span>  <span class="c1">// 出去保留内存，可以使用的内存大小
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="k">val</span> <span class="n">memoryFraction</span> <span class="k">=</span> <span class="n">conf</span><span class="o">.</span><span class="n">getDouble</span><span class="o">(</span><span class="s">&#34;spark.memory.fraction&#34;</span><span class="o">,</span> <span class="mf">0.6</span><span class="o">)</span>
+</span></span><span class="line"><span class="cl"><span class="k">val</span> <span class="n">maxMemory</span> <span class="k">=</span> <span class="o">(</span><span class="n">usableMemory</span> <span class="o">*</span> <span class="n">memoryFraction</span><span class="o">).</span><span class="n">toLong</span> <span class="c1">// 用于堆内内存池的大小，为60%
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="k">val</span> <span class="n">onHeapStorageRegionSize</span> <span class="k">=</span> <span class="o">(</span><span class="n">maxMemory</span> <span class="o">*</span> <span class="n">conf</span><span class="o">.</span><span class="n">getDouble</span><span class="o">(</span><span class="s">&#34;spark.memory.storageFraction&#34;</span><span class="o">,</span> <span class="mf">0.5</span><span class="o">)).</span><span class="n">toLong</span> <span class="c1">// 堆内存储内存为50%
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="k">val</span> <span class="n">onHeapExecutionMemory</span> <span class="k">=</span> <span class="n">maxMemory</span> <span class="o">-</span> <span class="n">onHeapStorageRegionSize</span>
+</span></span></code></pre></td></tr></table></div>
 </div>
 </div><p>用户申请存储内存时，如果当前内存池不够，则会向运行内存池借用。</p>
 <p>用户申请运行内存时，如果当前内存池不够，则会向存储内存池借用。因为运行内存的优先级高，还会进一步会要求存储内存池持久化它的block，来获得空闲空间。</p>
@@ -528,31 +528,31 @@
 </span><span class="lnt">24
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-scala" data-lang="scala"><span class="c1">// 借用storage内存
-</span><span class="c1"></span><span class="k">def</span> <span class="n">maybeGrowExecutionPool</span><span class="o">(</span><span class="n">extraMemoryNeeded</span><span class="k">:</span> <span class="kt">Long</span><span class="o">)</span><span class="k">:</span> <span class="kt">Unit</span> <span class="o">=</span> <span class="o">{</span>
-    <span class="k">if</span> <span class="o">(</span><span class="n">extraMemoryNeeded</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="o">)</span> <span class="o">{</span>
-        <span class="c1">// 如果storage内存池有空闲内存，
-</span><span class="c1"></span>        <span class="c1">// 或者storage内存池的容量大于最低容量storageRegionSize
-</span><span class="c1"></span>        <span class="k">val</span> <span class="n">memoryReclaimableFromStorage</span> <span class="k">=</span> <span class="n">math</span><span class="o">.</span><span class="n">max</span><span class="o">(</span>
-            <span class="n">storagePool</span><span class="o">.</span><span class="n">memoryFree</span><span class="o">,</span>
-            <span class="n">storagePool</span><span class="o">.</span><span class="n">poolSize</span> <span class="o">-</span> <span class="n">storageRegionSize</span><span class="o">)</span>
-        <span class="k">if</span> <span class="o">(</span><span class="n">memoryReclaimableFromStorage</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="o">)</span> <span class="o">{</span>
-            <span class="c1">// 尝试释放空间，有可能会将缓存的数据块，溢写到磁盘
-</span><span class="c1"></span>            <span class="k">val</span> <span class="n">spaceToReclaim</span> <span class="k">=</span> <span class="n">storagePool</span><span class="o">.</span><span class="n">freeSpaceToShrinkPool</span><span class="o">(</span>
-                <span class="n">math</span><span class="o">.</span><span class="n">min</span><span class="o">(</span><span class="n">extraMemoryNeeded</span><span class="o">,</span> <span class="n">memoryReclaimableFromStorage</span><span class="o">))</span>
-            <span class="c1">// 减少storage内存池的容量
-</span><span class="c1"></span>            <span class="n">storagePool</span><span class="o">.</span><span class="n">decrementPoolSize</span><span class="o">(</span><span class="n">spaceToReclaim</span><span class="o">)</span>
-            <span class="c1">// 增加execution内存池的容量
-</span><span class="c1"></span>            <span class="n">executionPool</span><span class="o">.</span><span class="n">incrementPoolSize</span><span class="o">(</span><span class="n">spaceToReclaim</span><span class="o">)</span>
-        <span class="o">}</span>
-    <span class="o">}</span>
-<span class="o">}</span>
-
-<span class="c1">// 计算最大的execution的内存容量
-</span><span class="c1"></span><span class="k">def</span> <span class="n">computeMaxExecutionPoolSize</span><span class="o">()</span><span class="k">:</span> <span class="kt">Long</span> <span class="o">=</span> <span class="o">{</span>
-    <span class="n">maxMemory</span> <span class="o">-</span> <span class="n">math</span><span class="o">.</span><span class="n">min</span><span class="o">(</span><span class="n">storagePool</span><span class="o">.</span><span class="n">memoryUsed</span><span class="o">,</span> <span class="n">storageRegionSize</span><span class="o">)</span>
-<span class="o">}</span>
-</code></pre></td></tr></table></div>
+<pre tabindex="0" class="chroma"><code class="language-scala" data-lang="scala"><span class="line"><span class="cl"><span class="c1">// 借用storage内存
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="k">def</span> <span class="n">maybeGrowExecutionPool</span><span class="o">(</span><span class="n">extraMemoryNeeded</span><span class="k">:</span> <span class="kt">Long</span><span class="o">)</span><span class="k">:</span> <span class="kt">Unit</span> <span class="o">=</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">    <span class="k">if</span> <span class="o">(</span><span class="n">extraMemoryNeeded</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="o">)</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">        <span class="c1">// 如果storage内存池有空闲内存，
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>        <span class="c1">// 或者storage内存池的容量大于最低容量storageRegionSize
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>        <span class="k">val</span> <span class="n">memoryReclaimableFromStorage</span> <span class="k">=</span> <span class="n">math</span><span class="o">.</span><span class="n">max</span><span class="o">(</span>
+</span></span><span class="line"><span class="cl">            <span class="n">storagePool</span><span class="o">.</span><span class="n">memoryFree</span><span class="o">,</span>
+</span></span><span class="line"><span class="cl">            <span class="n">storagePool</span><span class="o">.</span><span class="n">poolSize</span> <span class="o">-</span> <span class="n">storageRegionSize</span><span class="o">)</span>
+</span></span><span class="line"><span class="cl">        <span class="k">if</span> <span class="o">(</span><span class="n">memoryReclaimableFromStorage</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="o">)</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">            <span class="c1">// 尝试释放空间，有可能会将缓存的数据块，溢写到磁盘
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>            <span class="k">val</span> <span class="n">spaceToReclaim</span> <span class="k">=</span> <span class="n">storagePool</span><span class="o">.</span><span class="n">freeSpaceToShrinkPool</span><span class="o">(</span>
+</span></span><span class="line"><span class="cl">                <span class="n">math</span><span class="o">.</span><span class="n">min</span><span class="o">(</span><span class="n">extraMemoryNeeded</span><span class="o">,</span> <span class="n">memoryReclaimableFromStorage</span><span class="o">))</span>
+</span></span><span class="line"><span class="cl">            <span class="c1">// 减少storage内存池的容量
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>            <span class="n">storagePool</span><span class="o">.</span><span class="n">decrementPoolSize</span><span class="o">(</span><span class="n">spaceToReclaim</span><span class="o">)</span>
+</span></span><span class="line"><span class="cl">            <span class="c1">// 增加execution内存池的容量
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>            <span class="n">executionPool</span><span class="o">.</span><span class="n">incrementPoolSize</span><span class="o">(</span><span class="n">spaceToReclaim</span><span class="o">)</span>
+</span></span><span class="line"><span class="cl">        <span class="o">}</span>
+</span></span><span class="line"><span class="cl">    <span class="o">}</span>
+</span></span><span class="line"><span class="cl"><span class="o">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1">// 计算最大的execution的内存容量
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="k">def</span> <span class="n">computeMaxExecutionPoolSize</span><span class="o">()</span><span class="k">:</span> <span class="kt">Long</span> <span class="o">=</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">    <span class="n">maxMemory</span> <span class="o">-</span> <span class="n">math</span><span class="o">.</span><span class="n">min</span><span class="o">(</span><span class="n">storagePool</span><span class="o">.</span><span class="n">memoryUsed</span><span class="o">,</span> <span class="n">storageRegionSize</span><span class="o">)</span>
+</span></span><span class="line"><span class="cl"><span class="o">}</span>
+</span></span></code></pre></td></tr></table></div>
 </div>
 </div><h2 id="申请内存示例"><a href="#申请内存示例" class="anchor-link"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon anchor-icon"><path d="M326.612 185.391c59.747 59.809 58.927 155.698.36 214.59-.11.12-.24.25-.36.37l-67.2 67.2c-59.27 59.27-155.699 59.262-214.96 0-59.27-59.26-59.27-155.7 0-214.96l37.106-37.106c9.84-9.84 26.786-3.3 27.294 10.606.648 17.722 3.826 35.527 9.69 52.721 1.986 5.822.567 12.262-3.783 16.612l-13.087 13.087c-28.026 28.026-28.905 73.66-1.155 101.96 28.024 28.579 74.086 28.749 102.325.51l67.2-67.19c28.191-28.191 28.073-73.757 0-101.83-3.701-3.694-7.429-6.564-10.341-8.569a16.037 16.037 0 0 1-6.947-12.606c-.396-10.567 3.348-21.456 11.698-29.806l21.054-21.055c5.521-5.521 14.182-6.199 20.584-1.731a152.482 152.482 0 0 1 20.522 17.197zM467.547 44.449c-59.261-59.262-155.69-59.27-214.96 0l-67.2 67.2c-.12.12-.25.25-.36.37-58.566 58.892-59.387 154.781.36 214.59a152.454 152.454 0 0 0 20.521 17.196c6.402 4.468 15.064 3.789 20.584-1.731l21.054-21.055c8.35-8.35 12.094-19.239 11.698-29.806a16.037 16.037 0 0 0-6.947-12.606c-2.912-2.005-6.64-4.875-10.341-8.569-28.073-28.073-28.191-73.639 0-101.83l67.2-67.19c28.239-28.239 74.3-28.069 102.325.51 27.75 28.3 26.872 73.934-1.155 101.96l-13.087 13.087c-4.35 4.35-5.769 10.79-3.783 16.612 5.864 17.194 9.042 34.999 9.69 52.721.509 13.906 17.454 20.446 27.294 10.606l37.106-37.106c59.271-59.259 59.271-155.699.001-214.959z"/></svg></a>申请内存示例</h2>
 <p>上面介绍了内存的管理和分配，这里介绍了使用者的用法。我们以MemoryStore类为例，当spark缓存数据的时候，会申请storage类型的内存。</p>
@@ -569,16 +569,16 @@
 </span><span class="lnt">9
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-scala" data-lang="scala"><span class="n">memoryStore</span><span class="o">.</span><span class="n">putBytes</span><span class="o">(</span><span class="n">blockId</span><span class="o">,</span> <span class="n">size</span><span class="o">,</span> <span class="n">memoryMode</span><span class="o">,</span> <span class="o">()</span> <span class="k">=&gt;</span> <span class="o">{</span>
-    <span class="c1">// 如果申请的是堆外内存，并且原始的数据存放在堆内，那么就需要申请堆外内存，并且执行拷贝
-</span><span class="c1"></span>    <span class="k">if</span> <span class="o">(</span><span class="n">memoryMode</span> <span class="o">==</span> <span class="nc">MemoryMode</span><span class="o">.</span><span class="nc">OFF_HEAP</span> <span class="o">&amp;&amp;</span>
-        <span class="n">bytes</span><span class="o">.</span><span class="n">chunks</span><span class="o">.</span><span class="n">exists</span><span class="o">(</span><span class="n">buffer</span> <span class="k">=&gt;</span> <span class="o">!</span><span class="n">buffer</span><span class="o">.</span><span class="n">isDirect</span><span class="o">))</span> <span class="o">{</span>
-        <span class="n">bytes</span><span class="o">.</span><span class="n">copy</span><span class="o">(</span><span class="nc">Platform</span><span class="o">.</span><span class="n">allocateDirectBuffer</span><span class="o">)</span>
-    <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
-        <span class="n">bytes</span>
-    <span class="o">}</span>
-<span class="o">})</span>
-</code></pre></td></tr></table></div>
+<pre tabindex="0" class="chroma"><code class="language-scala" data-lang="scala"><span class="line"><span class="cl"><span class="n">memoryStore</span><span class="o">.</span><span class="n">putBytes</span><span class="o">(</span><span class="n">blockId</span><span class="o">,</span> <span class="n">size</span><span class="o">,</span> <span class="n">memoryMode</span><span class="o">,</span> <span class="o">()</span> <span class="k">=&gt;</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// 如果申请的是堆外内存，并且原始的数据存放在堆内，那么就需要申请堆外内存，并且执行拷贝
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="k">if</span> <span class="o">(</span><span class="n">memoryMode</span> <span class="o">==</span> <span class="nc">MemoryMode</span><span class="o">.</span><span class="nc">OFF_HEAP</span> <span class="o">&amp;&amp;</span>
+</span></span><span class="line"><span class="cl">        <span class="n">bytes</span><span class="o">.</span><span class="n">chunks</span><span class="o">.</span><span class="n">exists</span><span class="o">(</span><span class="n">buffer</span> <span class="k">=&gt;</span> <span class="o">!</span><span class="n">buffer</span><span class="o">.</span><span class="n">isDirect</span><span class="o">))</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">        <span class="n">bytes</span><span class="o">.</span><span class="n">copy</span><span class="o">(</span><span class="nc">Platform</span><span class="o">.</span><span class="n">allocateDirectBuffer</span><span class="o">)</span>
+</span></span><span class="line"><span class="cl">    <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">        <span class="n">bytes</span>
+</span></span><span class="line"><span class="cl">    <span class="o">}</span>
+</span></span><span class="line"><span class="cl"><span class="o">})</span>
+</span></span></code></pre></td></tr></table></div>
 </div>
 </div><p>这里需要注意下有个回调函数，用来分配内存的。再接着看<code>MemoryStore</code> 的 <code>putBytes</code> 方法。它申请内存的方法很简单，首先向memoryManager申请，如果memoryManager同意，直接调用_bytes函数，生成ChunkedByteBuffer。</p>
 <div class="highlight"><div class="chroma">
@@ -600,22 +600,22 @@
 </span><span class="lnt">15
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-scala" data-lang="scala"><span class="k">class</span> <span class="nc">MemoryStore</span> <span class="o">{</span>
-  
-  <span class="k">def</span> <span class="n">putBytes</span><span class="o">[</span><span class="kt">T:</span> <span class="kt">ClassTag</span><span class="o">](</span> <span class="n">blockId</span><span class="k">:</span> <span class="kt">BlockId</span><span class="o">,</span> <span class="n">size</span><span class="k">:</span> <span class="kt">Long</span><span class="o">,</span> <span class="n">memoryMode</span><span class="k">:</span> <span class="kt">MemoryMode</span><span class="o">,</span> <span class="nc">_bytes</span><span class="k">:</span> <span class="o">()</span> <span class="o">=&gt;</span> <span class="nc">ChunkedByteBuffer</span><span class="o">)</span><span class="k">:</span> <span class="kt">Boolean</span> <span class="o">=</span> <span class="o">{</span>
-    <span class="c1">// 申请storage内存
-</span><span class="c1"></span>    <span class="k">if</span> <span class="o">(</span><span class="n">memoryManager</span><span class="o">.</span><span class="n">acquireStorageMemory</span><span class="o">(</span><span class="n">blockId</span><span class="o">,</span> <span class="n">size</span><span class="o">,</span> <span class="n">memoryMode</span><span class="o">))</span> <span class="o">{</span>
-      <span class="c1">// 生成ChunkedByteBuffer，里面存储着要缓存的数据
-</span><span class="c1"></span>      <span class="k">val</span> <span class="n">bytes</span> <span class="k">=</span> <span class="nc">_bytes</span><span class="o">()</span>
-      <span class="n">assert</span><span class="o">(</span><span class="n">bytes</span><span class="o">.</span><span class="n">size</span> <span class="o">==</span> <span class="n">size</span><span class="o">)</span>
-      <span class="o">......</span>
-      <span class="kc">true</span>
-    <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
-      <span class="kc">false</span>
-    <span class="o">}</span>
-  <span class="o">}</span>
-<span class="o">}</span>
-</code></pre></td></tr></table></div>
+<pre tabindex="0" class="chroma"><code class="language-scala" data-lang="scala"><span class="line"><span class="cl"><span class="k">class</span> <span class="nc">MemoryStore</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">  
+</span></span><span class="line"><span class="cl">  <span class="k">def</span> <span class="n">putBytes</span><span class="o">[</span><span class="kt">T:</span> <span class="kt">ClassTag</span><span class="o">](</span> <span class="n">blockId</span><span class="k">:</span> <span class="kt">BlockId</span><span class="o">,</span> <span class="n">size</span><span class="k">:</span> <span class="kt">Long</span><span class="o">,</span> <span class="n">memoryMode</span><span class="k">:</span> <span class="kt">MemoryMode</span><span class="o">,</span> <span class="nc">_bytes</span><span class="k">:</span> <span class="o">()</span> <span class="o">=&gt;</span> <span class="nc">ChunkedByteBuffer</span><span class="o">)</span><span class="k">:</span> <span class="kt">Boolean</span> <span class="o">=</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// 申请storage内存
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="k">if</span> <span class="o">(</span><span class="n">memoryManager</span><span class="o">.</span><span class="n">acquireStorageMemory</span><span class="o">(</span><span class="n">blockId</span><span class="o">,</span> <span class="n">size</span><span class="o">,</span> <span class="n">memoryMode</span><span class="o">))</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">      <span class="c1">// 生成ChunkedByteBuffer，里面存储着要缓存的数据
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>      <span class="k">val</span> <span class="n">bytes</span> <span class="k">=</span> <span class="nc">_bytes</span><span class="o">()</span>
+</span></span><span class="line"><span class="cl">      <span class="n">assert</span><span class="o">(</span><span class="n">bytes</span><span class="o">.</span><span class="n">size</span> <span class="o">==</span> <span class="n">size</span><span class="o">)</span>
+</span></span><span class="line"><span class="cl">      <span class="o">......</span>
+</span></span><span class="line"><span class="cl">      <span class="kc">true</span>
+</span></span><span class="line"><span class="cl">    <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">      <span class="kc">false</span>
+</span></span><span class="line"><span class="cl">    <span class="o">}</span>
+</span></span><span class="line"><span class="cl">  <span class="o">}</span>
+</span></span><span class="line"><span class="cl"><span class="o">}</span>
+</span></span></code></pre></td></tr></table></div>
 </div>
 </div><p>可以看到用户向内存池申请时，是需要自己负责内存分配的。</p>
 
@@ -645,9 +645,9 @@
 
         
     <div class="updated-badge-container">
-        <span title="Updated @ 2021-10-22 14:44:34 CST" style="cursor:help">
+        <span title="Updated @ 2023-07-02 16:59:09 CST" style="cursor:help">
 
-<svg xmlns="http://www.w3.org/2000/svg" width="130" height="20" class="updated-badge"><linearGradient id="b" x2="0" y2="100%"><stop offset="0" stop-color="#bbb" stop-opacity=".1"/><stop offset="1" stop-opacity=".1"/></linearGradient><clipPath id="a"><rect width="130" height="20" rx="3" fill="#fff"/></clipPath><g clip-path="url(#a)"><path class="updated-badge-left" d="M0 0h55v20H0z"/><path class="updated-badge-right" d="M55 0h75v20H55z"/><path fill="url(#b)" d="M0 0h130v20H0z"/></g><g fill="#fff" text-anchor="middle" font-size="110"><text x="285" y="150" fill="#010101" fill-opacity=".3" textLength="450" transform="scale(.1)">updated</text><text x="285" y="140" textLength="450" transform="scale(.1)">updated</text><text x="915" y="150" fill="#010101" fill-opacity=".3" textLength="650" transform="scale(.1)">2021-10-22</text><text x="915" y="140" textLength="650" transform="scale(.1)">2021-10-22</text></g></svg>
+<svg xmlns="http://www.w3.org/2000/svg" width="130" height="20" class="updated-badge"><linearGradient id="b" x2="0" y2="100%"><stop offset="0" stop-color="#bbb" stop-opacity=".1"/><stop offset="1" stop-opacity=".1"/></linearGradient><clipPath id="a"><rect width="130" height="20" rx="3" fill="#fff"/></clipPath><g clip-path="url(#a)"><path class="updated-badge-left" d="M0 0h55v20H0z"/><path class="updated-badge-right" d="M55 0h75v20H55z"/><path fill="url(#b)" d="M0 0h130v20H0z"/></g><g fill="#fff" text-anchor="middle" font-size="110"><text x="285" y="150" fill="#010101" fill-opacity=".3" textLength="450" transform="scale(.1)">updated</text><text x="285" y="140" textLength="450" transform="scale(.1)">updated</text><text x="915" y="150" fill="#010101" fill-opacity=".3" textLength="650" transform="scale(.1)">2023-07-02</text><text x="915" y="140" textLength="650" transform="scale(.1)">2023-07-02</text></g></svg>
         </span></div>
 
 

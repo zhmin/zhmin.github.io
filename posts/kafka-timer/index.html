@@ -3,7 +3,7 @@
     <head prefix="og: http://ogp.me/ns# article: http://ogp.me/ns/article#">
     <meta charset="UTF-8" />
 
-    <meta name="generator" content="Hugo 0.88.1" /><meta name="theme-color" content="#fff" />
+    <meta name="generator" content="Hugo 0.115.0"><meta name="theme-color" content="#fff" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     
     <meta name="format-detection" content="telephone=no, date=no, address=no, email=no" />
@@ -14,11 +14,11 @@
 
     <title>Kafka 延迟任务 | 学习笔记</title>
 
-    <link rel="stylesheet" href="/css/meme.min.2d3e1834af2bc8dda20c7d74aaa1d8134845094441b7a554a5206ccd4b472596.css"/>
+    <link rel="stylesheet" href="/css/meme.min.91e7f58f97e1c60563ef481c38d9684fa8099537801d6f17bbfc724121e7d8f1.css"/>
 
     
     
-        <script src="/js/meme.min.800f61672145711eb3e1f29fcfcc3dbe0139dd459259718b611a0390f74703d1.js"></script>
+        <script src="/js/meme.min.3210a00c2fdcf6f831170b681b8ee40f83f0224663661e986872616aec45407f.js"></script>
 
     
 
@@ -54,7 +54,7 @@
         "@context": "https://schema.org",
         "@type": "BlogPosting",
         "datePublished": "2019-03-28T21:43:38+00:00",
-        "dateModified": "2021-10-22T14:44:34+08:00",
+        "dateModified": "2023-07-02T16:59:09+08:00",
         "url": "https://zhmin.github.io/posts/kafka-timer/",
         "headline": "Kafka 延迟任务",
         "description": "Kafka 延迟任务 时间轮概念 Kafka在处理请求时，使用了多种延迟任务来处理，比如心跳请求。Kafka自己实现了时间轮，提供任务的延迟定时。关于时间轮的概念，我们把常见的钟表想象成一个时间轮。 时间轮都有着自己……",
@@ -98,7 +98,7 @@
 <meta property="og:locale" content="zh" /><meta property="og:image" content="https://zhmin.github.io/icons/apple-touch-icon.png" />
     <meta property="og:type" content="article" />
     <meta property="article:published_time" content="2019-03-28T21:43:38&#43;00:00" />
-    <meta property="article:modified_time" content="2021-10-22T14:44:34&#43;08:00" />
+    <meta property="article:modified_time" content="2023-07-02T16:59:09&#43;08:00" />
     
     <meta property="article:section" content="posts" />
 
@@ -276,25 +276,25 @@
 </span><span class="lnt">18
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-scala" data-lang="scala"><span class="k">private</span><span class="o">[</span><span class="kt">timer</span><span class="o">]</span> <span class="k">class</span> <span class="nc">TimerTaskList</span><span class="o">(</span><span class="n">taskCounter</span><span class="k">:</span> <span class="kt">AtomicInteger</span><span class="o">)</span> <span class="k">extends</span> <span class="nc">Delayed</span> <span class="o">{</span>
-    
-  <span class="k">private</span><span class="o">[</span><span class="kt">this</span><span class="o">]</span> <span class="k">val</span> <span class="n">root</span> <span class="k">=</span> <span class="k">new</span> <span class="nc">TimerTaskEntry</span><span class="o">(</span><span class="kc">null</span><span class="o">,</span> <span class="o">-</span><span class="mi">1</span><span class="o">)</span>
-
-  <span class="c1">// 传递的函数，用来执行任务
-</span><span class="c1"></span>  <span class="k">def</span> <span class="n">flush</span><span class="o">(</span><span class="n">f</span><span class="k">:</span> <span class="o">(</span><span class="kt">TimerTaskEntry</span><span class="o">)=&gt;</span><span class="nc">Unit</span><span class="o">)</span><span class="k">:</span> <span class="kt">Unit</span> <span class="o">=</span> <span class="o">{</span>
-    <span class="n">synchronized</span> <span class="o">{</span>
-      <span class="c1">// 遍历链表，执行延迟任务
-</span><span class="c1"></span>      <span class="k">var</span> <span class="n">head</span> <span class="k">=</span> <span class="n">root</span><span class="o">.</span><span class="n">next</span>
-      <span class="k">while</span> <span class="o">(</span><span class="n">head</span> <span class="n">ne</span> <span class="n">root</span><span class="o">)</span> <span class="o">{</span>
-        <span class="n">remove</span><span class="o">(</span><span class="n">head</span><span class="o">)</span>
-        <span class="n">f</span><span class="o">(</span><span class="n">head</span><span class="o">)</span>
-        <span class="n">head</span> <span class="k">=</span> <span class="n">root</span><span class="o">.</span><span class="n">next</span>
-      <span class="o">}</span>
-      <span class="n">expiration</span><span class="o">.</span><span class="n">set</span><span class="o">(-</span><span class="mi">1L</span><span class="o">)</span>
-    <span class="o">}</span>
-  <span class="o">}</span>
-<span class="o">}</span>
-</code></pre></td></tr></table></div>
+<pre tabindex="0" class="chroma"><code class="language-scala" data-lang="scala"><span class="line"><span class="cl"><span class="k">private</span><span class="o">[</span><span class="kt">timer</span><span class="o">]</span> <span class="k">class</span> <span class="nc">TimerTaskList</span><span class="o">(</span><span class="n">taskCounter</span><span class="k">:</span> <span class="kt">AtomicInteger</span><span class="o">)</span> <span class="k">extends</span> <span class="nc">Delayed</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">    
+</span></span><span class="line"><span class="cl">  <span class="k">private</span><span class="o">[</span><span class="kt">this</span><span class="o">]</span> <span class="k">val</span> <span class="n">root</span> <span class="k">=</span> <span class="k">new</span> <span class="nc">TimerTaskEntry</span><span class="o">(</span><span class="kc">null</span><span class="o">,</span> <span class="o">-</span><span class="mi">1</span><span class="o">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="c1">// 传递的函数，用来执行任务
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="k">def</span> <span class="n">flush</span><span class="o">(</span><span class="n">f</span><span class="k">:</span> <span class="o">(</span><span class="kt">TimerTaskEntry</span><span class="o">)=&gt;</span><span class="nc">Unit</span><span class="o">)</span><span class="k">:</span> <span class="kt">Unit</span> <span class="o">=</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">    <span class="n">synchronized</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">      <span class="c1">// 遍历链表，执行延迟任务
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>      <span class="k">var</span> <span class="n">head</span> <span class="k">=</span> <span class="n">root</span><span class="o">.</span><span class="n">next</span>
+</span></span><span class="line"><span class="cl">      <span class="k">while</span> <span class="o">(</span><span class="n">head</span> <span class="n">ne</span> <span class="n">root</span><span class="o">)</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">        <span class="n">remove</span><span class="o">(</span><span class="n">head</span><span class="o">)</span>
+</span></span><span class="line"><span class="cl">        <span class="n">f</span><span class="o">(</span><span class="n">head</span><span class="o">)</span>
+</span></span><span class="line"><span class="cl">        <span class="n">head</span> <span class="k">=</span> <span class="n">root</span><span class="o">.</span><span class="n">next</span>
+</span></span><span class="line"><span class="cl">      <span class="o">}</span>
+</span></span><span class="line"><span class="cl">      <span class="n">expiration</span><span class="o">.</span><span class="n">set</span><span class="o">(-</span><span class="mi">1L</span><span class="o">)</span>
+</span></span><span class="line"><span class="cl">    <span class="o">}</span>
+</span></span><span class="line"><span class="cl">  <span class="o">}</span>
+</span></span><span class="line"><span class="cl"><span class="o">}</span>
+</span></span></code></pre></td></tr></table></div>
 </div>
 </div><p>TimingWheel表示时间轮，它有wheelSize格时间块，每块的时间长度为tickMs。每块时间保存了TimerTaskList。</p>
 <p>当添加任务时，任务超过了当前时间轮的范围，TimingWheel会自动创建父时间轮，直到父时间轮的范围可以包含此任务。</p>
@@ -371,74 +371,74 @@
 </span><span class="lnt">67
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-scala" data-lang="scala"><span class="c1">// tickMs表示时间轮的时间单位，比如分钟时间轮的时间单位为1分钟
-</span><span class="c1">// wheelSize表示有多少格时间，比如分钟时间轮有60格
-</span><span class="c1">// startMs表示时间轮的开始时间
-</span><span class="c1">// queue是Java自带类DelayQueue类型，它只保存了任务队列
-</span><span class="c1"></span><span class="k">private</span><span class="o">[</span><span class="kt">timer</span><span class="o">]</span> <span class="k">class</span> <span class="nc">TimingWheel</span><span class="o">(</span><span class="n">tickMs</span><span class="k">:</span> <span class="kt">Long</span><span class="o">,</span> <span class="n">wheelSize</span><span class="k">:</span> <span class="kt">Int</span><span class="o">,</span> <span class="n">startMs</span><span class="k">:</span> <span class="kt">Long</span><span class="o">,</span> <span class="n">taskCounter</span><span class="k">:</span> <span class="kt">AtomicInteger</span><span class="o">,</span> <span class="n">queue</span><span class="k">:</span> <span class="kt">DelayQueue</span><span class="o">[</span><span class="kt">TimerTaskList</span><span class="o">])</span> <span class="o">{</span>
-  <span class="c1">// interval表示延迟的最大时间，比如分钟时间轮为60分钟
-</span><span class="c1"></span>  <span class="k">private</span><span class="o">[</span><span class="kt">this</span><span class="o">]</span> <span class="k">val</span> <span class="n">interval</span> <span class="k">=</span> <span class="n">tickMs</span> <span class="o">*</span> <span class="n">wheelSize</span>
-  <span class="c1">// 每格时间都对应着一个任务队列
-</span><span class="c1"></span>  <span class="k">private</span><span class="o">[</span><span class="kt">this</span><span class="o">]</span> <span class="k">val</span> <span class="n">buckets</span> <span class="k">=</span> <span class="nc">Array</span><span class="o">.</span><span class="n">tabulate</span><span class="o">[</span><span class="kt">TimerTaskList</span><span class="o">](</span><span class="n">wheelSize</span><span class="o">)</span> <span class="o">{</span> <span class="k">_</span> <span class="k">=&gt;</span> <span class="k">new</span> <span class="nc">TimerTaskList</span><span class="o">(</span><span class="n">taskCounter</span><span class="o">)</span> <span class="o">}</span>
-  <span class="c1">// 当前时间，它的时间单位为tickMs，这里采用向下取整
-</span><span class="c1"></span>  <span class="k">private</span><span class="o">[</span><span class="kt">this</span><span class="o">]</span> <span class="k">var</span> <span class="n">currentTime</span> <span class="k">=</span> <span class="n">startMs</span> <span class="o">-</span> <span class="o">(</span><span class="n">startMs</span> <span class="o">%</span> <span class="n">tickMs</span><span class="o">)</span>
-  <span class="c1">// 父时间轮
-</span><span class="c1"></span>  <span class="nd">@volatile</span> <span class="k">private</span><span class="o">[</span><span class="kt">this</span><span class="o">]</span> <span class="k">var</span> <span class="n">overflowWheel</span><span class="k">:</span> <span class="kt">TimingWheel</span> <span class="o">=</span> <span class="kc">null</span>
-
-  <span class="k">private</span><span class="o">[</span><span class="kt">this</span><span class="o">]</span> <span class="k">def</span> <span class="n">addOverflowWheel</span><span class="o">()</span><span class="k">:</span> <span class="kt">Unit</span> <span class="o">=</span> <span class="o">{</span>
-    <span class="n">synchronized</span> <span class="o">{</span>
-      <span class="k">if</span> <span class="o">(</span><span class="n">overflowWheel</span> <span class="o">==</span> <span class="kc">null</span><span class="o">)</span> <span class="o">{</span>
-        <span class="n">overflowWheel</span> <span class="k">=</span> <span class="k">new</span> <span class="nc">TimingWheel</span><span class="o">(</span>
-          <span class="n">tickMs</span> <span class="k">=</span> <span class="n">interval</span><span class="o">,</span>          <span class="c1">// 父时间轮的时间单位，为当前时间轮的最大时间
-</span><span class="c1"></span>          <span class="n">wheelSize</span> <span class="k">=</span> <span class="n">wheelSize</span><span class="o">,</span>      <span class="c1">// 父时间轮的格数相同
-</span><span class="c1"></span>          <span class="n">startMs</span> <span class="k">=</span> <span class="n">currentTime</span><span class="o">,</span>
-          <span class="n">taskCounter</span> <span class="k">=</span> <span class="n">taskCounter</span><span class="o">,</span>
-          <span class="n">queue</span>
-        <span class="o">)</span>
-      <span class="o">}</span>
-    <span class="o">}</span>
-  <span class="o">}</span>
-    
-  <span class="c1">// 更新当前时间
-</span><span class="c1"></span>  <span class="k">def</span> <span class="n">advanceClock</span><span class="o">(</span><span class="n">timeMs</span><span class="k">:</span> <span class="kt">Long</span><span class="o">)</span><span class="k">:</span> <span class="kt">Unit</span> <span class="o">=</span> <span class="o">{</span>
-    <span class="c1">// 只有过了单位时间，才会更新当前时间
-</span><span class="c1"></span>    <span class="k">if</span> <span class="o">(</span><span class="n">timeMs</span> <span class="o">&gt;=</span> <span class="n">currentTime</span> <span class="o">+</span> <span class="n">tickMs</span><span class="o">)</span> <span class="o">{</span>
-      <span class="n">currentTime</span> <span class="k">=</span> <span class="n">timeMs</span> <span class="o">-</span> <span class="o">(</span><span class="n">timeMs</span> <span class="o">%</span> <span class="n">tickMs</span><span class="o">)</span>
-      <span class="c1">// 更新父时间轮
-</span><span class="c1"></span>      <span class="k">if</span> <span class="o">(</span><span class="n">overflowWheel</span> <span class="o">!=</span> <span class="kc">null</span><span class="o">)</span> <span class="n">overflowWheel</span><span class="o">.</span><span class="n">advanceClock</span><span class="o">(</span><span class="n">currentTime</span><span class="o">)</span>
-    <span class="o">}</span>
-  <span class="o">}</span>
-    
-  <span class="c1">// 添加任务，返回是否成功
-</span><span class="c1"></span>  <span class="k">def</span> <span class="n">add</span><span class="o">(</span><span class="n">timerTaskEntry</span><span class="k">:</span> <span class="kt">TimerTaskEntry</span><span class="o">)</span><span class="k">:</span> <span class="kt">Boolean</span> <span class="o">=</span> <span class="o">{</span>
-    <span class="k">val</span> <span class="n">expiration</span> <span class="k">=</span> <span class="n">timerTaskEntry</span><span class="o">.</span><span class="n">expirationMs</span>
-    <span class="k">if</span> <span class="o">(</span><span class="n">timerTaskEntry</span><span class="o">.</span><span class="n">cancelled</span><span class="o">)</span> <span class="o">{</span>
-      <span class="c1">// 如果任务在添加之前，已经被取消掉了
-</span><span class="c1"></span>      <span class="kc">false</span>
-    <span class="o">}</span> <span class="k">else</span> <span class="k">if</span> <span class="o">(</span><span class="n">expiration</span> <span class="o">&lt;</span> <span class="n">currentTime</span> <span class="o">+</span> <span class="n">tickMs</span><span class="o">)</span> <span class="o">{</span>
-      <span class="c1">// 如果任务已经过期了
-</span><span class="c1"></span>      <span class="kc">false</span>
-    <span class="o">}</span> <span class="k">else</span> <span class="k">if</span> <span class="o">(</span><span class="n">expiration</span> <span class="o">&lt;</span> <span class="n">currentTime</span> <span class="o">+</span> <span class="n">interval</span><span class="o">)</span> <span class="o">{</span>
-      <span class="c1">// 计算添加到哪个时间格
-</span><span class="c1"></span>      <span class="k">val</span> <span class="n">virtualId</span> <span class="k">=</span> <span class="n">expiration</span> <span class="o">/</span> <span class="n">tickMs</span>
-      <span class="k">val</span> <span class="n">bucket</span> <span class="k">=</span> <span class="n">buckets</span><span class="o">((</span><span class="n">virtualId</span> <span class="o">%</span> <span class="n">wheelSize</span><span class="o">.</span><span class="n">toLong</span><span class="o">).</span><span class="n">toInt</span><span class="o">)</span>
-      <span class="c1">// 添加任务到对应的任务列表
-</span><span class="c1"></span>      <span class="n">bucket</span><span class="o">.</span><span class="n">add</span><span class="o">(</span><span class="n">timerTaskEntry</span><span class="o">)</span>
-
-      <span class="c1">// 设置任务列表的过期时间
-</span><span class="c1"></span>      <span class="k">if</span> <span class="o">(</span><span class="n">bucket</span><span class="o">.</span><span class="n">setExpiration</span><span class="o">(</span><span class="n">virtualId</span> <span class="o">*</span> <span class="n">tickMs</span><span class="o">))</span> <span class="o">{</span>
-        <span class="c1">// 将列表添加到DepalyQueue
-</span><span class="c1"></span>        <span class="n">queue</span><span class="o">.</span><span class="n">offer</span><span class="o">(</span><span class="n">bucket</span><span class="o">)</span>
-      <span class="o">}</span>
-      <span class="kc">true</span>
-    <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
-      <span class="c1">// 超出了最大延迟时间，需要添加到父时间轮
-</span><span class="c1"></span>      <span class="k">if</span> <span class="o">(</span><span class="n">overflowWheel</span> <span class="o">==</span> <span class="kc">null</span><span class="o">)</span> <span class="n">addOverflowWheel</span><span class="o">()</span>
-      <span class="n">overflowWheel</span><span class="o">.</span><span class="n">add</span><span class="o">(</span><span class="n">timerTaskEntry</span><span class="o">)</span>
-    <span class="o">}</span>
-  <span class="o">}</span>    
-<span class="o">}</span>
-</code></pre></td></tr></table></div>
+<pre tabindex="0" class="chroma"><code class="language-scala" data-lang="scala"><span class="line"><span class="cl"><span class="c1">// tickMs表示时间轮的时间单位，比如分钟时间轮的时间单位为1分钟
+</span></span></span><span class="line"><span class="cl"><span class="c1">// wheelSize表示有多少格时间，比如分钟时间轮有60格
+</span></span></span><span class="line"><span class="cl"><span class="c1">// startMs表示时间轮的开始时间
+</span></span></span><span class="line"><span class="cl"><span class="c1">// queue是Java自带类DelayQueue类型，它只保存了任务队列
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="k">private</span><span class="o">[</span><span class="kt">timer</span><span class="o">]</span> <span class="k">class</span> <span class="nc">TimingWheel</span><span class="o">(</span><span class="n">tickMs</span><span class="k">:</span> <span class="kt">Long</span><span class="o">,</span> <span class="n">wheelSize</span><span class="k">:</span> <span class="kt">Int</span><span class="o">,</span> <span class="n">startMs</span><span class="k">:</span> <span class="kt">Long</span><span class="o">,</span> <span class="n">taskCounter</span><span class="k">:</span> <span class="kt">AtomicInteger</span><span class="o">,</span> <span class="n">queue</span><span class="k">:</span> <span class="kt">DelayQueue</span><span class="o">[</span><span class="kt">TimerTaskList</span><span class="o">])</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">  <span class="c1">// interval表示延迟的最大时间，比如分钟时间轮为60分钟
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="k">private</span><span class="o">[</span><span class="kt">this</span><span class="o">]</span> <span class="k">val</span> <span class="n">interval</span> <span class="k">=</span> <span class="n">tickMs</span> <span class="o">*</span> <span class="n">wheelSize</span>
+</span></span><span class="line"><span class="cl">  <span class="c1">// 每格时间都对应着一个任务队列
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="k">private</span><span class="o">[</span><span class="kt">this</span><span class="o">]</span> <span class="k">val</span> <span class="n">buckets</span> <span class="k">=</span> <span class="nc">Array</span><span class="o">.</span><span class="n">tabulate</span><span class="o">[</span><span class="kt">TimerTaskList</span><span class="o">](</span><span class="n">wheelSize</span><span class="o">)</span> <span class="o">{</span> <span class="k">_</span> <span class="k">=&gt;</span> <span class="k">new</span> <span class="nc">TimerTaskList</span><span class="o">(</span><span class="n">taskCounter</span><span class="o">)</span> <span class="o">}</span>
+</span></span><span class="line"><span class="cl">  <span class="c1">// 当前时间，它的时间单位为tickMs，这里采用向下取整
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="k">private</span><span class="o">[</span><span class="kt">this</span><span class="o">]</span> <span class="k">var</span> <span class="n">currentTime</span> <span class="k">=</span> <span class="n">startMs</span> <span class="o">-</span> <span class="o">(</span><span class="n">startMs</span> <span class="o">%</span> <span class="n">tickMs</span><span class="o">)</span>
+</span></span><span class="line"><span class="cl">  <span class="c1">// 父时间轮
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="nd">@volatile</span> <span class="k">private</span><span class="o">[</span><span class="kt">this</span><span class="o">]</span> <span class="k">var</span> <span class="n">overflowWheel</span><span class="k">:</span> <span class="kt">TimingWheel</span> <span class="o">=</span> <span class="kc">null</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="k">private</span><span class="o">[</span><span class="kt">this</span><span class="o">]</span> <span class="k">def</span> <span class="n">addOverflowWheel</span><span class="o">()</span><span class="k">:</span> <span class="kt">Unit</span> <span class="o">=</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">    <span class="n">synchronized</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">      <span class="k">if</span> <span class="o">(</span><span class="n">overflowWheel</span> <span class="o">==</span> <span class="kc">null</span><span class="o">)</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">        <span class="n">overflowWheel</span> <span class="k">=</span> <span class="k">new</span> <span class="nc">TimingWheel</span><span class="o">(</span>
+</span></span><span class="line"><span class="cl">          <span class="n">tickMs</span> <span class="k">=</span> <span class="n">interval</span><span class="o">,</span>          <span class="c1">// 父时间轮的时间单位，为当前时间轮的最大时间
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>          <span class="n">wheelSize</span> <span class="k">=</span> <span class="n">wheelSize</span><span class="o">,</span>      <span class="c1">// 父时间轮的格数相同
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>          <span class="n">startMs</span> <span class="k">=</span> <span class="n">currentTime</span><span class="o">,</span>
+</span></span><span class="line"><span class="cl">          <span class="n">taskCounter</span> <span class="k">=</span> <span class="n">taskCounter</span><span class="o">,</span>
+</span></span><span class="line"><span class="cl">          <span class="n">queue</span>
+</span></span><span class="line"><span class="cl">        <span class="o">)</span>
+</span></span><span class="line"><span class="cl">      <span class="o">}</span>
+</span></span><span class="line"><span class="cl">    <span class="o">}</span>
+</span></span><span class="line"><span class="cl">  <span class="o">}</span>
+</span></span><span class="line"><span class="cl">    
+</span></span><span class="line"><span class="cl">  <span class="c1">// 更新当前时间
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="k">def</span> <span class="n">advanceClock</span><span class="o">(</span><span class="n">timeMs</span><span class="k">:</span> <span class="kt">Long</span><span class="o">)</span><span class="k">:</span> <span class="kt">Unit</span> <span class="o">=</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// 只有过了单位时间，才会更新当前时间
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="k">if</span> <span class="o">(</span><span class="n">timeMs</span> <span class="o">&gt;=</span> <span class="n">currentTime</span> <span class="o">+</span> <span class="n">tickMs</span><span class="o">)</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">      <span class="n">currentTime</span> <span class="k">=</span> <span class="n">timeMs</span> <span class="o">-</span> <span class="o">(</span><span class="n">timeMs</span> <span class="o">%</span> <span class="n">tickMs</span><span class="o">)</span>
+</span></span><span class="line"><span class="cl">      <span class="c1">// 更新父时间轮
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>      <span class="k">if</span> <span class="o">(</span><span class="n">overflowWheel</span> <span class="o">!=</span> <span class="kc">null</span><span class="o">)</span> <span class="n">overflowWheel</span><span class="o">.</span><span class="n">advanceClock</span><span class="o">(</span><span class="n">currentTime</span><span class="o">)</span>
+</span></span><span class="line"><span class="cl">    <span class="o">}</span>
+</span></span><span class="line"><span class="cl">  <span class="o">}</span>
+</span></span><span class="line"><span class="cl">    
+</span></span><span class="line"><span class="cl">  <span class="c1">// 添加任务，返回是否成功
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="k">def</span> <span class="n">add</span><span class="o">(</span><span class="n">timerTaskEntry</span><span class="k">:</span> <span class="kt">TimerTaskEntry</span><span class="o">)</span><span class="k">:</span> <span class="kt">Boolean</span> <span class="o">=</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">    <span class="k">val</span> <span class="n">expiration</span> <span class="k">=</span> <span class="n">timerTaskEntry</span><span class="o">.</span><span class="n">expirationMs</span>
+</span></span><span class="line"><span class="cl">    <span class="k">if</span> <span class="o">(</span><span class="n">timerTaskEntry</span><span class="o">.</span><span class="n">cancelled</span><span class="o">)</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">      <span class="c1">// 如果任务在添加之前，已经被取消掉了
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>      <span class="kc">false</span>
+</span></span><span class="line"><span class="cl">    <span class="o">}</span> <span class="k">else</span> <span class="k">if</span> <span class="o">(</span><span class="n">expiration</span> <span class="o">&lt;</span> <span class="n">currentTime</span> <span class="o">+</span> <span class="n">tickMs</span><span class="o">)</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">      <span class="c1">// 如果任务已经过期了
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>      <span class="kc">false</span>
+</span></span><span class="line"><span class="cl">    <span class="o">}</span> <span class="k">else</span> <span class="k">if</span> <span class="o">(</span><span class="n">expiration</span> <span class="o">&lt;</span> <span class="n">currentTime</span> <span class="o">+</span> <span class="n">interval</span><span class="o">)</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">      <span class="c1">// 计算添加到哪个时间格
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>      <span class="k">val</span> <span class="n">virtualId</span> <span class="k">=</span> <span class="n">expiration</span> <span class="o">/</span> <span class="n">tickMs</span>
+</span></span><span class="line"><span class="cl">      <span class="k">val</span> <span class="n">bucket</span> <span class="k">=</span> <span class="n">buckets</span><span class="o">((</span><span class="n">virtualId</span> <span class="o">%</span> <span class="n">wheelSize</span><span class="o">.</span><span class="n">toLong</span><span class="o">).</span><span class="n">toInt</span><span class="o">)</span>
+</span></span><span class="line"><span class="cl">      <span class="c1">// 添加任务到对应的任务列表
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>      <span class="n">bucket</span><span class="o">.</span><span class="n">add</span><span class="o">(</span><span class="n">timerTaskEntry</span><span class="o">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">      <span class="c1">// 设置任务列表的过期时间
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>      <span class="k">if</span> <span class="o">(</span><span class="n">bucket</span><span class="o">.</span><span class="n">setExpiration</span><span class="o">(</span><span class="n">virtualId</span> <span class="o">*</span> <span class="n">tickMs</span><span class="o">))</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">        <span class="c1">// 将列表添加到DepalyQueue
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>        <span class="n">queue</span><span class="o">.</span><span class="n">offer</span><span class="o">(</span><span class="n">bucket</span><span class="o">)</span>
+</span></span><span class="line"><span class="cl">      <span class="o">}</span>
+</span></span><span class="line"><span class="cl">      <span class="kc">true</span>
+</span></span><span class="line"><span class="cl">    <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">      <span class="c1">// 超出了最大延迟时间，需要添加到父时间轮
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>      <span class="k">if</span> <span class="o">(</span><span class="n">overflowWheel</span> <span class="o">==</span> <span class="kc">null</span><span class="o">)</span> <span class="n">addOverflowWheel</span><span class="o">()</span>
+</span></span><span class="line"><span class="cl">      <span class="n">overflowWheel</span><span class="o">.</span><span class="n">add</span><span class="o">(</span><span class="n">timerTaskEntry</span><span class="o">)</span>
+</span></span><span class="line"><span class="cl">    <span class="o">}</span>
+</span></span><span class="line"><span class="cl">  <span class="o">}</span>    
+</span></span><span class="line"><span class="cl"><span class="o">}</span>
+</span></span></code></pre></td></tr></table></div>
 </div>
 </div><h2 id="定时器"><a href="#定时器" class="anchor-link"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon anchor-icon"><path d="M326.612 185.391c59.747 59.809 58.927 155.698.36 214.59-.11.12-.24.25-.36.37l-67.2 67.2c-59.27 59.27-155.699 59.262-214.96 0-59.27-59.26-59.27-155.7 0-214.96l37.106-37.106c9.84-9.84 26.786-3.3 27.294 10.606.648 17.722 3.826 35.527 9.69 52.721 1.986 5.822.567 12.262-3.783 16.612l-13.087 13.087c-28.026 28.026-28.905 73.66-1.155 101.96 28.024 28.579 74.086 28.749 102.325.51l67.2-67.19c28.191-28.191 28.073-73.757 0-101.83-3.701-3.694-7.429-6.564-10.341-8.569a16.037 16.037 0 0 1-6.947-12.606c-.396-10.567 3.348-21.456 11.698-29.806l21.054-21.055c5.521-5.521 14.182-6.199 20.584-1.731a152.482 152.482 0 0 1 20.522 17.197zM467.547 44.449c-59.261-59.262-155.69-59.27-214.96 0l-67.2 67.2c-.12.12-.25.25-.36.37-58.566 58.892-59.387 154.781.36 214.59a152.454 152.454 0 0 0 20.521 17.196c6.402 4.468 15.064 3.789 20.584-1.731l21.054-21.055c8.35-8.35 12.094-19.239 11.698-29.806a16.037 16.037 0 0 0-6.947-12.606c-2.912-2.005-6.64-4.875-10.341-8.569-28.073-28.073-28.191-73.639 0-101.83l67.2-67.19c28.239-28.239 74.3-28.069 102.325.51 27.75 28.3 26.872 73.934-1.155 101.96l-13.087 13.087c-4.35 4.35-5.769 10.79-3.783 16.612 5.864 17.194 9.042 34.999 9.69 52.721.509 13.906 17.454 20.446 27.294 10.606l37.106-37.106c59.271-59.259 59.271-155.699.001-214.959z"/></svg></a>定时器</h2>
 <p>时间轮只是保存了任务，而定时器负责管理时间轮和执行过期的任务。 定时器的接口由Timer表示</p>
@@ -453,14 +453,14 @@
 </span><span class="lnt">7
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-scala" data-lang="scala"><span class="k">trait</span> <span class="nc">Timer</span> <span class="o">{</span>
-  <span class="c1">// 添加任务
-</span><span class="c1"></span>  <span class="k">def</span> <span class="n">add</span><span class="o">(</span><span class="n">timerTask</span><span class="k">:</span> <span class="kt">TimerTask</span><span class="o">)</span><span class="k">:</span> <span class="kt">Unit</span>
-
-  <span class="c1">// 更新时间，并且提交延迟任务给线程池执行
-</span><span class="c1"></span>  <span class="k">def</span> <span class="n">advanceClock</span><span class="o">(</span><span class="n">timeoutMs</span><span class="k">:</span> <span class="kt">Long</span><span class="o">)</span><span class="k">:</span> <span class="kt">Boolean</span>
-<span class="o">}</span>
-</code></pre></td></tr></table></div>
+<pre tabindex="0" class="chroma"><code class="language-scala" data-lang="scala"><span class="line"><span class="cl"><span class="k">trait</span> <span class="nc">Timer</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">  <span class="c1">// 添加任务
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="k">def</span> <span class="n">add</span><span class="o">(</span><span class="n">timerTask</span><span class="k">:</span> <span class="kt">TimerTask</span><span class="o">)</span><span class="k">:</span> <span class="kt">Unit</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="c1">// 更新时间，并且提交延迟任务给线程池执行
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="k">def</span> <span class="n">advanceClock</span><span class="o">(</span><span class="n">timeoutMs</span><span class="k">:</span> <span class="kt">Long</span><span class="o">)</span><span class="k">:</span> <span class="kt">Boolean</span>
+</span></span><span class="line"><span class="cl"><span class="o">}</span>
+</span></span></code></pre></td></tr></table></div>
 </div>
 </div><p>SystemTimer实现了Timer接口，它使用DelayQueue查找过期的任务列表，然后提交线程池执行。</p>
 <div class="highlight"><div class="chroma">
@@ -533,73 +533,73 @@
 </span><span class="lnt">66
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-scala" data-lang="scala"><span class="k">class</span> <span class="nc">SystemTimer</span><span class="o">(</span><span class="n">executorName</span><span class="k">:</span> <span class="kt">String</span><span class="o">,</span>
-                  <span class="n">tickMs</span><span class="k">:</span> <span class="kt">Long</span> <span class="o">=</span> <span class="mi">1</span><span class="o">,</span>
-                  <span class="n">wheelSize</span><span class="k">:</span> <span class="kt">Int</span> <span class="o">=</span> <span class="mi">20</span><span class="o">,</span>
-                  <span class="n">startMs</span><span class="k">:</span> <span class="kt">Long</span> <span class="o">=</span> <span class="nc">Time</span><span class="o">.</span><span class="nc">SYSTEM</span><span class="o">.</span><span class="n">hiResClockMs</span><span class="o">)</span> <span class="k">extends</span> <span class="nc">Timer</span> <span class="o">{</span>
-
-  <span class="c1">// 执行任务的线程池
-</span><span class="c1"></span>  <span class="k">private</span><span class="o">[</span><span class="kt">this</span><span class="o">]</span> <span class="k">val</span> <span class="n">taskExecutor</span> <span class="k">=</span> <span class="nc">Executors</span><span class="o">.</span><span class="n">newFixedThreadPool</span><span class="o">(</span><span class="mi">1</span><span class="o">,</span> <span class="k">new</span> <span class="nc">ThreadFactory</span><span class="o">()</span> <span class="o">{</span>
-    <span class="k">def</span> <span class="n">newThread</span><span class="o">(</span><span class="n">runnable</span><span class="k">:</span> <span class="kt">Runnable</span><span class="o">)</span><span class="k">:</span> <span class="kt">Thread</span> <span class="o">=</span>
-      <span class="nc">KafkaThread</span><span class="o">.</span><span class="n">nonDaemon</span><span class="o">(</span><span class="s">&#34;executor-&#34;</span><span class="o">+</span><span class="n">executorName</span><span class="o">,</span> <span class="n">runnable</span><span class="o">)</span>
-  <span class="o">})</span>
-  <span class="c1">// Java自带的延迟队列
-</span><span class="c1"></span>  <span class="k">private</span><span class="o">[</span><span class="kt">this</span><span class="o">]</span> <span class="k">val</span> <span class="n">delayQueue</span> <span class="k">=</span> <span class="k">new</span> <span class="nc">DelayQueue</span><span class="o">[</span><span class="kt">TimerTaskList</span><span class="o">]()</span>
-  <span class="c1">// 时间轮
-</span><span class="c1"></span>  <span class="k">private</span><span class="o">[</span><span class="kt">this</span><span class="o">]</span> <span class="k">val</span> <span class="n">timingWheel</span> <span class="k">=</span> <span class="k">new</span> <span class="nc">TimingWheel</span><span class="o">(</span>
-    <span class="n">tickMs</span> <span class="k">=</span> <span class="n">tickMs</span><span class="o">,</span>
-    <span class="n">wheelSize</span> <span class="k">=</span> <span class="n">wheelSize</span><span class="o">,</span>
-    <span class="n">startMs</span> <span class="k">=</span> <span class="n">startMs</span><span class="o">,</span>
-    <span class="n">taskCounter</span> <span class="k">=</span> <span class="n">taskCounter</span><span class="o">,</span>
-    <span class="n">delayQueue</span>
-  <span class="o">)</span>
-  
-  <span class="c1">// 添加任务
-</span><span class="c1"></span>  <span class="k">def</span> <span class="n">add</span><span class="o">(</span><span class="n">timerTask</span><span class="k">:</span> <span class="kt">TimerTask</span><span class="o">)</span><span class="k">:</span> <span class="kt">Unit</span> <span class="o">=</span> <span class="o">{</span>
-    <span class="n">readLock</span><span class="o">.</span><span class="n">lock</span><span class="o">()</span>
-    <span class="k">try</span> <span class="o">{</span>
-      <span class="n">addTimerTaskEntry</span><span class="o">(</span><span class="k">new</span> <span class="nc">TimerTaskEntry</span><span class="o">(</span><span class="n">timerTask</span><span class="o">,</span> <span class="n">timerTask</span><span class="o">.</span><span class="n">delayMs</span> <span class="o">+</span> <span class="nc">Time</span><span class="o">.</span><span class="nc">SYSTEM</span><span class="o">.</span><span class="n">hiResClockMs</span><span class="o">))</span>
-    <span class="o">}</span> <span class="k">finally</span> <span class="o">{</span>
-      <span class="n">readLock</span><span class="o">.</span><span class="n">unlock</span><span class="o">()</span>
-    <span class="o">}</span>
-  <span class="o">}</span>
-  
-    
-  <span class="k">def</span> <span class="n">advanceClock</span><span class="o">(</span><span class="n">timeoutMs</span><span class="k">:</span> <span class="kt">Long</span><span class="o">)</span><span class="k">:</span> <span class="kt">Boolean</span> <span class="o">=</span> <span class="o">{</span>
-    <span class="c1">// delayQueue查找过期的任务队列
-</span><span class="c1"></span>    <span class="k">var</span> <span class="n">bucket</span> <span class="k">=</span> <span class="n">delayQueue</span><span class="o">.</span><span class="n">poll</span><span class="o">(</span><span class="n">timeoutMs</span><span class="o">,</span> <span class="nc">TimeUnit</span><span class="o">.</span><span class="nc">MILLISECONDS</span><span class="o">)</span>
-    <span class="k">if</span> <span class="o">(</span><span class="n">bucket</span> <span class="o">!=</span> <span class="kc">null</span><span class="o">)</span> <span class="o">{</span>
-      <span class="n">writeLock</span><span class="o">.</span><span class="n">lock</span><span class="o">()</span>
-      <span class="k">try</span> <span class="o">{</span>
-        <span class="k">while</span> <span class="o">(</span><span class="n">bucket</span> <span class="o">!=</span> <span class="kc">null</span><span class="o">)</span> <span class="o">{</span>
-          <span class="c1">// 调用时间轮的advanceClock方法，更新该时间轮的时间
-</span><span class="c1"></span>          <span class="n">timingWheel</span><span class="o">.</span><span class="n">advanceClock</span><span class="o">(</span><span class="n">bucket</span><span class="o">.</span><span class="n">getExpiration</span><span class="o">())</span>
-          <span class="c1">// 对任务列表依次执行reinsert操作
-</span><span class="c1"></span>          <span class="n">bucket</span><span class="o">.</span><span class="n">flush</span><span class="o">(</span><span class="n">reinsert</span><span class="o">)</span>
-          <span class="c1">// 继续查看是否还有超时的任务列表
-</span><span class="c1"></span>          <span class="n">bucket</span> <span class="k">=</span> <span class="n">delayQueue</span><span class="o">.</span><span class="n">poll</span><span class="o">()</span>
-        <span class="o">}</span>
-      <span class="o">}</span> <span class="k">finally</span> <span class="o">{</span>
-        <span class="n">writeLock</span><span class="o">.</span><span class="n">unlock</span><span class="o">()</span>
-      <span class="o">}</span>
-      <span class="kc">true</span>
-    <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
-      <span class="kc">false</span>
-    <span class="o">}</span>
-  <span class="o">}</span>
-  
-  <span class="k">private</span><span class="o">[</span><span class="kt">this</span><span class="o">]</span> <span class="k">val</span> <span class="n">reinsert</span> <span class="k">=</span> <span class="o">(</span><span class="n">timerTaskEntry</span><span class="k">:</span> <span class="kt">TimerTaskEntry</span><span class="o">)</span> <span class="k">=&gt;</span> <span class="n">addTimerTaskEntry</span><span class="o">(</span><span class="n">timerTaskEntry</span><span class="o">)</span>
-  
-  <span class="k">private</span> <span class="k">def</span> <span class="n">addTimerTaskEntry</span><span class="o">(</span><span class="n">timerTaskEntry</span><span class="k">:</span> <span class="kt">TimerTaskEntry</span><span class="o">)</span><span class="k">:</span> <span class="kt">Unit</span> <span class="o">=</span> <span class="o">{</span>
-    
-    <span class="k">if</span> <span class="o">(!</span><span class="n">timingWheel</span><span class="o">.</span><span class="n">add</span><span class="o">(</span><span class="n">timerTaskEntry</span><span class="o">))</span> <span class="o">{</span>
-      <span class="c1">// 如果是因为任务过期，导致添加失败，那么将任务丢到线程池执行
-</span><span class="c1"></span>      <span class="k">if</span> <span class="o">(!</span><span class="n">timerTaskEntry</span><span class="o">.</span><span class="n">cancelled</span><span class="o">)</span>
-        <span class="n">taskExecutor</span><span class="o">.</span><span class="n">submit</span><span class="o">(</span><span class="n">timerTaskEntry</span><span class="o">.</span><span class="n">timerTask</span><span class="o">)</span>
-    <span class="o">}</span>
-  <span class="o">}</span>
-  
-</code></pre></td></tr></table></div>
+<pre tabindex="0" class="chroma"><code class="language-scala" data-lang="scala"><span class="line"><span class="cl"><span class="k">class</span> <span class="nc">SystemTimer</span><span class="o">(</span><span class="n">executorName</span><span class="k">:</span> <span class="kt">String</span><span class="o">,</span>
+</span></span><span class="line"><span class="cl">                  <span class="n">tickMs</span><span class="k">:</span> <span class="kt">Long</span> <span class="o">=</span> <span class="mi">1</span><span class="o">,</span>
+</span></span><span class="line"><span class="cl">                  <span class="n">wheelSize</span><span class="k">:</span> <span class="kt">Int</span> <span class="o">=</span> <span class="mi">20</span><span class="o">,</span>
+</span></span><span class="line"><span class="cl">                  <span class="n">startMs</span><span class="k">:</span> <span class="kt">Long</span> <span class="o">=</span> <span class="nc">Time</span><span class="o">.</span><span class="nc">SYSTEM</span><span class="o">.</span><span class="n">hiResClockMs</span><span class="o">)</span> <span class="k">extends</span> <span class="nc">Timer</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="c1">// 执行任务的线程池
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="k">private</span><span class="o">[</span><span class="kt">this</span><span class="o">]</span> <span class="k">val</span> <span class="n">taskExecutor</span> <span class="k">=</span> <span class="nc">Executors</span><span class="o">.</span><span class="n">newFixedThreadPool</span><span class="o">(</span><span class="mi">1</span><span class="o">,</span> <span class="k">new</span> <span class="nc">ThreadFactory</span><span class="o">()</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">    <span class="k">def</span> <span class="n">newThread</span><span class="o">(</span><span class="n">runnable</span><span class="k">:</span> <span class="kt">Runnable</span><span class="o">)</span><span class="k">:</span> <span class="kt">Thread</span> <span class="o">=</span>
+</span></span><span class="line"><span class="cl">      <span class="nc">KafkaThread</span><span class="o">.</span><span class="n">nonDaemon</span><span class="o">(</span><span class="s">&#34;executor-&#34;</span><span class="o">+</span><span class="n">executorName</span><span class="o">,</span> <span class="n">runnable</span><span class="o">)</span>
+</span></span><span class="line"><span class="cl">  <span class="o">})</span>
+</span></span><span class="line"><span class="cl">  <span class="c1">// Java自带的延迟队列
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="k">private</span><span class="o">[</span><span class="kt">this</span><span class="o">]</span> <span class="k">val</span> <span class="n">delayQueue</span> <span class="k">=</span> <span class="k">new</span> <span class="nc">DelayQueue</span><span class="o">[</span><span class="kt">TimerTaskList</span><span class="o">]()</span>
+</span></span><span class="line"><span class="cl">  <span class="c1">// 时间轮
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="k">private</span><span class="o">[</span><span class="kt">this</span><span class="o">]</span> <span class="k">val</span> <span class="n">timingWheel</span> <span class="k">=</span> <span class="k">new</span> <span class="nc">TimingWheel</span><span class="o">(</span>
+</span></span><span class="line"><span class="cl">    <span class="n">tickMs</span> <span class="k">=</span> <span class="n">tickMs</span><span class="o">,</span>
+</span></span><span class="line"><span class="cl">    <span class="n">wheelSize</span> <span class="k">=</span> <span class="n">wheelSize</span><span class="o">,</span>
+</span></span><span class="line"><span class="cl">    <span class="n">startMs</span> <span class="k">=</span> <span class="n">startMs</span><span class="o">,</span>
+</span></span><span class="line"><span class="cl">    <span class="n">taskCounter</span> <span class="k">=</span> <span class="n">taskCounter</span><span class="o">,</span>
+</span></span><span class="line"><span class="cl">    <span class="n">delayQueue</span>
+</span></span><span class="line"><span class="cl">  <span class="o">)</span>
+</span></span><span class="line"><span class="cl">  
+</span></span><span class="line"><span class="cl">  <span class="c1">// 添加任务
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="k">def</span> <span class="n">add</span><span class="o">(</span><span class="n">timerTask</span><span class="k">:</span> <span class="kt">TimerTask</span><span class="o">)</span><span class="k">:</span> <span class="kt">Unit</span> <span class="o">=</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">    <span class="n">readLock</span><span class="o">.</span><span class="n">lock</span><span class="o">()</span>
+</span></span><span class="line"><span class="cl">    <span class="k">try</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">      <span class="n">addTimerTaskEntry</span><span class="o">(</span><span class="k">new</span> <span class="nc">TimerTaskEntry</span><span class="o">(</span><span class="n">timerTask</span><span class="o">,</span> <span class="n">timerTask</span><span class="o">.</span><span class="n">delayMs</span> <span class="o">+</span> <span class="nc">Time</span><span class="o">.</span><span class="nc">SYSTEM</span><span class="o">.</span><span class="n">hiResClockMs</span><span class="o">))</span>
+</span></span><span class="line"><span class="cl">    <span class="o">}</span> <span class="k">finally</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">      <span class="n">readLock</span><span class="o">.</span><span class="n">unlock</span><span class="o">()</span>
+</span></span><span class="line"><span class="cl">    <span class="o">}</span>
+</span></span><span class="line"><span class="cl">  <span class="o">}</span>
+</span></span><span class="line"><span class="cl">  
+</span></span><span class="line"><span class="cl">    
+</span></span><span class="line"><span class="cl">  <span class="k">def</span> <span class="n">advanceClock</span><span class="o">(</span><span class="n">timeoutMs</span><span class="k">:</span> <span class="kt">Long</span><span class="o">)</span><span class="k">:</span> <span class="kt">Boolean</span> <span class="o">=</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// delayQueue查找过期的任务队列
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="k">var</span> <span class="n">bucket</span> <span class="k">=</span> <span class="n">delayQueue</span><span class="o">.</span><span class="n">poll</span><span class="o">(</span><span class="n">timeoutMs</span><span class="o">,</span> <span class="nc">TimeUnit</span><span class="o">.</span><span class="nc">MILLISECONDS</span><span class="o">)</span>
+</span></span><span class="line"><span class="cl">    <span class="k">if</span> <span class="o">(</span><span class="n">bucket</span> <span class="o">!=</span> <span class="kc">null</span><span class="o">)</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">      <span class="n">writeLock</span><span class="o">.</span><span class="n">lock</span><span class="o">()</span>
+</span></span><span class="line"><span class="cl">      <span class="k">try</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">        <span class="k">while</span> <span class="o">(</span><span class="n">bucket</span> <span class="o">!=</span> <span class="kc">null</span><span class="o">)</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">          <span class="c1">// 调用时间轮的advanceClock方法，更新该时间轮的时间
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>          <span class="n">timingWheel</span><span class="o">.</span><span class="n">advanceClock</span><span class="o">(</span><span class="n">bucket</span><span class="o">.</span><span class="n">getExpiration</span><span class="o">())</span>
+</span></span><span class="line"><span class="cl">          <span class="c1">// 对任务列表依次执行reinsert操作
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>          <span class="n">bucket</span><span class="o">.</span><span class="n">flush</span><span class="o">(</span><span class="n">reinsert</span><span class="o">)</span>
+</span></span><span class="line"><span class="cl">          <span class="c1">// 继续查看是否还有超时的任务列表
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>          <span class="n">bucket</span> <span class="k">=</span> <span class="n">delayQueue</span><span class="o">.</span><span class="n">poll</span><span class="o">()</span>
+</span></span><span class="line"><span class="cl">        <span class="o">}</span>
+</span></span><span class="line"><span class="cl">      <span class="o">}</span> <span class="k">finally</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">        <span class="n">writeLock</span><span class="o">.</span><span class="n">unlock</span><span class="o">()</span>
+</span></span><span class="line"><span class="cl">      <span class="o">}</span>
+</span></span><span class="line"><span class="cl">      <span class="kc">true</span>
+</span></span><span class="line"><span class="cl">    <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">      <span class="kc">false</span>
+</span></span><span class="line"><span class="cl">    <span class="o">}</span>
+</span></span><span class="line"><span class="cl">  <span class="o">}</span>
+</span></span><span class="line"><span class="cl">  
+</span></span><span class="line"><span class="cl">  <span class="k">private</span><span class="o">[</span><span class="kt">this</span><span class="o">]</span> <span class="k">val</span> <span class="n">reinsert</span> <span class="k">=</span> <span class="o">(</span><span class="n">timerTaskEntry</span><span class="k">:</span> <span class="kt">TimerTaskEntry</span><span class="o">)</span> <span class="k">=&gt;</span> <span class="n">addTimerTaskEntry</span><span class="o">(</span><span class="n">timerTaskEntry</span><span class="o">)</span>
+</span></span><span class="line"><span class="cl">  
+</span></span><span class="line"><span class="cl">  <span class="k">private</span> <span class="k">def</span> <span class="n">addTimerTaskEntry</span><span class="o">(</span><span class="n">timerTaskEntry</span><span class="k">:</span> <span class="kt">TimerTaskEntry</span><span class="o">)</span><span class="k">:</span> <span class="kt">Unit</span> <span class="o">=</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">    
+</span></span><span class="line"><span class="cl">    <span class="k">if</span> <span class="o">(!</span><span class="n">timingWheel</span><span class="o">.</span><span class="n">add</span><span class="o">(</span><span class="n">timerTaskEntry</span><span class="o">))</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">      <span class="c1">// 如果是因为任务过期，导致添加失败，那么将任务丢到线程池执行
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>      <span class="k">if</span> <span class="o">(!</span><span class="n">timerTaskEntry</span><span class="o">.</span><span class="n">cancelled</span><span class="o">)</span>
+</span></span><span class="line"><span class="cl">        <span class="n">taskExecutor</span><span class="o">.</span><span class="n">submit</span><span class="o">(</span><span class="n">timerTaskEntry</span><span class="o">.</span><span class="n">timerTask</span><span class="o">)</span>
+</span></span><span class="line"><span class="cl">    <span class="o">}</span>
+</span></span><span class="line"><span class="cl">  <span class="o">}</span>
+</span></span><span class="line"><span class="cl">  
+</span></span></code></pre></td></tr></table></div>
 </div>
 </div><h2 id="延迟任务"><a href="#延迟任务" class="anchor-link"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon anchor-icon"><path d="M326.612 185.391c59.747 59.809 58.927 155.698.36 214.59-.11.12-.24.25-.36.37l-67.2 67.2c-59.27 59.27-155.699 59.262-214.96 0-59.27-59.26-59.27-155.7 0-214.96l37.106-37.106c9.84-9.84 26.786-3.3 27.294 10.606.648 17.722 3.826 35.527 9.69 52.721 1.986 5.822.567 12.262-3.783 16.612l-13.087 13.087c-28.026 28.026-28.905 73.66-1.155 101.96 28.024 28.579 74.086 28.749 102.325.51l67.2-67.19c28.191-28.191 28.073-73.757 0-101.83-3.701-3.694-7.429-6.564-10.341-8.569a16.037 16.037 0 0 1-6.947-12.606c-.396-10.567 3.348-21.456 11.698-29.806l21.054-21.055c5.521-5.521 14.182-6.199 20.584-1.731a152.482 152.482 0 0 1 20.522 17.197zM467.547 44.449c-59.261-59.262-155.69-59.27-214.96 0l-67.2 67.2c-.12.12-.25.25-.36.37-58.566 58.892-59.387 154.781.36 214.59a152.454 152.454 0 0 0 20.521 17.196c6.402 4.468 15.064 3.789 20.584-1.731l21.054-21.055c8.35-8.35 12.094-19.239 11.698-29.806a16.037 16.037 0 0 0-6.947-12.606c-2.912-2.005-6.64-4.875-10.341-8.569-28.073-28.073-28.191-73.639 0-101.83l67.2-67.19c28.239-28.239 74.3-28.069 102.325.51 27.75 28.3 26.872 73.934-1.155 101.96l-13.087 13.087c-4.35 4.35-5.769 10.79-3.783 16.612 5.864 17.194 9.042 34.999 9.69 52.721.509 13.906 17.454 20.446 27.294 10.606l37.106-37.106c59.271-59.259 59.271-155.699.001-214.959z"/></svg></a>延迟任务</h2>
 <p>DelayedOperation表示延迟任务，它在TimerTask的基础上，提供了支持提前完成的功能。</p>
@@ -632,26 +632,26 @@
 </span><span class="lnt">19
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-scala" data-lang="scala"><span class="k">abstract</span> <span class="k">class</span> <span class="nc">DelayedOperation</span> <span class="o">{</span>
-  
-  <span class="c1">// 这里使用了AtomicBoolean，用来控制并发
-</span><span class="c1"></span>  <span class="k">private</span> <span class="k">val</span> <span class="n">completed</span> <span class="k">=</span> <span class="k">new</span> <span class="nc">AtomicBoolean</span><span class="o">(</span><span class="kc">false</span><span class="o">)</span>
-    
-  <span class="c1">// 执行任务
-</span><span class="c1"></span>  <span class="k">def</span> <span class="n">forceComplete</span><span class="o">()</span><span class="k">:</span> <span class="kt">Boolean</span> <span class="o">=</span> <span class="o">{</span>
-    <span class="k">if</span> <span class="o">(</span><span class="n">completed</span><span class="o">.</span><span class="n">compareAndSet</span><span class="o">(</span><span class="kc">false</span><span class="o">,</span> <span class="kc">true</span><span class="o">))</span> <span class="o">{</span>
-      <span class="c1">// 尝试设置completed的值
-</span><span class="c1"></span>      <span class="c1">// 从定时器中取消任务
-</span><span class="c1"></span>      <span class="n">cancel</span><span class="o">()</span>
-      <span class="c1">// 调用onComplete方法，执行回调
-</span><span class="c1"></span>      <span class="n">onComplete</span><span class="o">()</span>
-      <span class="kc">true</span>
-    <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
-      <span class="kc">false</span>
-    <span class="o">}</span>
-  <span class="o">}</span>    
-<span class="o">}</span>
-</code></pre></td></tr></table></div>
+<pre tabindex="0" class="chroma"><code class="language-scala" data-lang="scala"><span class="line"><span class="cl"><span class="k">abstract</span> <span class="k">class</span> <span class="nc">DelayedOperation</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">  
+</span></span><span class="line"><span class="cl">  <span class="c1">// 这里使用了AtomicBoolean，用来控制并发
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="k">private</span> <span class="k">val</span> <span class="n">completed</span> <span class="k">=</span> <span class="k">new</span> <span class="nc">AtomicBoolean</span><span class="o">(</span><span class="kc">false</span><span class="o">)</span>
+</span></span><span class="line"><span class="cl">    
+</span></span><span class="line"><span class="cl">  <span class="c1">// 执行任务
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="k">def</span> <span class="n">forceComplete</span><span class="o">()</span><span class="k">:</span> <span class="kt">Boolean</span> <span class="o">=</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">    <span class="k">if</span> <span class="o">(</span><span class="n">completed</span><span class="o">.</span><span class="n">compareAndSet</span><span class="o">(</span><span class="kc">false</span><span class="o">,</span> <span class="kc">true</span><span class="o">))</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">      <span class="c1">// 尝试设置completed的值
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>      <span class="c1">// 从定时器中取消任务
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>      <span class="n">cancel</span><span class="o">()</span>
+</span></span><span class="line"><span class="cl">      <span class="c1">// 调用onComplete方法，执行回调
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>      <span class="n">onComplete</span><span class="o">()</span>
+</span></span><span class="line"><span class="cl">      <span class="kc">true</span>
+</span></span><span class="line"><span class="cl">    <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">      <span class="kc">false</span>
+</span></span><span class="line"><span class="cl">    <span class="o">}</span>
+</span></span><span class="line"><span class="cl">  <span class="o">}</span>    
+</span></span><span class="line"><span class="cl"><span class="o">}</span>
+</span></span></code></pre></td></tr></table></div>
 </div>
 </div><p>DelayedOperation还提供了maybeTryComplete方法，在tryComplete方法的基础之上，提供了多线程的优化。maybeTryComplete方法实现得很精巧，它能保证尽量及时的检测任务是否可以完成。</p>
 <div class="highlight"><div class="chroma">
@@ -687,36 +687,36 @@
 </span><span class="lnt">29
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-scala" data-lang="scala"><span class="c1">// 是否需要再次尝试
-</span><span class="c1"></span><span class="k">private</span> <span class="k">val</span> <span class="n">tryCompletePending</span> <span class="k">=</span> <span class="k">new</span> <span class="nc">AtomicBoolean</span><span class="o">(</span><span class="kc">false</span><span class="o">)</span>
-
-<span class="k">private</span><span class="o">[</span><span class="kt">server</span><span class="o">]</span> <span class="k">def</span> <span class="n">maybeTryComplete</span><span class="o">()</span><span class="k">:</span> <span class="kt">Boolean</span> <span class="o">=</span> <span class="o">{</span>
-  <span class="k">var</span> <span class="n">retry</span> <span class="k">=</span> <span class="kc">false</span>
-  <span class="k">var</span> <span class="n">done</span> <span class="k">=</span> <span class="kc">false</span>
-  <span class="k">do</span> <span class="o">{</span>
-    <span class="k">if</span> <span class="o">(</span><span class="n">lock</span><span class="o">.</span><span class="n">tryLock</span><span class="o">())</span> <span class="o">{</span>
-      <span class="c1">// 成功获取锁
-</span><span class="c1"></span>      <span class="k">try</span> <span class="o">{</span>
-        <span class="c1">// 设置tryCompletePending为false，表示不再尝试
-</span><span class="c1"></span>        <span class="n">tryCompletePending</span><span class="o">.</span><span class="n">set</span><span class="o">(</span><span class="kc">false</span><span class="o">)</span>
-        
-        <span class="n">done</span> <span class="k">=</span> <span class="n">tryComplete</span><span class="o">()</span>
-      <span class="o">}</span> <span class="k">finally</span> <span class="o">{</span>
-        <span class="n">lock</span><span class="o">.</span><span class="n">unlock</span><span class="o">()</span>
-      <span class="o">}</span>
-      <span class="c1">// 获取tryCompletePending的值，有可能此时外部线程修改了值
-</span><span class="c1"></span>      <span class="n">retry</span> <span class="k">=</span> <span class="n">tryCompletePending</span><span class="o">.</span><span class="n">get</span><span class="o">()</span>
-    <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
-      <span class="c1">// 如果获取锁失败，设置tryCompletePending为true，通知获取锁的线程再次尝试。
-</span><span class="c1"></span>      <span class="c1">// 如果tryCompletePending之前为false，表示获取所的线程尝试操作已完成，不能保证。获取所失败的线程，需要自己尝试
-</span><span class="c1"></span>      <span class="c1">// 如果tryCompletePending之前为true，表示现在已有一个获取锁失败的线程在运行，所以当前线程不用再尝试
-</span><span class="c1"></span>      <span class="n">retry</span> <span class="k">=</span> <span class="o">!</span><span class="n">tryCompletePending</span><span class="o">.</span><span class="n">getAndSet</span><span class="o">(</span><span class="kc">true</span><span class="o">)</span>
-      
-    <span class="o">}</span>
-  <span class="o">}</span> <span class="k">while</span> <span class="o">(!</span><span class="n">isCompleted</span> <span class="o">&amp;&amp;</span> <span class="n">retry</span><span class="o">)</span>
-  <span class="n">done</span>
-<span class="o">}</span>
-</code></pre></td></tr></table></div>
+<pre tabindex="0" class="chroma"><code class="language-scala" data-lang="scala"><span class="line"><span class="cl"><span class="c1">// 是否需要再次尝试
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="k">private</span> <span class="k">val</span> <span class="n">tryCompletePending</span> <span class="k">=</span> <span class="k">new</span> <span class="nc">AtomicBoolean</span><span class="o">(</span><span class="kc">false</span><span class="o">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="k">private</span><span class="o">[</span><span class="kt">server</span><span class="o">]</span> <span class="k">def</span> <span class="n">maybeTryComplete</span><span class="o">()</span><span class="k">:</span> <span class="kt">Boolean</span> <span class="o">=</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">  <span class="k">var</span> <span class="n">retry</span> <span class="k">=</span> <span class="kc">false</span>
+</span></span><span class="line"><span class="cl">  <span class="k">var</span> <span class="n">done</span> <span class="k">=</span> <span class="kc">false</span>
+</span></span><span class="line"><span class="cl">  <span class="k">do</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">    <span class="k">if</span> <span class="o">(</span><span class="n">lock</span><span class="o">.</span><span class="n">tryLock</span><span class="o">())</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">      <span class="c1">// 成功获取锁
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>      <span class="k">try</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">        <span class="c1">// 设置tryCompletePending为false，表示不再尝试
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>        <span class="n">tryCompletePending</span><span class="o">.</span><span class="n">set</span><span class="o">(</span><span class="kc">false</span><span class="o">)</span>
+</span></span><span class="line"><span class="cl">        
+</span></span><span class="line"><span class="cl">        <span class="n">done</span> <span class="k">=</span> <span class="n">tryComplete</span><span class="o">()</span>
+</span></span><span class="line"><span class="cl">      <span class="o">}</span> <span class="k">finally</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">        <span class="n">lock</span><span class="o">.</span><span class="n">unlock</span><span class="o">()</span>
+</span></span><span class="line"><span class="cl">      <span class="o">}</span>
+</span></span><span class="line"><span class="cl">      <span class="c1">// 获取tryCompletePending的值，有可能此时外部线程修改了值
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>      <span class="n">retry</span> <span class="k">=</span> <span class="n">tryCompletePending</span><span class="o">.</span><span class="n">get</span><span class="o">()</span>
+</span></span><span class="line"><span class="cl">    <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">      <span class="c1">// 如果获取锁失败，设置tryCompletePending为true，通知获取锁的线程再次尝试。
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>      <span class="c1">// 如果tryCompletePending之前为false，表示获取所的线程尝试操作已完成，不能保证。获取所失败的线程，需要自己尝试
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>      <span class="c1">// 如果tryCompletePending之前为true，表示现在已有一个获取锁失败的线程在运行，所以当前线程不用再尝试
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>      <span class="n">retry</span> <span class="k">=</span> <span class="o">!</span><span class="n">tryCompletePending</span><span class="o">.</span><span class="n">getAndSet</span><span class="o">(</span><span class="kc">true</span><span class="o">)</span>
+</span></span><span class="line"><span class="cl">      
+</span></span><span class="line"><span class="cl">    <span class="o">}</span>
+</span></span><span class="line"><span class="cl">  <span class="o">}</span> <span class="k">while</span> <span class="o">(!</span><span class="n">isCompleted</span> <span class="o">&amp;&amp;</span> <span class="n">retry</span><span class="o">)</span>
+</span></span><span class="line"><span class="cl">  <span class="n">done</span>
+</span></span><span class="line"><span class="cl"><span class="o">}</span>
+</span></span></code></pre></td></tr></table></div>
 </div>
 </div><p>maybeTryComplete方法实现得很精巧，它能保证尽量及时的检测任务是否可以完成。如果线程A首先获取锁，但是这时没有满足条件。之后线程B获取锁失败，但是此时说不定满足条件，所以这里需要再次检查条件，至于是哪个线程执行都可以。</p>
 <h2 id="延迟任务管理"><a href="#延迟任务管理" class="anchor-link"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon anchor-icon"><path d="M326.612 185.391c59.747 59.809 58.927 155.698.36 214.59-.11.12-.24.25-.36.37l-67.2 67.2c-59.27 59.27-155.699 59.262-214.96 0-59.27-59.26-59.27-155.7 0-214.96l37.106-37.106c9.84-9.84 26.786-3.3 27.294 10.606.648 17.722 3.826 35.527 9.69 52.721 1.986 5.822.567 12.262-3.783 16.612l-13.087 13.087c-28.026 28.026-28.905 73.66-1.155 101.96 28.024 28.579 74.086 28.749 102.325.51l67.2-67.19c28.191-28.191 28.073-73.757 0-101.83-3.701-3.694-7.429-6.564-10.341-8.569a16.037 16.037 0 0 1-6.947-12.606c-.396-10.567 3.348-21.456 11.698-29.806l21.054-21.055c5.521-5.521 14.182-6.199 20.584-1.731a152.482 152.482 0 0 1 20.522 17.197zM467.547 44.449c-59.261-59.262-155.69-59.27-214.96 0l-67.2 67.2c-.12.12-.25.25-.36.37-58.566 58.892-59.387 154.781.36 214.59a152.454 152.454 0 0 0 20.521 17.196c6.402 4.468 15.064 3.789 20.584-1.731l21.054-21.055c8.35-8.35 12.094-19.239 11.698-29.806a16.037 16.037 0 0 0-6.947-12.606c-2.912-2.005-6.64-4.875-10.341-8.569-28.073-28.073-28.191-73.639 0-101.83l67.2-67.19c28.239-28.239 74.3-28.069 102.325.51 27.75 28.3 26.872 73.934-1.155 101.96l-13.087 13.087c-4.35 4.35-5.769 10.79-3.783 16.612 5.864 17.194 9.042 34.999 9.69 52.721.509 13.906 17.454 20.446 27.294 10.606l37.106-37.106c59.271-59.259 59.271-155.699.001-214.959z"/></svg></a>延迟任务管理</h2>
@@ -753,35 +753,35 @@
 </span><span class="lnt">28
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-scala" data-lang="scala"><span class="c1">// key为任务类型
-</span><span class="c1"></span><span class="k">private</span> <span class="k">class</span> <span class="nc">Watchers</span><span class="o">(</span><span class="k">val</span> <span class="n">key</span><span class="k">:</span> <span class="kt">Any</span><span class="o">)</span> <span class="o">{</span>
-    <span class="c1">// 延迟任务列表
-</span><span class="c1"></span>    <span class="k">private</span><span class="o">[</span><span class="kt">this</span><span class="o">]</span> <span class="k">val</span> <span class="n">operations</span> <span class="k">=</span> <span class="k">new</span> <span class="nc">ConcurrentLinkedQueue</span><span class="o">[</span><span class="kt">T</span><span class="o">]()</span>
-    
-    <span class="k">def</span> <span class="n">tryCompleteWatched</span><span class="o">()</span><span class="k">:</span> <span class="kt">Int</span> <span class="o">=</span> <span class="o">{</span>
-      <span class="k">var</span> <span class="n">completed</span> <span class="k">=</span> <span class="mi">0</span>
-      <span class="c1">// 遍历任务列表
-</span><span class="c1"></span>      <span class="k">val</span> <span class="n">iter</span> <span class="k">=</span> <span class="n">operations</span><span class="o">.</span><span class="n">iterator</span><span class="o">()</span>
-      <span class="k">while</span> <span class="o">(</span><span class="n">iter</span><span class="o">.</span><span class="n">hasNext</span><span class="o">)</span> <span class="o">{</span>
-        <span class="k">val</span> <span class="n">curr</span> <span class="k">=</span> <span class="n">iter</span><span class="o">.</span><span class="n">next</span><span class="o">()</span>
-        <span class="k">if</span> <span class="o">(</span><span class="n">curr</span><span class="o">.</span><span class="n">isCompleted</span><span class="o">)</span> <span class="o">{</span>
-          <span class="c1">// another thread has completed this operation, just remove it
-</span><span class="c1"></span>          <span class="n">iter</span><span class="o">.</span><span class="n">remove</span><span class="o">()</span>
-        <span class="o">}</span> <span class="k">else</span> <span class="k">if</span> <span class="o">(</span><span class="n">curr</span><span class="o">.</span><span class="n">maybeTryComplete</span><span class="o">())</span> <span class="o">{</span>
-          <span class="c1">// 调用DelayedOperation的maybeTryComplete方法，尝试完成任务
-</span><span class="c1"></span>          <span class="n">iter</span><span class="o">.</span><span class="n">remove</span><span class="o">()</span>
-          <span class="n">completed</span> <span class="o">+=</span> <span class="mi">1</span>
-        <span class="o">}</span>
-      <span class="o">}</span>
-
-      <span class="k">if</span> <span class="o">(</span><span class="n">operations</span><span class="o">.</span><span class="n">isEmpty</span><span class="o">)</span>
-        <span class="c1">// Watchers是DelayedOperationPurgatory的内部类，这里的removeKeyIfEmpty是属于DelayedOperationPurgatory类的方法
-</span><span class="c1"></span>        <span class="c1">// 如果当前列表的任务都已经完成，那么将这个分组删除掉
-</span><span class="c1"></span>        <span class="n">removeKeyIfEmpty</span><span class="o">(</span><span class="n">key</span><span class="o">,</span> <span class="k">this</span><span class="o">)</span>
-      <span class="n">completed</span>
-    <span class="o">}</span>
-<span class="o">}</span>
-</code></pre></td></tr></table></div>
+<pre tabindex="0" class="chroma"><code class="language-scala" data-lang="scala"><span class="line"><span class="cl"><span class="c1">// key为任务类型
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="k">private</span> <span class="k">class</span> <span class="nc">Watchers</span><span class="o">(</span><span class="k">val</span> <span class="n">key</span><span class="k">:</span> <span class="kt">Any</span><span class="o">)</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// 延迟任务列表
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="k">private</span><span class="o">[</span><span class="kt">this</span><span class="o">]</span> <span class="k">val</span> <span class="n">operations</span> <span class="k">=</span> <span class="k">new</span> <span class="nc">ConcurrentLinkedQueue</span><span class="o">[</span><span class="kt">T</span><span class="o">]()</span>
+</span></span><span class="line"><span class="cl">    
+</span></span><span class="line"><span class="cl">    <span class="k">def</span> <span class="n">tryCompleteWatched</span><span class="o">()</span><span class="k">:</span> <span class="kt">Int</span> <span class="o">=</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">      <span class="k">var</span> <span class="n">completed</span> <span class="k">=</span> <span class="mi">0</span>
+</span></span><span class="line"><span class="cl">      <span class="c1">// 遍历任务列表
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>      <span class="k">val</span> <span class="n">iter</span> <span class="k">=</span> <span class="n">operations</span><span class="o">.</span><span class="n">iterator</span><span class="o">()</span>
+</span></span><span class="line"><span class="cl">      <span class="k">while</span> <span class="o">(</span><span class="n">iter</span><span class="o">.</span><span class="n">hasNext</span><span class="o">)</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">        <span class="k">val</span> <span class="n">curr</span> <span class="k">=</span> <span class="n">iter</span><span class="o">.</span><span class="n">next</span><span class="o">()</span>
+</span></span><span class="line"><span class="cl">        <span class="k">if</span> <span class="o">(</span><span class="n">curr</span><span class="o">.</span><span class="n">isCompleted</span><span class="o">)</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">          <span class="c1">// another thread has completed this operation, just remove it
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>          <span class="n">iter</span><span class="o">.</span><span class="n">remove</span><span class="o">()</span>
+</span></span><span class="line"><span class="cl">        <span class="o">}</span> <span class="k">else</span> <span class="k">if</span> <span class="o">(</span><span class="n">curr</span><span class="o">.</span><span class="n">maybeTryComplete</span><span class="o">())</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">          <span class="c1">// 调用DelayedOperation的maybeTryComplete方法，尝试完成任务
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>          <span class="n">iter</span><span class="o">.</span><span class="n">remove</span><span class="o">()</span>
+</span></span><span class="line"><span class="cl">          <span class="n">completed</span> <span class="o">+=</span> <span class="mi">1</span>
+</span></span><span class="line"><span class="cl">        <span class="o">}</span>
+</span></span><span class="line"><span class="cl">      <span class="o">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">      <span class="k">if</span> <span class="o">(</span><span class="n">operations</span><span class="o">.</span><span class="n">isEmpty</span><span class="o">)</span>
+</span></span><span class="line"><span class="cl">        <span class="c1">// Watchers是DelayedOperationPurgatory的内部类，这里的removeKeyIfEmpty是属于DelayedOperationPurgatory类的方法
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>        <span class="c1">// 如果当前列表的任务都已经完成，那么将这个分组删除掉
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>        <span class="n">removeKeyIfEmpty</span><span class="o">(</span><span class="n">key</span><span class="o">,</span> <span class="k">this</span><span class="o">)</span>
+</span></span><span class="line"><span class="cl">      <span class="n">completed</span>
+</span></span><span class="line"><span class="cl">    <span class="o">}</span>
+</span></span><span class="line"><span class="cl"><span class="o">}</span>
+</span></span></code></pre></td></tr></table></div>
 </div>
 </div><p>DelayedOperationPurgatory里包含了一个线程，用来更新时间轮的时间，并且执行过期任务。</p>
 <div class="highlight"><div class="chroma">
@@ -816,35 +816,35 @@
 </span><span class="lnt">28
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-scala" data-lang="scala"><span class="k">final</span> <span class="k">class</span> <span class="nc">DelayedOperationPurgatory</span><span class="o">[</span><span class="kt">T</span> <span class="k">&lt;:</span> <span class="kt">DelayedOperation</span><span class="o">](...)</span> <span class="o">{</span>
-  <span class="c1">// 更新时间的线程
-</span><span class="c1"></span>  <span class="k">private</span> <span class="k">val</span> <span class="n">expirationReaper</span> <span class="k">=</span> <span class="k">new</span> <span class="nc">ExpiredOperationReaper</span><span class="o">()</span>
-  
-  <span class="k">private</span> <span class="k">class</span> <span class="nc">ExpiredOperationReaper</span> <span class="k">extends</span> <span class="nc">ShutdownableThread</span><span class="o">(</span>
-    <span class="s">&#34;ExpirationReaper-%d-%s&#34;</span><span class="o">.</span><span class="n">format</span><span class="o">(</span><span class="n">brokerId</span><span class="o">,</span> <span class="n">purgatoryName</span><span class="o">),</span>
-    <span class="kc">false</span><span class="o">)</span> <span class="o">{</span>
-      
-    <span class="c1">// 该线程调用DelayedOperationPurgatory的advanceClock方法，更新时间轮
-</span><span class="c1"></span>    <span class="k">override</span> <span class="k">def</span> <span class="n">doWork</span><span class="o">()</span> <span class="o">{</span>
-      <span class="n">advanceClock</span><span class="o">(</span><span class="mi">200L</span><span class="o">)</span>
-    <span class="o">}</span>
-  <span class="o">}</span>
-  
-  <span class="c1">// timeoutMs参数，表示此次操作的超时时间
-</span><span class="c1"></span>  <span class="k">def</span> <span class="n">advanceClock</span><span class="o">(</span><span class="n">timeoutMs</span><span class="k">:</span> <span class="kt">Long</span><span class="o">)</span> <span class="o">{</span>
-    <span class="c1">// 调用SystemTimer的advanceClock方法，执行过期的任务
-</span><span class="c1"></span>    <span class="n">timeoutTimer</span><span class="o">.</span><span class="n">advanceClock</span><span class="o">(</span><span class="n">timeoutMs</span><span class="o">)</span>
-    <span class="c1">// estimatedTotalOperations表示 DelayedOperationPurgatory的任务数，包含已经完成的任务
-</span><span class="c1"></span>    <span class="c1">// delayed表示时间轮还未完成的任务数
-</span><span class="c1"></span>    <span class="k">if</span> <span class="o">(</span><span class="n">estimatedTotalOperations</span><span class="o">.</span><span class="n">get</span> <span class="o">-</span> <span class="n">delayed</span> <span class="o">&gt;</span> <span class="n">purgeInterval</span><span class="o">)</span> <span class="o">{</span>
-      <span class="n">estimatedTotalOperations</span><span class="o">.</span><span class="n">getAndSet</span><span class="o">(</span><span class="n">delayed</span><span class="o">)</span>
-      <span class="c1">// 遍历Watchers列表，清除已经完成的任务
-</span><span class="c1"></span>      <span class="k">val</span> <span class="n">purged</span> <span class="k">=</span> <span class="n">allWatchers</span><span class="o">.</span><span class="n">map</span><span class="o">(</span><span class="k">_</span><span class="o">.</span><span class="n">purgeCompleted</span><span class="o">()).</span><span class="n">sum</span>
-    <span class="o">}</span>
-  <span class="o">}</span>  
-  
-<span class="o">}</span>
-</code></pre></td></tr></table></div>
+<pre tabindex="0" class="chroma"><code class="language-scala" data-lang="scala"><span class="line"><span class="cl"><span class="k">final</span> <span class="k">class</span> <span class="nc">DelayedOperationPurgatory</span><span class="o">[</span><span class="kt">T</span> <span class="k">&lt;:</span> <span class="kt">DelayedOperation</span><span class="o">](...)</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">  <span class="c1">// 更新时间的线程
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="k">private</span> <span class="k">val</span> <span class="n">expirationReaper</span> <span class="k">=</span> <span class="k">new</span> <span class="nc">ExpiredOperationReaper</span><span class="o">()</span>
+</span></span><span class="line"><span class="cl">  
+</span></span><span class="line"><span class="cl">  <span class="k">private</span> <span class="k">class</span> <span class="nc">ExpiredOperationReaper</span> <span class="k">extends</span> <span class="nc">ShutdownableThread</span><span class="o">(</span>
+</span></span><span class="line"><span class="cl">    <span class="s">&#34;ExpirationReaper-%d-%s&#34;</span><span class="o">.</span><span class="n">format</span><span class="o">(</span><span class="n">brokerId</span><span class="o">,</span> <span class="n">purgatoryName</span><span class="o">),</span>
+</span></span><span class="line"><span class="cl">    <span class="kc">false</span><span class="o">)</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">      
+</span></span><span class="line"><span class="cl">    <span class="c1">// 该线程调用DelayedOperationPurgatory的advanceClock方法，更新时间轮
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="k">override</span> <span class="k">def</span> <span class="n">doWork</span><span class="o">()</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">      <span class="n">advanceClock</span><span class="o">(</span><span class="mi">200L</span><span class="o">)</span>
+</span></span><span class="line"><span class="cl">    <span class="o">}</span>
+</span></span><span class="line"><span class="cl">  <span class="o">}</span>
+</span></span><span class="line"><span class="cl">  
+</span></span><span class="line"><span class="cl">  <span class="c1">// timeoutMs参数，表示此次操作的超时时间
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="k">def</span> <span class="n">advanceClock</span><span class="o">(</span><span class="n">timeoutMs</span><span class="k">:</span> <span class="kt">Long</span><span class="o">)</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// 调用SystemTimer的advanceClock方法，执行过期的任务
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="n">timeoutTimer</span><span class="o">.</span><span class="n">advanceClock</span><span class="o">(</span><span class="n">timeoutMs</span><span class="o">)</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// estimatedTotalOperations表示 DelayedOperationPurgatory的任务数，包含已经完成的任务
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="c1">// delayed表示时间轮还未完成的任务数
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="k">if</span> <span class="o">(</span><span class="n">estimatedTotalOperations</span><span class="o">.</span><span class="n">get</span> <span class="o">-</span> <span class="n">delayed</span> <span class="o">&gt;</span> <span class="n">purgeInterval</span><span class="o">)</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">      <span class="n">estimatedTotalOperations</span><span class="o">.</span><span class="n">getAndSet</span><span class="o">(</span><span class="n">delayed</span><span class="o">)</span>
+</span></span><span class="line"><span class="cl">      <span class="c1">// 遍历Watchers列表，清除已经完成的任务
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>      <span class="k">val</span> <span class="n">purged</span> <span class="k">=</span> <span class="n">allWatchers</span><span class="o">.</span><span class="n">map</span><span class="o">(</span><span class="k">_</span><span class="o">.</span><span class="n">purgeCompleted</span><span class="o">()).</span><span class="n">sum</span>
+</span></span><span class="line"><span class="cl">    <span class="o">}</span>
+</span></span><span class="line"><span class="cl">  <span class="o">}</span>  
+</span></span><span class="line"><span class="cl">  
+</span></span><span class="line"><span class="cl"><span class="o">}</span>
+</span></span></code></pre></td></tr></table></div>
 </div>
 </div><p>DelayedOperationPurgatory提供了两个重要方法，供外部使用。使用者首先调用tryCompleteElseWatch方法，添加延迟任务。添加完后，不定时的调用checkAndComplete方法，尝试提前完成任务。</p>
 <ul>
@@ -907,59 +907,59 @@
 </span><span class="lnt">52
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-scala" data-lang="scala"><span class="k">final</span> <span class="k">class</span> <span class="nc">DelayedOperationPurgatory</span><span class="o">[</span><span class="kt">T</span> <span class="k">&lt;:</span> <span class="kt">DelayedOperation</span><span class="o">]</span> <span class="o">(...)</span> <span class="o">{</span>
-
-  <span class="k">private</span> <span class="k">val</span> <span class="n">watchersForKey</span> <span class="k">=</span> <span class="k">new</span> <span class="nc">Pool</span><span class="o">[</span><span class="kt">Any</span>, <span class="kt">Watchers</span><span class="o">](</span><span class="nc">Some</span><span class="o">((</span><span class="n">key</span><span class="k">:</span> <span class="kt">Any</span><span class="o">)</span> <span class="k">=&gt;</span> <span class="k">new</span> <span class="nc">Watchers</span><span class="o">(</span><span class="n">key</span><span class="o">)))</span>
-
-  <span class="c1">// 注意到watchKeys是一个列表，延迟任务与事件类型是多对多的关系
-</span><span class="c1"></span>  <span class="k">def</span> <span class="n">tryCompleteElseWatch</span><span class="o">(</span><span class="n">operation</span><span class="k">:</span> <span class="kt">T</span><span class="o">,</span> <span class="n">watchKeys</span><span class="k">:</span> <span class="kt">Seq</span><span class="o">[</span><span class="kt">Any</span><span class="o">])</span><span class="k">:</span> <span class="kt">Boolean</span> <span class="o">=</span> <span class="o">{</span>
-    <span class="c1">// 尝试提前完成任务
-</span><span class="c1"></span>    <span class="k">var</span> <span class="n">isCompletedByMe</span> <span class="k">=</span> <span class="n">operation</span><span class="o">.</span><span class="n">tryComplete</span><span class="o">()</span>
-    <span class="k">if</span> <span class="o">(</span><span class="n">isCompletedByMe</span><span class="o">)</span>
-      <span class="k">return</span> <span class="kc">true</span>
-
-    <span class="k">var</span> <span class="n">watchCreated</span> <span class="k">=</span> <span class="kc">false</span>
-    <span class="k">for</span><span class="o">(</span><span class="n">key</span> <span class="k">&lt;-</span> <span class="n">watchKeys</span><span class="o">)</span> <span class="o">{</span>
-      <span class="c1">// 有可能别的线程，提前完成了任务
-</span><span class="c1"></span>      <span class="k">if</span> <span class="o">(</span><span class="n">operation</span><span class="o">.</span><span class="n">isCompleted</span><span class="o">)</span>
-        <span class="k">return</span> <span class="kc">false</span>
-      <span class="c1">// 将任务添加到key对应的列表
-</span><span class="c1"></span>      <span class="n">watchForOperation</span><span class="o">(</span><span class="n">key</span><span class="o">,</span> <span class="n">operation</span><span class="o">)</span>
-
-      <span class="k">if</span> <span class="o">(!</span><span class="n">watchCreated</span><span class="o">)</span> <span class="o">{</span>
-        <span class="n">watchCreated</span> <span class="k">=</span> <span class="kc">true</span>
-        <span class="n">estimatedTotalOperations</span><span class="o">.</span><span class="n">incrementAndGet</span><span class="o">()</span>
-      <span class="o">}</span>
-    <span class="o">}</span>
-      
-    <span class="c1">// 再次尝试完成任务
-</span><span class="c1"></span>    <span class="n">isCompletedByMe</span> <span class="k">=</span> <span class="n">operation</span><span class="o">.</span><span class="n">maybeTryComplete</span><span class="o">()</span>
-    <span class="k">if</span> <span class="o">(</span><span class="n">isCompletedByMe</span><span class="o">)</span>
-      <span class="k">return</span> <span class="kc">true</span>
-
-    <span class="k">if</span> <span class="o">(!</span><span class="n">operation</span><span class="o">.</span><span class="n">isCompleted</span><span class="o">)</span> <span class="o">{</span>
-      <span class="k">if</span> <span class="o">(</span><span class="n">timerEnabled</span><span class="o">)</span>
-        <span class="c1">// 添加到定时器中
-</span><span class="c1"></span>        <span class="n">timeoutTimer</span><span class="o">.</span><span class="n">add</span><span class="o">(</span><span class="n">operation</span><span class="o">)</span>
-      <span class="k">if</span> <span class="o">(</span><span class="n">operation</span><span class="o">.</span><span class="n">isCompleted</span><span class="o">)</span> <span class="o">{</span>
-        <span class="c1">// 如果这时候任务已经完成，那么就取消任务
-</span><span class="c1"></span>        <span class="n">operation</span><span class="o">.</span><span class="n">cancel</span><span class="o">()</span>
-      <span class="o">}</span>
-    <span class="o">}</span>
-    <span class="kc">false</span>
-  <span class="o">}</span>
-
-  <span class="k">def</span> <span class="n">checkAndComplete</span><span class="o">(</span><span class="n">key</span><span class="k">:</span> <span class="kt">Any</span><span class="o">)</span><span class="k">:</span> <span class="kt">Int</span> <span class="o">=</span> <span class="o">{</span>
-    <span class="c1">// 获取该事件类型的任务列表
-</span><span class="c1"></span>    <span class="k">val</span> <span class="n">watchers</span> <span class="k">=</span> <span class="n">inReadLock</span><span class="o">(</span><span class="n">removeWatchersLock</span><span class="o">)</span> <span class="o">{</span> <span class="n">watchersForKey</span><span class="o">.</span><span class="n">get</span><span class="o">(</span><span class="n">key</span><span class="o">)</span> <span class="o">}</span>
-    <span class="k">if</span><span class="o">(</span><span class="n">watchers</span> <span class="o">==</span> <span class="kc">null</span><span class="o">)</span>
-      <span class="mi">0</span>
-    <span class="k">else</span>
-      <span class="c1">// 调用Watchers的tryCompleteWatched方法，尝试提前完成任务
-</span><span class="c1"></span>      <span class="n">watchers</span><span class="o">.</span><span class="n">tryCompleteWatched</span><span class="o">()</span>
-  <span class="o">}</span>  
-<span class="o">}</span>
-</code></pre></td></tr></table></div>
+<pre tabindex="0" class="chroma"><code class="language-scala" data-lang="scala"><span class="line"><span class="cl"><span class="k">final</span> <span class="k">class</span> <span class="nc">DelayedOperationPurgatory</span><span class="o">[</span><span class="kt">T</span> <span class="k">&lt;:</span> <span class="kt">DelayedOperation</span><span class="o">]</span> <span class="o">(...)</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="k">private</span> <span class="k">val</span> <span class="n">watchersForKey</span> <span class="k">=</span> <span class="k">new</span> <span class="nc">Pool</span><span class="o">[</span><span class="kt">Any</span>, <span class="kt">Watchers</span><span class="o">](</span><span class="nc">Some</span><span class="o">((</span><span class="n">key</span><span class="k">:</span> <span class="kt">Any</span><span class="o">)</span> <span class="k">=&gt;</span> <span class="k">new</span> <span class="nc">Watchers</span><span class="o">(</span><span class="n">key</span><span class="o">)))</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="c1">// 注意到watchKeys是一个列表，延迟任务与事件类型是多对多的关系
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="k">def</span> <span class="n">tryCompleteElseWatch</span><span class="o">(</span><span class="n">operation</span><span class="k">:</span> <span class="kt">T</span><span class="o">,</span> <span class="n">watchKeys</span><span class="k">:</span> <span class="kt">Seq</span><span class="o">[</span><span class="kt">Any</span><span class="o">])</span><span class="k">:</span> <span class="kt">Boolean</span> <span class="o">=</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// 尝试提前完成任务
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="k">var</span> <span class="n">isCompletedByMe</span> <span class="k">=</span> <span class="n">operation</span><span class="o">.</span><span class="n">tryComplete</span><span class="o">()</span>
+</span></span><span class="line"><span class="cl">    <span class="k">if</span> <span class="o">(</span><span class="n">isCompletedByMe</span><span class="o">)</span>
+</span></span><span class="line"><span class="cl">      <span class="k">return</span> <span class="kc">true</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="k">var</span> <span class="n">watchCreated</span> <span class="k">=</span> <span class="kc">false</span>
+</span></span><span class="line"><span class="cl">    <span class="k">for</span><span class="o">(</span><span class="n">key</span> <span class="k">&lt;-</span> <span class="n">watchKeys</span><span class="o">)</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">      <span class="c1">// 有可能别的线程，提前完成了任务
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>      <span class="k">if</span> <span class="o">(</span><span class="n">operation</span><span class="o">.</span><span class="n">isCompleted</span><span class="o">)</span>
+</span></span><span class="line"><span class="cl">        <span class="k">return</span> <span class="kc">false</span>
+</span></span><span class="line"><span class="cl">      <span class="c1">// 将任务添加到key对应的列表
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>      <span class="n">watchForOperation</span><span class="o">(</span><span class="n">key</span><span class="o">,</span> <span class="n">operation</span><span class="o">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">      <span class="k">if</span> <span class="o">(!</span><span class="n">watchCreated</span><span class="o">)</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">        <span class="n">watchCreated</span> <span class="k">=</span> <span class="kc">true</span>
+</span></span><span class="line"><span class="cl">        <span class="n">estimatedTotalOperations</span><span class="o">.</span><span class="n">incrementAndGet</span><span class="o">()</span>
+</span></span><span class="line"><span class="cl">      <span class="o">}</span>
+</span></span><span class="line"><span class="cl">    <span class="o">}</span>
+</span></span><span class="line"><span class="cl">      
+</span></span><span class="line"><span class="cl">    <span class="c1">// 再次尝试完成任务
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="n">isCompletedByMe</span> <span class="k">=</span> <span class="n">operation</span><span class="o">.</span><span class="n">maybeTryComplete</span><span class="o">()</span>
+</span></span><span class="line"><span class="cl">    <span class="k">if</span> <span class="o">(</span><span class="n">isCompletedByMe</span><span class="o">)</span>
+</span></span><span class="line"><span class="cl">      <span class="k">return</span> <span class="kc">true</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="k">if</span> <span class="o">(!</span><span class="n">operation</span><span class="o">.</span><span class="n">isCompleted</span><span class="o">)</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">      <span class="k">if</span> <span class="o">(</span><span class="n">timerEnabled</span><span class="o">)</span>
+</span></span><span class="line"><span class="cl">        <span class="c1">// 添加到定时器中
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>        <span class="n">timeoutTimer</span><span class="o">.</span><span class="n">add</span><span class="o">(</span><span class="n">operation</span><span class="o">)</span>
+</span></span><span class="line"><span class="cl">      <span class="k">if</span> <span class="o">(</span><span class="n">operation</span><span class="o">.</span><span class="n">isCompleted</span><span class="o">)</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">        <span class="c1">// 如果这时候任务已经完成，那么就取消任务
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>        <span class="n">operation</span><span class="o">.</span><span class="n">cancel</span><span class="o">()</span>
+</span></span><span class="line"><span class="cl">      <span class="o">}</span>
+</span></span><span class="line"><span class="cl">    <span class="o">}</span>
+</span></span><span class="line"><span class="cl">    <span class="kc">false</span>
+</span></span><span class="line"><span class="cl">  <span class="o">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="k">def</span> <span class="n">checkAndComplete</span><span class="o">(</span><span class="n">key</span><span class="k">:</span> <span class="kt">Any</span><span class="o">)</span><span class="k">:</span> <span class="kt">Int</span> <span class="o">=</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// 获取该事件类型的任务列表
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="k">val</span> <span class="n">watchers</span> <span class="k">=</span> <span class="n">inReadLock</span><span class="o">(</span><span class="n">removeWatchersLock</span><span class="o">)</span> <span class="o">{</span> <span class="n">watchersForKey</span><span class="o">.</span><span class="n">get</span><span class="o">(</span><span class="n">key</span><span class="o">)</span> <span class="o">}</span>
+</span></span><span class="line"><span class="cl">    <span class="k">if</span><span class="o">(</span><span class="n">watchers</span> <span class="o">==</span> <span class="kc">null</span><span class="o">)</span>
+</span></span><span class="line"><span class="cl">      <span class="mi">0</span>
+</span></span><span class="line"><span class="cl">    <span class="k">else</span>
+</span></span><span class="line"><span class="cl">      <span class="c1">// 调用Watchers的tryCompleteWatched方法，尝试提前完成任务
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>      <span class="n">watchers</span><span class="o">.</span><span class="n">tryCompleteWatched</span><span class="o">()</span>
+</span></span><span class="line"><span class="cl">  <span class="o">}</span>  
+</span></span><span class="line"><span class="cl"><span class="o">}</span>
+</span></span></code></pre></td></tr></table></div>
 </div>
 </div>
             </div>
@@ -988,9 +988,9 @@
 
         
     <div class="updated-badge-container">
-        <span title="Updated @ 2021-10-22 14:44:34 CST" style="cursor:help">
+        <span title="Updated @ 2023-07-02 16:59:09 CST" style="cursor:help">
 
-<svg xmlns="http://www.w3.org/2000/svg" width="130" height="20" class="updated-badge"><linearGradient id="b" x2="0" y2="100%"><stop offset="0" stop-color="#bbb" stop-opacity=".1"/><stop offset="1" stop-opacity=".1"/></linearGradient><clipPath id="a"><rect width="130" height="20" rx="3" fill="#fff"/></clipPath><g clip-path="url(#a)"><path class="updated-badge-left" d="M0 0h55v20H0z"/><path class="updated-badge-right" d="M55 0h75v20H55z"/><path fill="url(#b)" d="M0 0h130v20H0z"/></g><g fill="#fff" text-anchor="middle" font-size="110"><text x="285" y="150" fill="#010101" fill-opacity=".3" textLength="450" transform="scale(.1)">updated</text><text x="285" y="140" textLength="450" transform="scale(.1)">updated</text><text x="915" y="150" fill="#010101" fill-opacity=".3" textLength="650" transform="scale(.1)">2021-10-22</text><text x="915" y="140" textLength="650" transform="scale(.1)">2021-10-22</text></g></svg>
+<svg xmlns="http://www.w3.org/2000/svg" width="130" height="20" class="updated-badge"><linearGradient id="b" x2="0" y2="100%"><stop offset="0" stop-color="#bbb" stop-opacity=".1"/><stop offset="1" stop-opacity=".1"/></linearGradient><clipPath id="a"><rect width="130" height="20" rx="3" fill="#fff"/></clipPath><g clip-path="url(#a)"><path class="updated-badge-left" d="M0 0h55v20H0z"/><path class="updated-badge-right" d="M55 0h75v20H55z"/><path fill="url(#b)" d="M0 0h130v20H0z"/></g><g fill="#fff" text-anchor="middle" font-size="110"><text x="285" y="150" fill="#010101" fill-opacity=".3" textLength="450" transform="scale(.1)">updated</text><text x="285" y="140" textLength="450" transform="scale(.1)">updated</text><text x="915" y="150" fill="#010101" fill-opacity=".3" textLength="650" transform="scale(.1)">2023-07-02</text><text x="915" y="140" textLength="650" transform="scale(.1)">2023-07-02</text></g></svg>
         </span></div>
 
 

@@ -3,7 +3,7 @@
     <head prefix="og: http://ogp.me/ns# article: http://ogp.me/ns/article#">
     <meta charset="UTF-8" />
 
-    <meta name="generator" content="Hugo 0.88.1" /><meta name="theme-color" content="#fff" />
+    <meta name="generator" content="Hugo 0.115.0"><meta name="theme-color" content="#fff" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     
     <meta name="format-detection" content="telephone=no, date=no, address=no, email=no" />
@@ -14,11 +14,11 @@
 
     <title>Spark BypassMergeSortShuffleWriter 原理 | 学习笔记</title>
 
-    <link rel="stylesheet" href="/css/meme.min.2d3e1834af2bc8dda20c7d74aaa1d8134845094441b7a554a5206ccd4b472596.css"/>
+    <link rel="stylesheet" href="/css/meme.min.91e7f58f97e1c60563ef481c38d9684fa8099537801d6f17bbfc724121e7d8f1.css"/>
 
     
     
-        <script src="/js/meme.min.800f61672145711eb3e1f29fcfcc3dbe0139dd459259718b611a0390f74703d1.js"></script>
+        <script src="/js/meme.min.3210a00c2fdcf6f831170b681b8ee40f83f0224663661e986872616aec45407f.js"></script>
 
     
 
@@ -54,13 +54,13 @@
         "@context": "https://schema.org",
         "@type": "BlogPosting",
         "datePublished": "2019-01-26T22:58:19+00:00",
-        "dateModified": "2021-10-22T14:44:34+08:00",
+        "dateModified": "2023-07-02T16:59:09+08:00",
         "url": "https://zhmin.github.io/posts/spark-shuffle-writer/",
         "headline": "Spark BypassMergeSortShuffleWriter 原理",
         "description": "Spark BypassMergeSortShuffleWriter 原理 Spark的 shuffle 过程比较复杂，涉及到map端和reduce端的共同配合，这篇文章主要介绍map端的运行原理。map端的操作主要由 ShuffleWriter 实现，Shuffle Writer 有着三种不同的算法，对应于不同的情形。因为……",
         "inLanguage" : "zh-CN",
         "articleSection": "posts",
-        "wordCount":  2670 ,
+        "wordCount":  2669 ,
         "image": ["https://zhmin.github.io/spark-shuffle-bypass.svg"],
         "author": {
             "@type": "Person",
@@ -98,7 +98,7 @@
 <meta property="og:locale" content="zh" /><meta property="og:image" content="https://zhmin.github.io/spark-shuffle-bypass.svg" />
 <meta property="og:type" content="article" />
     <meta property="article:published_time" content="2019-01-26T22:58:19&#43;00:00" />
-    <meta property="article:modified_time" content="2021-10-22T14:44:34&#43;08:00" />
+    <meta property="article:modified_time" content="2023-07-02T16:59:09&#43;08:00" />
     
     <meta property="article:section" content="posts" />
 
@@ -223,7 +223,7 @@
     
     
         
-        <span class="post-meta-item wordcount"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon post-meta-icon"><path d="M497.9 142.1l-46.1 46.1c-4.7 4.7-12.3 4.7-17 0l-111-111c-4.7-4.7-4.7-12.3 0-17l46.1-46.1c18.7-18.7 49.1-18.7 67.9 0l60.1 60.1c18.8 18.7 18.8 49.1 0 67.9zM284.2 99.8L21.6 362.4.4 483.9c-2.9 16.4 11.4 30.6 27.8 27.8l121.5-21.3 262.6-262.6c4.7-4.7 4.7-12.3 0-17l-111-111c-4.8-4.7-12.4-4.7-17.1 0zM124.1 339.9c-5.5-5.5-5.5-14.3 0-19.8l154-154c5.5-5.5 14.3-5.5 19.8 0s5.5 14.3 0 19.8l-154 154c-5.5 5.5-14.3 5.5-19.8 0zM88 424h48v36.3l-64.5 11.3-31.1-31.1L51.7 376H88v48z"/></svg>&nbsp;2670</span>
+        <span class="post-meta-item wordcount"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon post-meta-icon"><path d="M497.9 142.1l-46.1 46.1c-4.7 4.7-12.3 4.7-17 0l-111-111c-4.7-4.7-4.7-12.3 0-17l46.1-46.1c18.7-18.7 49.1-18.7 67.9 0l60.1 60.1c18.8 18.7 18.8 49.1 0 67.9zM284.2 99.8L21.6 362.4.4 483.9c-2.9 16.4 11.4 30.6 27.8 27.8l121.5-21.3 262.6-262.6c4.7-4.7 4.7-12.3 0-17l-111-111c-4.8-4.7-12.4-4.7-17.1 0zM124.1 339.9c-5.5-5.5-5.5-14.3 0-19.8l154-154c5.5-5.5 14.3-5.5 19.8 0s5.5 14.3 0 19.8l-154 154c-5.5 5.5-14.3 5.5-19.8 0zM88 424h48v36.3l-64.5 11.3-31.1-31.1L51.7 376H88v48z"/></svg>&nbsp;2669</span>
     
     
         
@@ -275,28 +275,28 @@
 </span><span class="lnt">21
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-scala" data-lang="scala"><span class="k">private</span> <span class="k">def</span> <span class="n">initialize</span><span class="o">()</span><span class="k">:</span> <span class="kt">Unit</span> <span class="o">=</span> <span class="o">{</span>
-  <span class="c1">// 文件输出流
-</span><span class="c1"></span>  <span class="n">fos</span> <span class="k">=</span> <span class="k">new</span> <span class="nc">FileOutputStream</span><span class="o">(</span><span class="n">file</span><span class="o">,</span> <span class="kc">true</span><span class="o">)</span>
-  <span class="c1">// 获取该文件的Channel，通过Channel获取写位置
-</span><span class="c1"></span>  <span class="n">channel</span> <span class="k">=</span> <span class="n">fos</span><span class="o">.</span><span class="n">getChannel</span><span class="o">()</span>
-  <span class="c1">// 装饰流 TimeTrackingOutputStream， writeMetrics是作为统计使用的
-</span><span class="c1"></span>  <span class="n">ts</span> <span class="k">=</span> <span class="k">new</span> <span class="nc">TimeTrackingOutputStream</span><span class="o">(</span><span class="n">writeMetrics</span><span class="o">,</span> <span class="n">fos</span><span class="o">)</span>
-  <span class="c1">// 继承缓冲流，但是作为ManualCloseOutputStream的接口
-</span><span class="c1"></span>  <span class="k">class</span> <span class="nc">ManualCloseBufferedOutputStream</span>
-    <span class="k">extends</span> <span class="nc">BufferedOutputStream</span><span class="o">(</span><span class="n">ts</span><span class="o">,</span> <span class="n">bufferSize</span><span class="o">)</span> <span class="k">with</span> <span class="nc">ManualCloseOutputStream</span>
-  <span class="n">mcs</span> <span class="k">=</span> <span class="k">new</span> <span class="nc">ManualCloseBufferedOutputStream</span>
-<span class="o">}</span>
-
-<span class="k">def</span> <span class="n">open</span><span class="o">()</span><span class="k">:</span> <span class="kt">DiskBlockObjectWriter</span> <span class="o">=</span> <span class="o">{</span>
-  <span class="c1">// 通过SerializerManager装饰压缩流
-</span><span class="c1"></span>  <span class="n">bs</span> <span class="k">=</span> <span class="n">serializerManager</span><span class="o">.</span><span class="n">wrapStream</span><span class="o">(</span><span class="n">blockId</span><span class="o">,</span> <span class="n">mcs</span><span class="o">)</span>
-  <span class="c1">// 通过SerializerInstance装饰序列流
-</span><span class="c1"></span>  <span class="n">objOut</span> <span class="k">=</span> <span class="n">serializerInstance</span><span class="o">.</span><span class="n">serializeStream</span><span class="o">(</span><span class="n">bs</span><span class="o">)</span>
-  <span class="n">streamOpen</span> <span class="k">=</span> <span class="kc">true</span>
-  <span class="k">this</span>
-<span class="o">}</span>
-</code></pre></td></tr></table></div>
+<pre tabindex="0" class="chroma"><code class="language-scala" data-lang="scala"><span class="line"><span class="cl"><span class="k">private</span> <span class="k">def</span> <span class="n">initialize</span><span class="o">()</span><span class="k">:</span> <span class="kt">Unit</span> <span class="o">=</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">  <span class="c1">// 文件输出流
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="n">fos</span> <span class="k">=</span> <span class="k">new</span> <span class="nc">FileOutputStream</span><span class="o">(</span><span class="n">file</span><span class="o">,</span> <span class="kc">true</span><span class="o">)</span>
+</span></span><span class="line"><span class="cl">  <span class="c1">// 获取该文件的Channel，通过Channel获取写位置
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="n">channel</span> <span class="k">=</span> <span class="n">fos</span><span class="o">.</span><span class="n">getChannel</span><span class="o">()</span>
+</span></span><span class="line"><span class="cl">  <span class="c1">// 装饰流 TimeTrackingOutputStream， writeMetrics是作为统计使用的
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="n">ts</span> <span class="k">=</span> <span class="k">new</span> <span class="nc">TimeTrackingOutputStream</span><span class="o">(</span><span class="n">writeMetrics</span><span class="o">,</span> <span class="n">fos</span><span class="o">)</span>
+</span></span><span class="line"><span class="cl">  <span class="c1">// 继承缓冲流，但是作为ManualCloseOutputStream的接口
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="k">class</span> <span class="nc">ManualCloseBufferedOutputStream</span>
+</span></span><span class="line"><span class="cl">    <span class="k">extends</span> <span class="nc">BufferedOutputStream</span><span class="o">(</span><span class="n">ts</span><span class="o">,</span> <span class="n">bufferSize</span><span class="o">)</span> <span class="k">with</span> <span class="nc">ManualCloseOutputStream</span>
+</span></span><span class="line"><span class="cl">  <span class="n">mcs</span> <span class="k">=</span> <span class="k">new</span> <span class="nc">ManualCloseBufferedOutputStream</span>
+</span></span><span class="line"><span class="cl"><span class="o">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="k">def</span> <span class="n">open</span><span class="o">()</span><span class="k">:</span> <span class="kt">DiskBlockObjectWriter</span> <span class="o">=</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">  <span class="c1">// 通过SerializerManager装饰压缩流
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="n">bs</span> <span class="k">=</span> <span class="n">serializerManager</span><span class="o">.</span><span class="n">wrapStream</span><span class="o">(</span><span class="n">blockId</span><span class="o">,</span> <span class="n">mcs</span><span class="o">)</span>
+</span></span><span class="line"><span class="cl">  <span class="c1">// 通过SerializerInstance装饰序列流
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="n">objOut</span> <span class="k">=</span> <span class="n">serializerInstance</span><span class="o">.</span><span class="n">serializeStream</span><span class="o">(</span><span class="n">bs</span><span class="o">)</span>
+</span></span><span class="line"><span class="cl">  <span class="n">streamOpen</span> <span class="k">=</span> <span class="kc">true</span>
+</span></span><span class="line"><span class="cl">  <span class="k">this</span>
+</span></span><span class="line"><span class="cl"><span class="o">}</span>
+</span></span></code></pre></td></tr></table></div>
 </div>
 </div><p>注意到 initialize方法只会调用一次，open方法会多次调用。因为DiskBlockObjectWriter涉及到了序列化，而序列化流是有缓存的，当每次flush序列化流后，都会关闭它，并且调用open获取新的序列化流。</p>
 <h3 id="写入文件"><a href="#写入文件" class="anchor-link"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon anchor-icon"><path d="M326.612 185.391c59.747 59.809 58.927 155.698.36 214.59-.11.12-.24.25-.36.37l-67.2 67.2c-59.27 59.27-155.699 59.262-214.96 0-59.27-59.26-59.27-155.7 0-214.96l37.106-37.106c9.84-9.84 26.786-3.3 27.294 10.606.648 17.722 3.826 35.527 9.69 52.721 1.986 5.822.567 12.262-3.783 16.612l-13.087 13.087c-28.026 28.026-28.905 73.66-1.155 101.96 28.024 28.579 74.086 28.749 102.325.51l67.2-67.19c28.191-28.191 28.073-73.757 0-101.83-3.701-3.694-7.429-6.564-10.341-8.569a16.037 16.037 0 0 1-6.947-12.606c-.396-10.567 3.348-21.456 11.698-29.806l21.054-21.055c5.521-5.521 14.182-6.199 20.584-1.731a152.482 152.482 0 0 1 20.522 17.197zM467.547 44.449c-59.261-59.262-155.69-59.27-214.96 0l-67.2 67.2c-.12.12-.25.25-.36.37-58.566 58.892-59.387 154.781.36 214.59a152.454 152.454 0 0 0 20.521 17.196c6.402 4.468 15.064 3.789 20.584-1.731l21.054-21.055c8.35-8.35 12.094-19.239 11.698-29.806a16.037 16.037 0 0 0-6.947-12.606c-2.912-2.005-6.64-4.875-10.341-8.569-28.073-28.073-28.191-73.639 0-101.83l67.2-67.19c28.239-28.239 74.3-28.069 102.325.51 27.75 28.3 26.872 73.934-1.155 101.96l-13.087 13.087c-4.35 4.35-5.769 10.79-3.783 16.612 5.864 17.194 9.042 34.999 9.69 52.721.509 13.906 17.454 20.446 27.294 10.606l37.106-37.106c59.271-59.259 59.271-155.699.001-214.959z"/></svg></a>写入文件</h3>
@@ -315,17 +315,17 @@
 </span><span class="lnt">10
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-scala" data-lang="scala"><span class="k">def</span> <span class="n">write</span><span class="o">(</span><span class="n">key</span><span class="k">:</span> <span class="kt">Any</span><span class="o">,</span> <span class="n">value</span><span class="k">:</span> <span class="kt">Any</span><span class="o">)</span> <span class="o">{</span>
-  <span class="k">if</span> <span class="o">(!</span><span class="n">streamOpen</span><span class="o">)</span> <span class="o">{</span>
-    <span class="n">open</span><span class="o">()</span>
-  <span class="o">}</span>
-  <span class="c1">// 只是简单调用了objOut流，写入key和value
-</span><span class="c1"></span>  <span class="n">objOut</span><span class="o">.</span><span class="n">writeKey</span><span class="o">(</span><span class="n">key</span><span class="o">)</span>
-  <span class="n">objOut</span><span class="o">.</span><span class="n">writeValue</span><span class="o">(</span><span class="n">value</span><span class="o">)</span>
-  <span class="c1">// 记录写入的数据条数和字节数
-</span><span class="c1"></span>  <span class="n">recordWritten</span><span class="o">()</span>
-<span class="o">}</span>
-</code></pre></td></tr></table></div>
+<pre tabindex="0" class="chroma"><code class="language-scala" data-lang="scala"><span class="line"><span class="cl"><span class="k">def</span> <span class="n">write</span><span class="o">(</span><span class="n">key</span><span class="k">:</span> <span class="kt">Any</span><span class="o">,</span> <span class="n">value</span><span class="k">:</span> <span class="kt">Any</span><span class="o">)</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">  <span class="k">if</span> <span class="o">(!</span><span class="n">streamOpen</span><span class="o">)</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">    <span class="n">open</span><span class="o">()</span>
+</span></span><span class="line"><span class="cl">  <span class="o">}</span>
+</span></span><span class="line"><span class="cl">  <span class="c1">// 只是简单调用了objOut流，写入key和value
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="n">objOut</span><span class="o">.</span><span class="n">writeKey</span><span class="o">(</span><span class="n">key</span><span class="o">)</span>
+</span></span><span class="line"><span class="cl">  <span class="n">objOut</span><span class="o">.</span><span class="n">writeValue</span><span class="o">(</span><span class="n">value</span><span class="o">)</span>
+</span></span><span class="line"><span class="cl">  <span class="c1">// 记录写入的数据条数和字节数
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="n">recordWritten</span><span class="o">()</span>
+</span></span><span class="line"><span class="cl"><span class="o">}</span>
+</span></span></code></pre></td></tr></table></div>
 </div>
 </div><p>它还提供了<code>commitAndGet</code>方法执行 flush 操作。commitAndGet 从上一次提交开始，到此次 commit 的写入数据的文件位置信息 (起始位置，数据长度)。</p>
 <div class="highlight"><div class="chroma">
@@ -360,41 +360,39 @@
 </span><span class="lnt">28
 </span><span class="lnt">29
 </span><span class="lnt">30
-</span><span class="lnt">31
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-scala" data-lang="scala"><span class="k">def</span> <span class="n">commitAndGet</span><span class="o">()</span><span class="k">:</span> <span class="kt">FileSegment</span> <span class="o">=</span> <span class="o">{</span>
-    <span class="k">if</span> <span class="o">(</span><span class="n">streamOpen</span><span class="o">)</span> <span class="o">{</span>
-        <span class="c1">// NOTE: Because Kryo doesn&#39;t flush the underlying stream we explicitly flush both the
-</span><span class="c1"></span>        <span class="c1">//       serializer stream and the lower level stream.
-</span><span class="c1"></span>        <span class="c1">// 调用objOut流的flush
-</span><span class="c1"></span>        <span class="n">objOut</span><span class="o">.</span><span class="n">flush</span><span class="o">()</span>
-        <span class="c1">// 调用bs的flush
-</span><span class="c1"></span>        <span class="n">bs</span><span class="o">.</span><span class="n">flush</span><span class="o">()</span>
-        <span class="c1">// 关闭objOut流
-</span><span class="c1"></span>        <span class="n">objOut</span><span class="o">.</span><span class="n">close</span><span class="o">()</span>
-        <span class="n">streamOpen</span> <span class="k">=</span> <span class="kc">false</span>
-        <span class="k">if</span> <span class="o">(</span><span class="n">syncWrites</span><span class="o">)</span> <span class="o">{</span>
-            <span class="c1">// 调用文件sync方法，强制flush内核缓存
-</span><span class="c1"></span>            <span class="k">val</span> <span class="n">start</span> <span class="k">=</span> <span class="nc">System</span><span class="o">.</span><span class="n">nanoTime</span><span class="o">()</span>
-            <span class="n">fos</span><span class="o">.</span><span class="n">getFD</span><span class="o">.</span><span class="n">sync</span><span class="o">()</span>
-            <span class="n">writeMetrics</span><span class="o">.</span><span class="n">incWriteTime</span><span class="o">(</span><span class="nc">System</span><span class="o">.</span><span class="n">nanoTime</span><span class="o">()</span> <span class="o">-</span> <span class="n">start</span><span class="o">)</span>
-        <span class="o">}</span>
-        <span class="c1">// 获取文件的写位置
-</span><span class="c1"></span>        <span class="k">val</span> <span class="n">pos</span> <span class="k">=</span> <span class="n">channel</span><span class="o">.</span><span class="n">position</span><span class="o">()</span>
-        <span class="c1">// committedPosition表示上一次commit的时候的位置
-</span><span class="c1"></span>        <span class="k">val</span> <span class="n">fileSegment</span> <span class="k">=</span> <span class="k">new</span> <span class="nc">FileSegment</span><span class="o">(</span><span class="n">file</span><span class="o">,</span> <span class="n">committedPosition</span><span class="o">,</span> <span class="n">pos</span> <span class="o">-</span> <span class="n">committedPosition</span><span class="o">)</span>
-        <span class="c1">// 更新 committedPosition
-</span><span class="c1"></span>        <span class="n">committedPosition</span> <span class="k">=</span> <span class="n">pos</span>
-        <span class="c1">// 更新写入字节数
-</span><span class="c1"></span>        <span class="n">writeMetrics</span><span class="o">.</span><span class="n">incBytesWritten</span><span class="o">(</span><span class="n">committedPosition</span> <span class="o">-</span> <span class="n">reportedPosition</span><span class="o">)</span>
-        <span class="n">fileSegment</span>
-    <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
-        <span class="k">new</span> <span class="nc">FileSegment</span><span class="o">(</span><span class="n">file</span><span class="o">,</span> <span class="n">committedPosition</span><span class="o">,</span> <span class="mi">0</span><span class="o">)</span>
-    <span class="o">}</span>
-<span class="o">}</span>
-
-</code></pre></td></tr></table></div>
+<pre tabindex="0" class="chroma"><code class="language-scala" data-lang="scala"><span class="line"><span class="cl"><span class="k">def</span> <span class="n">commitAndGet</span><span class="o">()</span><span class="k">:</span> <span class="kt">FileSegment</span> <span class="o">=</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">    <span class="k">if</span> <span class="o">(</span><span class="n">streamOpen</span><span class="o">)</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">        <span class="c1">// NOTE: Because Kryo doesn&#39;t flush the underlying stream we explicitly flush both the
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>        <span class="c1">//       serializer stream and the lower level stream.
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>        <span class="c1">// 调用objOut流的flush
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>        <span class="n">objOut</span><span class="o">.</span><span class="n">flush</span><span class="o">()</span>
+</span></span><span class="line"><span class="cl">        <span class="c1">// 调用bs的flush
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>        <span class="n">bs</span><span class="o">.</span><span class="n">flush</span><span class="o">()</span>
+</span></span><span class="line"><span class="cl">        <span class="c1">// 关闭objOut流
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>        <span class="n">objOut</span><span class="o">.</span><span class="n">close</span><span class="o">()</span>
+</span></span><span class="line"><span class="cl">        <span class="n">streamOpen</span> <span class="k">=</span> <span class="kc">false</span>
+</span></span><span class="line"><span class="cl">        <span class="k">if</span> <span class="o">(</span><span class="n">syncWrites</span><span class="o">)</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">            <span class="c1">// 调用文件sync方法，强制flush内核缓存
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>            <span class="k">val</span> <span class="n">start</span> <span class="k">=</span> <span class="nc">System</span><span class="o">.</span><span class="n">nanoTime</span><span class="o">()</span>
+</span></span><span class="line"><span class="cl">            <span class="n">fos</span><span class="o">.</span><span class="n">getFD</span><span class="o">.</span><span class="n">sync</span><span class="o">()</span>
+</span></span><span class="line"><span class="cl">            <span class="n">writeMetrics</span><span class="o">.</span><span class="n">incWriteTime</span><span class="o">(</span><span class="nc">System</span><span class="o">.</span><span class="n">nanoTime</span><span class="o">()</span> <span class="o">-</span> <span class="n">start</span><span class="o">)</span>
+</span></span><span class="line"><span class="cl">        <span class="o">}</span>
+</span></span><span class="line"><span class="cl">        <span class="c1">// 获取文件的写位置
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>        <span class="k">val</span> <span class="n">pos</span> <span class="k">=</span> <span class="n">channel</span><span class="o">.</span><span class="n">position</span><span class="o">()</span>
+</span></span><span class="line"><span class="cl">        <span class="c1">// committedPosition表示上一次commit的时候的位置
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>        <span class="k">val</span> <span class="n">fileSegment</span> <span class="k">=</span> <span class="k">new</span> <span class="nc">FileSegment</span><span class="o">(</span><span class="n">file</span><span class="o">,</span> <span class="n">committedPosition</span><span class="o">,</span> <span class="n">pos</span> <span class="o">-</span> <span class="n">committedPosition</span><span class="o">)</span>
+</span></span><span class="line"><span class="cl">        <span class="c1">// 更新 committedPosition
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>        <span class="n">committedPosition</span> <span class="k">=</span> <span class="n">pos</span>
+</span></span><span class="line"><span class="cl">        <span class="c1">// 更新写入字节数
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>        <span class="n">writeMetrics</span><span class="o">.</span><span class="n">incBytesWritten</span><span class="o">(</span><span class="n">committedPosition</span> <span class="o">-</span> <span class="n">reportedPosition</span><span class="o">)</span>
+</span></span><span class="line"><span class="cl">        <span class="n">fileSegment</span>
+</span></span><span class="line"><span class="cl">    <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">        <span class="k">new</span> <span class="nc">FileSegment</span><span class="o">(</span><span class="n">file</span><span class="o">,</span> <span class="n">committedPosition</span><span class="o">,</span> <span class="mi">0</span><span class="o">)</span>
+</span></span><span class="line"><span class="cl">    <span class="o">}</span>
+</span></span><span class="line"><span class="cl"><span class="o">}</span>
+</span></span></code></pre></td></tr></table></div>
 </div>
 </div><h2 id="bypassmergesortshufflewriter-使用"><a href="#bypassmergesortshufflewriter-使用" class="anchor-link"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon anchor-icon"><path d="M326.612 185.391c59.747 59.809 58.927 155.698.36 214.59-.11.12-.24.25-.36.37l-67.2 67.2c-59.27 59.27-155.699 59.262-214.96 0-59.27-59.26-59.27-155.7 0-214.96l37.106-37.106c9.84-9.84 26.786-3.3 27.294 10.606.648 17.722 3.826 35.527 9.69 52.721 1.986 5.822.567 12.262-3.783 16.612l-13.087 13.087c-28.026 28.026-28.905 73.66-1.155 101.96 28.024 28.579 74.086 28.749 102.325.51l67.2-67.19c28.191-28.191 28.073-73.757 0-101.83-3.701-3.694-7.429-6.564-10.341-8.569a16.037 16.037 0 0 1-6.947-12.606c-.396-10.567 3.348-21.456 11.698-29.806l21.054-21.055c5.521-5.521 14.182-6.199 20.584-1.731a152.482 152.482 0 0 1 20.522 17.197zM467.547 44.449c-59.261-59.262-155.69-59.27-214.96 0l-67.2 67.2c-.12.12-.25.25-.36.37-58.566 58.892-59.387 154.781.36 214.59a152.454 152.454 0 0 0 20.521 17.196c6.402 4.468 15.064 3.789 20.584-1.731l21.054-21.055c8.35-8.35 12.094-19.239 11.698-29.806a16.037 16.037 0 0 0-6.947-12.606c-2.912-2.005-6.64-4.875-10.341-8.569-28.073-28.073-28.191-73.639 0-101.83l67.2-67.19c28.239-28.239 74.3-28.069 102.325.51 27.75 28.3 26.872 73.934-1.155 101.96l-13.087 13.087c-4.35 4.35-5.769 10.79-3.783 16.612 5.864 17.194 9.042 34.999 9.69 52.721.509 13.906 17.454 20.446 27.294 10.606l37.106-37.106c59.271-59.259 59.271-155.699.001-214.959z"/></svg></a>BypassMergeSortShuffleWriter 使用</h2>
 <p><code>BypassMergeSortShuffleWriter</code>的代码很简单，这里就不再详细介绍，流程如下</p>
@@ -416,12 +414,12 @@
 </span><span class="lnt">5
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell">-----------------------------------------------------------------------------------
-       Long        <span class="p">|</span>        Long        <span class="p">|</span>        Long         <span class="p">|</span>        Long       <span class="p">|</span>
------------------------------------------------------------------------------------
-   分区一的偏移量   <span class="p">|</span>    分区二的偏移量    <span class="p">|</span>     分区三的偏移量   <span class="p">|</span>     分区四的偏移量
-------------------------------------------------------------------------------------
-</code></pre></td></tr></table></div>
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">-----------------------------------------------------------------------------------
+</span></span><span class="line"><span class="cl">       Long        <span class="p">|</span>        Long        <span class="p">|</span>        Long         <span class="p">|</span>        Long       <span class="p">|</span>
+</span></span><span class="line"><span class="cl">-----------------------------------------------------------------------------------
+</span></span><span class="line"><span class="cl">   分区一的偏移量   <span class="p">|</span>    分区二的偏移量    <span class="p">|</span>     分区三的偏移量   <span class="p">|</span>     分区四的偏移量
+</span></span><span class="line"><span class="cl">------------------------------------------------------------------------------------
+</span></span></code></pre></td></tr></table></div>
 </div>
 </div><p>IndexShuffleBlockResolver类负责创建索引文件，存储到ShuffleIndexBlock数据块中。它提供了writeIndexFileAndCommit方法创建索引。因为创建索引文件，有线程竞争。所以它会先建立临时索引文件，然后再去检查索引文件是否已经存在，并且与临时索引文件是否相同。如果一致，则删除临时索引文件。如果不一致，则会更新索引文件。writeIndexFileAndCommit方法的代码如下：</p>
 <div class="highlight"><div class="chroma">
@@ -491,70 +489,70 @@
 </span><span class="lnt">63
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-scala" data-lang="scala"><span class="k">def</span> <span class="n">writeIndexFileAndCommit</span><span class="o">(</span>
-    <span class="n">shuffleId</span><span class="k">:</span> <span class="kt">Int</span><span class="o">,</span>
-    <span class="n">mapId</span><span class="k">:</span> <span class="kt">Int</span><span class="o">,</span>
-    <span class="n">lengths</span><span class="k">:</span> <span class="kt">Array</span><span class="o">[</span><span class="kt">Long</span><span class="o">],</span>      <span class="c1">// 每个分区对应的数据长度
-</span><span class="c1"></span>    <span class="n">dataTmp</span><span class="k">:</span> <span class="kt">File</span><span class="o">)</span><span class="k">:</span> <span class="kt">Unit</span> <span class="o">=</span> <span class="o">{</span>
-  <span class="c1">// 获取索引文件
-</span><span class="c1"></span>  <span class="k">val</span> <span class="n">indexFile</span> <span class="k">=</span> <span class="n">getIndexFile</span><span class="o">(</span><span class="n">shuffleId</span><span class="o">,</span> <span class="n">mapId</span><span class="o">)</span>
-  <span class="c1">// 新建临时索引文件
-</span><span class="c1"></span>  <span class="k">val</span> <span class="n">indexTmp</span> <span class="k">=</span> <span class="nc">Utils</span><span class="o">.</span><span class="n">tempFileWith</span><span class="o">(</span><span class="n">indexFile</span><span class="o">)</span>
-  <span class="k">try</span> <span class="o">{</span>
-    <span class="k">val</span> <span class="n">out</span> <span class="k">=</span> <span class="k">new</span> <span class="nc">DataOutputStream</span><span class="o">(</span><span class="k">new</span> <span class="nc">BufferedOutputStream</span><span class="o">(</span><span class="k">new</span> <span class="nc">FileOutputStream</span><span class="o">(</span><span class="n">indexTmp</span><span class="o">)))</span>
-    <span class="nc">Utils</span><span class="o">.</span><span class="n">tryWithSafeFinally</span> <span class="o">{</span>
-      <span class="c1">// 第一个分区的偏移量肯定是从0开始的
-</span><span class="c1"></span>      <span class="k">var</span> <span class="n">offset</span> <span class="k">=</span> <span class="mi">0L</span>
-      <span class="n">out</span><span class="o">.</span><span class="n">writeLong</span><span class="o">(</span><span class="n">offset</span><span class="o">)</span>
-      <span class="c1">// 根据对应分区的数据长度，计算出偏移量
-</span><span class="c1"></span>      <span class="k">for</span> <span class="o">(</span><span class="n">length</span> <span class="k">&lt;-</span> <span class="n">lengths</span><span class="o">)</span> <span class="o">{</span>
-        <span class="n">offset</span> <span class="o">+=</span> <span class="n">length</span>
-        <span class="n">out</span><span class="o">.</span><span class="n">writeLong</span><span class="o">(</span><span class="n">offset</span><span class="o">)</span>
-      <span class="o">}</span>
-    <span class="o">}</span> <span class="o">{</span>
-      <span class="n">out</span><span class="o">.</span><span class="n">close</span><span class="o">()</span>
-    <span class="o">}</span>
-    <span class="c1">// 获取数据文件
-</span><span class="c1"></span>    <span class="k">val</span> <span class="n">dataFile</span> <span class="k">=</span> <span class="n">getDataFile</span><span class="o">(</span><span class="n">shuffleId</span><span class="o">,</span> <span class="n">mapId</span><span class="o">)</span>
-    <span class="c1">// 使用synchronized，保证下列程序是原子性的
-</span><span class="c1"></span>    <span class="n">synchronized</span> <span class="o">{</span>
-      <span class="c1">// 调用checkIndexAndDataFile方法，
-</span><span class="c1"></span>      <span class="c1">// 检查索引文件是否与数据文件匹配，还有是否已经存在和临时索引文件相同的索引文件
-</span><span class="c1"></span>      <span class="k">val</span> <span class="n">existingLengths</span> <span class="k">=</span> <span class="n">checkIndexAndDataFile</span><span class="o">(</span><span class="n">indexFile</span><span class="o">,</span> <span class="n">dataFile</span><span class="o">,</span> <span class="n">lengths</span><span class="o">.</span><span class="n">length</span><span class="o">)</span>
-      <span class="k">if</span> <span class="o">(</span><span class="n">existingLengths</span> <span class="o">!=</span> <span class="kc">null</span><span class="o">)</span> <span class="o">{</span>
-        <span class="c1">// 这里表示别的线程已经创建了正确的索引文件
-</span><span class="c1"></span>        <span class="c1">// 所以这儿需要删除临时索引文件和对应的临时数据文件
-</span><span class="c1"></span>        <span class="nc">System</span><span class="o">.</span><span class="n">arraycopy</span><span class="o">(</span><span class="n">existingLengths</span><span class="o">,</span> <span class="mi">0</span><span class="o">,</span> <span class="n">lengths</span><span class="o">,</span> <span class="mi">0</span><span class="o">,</span> <span class="n">lengths</span><span class="o">.</span><span class="n">length</span><span class="o">)</span>
-        <span class="k">if</span> <span class="o">(</span><span class="n">dataTmp</span> <span class="o">!=</span> <span class="kc">null</span> <span class="o">&amp;&amp;</span> <span class="n">dataTmp</span><span class="o">.</span><span class="n">exists</span><span class="o">())</span> <span class="o">{</span>
-          <span class="n">dataTmp</span><span class="o">.</span><span class="n">delete</span><span class="o">()</span>
-        <span class="o">}</span>
-        <span class="n">indexTmp</span><span class="o">.</span><span class="n">delete</span><span class="o">()</span>
-      <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
-        <span class="c1">// 这里表示没有创建正确的索引文件，所以需要删除原有索引文件和对应的数据文件
-</span><span class="c1"></span>        <span class="k">if</span> <span class="o">(</span><span class="n">indexFile</span><span class="o">.</span><span class="n">exists</span><span class="o">())</span> <span class="o">{</span>
-          <span class="n">indexFile</span><span class="o">.</span><span class="n">delete</span><span class="o">()</span>
-        <span class="o">}</span>
-        
-        <span class="k">if</span> <span class="o">(</span><span class="n">dataFile</span><span class="o">.</span><span class="n">exists</span><span class="o">())</span> <span class="o">{</span>
-          <span class="n">dataFile</span><span class="o">.</span><span class="n">delete</span><span class="o">()</span>
-        <span class="o">}</span>
-        <span class="c1">// 将临时索引文件重命名，为索引文件
-</span><span class="c1"></span>        <span class="k">if</span> <span class="o">(!</span><span class="n">indexTmp</span><span class="o">.</span><span class="n">renameTo</span><span class="o">(</span><span class="n">indexFile</span><span class="o">))</span> <span class="o">{</span>
-          <span class="k">throw</span> <span class="k">new</span> <span class="nc">IOException</span><span class="o">(</span><span class="s">&#34;fail to rename file &#34;</span> <span class="o">+</span> <span class="n">indexTmp</span> <span class="o">+</span> <span class="s">&#34; to &#34;</span> <span class="o">+</span> <span class="n">indexFile</span><span class="o">)</span>
-        <span class="o">}</span>
-        <span class="c1">// 将临时数据文件重命名，为数据文件
-</span><span class="c1"></span>        <span class="k">if</span> <span class="o">(</span><span class="n">dataTmp</span> <span class="o">!=</span> <span class="kc">null</span> <span class="o">&amp;&amp;</span> <span class="n">dataTmp</span><span class="o">.</span><span class="n">exists</span><span class="o">()</span> <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="n">dataTmp</span><span class="o">.</span><span class="n">renameTo</span><span class="o">(</span><span class="n">dataFile</span><span class="o">))</span> <span class="o">{</span>
-          <span class="k">throw</span> <span class="k">new</span> <span class="nc">IOException</span><span class="o">(</span><span class="s">&#34;fail to rename file &#34;</span> <span class="o">+</span> <span class="n">dataTmp</span> <span class="o">+</span> <span class="s">&#34; to &#34;</span> <span class="o">+</span> <span class="n">dataFile</span><span class="o">)</span>
-        <span class="o">}</span>
-      <span class="o">}</span>
-    <span class="o">}</span>
-  <span class="o">}</span> <span class="k">finally</span> <span class="o">{</span>
-    <span class="k">if</span> <span class="o">(</span><span class="n">indexTmp</span><span class="o">.</span><span class="n">exists</span><span class="o">()</span> <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="n">indexTmp</span><span class="o">.</span><span class="n">delete</span><span class="o">())</span> <span class="o">{</span>
-      <span class="n">logError</span><span class="o">(</span><span class="s">s&#34;Failed to delete temporary index file at </span><span class="si">${</span><span class="n">indexTmp</span><span class="o">.</span><span class="n">getAbsolutePath</span><span class="si">}</span><span class="s">&#34;</span><span class="o">)</span>
-    <span class="o">}</span>
-  <span class="o">}</span>
-<span class="o">}</span>
-</code></pre></td></tr></table></div>
+<pre tabindex="0" class="chroma"><code class="language-scala" data-lang="scala"><span class="line"><span class="cl"><span class="k">def</span> <span class="n">writeIndexFileAndCommit</span><span class="o">(</span>
+</span></span><span class="line"><span class="cl">    <span class="n">shuffleId</span><span class="k">:</span> <span class="kt">Int</span><span class="o">,</span>
+</span></span><span class="line"><span class="cl">    <span class="n">mapId</span><span class="k">:</span> <span class="kt">Int</span><span class="o">,</span>
+</span></span><span class="line"><span class="cl">    <span class="n">lengths</span><span class="k">:</span> <span class="kt">Array</span><span class="o">[</span><span class="kt">Long</span><span class="o">],</span>      <span class="c1">// 每个分区对应的数据长度
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="n">dataTmp</span><span class="k">:</span> <span class="kt">File</span><span class="o">)</span><span class="k">:</span> <span class="kt">Unit</span> <span class="o">=</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">  <span class="c1">// 获取索引文件
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="k">val</span> <span class="n">indexFile</span> <span class="k">=</span> <span class="n">getIndexFile</span><span class="o">(</span><span class="n">shuffleId</span><span class="o">,</span> <span class="n">mapId</span><span class="o">)</span>
+</span></span><span class="line"><span class="cl">  <span class="c1">// 新建临时索引文件
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="k">val</span> <span class="n">indexTmp</span> <span class="k">=</span> <span class="nc">Utils</span><span class="o">.</span><span class="n">tempFileWith</span><span class="o">(</span><span class="n">indexFile</span><span class="o">)</span>
+</span></span><span class="line"><span class="cl">  <span class="k">try</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">    <span class="k">val</span> <span class="n">out</span> <span class="k">=</span> <span class="k">new</span> <span class="nc">DataOutputStream</span><span class="o">(</span><span class="k">new</span> <span class="nc">BufferedOutputStream</span><span class="o">(</span><span class="k">new</span> <span class="nc">FileOutputStream</span><span class="o">(</span><span class="n">indexTmp</span><span class="o">)))</span>
+</span></span><span class="line"><span class="cl">    <span class="nc">Utils</span><span class="o">.</span><span class="n">tryWithSafeFinally</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">      <span class="c1">// 第一个分区的偏移量肯定是从0开始的
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>      <span class="k">var</span> <span class="n">offset</span> <span class="k">=</span> <span class="mi">0L</span>
+</span></span><span class="line"><span class="cl">      <span class="n">out</span><span class="o">.</span><span class="n">writeLong</span><span class="o">(</span><span class="n">offset</span><span class="o">)</span>
+</span></span><span class="line"><span class="cl">      <span class="c1">// 根据对应分区的数据长度，计算出偏移量
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>      <span class="k">for</span> <span class="o">(</span><span class="n">length</span> <span class="k">&lt;-</span> <span class="n">lengths</span><span class="o">)</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">        <span class="n">offset</span> <span class="o">+=</span> <span class="n">length</span>
+</span></span><span class="line"><span class="cl">        <span class="n">out</span><span class="o">.</span><span class="n">writeLong</span><span class="o">(</span><span class="n">offset</span><span class="o">)</span>
+</span></span><span class="line"><span class="cl">      <span class="o">}</span>
+</span></span><span class="line"><span class="cl">    <span class="o">}</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">      <span class="n">out</span><span class="o">.</span><span class="n">close</span><span class="o">()</span>
+</span></span><span class="line"><span class="cl">    <span class="o">}</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// 获取数据文件
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="k">val</span> <span class="n">dataFile</span> <span class="k">=</span> <span class="n">getDataFile</span><span class="o">(</span><span class="n">shuffleId</span><span class="o">,</span> <span class="n">mapId</span><span class="o">)</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// 使用synchronized，保证下列程序是原子性的
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="n">synchronized</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">      <span class="c1">// 调用checkIndexAndDataFile方法，
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>      <span class="c1">// 检查索引文件是否与数据文件匹配，还有是否已经存在和临时索引文件相同的索引文件
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>      <span class="k">val</span> <span class="n">existingLengths</span> <span class="k">=</span> <span class="n">checkIndexAndDataFile</span><span class="o">(</span><span class="n">indexFile</span><span class="o">,</span> <span class="n">dataFile</span><span class="o">,</span> <span class="n">lengths</span><span class="o">.</span><span class="n">length</span><span class="o">)</span>
+</span></span><span class="line"><span class="cl">      <span class="k">if</span> <span class="o">(</span><span class="n">existingLengths</span> <span class="o">!=</span> <span class="kc">null</span><span class="o">)</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">        <span class="c1">// 这里表示别的线程已经创建了正确的索引文件
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>        <span class="c1">// 所以这儿需要删除临时索引文件和对应的临时数据文件
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>        <span class="nc">System</span><span class="o">.</span><span class="n">arraycopy</span><span class="o">(</span><span class="n">existingLengths</span><span class="o">,</span> <span class="mi">0</span><span class="o">,</span> <span class="n">lengths</span><span class="o">,</span> <span class="mi">0</span><span class="o">,</span> <span class="n">lengths</span><span class="o">.</span><span class="n">length</span><span class="o">)</span>
+</span></span><span class="line"><span class="cl">        <span class="k">if</span> <span class="o">(</span><span class="n">dataTmp</span> <span class="o">!=</span> <span class="kc">null</span> <span class="o">&amp;&amp;</span> <span class="n">dataTmp</span><span class="o">.</span><span class="n">exists</span><span class="o">())</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">          <span class="n">dataTmp</span><span class="o">.</span><span class="n">delete</span><span class="o">()</span>
+</span></span><span class="line"><span class="cl">        <span class="o">}</span>
+</span></span><span class="line"><span class="cl">        <span class="n">indexTmp</span><span class="o">.</span><span class="n">delete</span><span class="o">()</span>
+</span></span><span class="line"><span class="cl">      <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">        <span class="c1">// 这里表示没有创建正确的索引文件，所以需要删除原有索引文件和对应的数据文件
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>        <span class="k">if</span> <span class="o">(</span><span class="n">indexFile</span><span class="o">.</span><span class="n">exists</span><span class="o">())</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">          <span class="n">indexFile</span><span class="o">.</span><span class="n">delete</span><span class="o">()</span>
+</span></span><span class="line"><span class="cl">        <span class="o">}</span>
+</span></span><span class="line"><span class="cl">        
+</span></span><span class="line"><span class="cl">        <span class="k">if</span> <span class="o">(</span><span class="n">dataFile</span><span class="o">.</span><span class="n">exists</span><span class="o">())</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">          <span class="n">dataFile</span><span class="o">.</span><span class="n">delete</span><span class="o">()</span>
+</span></span><span class="line"><span class="cl">        <span class="o">}</span>
+</span></span><span class="line"><span class="cl">        <span class="c1">// 将临时索引文件重命名，为索引文件
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>        <span class="k">if</span> <span class="o">(!</span><span class="n">indexTmp</span><span class="o">.</span><span class="n">renameTo</span><span class="o">(</span><span class="n">indexFile</span><span class="o">))</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">          <span class="k">throw</span> <span class="k">new</span> <span class="nc">IOException</span><span class="o">(</span><span class="s">&#34;fail to rename file &#34;</span> <span class="o">+</span> <span class="n">indexTmp</span> <span class="o">+</span> <span class="s">&#34; to &#34;</span> <span class="o">+</span> <span class="n">indexFile</span><span class="o">)</span>
+</span></span><span class="line"><span class="cl">        <span class="o">}</span>
+</span></span><span class="line"><span class="cl">        <span class="c1">// 将临时数据文件重命名，为数据文件
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>        <span class="k">if</span> <span class="o">(</span><span class="n">dataTmp</span> <span class="o">!=</span> <span class="kc">null</span> <span class="o">&amp;&amp;</span> <span class="n">dataTmp</span><span class="o">.</span><span class="n">exists</span><span class="o">()</span> <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="n">dataTmp</span><span class="o">.</span><span class="n">renameTo</span><span class="o">(</span><span class="n">dataFile</span><span class="o">))</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">          <span class="k">throw</span> <span class="k">new</span> <span class="nc">IOException</span><span class="o">(</span><span class="s">&#34;fail to rename file &#34;</span> <span class="o">+</span> <span class="n">dataTmp</span> <span class="o">+</span> <span class="s">&#34; to &#34;</span> <span class="o">+</span> <span class="n">dataFile</span><span class="o">)</span>
+</span></span><span class="line"><span class="cl">        <span class="o">}</span>
+</span></span><span class="line"><span class="cl">      <span class="o">}</span>
+</span></span><span class="line"><span class="cl">    <span class="o">}</span>
+</span></span><span class="line"><span class="cl">  <span class="o">}</span> <span class="k">finally</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">    <span class="k">if</span> <span class="o">(</span><span class="n">indexTmp</span><span class="o">.</span><span class="n">exists</span><span class="o">()</span> <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="n">indexTmp</span><span class="o">.</span><span class="n">delete</span><span class="o">())</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">      <span class="n">logError</span><span class="o">(</span><span class="s">s&#34;Failed to delete temporary index file at </span><span class="si">${</span><span class="n">indexTmp</span><span class="o">.</span><span class="n">getAbsolutePath</span><span class="si">}</span><span class="s">&#34;</span><span class="o">)</span>
+</span></span><span class="line"><span class="cl">    <span class="o">}</span>
+</span></span><span class="line"><span class="cl">  <span class="o">}</span>
+</span></span><span class="line"><span class="cl"><span class="o">}</span>
+</span></span></code></pre></td></tr></table></div>
 </div>
 </div><h2 id="总结"><a href="#总结" class="anchor-link"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon anchor-icon"><path d="M326.612 185.391c59.747 59.809 58.927 155.698.36 214.59-.11.12-.24.25-.36.37l-67.2 67.2c-59.27 59.27-155.699 59.262-214.96 0-59.27-59.26-59.27-155.7 0-214.96l37.106-37.106c9.84-9.84 26.786-3.3 27.294 10.606.648 17.722 3.826 35.527 9.69 52.721 1.986 5.822.567 12.262-3.783 16.612l-13.087 13.087c-28.026 28.026-28.905 73.66-1.155 101.96 28.024 28.579 74.086 28.749 102.325.51l67.2-67.19c28.191-28.191 28.073-73.757 0-101.83-3.701-3.694-7.429-6.564-10.341-8.569a16.037 16.037 0 0 1-6.947-12.606c-.396-10.567 3.348-21.456 11.698-29.806l21.054-21.055c5.521-5.521 14.182-6.199 20.584-1.731a152.482 152.482 0 0 1 20.522 17.197zM467.547 44.449c-59.261-59.262-155.69-59.27-214.96 0l-67.2 67.2c-.12.12-.25.25-.36.37-58.566 58.892-59.387 154.781.36 214.59a152.454 152.454 0 0 0 20.521 17.196c6.402 4.468 15.064 3.789 20.584-1.731l21.054-21.055c8.35-8.35 12.094-19.239 11.698-29.806a16.037 16.037 0 0 0-6.947-12.606c-2.912-2.005-6.64-4.875-10.341-8.569-28.073-28.073-28.191-73.639 0-101.83l67.2-67.19c28.239-28.239 74.3-28.069 102.325.51 27.75 28.3 26.872 73.934-1.155 101.96l-13.087 13.087c-4.35 4.35-5.769 10.79-3.783 16.612 5.864 17.194 9.042 34.999 9.69 52.721.509 13.906 17.454 20.446 27.294 10.606l37.106-37.106c59.271-59.259 59.271-155.699.001-214.959z"/></svg></a>总结</h2>
 <p><code>BypassMergeSortShuffleHandle</code>只是适用于简单的分区场景，一般数据量不大。Spark 在存储数据时，利用了缓冲区和<code>transferTo</code>技术，来提高磁盘性能。需要注意下所有的中间数据都是在磁盘里，并没有利用内存。而且它只保证分区的正确性，而并不保证分区里的数据顺序。</p>
@@ -585,9 +583,9 @@
 
         
     <div class="updated-badge-container">
-        <span title="Updated @ 2021-10-22 14:44:34 CST" style="cursor:help">
+        <span title="Updated @ 2023-07-02 16:59:09 CST" style="cursor:help">
 
-<svg xmlns="http://www.w3.org/2000/svg" width="130" height="20" class="updated-badge"><linearGradient id="b" x2="0" y2="100%"><stop offset="0" stop-color="#bbb" stop-opacity=".1"/><stop offset="1" stop-opacity=".1"/></linearGradient><clipPath id="a"><rect width="130" height="20" rx="3" fill="#fff"/></clipPath><g clip-path="url(#a)"><path class="updated-badge-left" d="M0 0h55v20H0z"/><path class="updated-badge-right" d="M55 0h75v20H55z"/><path fill="url(#b)" d="M0 0h130v20H0z"/></g><g fill="#fff" text-anchor="middle" font-size="110"><text x="285" y="150" fill="#010101" fill-opacity=".3" textLength="450" transform="scale(.1)">updated</text><text x="285" y="140" textLength="450" transform="scale(.1)">updated</text><text x="915" y="150" fill="#010101" fill-opacity=".3" textLength="650" transform="scale(.1)">2021-10-22</text><text x="915" y="140" textLength="650" transform="scale(.1)">2021-10-22</text></g></svg>
+<svg xmlns="http://www.w3.org/2000/svg" width="130" height="20" class="updated-badge"><linearGradient id="b" x2="0" y2="100%"><stop offset="0" stop-color="#bbb" stop-opacity=".1"/><stop offset="1" stop-opacity=".1"/></linearGradient><clipPath id="a"><rect width="130" height="20" rx="3" fill="#fff"/></clipPath><g clip-path="url(#a)"><path class="updated-badge-left" d="M0 0h55v20H0z"/><path class="updated-badge-right" d="M55 0h75v20H55z"/><path fill="url(#b)" d="M0 0h130v20H0z"/></g><g fill="#fff" text-anchor="middle" font-size="110"><text x="285" y="150" fill="#010101" fill-opacity=".3" textLength="450" transform="scale(.1)">updated</text><text x="285" y="140" textLength="450" transform="scale(.1)">updated</text><text x="915" y="150" fill="#010101" fill-opacity=".3" textLength="650" transform="scale(.1)">2023-07-02</text><text x="915" y="140" textLength="650" transform="scale(.1)">2023-07-02</text></g></svg>
         </span></div>
 
 

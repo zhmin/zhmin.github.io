@@ -3,7 +3,7 @@
     <head prefix="og: http://ogp.me/ns# article: http://ogp.me/ns/article#">
     <meta charset="UTF-8" />
 
-    <meta name="generator" content="Hugo 0.88.1" /><meta name="theme-color" content="#fff" />
+    <meta name="generator" content="Hugo 0.115.0"><meta name="theme-color" content="#fff" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     
     <meta name="format-detection" content="telephone=no, date=no, address=no, email=no" />
@@ -14,11 +14,11 @@
 
     <title>Spark ExternalShuffleService 运行原理 | 学习笔记</title>
 
-    <link rel="stylesheet" href="/css/meme.min.2d3e1834af2bc8dda20c7d74aaa1d8134845094441b7a554a5206ccd4b472596.css"/>
+    <link rel="stylesheet" href="/css/meme.min.91e7f58f97e1c60563ef481c38d9684fa8099537801d6f17bbfc724121e7d8f1.css"/>
 
     
     
-        <script src="/js/meme.min.800f61672145711eb3e1f29fcfcc3dbe0139dd459259718b611a0390f74703d1.js"></script>
+        <script src="/js/meme.min.3210a00c2fdcf6f831170b681b8ee40f83f0224663661e986872616aec45407f.js"></script>
 
     
 
@@ -54,13 +54,13 @@
         "@context": "https://schema.org",
         "@type": "BlogPosting",
         "datePublished": "2019-08-05T22:18:00+00:00",
-        "dateModified": "2021-10-22T14:44:34+08:00",
+        "dateModified": "2023-07-02T16:59:09+08:00",
         "url": "https://zhmin.github.io/posts/spark-external-shuffle-service/",
         "headline": "Spark ExternalShuffleService 运行原理",
         "description": "前言 Spark 的 Executor 节点不仅负责数据的计算，还涉及到数据的管理。如果发生了 shuffle 操作，Executor 节点不仅需要生成 shuffle 数据，还需要负责处理读取请求。如果 一个 Executor 节点挂掉了，那么它也就无法处理 shuffle 的数据读取请求了，它之……",
         "inLanguage" : "zh-CN",
         "articleSection": "posts",
-        "wordCount":  1662 ,
+        "wordCount":  1660 ,
         "image": ["https://zhmin.github.io/spark-external-shuffle-service.svg"],
         "author": {
             "@type": "Person",
@@ -98,7 +98,7 @@
 <meta property="og:locale" content="zh" /><meta property="og:image" content="https://zhmin.github.io/spark-external-shuffle-service.svg" />
 <meta property="og:type" content="article" />
     <meta property="article:published_time" content="2019-08-05T22:18:00&#43;00:00" />
-    <meta property="article:modified_time" content="2021-10-22T14:44:34&#43;08:00" />
+    <meta property="article:modified_time" content="2023-07-02T16:59:09&#43;08:00" />
     
     <meta property="article:section" content="posts" />
 
@@ -223,7 +223,7 @@
     
     
         
-        <span class="post-meta-item wordcount"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon post-meta-icon"><path d="M497.9 142.1l-46.1 46.1c-4.7 4.7-12.3 4.7-17 0l-111-111c-4.7-4.7-4.7-12.3 0-17l46.1-46.1c18.7-18.7 49.1-18.7 67.9 0l60.1 60.1c18.8 18.7 18.8 49.1 0 67.9zM284.2 99.8L21.6 362.4.4 483.9c-2.9 16.4 11.4 30.6 27.8 27.8l121.5-21.3 262.6-262.6c4.7-4.7 4.7-12.3 0-17l-111-111c-4.8-4.7-12.4-4.7-17.1 0zM124.1 339.9c-5.5-5.5-5.5-14.3 0-19.8l154-154c5.5-5.5 14.3-5.5 19.8 0s5.5 14.3 0 19.8l-154 154c-5.5 5.5-14.3 5.5-19.8 0zM88 424h48v36.3l-64.5 11.3-31.1-31.1L51.7 376H88v48z"/></svg>&nbsp;1662</span>
+        <span class="post-meta-item wordcount"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon post-meta-icon"><path d="M497.9 142.1l-46.1 46.1c-4.7 4.7-12.3 4.7-17 0l-111-111c-4.7-4.7-4.7-12.3 0-17l46.1-46.1c18.7-18.7 49.1-18.7 67.9 0l60.1 60.1c18.8 18.7 18.8 49.1 0 67.9zM284.2 99.8L21.6 362.4.4 483.9c-2.9 16.4 11.4 30.6 27.8 27.8l121.5-21.3 262.6-262.6c4.7-4.7 4.7-12.3 0-17l-111-111c-4.8-4.7-12.4-4.7-17.1 0zM124.1 339.9c-5.5-5.5-5.5-14.3 0-19.8l154-154c5.5-5.5 14.3-5.5 19.8 0s5.5 14.3 0 19.8l-154 154c-5.5 5.5-14.3 5.5-19.8 0zM88 424h48v36.3l-64.5 11.3-31.1-31.1L51.7 376H88v48z"/></svg>&nbsp;1660</span>
     
     
         
@@ -264,21 +264,21 @@
 </span><span class="lnt">14
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-xml" data-lang="xml"><span class="nt">&lt;property&gt;</span>
-    <span class="nt">&lt;name&gt;</span>yarn.nodemanager.aux-services<span class="nt">&lt;/name&gt;</span>
-    <span class="nt">&lt;value&gt;</span>mapreduce_shuffle, spark_shuffle<span class="nt">&lt;/value&gt;</span>
-<span class="nt">&lt;/property&gt;</span>
-
-<span class="nt">&lt;property&gt;</span>
-    <span class="nt">&lt;name&gt;</span>yarn.nodemanager.aux-services.spark_shuffle.class<span class="nt">&lt;/name&gt;</span>
-    <span class="nt">&lt;value&gt;</span>org.apache.spark.network.yarn.YarnShuffleService<span class="nt">&lt;/value&gt;</span>
-<span class="nt">&lt;/property&gt;</span>
-
-<span class="nt">&lt;property&gt;</span>
-    <span class="nt">&lt;name&gt;</span>spark.shuffle.service.port<span class="nt">&lt;/name&gt;</span>
-    <span class="nt">&lt;value&gt;</span>7337<span class="nt">&lt;/value&gt;</span>
-<span class="nt">&lt;/property&gt;</span>
-</code></pre></td></tr></table></div>
+<pre tabindex="0" class="chroma"><code class="language-xml" data-lang="xml"><span class="line"><span class="cl"><span class="nt">&lt;property&gt;</span>
+</span></span><span class="line"><span class="cl">    <span class="nt">&lt;name&gt;</span>yarn.nodemanager.aux-services<span class="nt">&lt;/name&gt;</span>
+</span></span><span class="line"><span class="cl">    <span class="nt">&lt;value&gt;</span>mapreduce_shuffle, spark_shuffle<span class="nt">&lt;/value&gt;</span>
+</span></span><span class="line"><span class="cl"><span class="nt">&lt;/property&gt;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="nt">&lt;property&gt;</span>
+</span></span><span class="line"><span class="cl">    <span class="nt">&lt;name&gt;</span>yarn.nodemanager.aux-services.spark_shuffle.class<span class="nt">&lt;/name&gt;</span>
+</span></span><span class="line"><span class="cl">    <span class="nt">&lt;value&gt;</span>org.apache.spark.network.yarn.YarnShuffleService<span class="nt">&lt;/value&gt;</span>
+</span></span><span class="line"><span class="cl"><span class="nt">&lt;/property&gt;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="nt">&lt;property&gt;</span>
+</span></span><span class="line"><span class="cl">    <span class="nt">&lt;name&gt;</span>spark.shuffle.service.port<span class="nt">&lt;/name&gt;</span>
+</span></span><span class="line"><span class="cl">    <span class="nt">&lt;value&gt;</span>7337<span class="nt">&lt;/value&gt;</span>
+</span></span><span class="line"><span class="cl"><span class="nt">&lt;/property&gt;</span>
+</span></span></code></pre></td></tr></table></div>
 </div>
 </div><h2 id="yarnshuffleservice"><a href="#yarnshuffleservice" class="anchor-link"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon anchor-icon"><path d="M326.612 185.391c59.747 59.809 58.927 155.698.36 214.59-.11.12-.24.25-.36.37l-67.2 67.2c-59.27 59.27-155.699 59.262-214.96 0-59.27-59.26-59.27-155.7 0-214.96l37.106-37.106c9.84-9.84 26.786-3.3 27.294 10.606.648 17.722 3.826 35.527 9.69 52.721 1.986 5.822.567 12.262-3.783 16.612l-13.087 13.087c-28.026 28.026-28.905 73.66-1.155 101.96 28.024 28.579 74.086 28.749 102.325.51l67.2-67.19c28.191-28.191 28.073-73.757 0-101.83-3.701-3.694-7.429-6.564-10.341-8.569a16.037 16.037 0 0 1-6.947-12.606c-.396-10.567 3.348-21.456 11.698-29.806l21.054-21.055c5.521-5.521 14.182-6.199 20.584-1.731a152.482 152.482 0 0 1 20.522 17.197zM467.547 44.449c-59.261-59.262-155.69-59.27-214.96 0l-67.2 67.2c-.12.12-.25.25-.36.37-58.566 58.892-59.387 154.781.36 214.59a152.454 152.454 0 0 0 20.521 17.196c6.402 4.468 15.064 3.789 20.584-1.731l21.054-21.055c8.35-8.35 12.094-19.239 11.698-29.806a16.037 16.037 0 0 0-6.947-12.606c-2.912-2.005-6.64-4.875-10.341-8.569-28.073-28.073-28.191-73.639 0-101.83l67.2-67.19c28.239-28.239 74.3-28.069 102.325.51 27.75 28.3 26.872 73.934-1.155 101.96l-13.087 13.087c-4.35 4.35-5.769 10.79-3.783 16.612 5.864 17.194 9.042 34.999 9.69 52.721.509 13.906 17.454 20.446 27.294 10.606l37.106-37.106c59.271-59.259 59.271-155.699.001-214.959z"/></svg></a>YarnShuffleService</h2>
 <p>从上面的配置中，可以看到实现类 是 YarnShuffleService。它本质是运行了一个 Spark Rpc 服务，只处理来自 Map 节点和来自 Reduce 节点的请求。</p>
@@ -296,18 +296,14 @@
 </span><span class="lnt">3
 </span><span class="lnt">4
 </span><span class="lnt">5
-</span><span class="lnt">6
-</span><span class="lnt">7
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">RegisterExecutor</span> <span class="kd">extends</span> <span class="n">BlockTransferMessage</span> <span class="o">{</span>
-    <span class="kd">public</span> <span class="kd">final</span> <span class="n">String</span> <span class="n">appId</span><span class="o">;</span>         <span class="c1">// spark application id
-</span><span class="c1"></span>    <span class="kd">public</span> <span class="kd">final</span> <span class="n">String</span> <span class="n">execId</span><span class="o">;</span>        <span class="c1">// executor id
-</span><span class="c1"></span>    <span class="kd">public</span> <span class="kd">final</span> <span class="n">ExecutorShuffleInfo</span> <span class="n">executorInfo</span><span class="o">;</span>    <span class="c1">// 文件路径
-</span><span class="c1"></span><span class="o">}</span>
-
-
-</code></pre></td></tr></table></div>
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">RegisterExecutor</span> <span class="kd">extends</span> <span class="n">BlockTransferMessage</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">    <span class="kd">public</span> <span class="kd">final</span> <span class="n">String</span> <span class="n">appId</span><span class="o">;</span>         <span class="c1">// spark application id
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="kd">public</span> <span class="kd">final</span> <span class="n">String</span> <span class="n">execId</span><span class="o">;</span>        <span class="c1">// executor id
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="kd">public</span> <span class="kd">final</span> <span class="n">ExecutorShuffleInfo</span> <span class="n">executorInfo</span><span class="o">;</span>    <span class="c1">// 文件路径
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="o">}</span>
+</span></span></code></pre></td></tr></table></div>
 </div>
 </div><p>因为 ExternalShuffleService 是为同个主机上所有 Executor 服务的，而这台主机上可能同时运行多个 spark 程序，所以需要 appId 用来区分。execId 是用来区分 Executor 节点的。executorInfo 是用来指定数据存储的目录。</p>
 <p>继续看看文件路径是怎么定义的</p>
@@ -321,13 +317,13 @@
 </span><span class="lnt">6
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">ExecutorShuffleInfo</span> <span class="kd">implements</span> <span class="n">Encodable</span> <span class="o">{</span>
-    
-    <span class="kd">public</span> <span class="kd">final</span> <span class="n">String</span><span class="o">[]</span> <span class="n">localDirs</span><span class="o">;</span>         <span class="c1">// 第一级目录列表
-</span><span class="c1"></span>    <span class="kd">public</span> <span class="kd">final</span> <span class="kt">int</span> <span class="n">subDirsPerLocalDir</span><span class="o">;</span>     <span class="c1">// 第二级目录列表
-</span><span class="c1"></span>    <span class="kd">public</span> <span class="kd">final</span> <span class="n">String</span> <span class="n">shuffleManager</span><span class="o">;</span>      <span class="c1">// shuffleManager的类型，目前只有一种类型 SortShuffleManager
-</span><span class="c1"></span><span class="o">}</span>
-</code></pre></td></tr></table></div>
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">ExecutorShuffleInfo</span> <span class="kd">implements</span> <span class="n">Encodable</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">    
+</span></span><span class="line"><span class="cl">    <span class="kd">public</span> <span class="kd">final</span> <span class="n">String</span><span class="o">[]</span> <span class="n">localDirs</span><span class="o">;</span>         <span class="c1">// 第一级目录列表
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="kd">public</span> <span class="kd">final</span> <span class="kt">int</span> <span class="n">subDirsPerLocalDir</span><span class="o">;</span>     <span class="c1">// 第二级目录列表
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="kd">public</span> <span class="kd">final</span> <span class="n">String</span> <span class="n">shuffleManager</span><span class="o">;</span>      <span class="c1">// shuffleManager的类型，目前只有一种类型 SortShuffleManager
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="o">}</span>
+</span></span></code></pre></td></tr></table></div>
 </div>
 </div><p>上面只是定义了两级目录，如果想要了解它的含义，就必须了解 shuffle 数据存储位置的规则。</p>
 <p>Executor 在 存储 shuffle 数据时，是将它存放在分散的目录，分散的目录是根据文件名的哈希值来确定的。分散的目的是防止单个目录下文件数目过大，造成寻找文件的延迟增大。</p>
@@ -345,12 +341,12 @@
 </span><span class="lnt">5
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">OpenBlocks</span> <span class="kd">extends</span> <span class="n">BlockTransferMessage</span> <span class="o">{</span>
-    <span class="kd">public</span> <span class="kd">final</span> <span class="n">String</span> <span class="n">appId</span><span class="o">;</span>    <span class="c1">// spark application id
-</span><span class="c1"></span>    <span class="kd">public</span> <span class="kd">final</span> <span class="n">String</span> <span class="n">execId</span><span class="o">;</span>   <span class="c1">// executor id
-</span><span class="c1"></span>    <span class="kd">public</span> <span class="kd">final</span> <span class="n">String</span><span class="o">[]</span> <span class="n">blockIds</span><span class="o">;</span>    <span class="c1">// 包含shuffleId，mapId，reduceId 的字符串列表
-</span><span class="c1"></span><span class="o">}</span>
-</code></pre></td></tr></table></div>
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">OpenBlocks</span> <span class="kd">extends</span> <span class="n">BlockTransferMessage</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">    <span class="kd">public</span> <span class="kd">final</span> <span class="n">String</span> <span class="n">appId</span><span class="o">;</span>    <span class="c1">// spark application id
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="kd">public</span> <span class="kd">final</span> <span class="n">String</span> <span class="n">execId</span><span class="o">;</span>   <span class="c1">// executor id
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="kd">public</span> <span class="kd">final</span> <span class="n">String</span><span class="o">[]</span> <span class="n">blockIds</span><span class="o">;</span>    <span class="c1">// 包含shuffleId，mapId，reduceId 的字符串列表
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="o">}</span>
+</span></span></code></pre></td></tr></table></div>
 </div>
 </div><p>YarnShuffleService 会根据请求的数据，找到对应的文件路径，并且根据 reduceId 从索引文件中，找到数据所在的文件偏移值。</p>
 <h3 id="数据传输请求"><a href="#数据传输请求" class="anchor-link"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon anchor-icon"><path d="M326.612 185.391c59.747 59.809 58.927 155.698.36 214.59-.11.12-.24.25-.36.37l-67.2 67.2c-59.27 59.27-155.699 59.262-214.96 0-59.27-59.26-59.27-155.7 0-214.96l37.106-37.106c9.84-9.84 26.786-3.3 27.294 10.606.648 17.722 3.826 35.527 9.69 52.721 1.986 5.822.567 12.262-3.783 16.612l-13.087 13.087c-28.026 28.026-28.905 73.66-1.155 101.96 28.024 28.579 74.086 28.749 102.325.51l67.2-67.19c28.191-28.191 28.073-73.757 0-101.83-3.701-3.694-7.429-6.564-10.341-8.569a16.037 16.037 0 0 1-6.947-12.606c-.396-10.567 3.348-21.456 11.698-29.806l21.054-21.055c5.521-5.521 14.182-6.199 20.584-1.731a152.482 152.482 0 0 1 20.522 17.197zM467.547 44.449c-59.261-59.262-155.69-59.27-214.96 0l-67.2 67.2c-.12.12-.25.25-.36.37-58.566 58.892-59.387 154.781.36 214.59a152.454 152.454 0 0 0 20.521 17.196c6.402 4.468 15.064 3.789 20.584-1.731l21.054-21.055c8.35-8.35 12.094-19.239 11.698-29.806a16.037 16.037 0 0 0-6.947-12.606c-2.912-2.005-6.64-4.875-10.341-8.569-28.073-28.073-28.191-73.639 0-101.83l67.2-67.19c28.239-28.239 74.3-28.069 102.325.51 27.75 28.3 26.872 73.934-1.155 101.96l-13.087 13.087c-4.35 4.35-5.769 10.79-3.783 16.612 5.864 17.194 9.042 34.999 9.69 52.721.509 13.906 17.454 20.446 27.294 10.606l37.106-37.106c59.271-59.259 59.271-155.699.001-214.959z"/></svg></a>数据传输请求</h3>
@@ -382,9 +378,9 @@
 
         
     <div class="updated-badge-container">
-        <span title="Updated @ 2021-10-22 14:44:34 CST" style="cursor:help">
+        <span title="Updated @ 2023-07-02 16:59:09 CST" style="cursor:help">
 
-<svg xmlns="http://www.w3.org/2000/svg" width="130" height="20" class="updated-badge"><linearGradient id="b" x2="0" y2="100%"><stop offset="0" stop-color="#bbb" stop-opacity=".1"/><stop offset="1" stop-opacity=".1"/></linearGradient><clipPath id="a"><rect width="130" height="20" rx="3" fill="#fff"/></clipPath><g clip-path="url(#a)"><path class="updated-badge-left" d="M0 0h55v20H0z"/><path class="updated-badge-right" d="M55 0h75v20H55z"/><path fill="url(#b)" d="M0 0h130v20H0z"/></g><g fill="#fff" text-anchor="middle" font-size="110"><text x="285" y="150" fill="#010101" fill-opacity=".3" textLength="450" transform="scale(.1)">updated</text><text x="285" y="140" textLength="450" transform="scale(.1)">updated</text><text x="915" y="150" fill="#010101" fill-opacity=".3" textLength="650" transform="scale(.1)">2021-10-22</text><text x="915" y="140" textLength="650" transform="scale(.1)">2021-10-22</text></g></svg>
+<svg xmlns="http://www.w3.org/2000/svg" width="130" height="20" class="updated-badge"><linearGradient id="b" x2="0" y2="100%"><stop offset="0" stop-color="#bbb" stop-opacity=".1"/><stop offset="1" stop-opacity=".1"/></linearGradient><clipPath id="a"><rect width="130" height="20" rx="3" fill="#fff"/></clipPath><g clip-path="url(#a)"><path class="updated-badge-left" d="M0 0h55v20H0z"/><path class="updated-badge-right" d="M55 0h75v20H55z"/><path fill="url(#b)" d="M0 0h130v20H0z"/></g><g fill="#fff" text-anchor="middle" font-size="110"><text x="285" y="150" fill="#010101" fill-opacity=".3" textLength="450" transform="scale(.1)">updated</text><text x="285" y="140" textLength="450" transform="scale(.1)">updated</text><text x="915" y="150" fill="#010101" fill-opacity=".3" textLength="650" transform="scale(.1)">2023-07-02</text><text x="915" y="140" textLength="650" transform="scale(.1)">2023-07-02</text></g></svg>
         </span></div>
 
 

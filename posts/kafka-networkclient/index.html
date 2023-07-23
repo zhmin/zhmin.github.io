@@ -3,7 +3,7 @@
     <head prefix="og: http://ogp.me/ns# article: http://ogp.me/ns/article#">
     <meta charset="UTF-8" />
 
-    <meta name="generator" content="Hugo 0.88.1" /><meta name="theme-color" content="#fff" />
+    <meta name="generator" content="Hugo 0.115.0"><meta name="theme-color" content="#fff" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     
     <meta name="format-detection" content="telephone=no, date=no, address=no, email=no" />
@@ -14,11 +14,11 @@
 
     <title>Kafka NetworkClient 原理 | 学习笔记</title>
 
-    <link rel="stylesheet" href="/css/meme.min.2d3e1834af2bc8dda20c7d74aaa1d8134845094441b7a554a5206ccd4b472596.css"/>
+    <link rel="stylesheet" href="/css/meme.min.91e7f58f97e1c60563ef481c38d9684fa8099537801d6f17bbfc724121e7d8f1.css"/>
 
     
     
-        <script src="/js/meme.min.800f61672145711eb3e1f29fcfcc3dbe0139dd459259718b611a0390f74703d1.js"></script>
+        <script src="/js/meme.min.3210a00c2fdcf6f831170b681b8ee40f83f0224663661e986872616aec45407f.js"></script>
 
     
 
@@ -54,7 +54,7 @@
         "@context": "https://schema.org",
         "@type": "BlogPosting",
         "datePublished": "2019-03-06T00:53:10+00:00",
-        "dateModified": "2021-10-22T14:44:34+08:00",
+        "dateModified": "2023-07-02T16:59:09+08:00",
         "url": "https://zhmin.github.io/posts/kafka-networkclient/",
         "headline": "Kafka NetworkClient 原理",
         "description": "Kafka NetworkClient 原理 Kafka的所有消息，都是通过NetworkClient发送消息。无论是Kafka的生产者，还是Kakfa的消费者，都会包含NetworkClient，才能将请求发送出去。 客户使用Networ……",
@@ -98,7 +98,7 @@
 <meta property="og:locale" content="zh" /><meta property="og:image" content="https://zhmin.github.io/kafka-networkclient-flow.svg" />
 <meta property="og:type" content="article" />
     <meta property="article:published_time" content="2019-03-06T00:53:10&#43;00:00" />
-    <meta property="article:modified_time" content="2021-10-22T14:44:34&#43;08:00" />
+    <meta property="article:modified_time" content="2023-07-02T16:59:09&#43;08:00" />
     
     <meta property="article:section" content="posts" />
 
@@ -311,58 +311,58 @@
 </span><span class="lnt">51
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">NetworkClient</span> <span class="kd">implements</span> <span class="n">KafkaClient</span> <span class="o">{</span>
-    
-    <span class="c1">// Kafka的Selector，用来异步发送网络数据
-</span><span class="c1"></span>    <span class="kd">private</span> <span class="kd">final</span> <span class="n">Selectable</span> <span class="n">selector</span><span class="o">;</span>  
-    <span class="c1">// 保存与每个节点的连接状态
-</span><span class="c1"></span>    <span class="kd">private</span> <span class="kd">final</span> <span class="n">ClusterConnectionStates</span> <span class="n">connectionStates</span><span class="o">;</span>
-
-    <span class="kd">public</span> <span class="kt">boolean</span> <span class="nf">ready</span><span class="o">(</span><span class="n">Node</span> <span class="n">node</span><span class="o">,</span> <span class="kt">long</span> <span class="n">now</span><span class="o">)</span> <span class="o">{</span>
-        <span class="k">if</span> <span class="o">(</span><span class="n">node</span><span class="o">.</span><span class="na">isEmpty</span><span class="o">())</span>
-            <span class="k">throw</span> <span class="k">new</span> <span class="n">IllegalArgumentException</span><span class="o">(</span><span class="s">&#34;Cannot connect to empty node &#34;</span> <span class="o">+</span> <span class="n">node</span><span class="o">);</span>
-        <span class="c1">// 判断是否允许发送请求
-</span><span class="c1"></span>        <span class="k">if</span> <span class="o">(</span><span class="n">isReady</span><span class="o">(</span><span class="n">node</span><span class="o">,</span> <span class="n">now</span><span class="o">))</span>
-            <span class="k">return</span> <span class="kc">true</span><span class="o">;</span>
-
-        <span class="k">if</span> <span class="o">(</span><span class="n">connectionStates</span><span class="o">.</span><span class="na">canConnect</span><span class="o">(</span><span class="n">node</span><span class="o">.</span><span class="na">idString</span><span class="o">(),</span> <span class="n">now</span><span class="o">))</span>
-            <span class="n">initiateConnect</span><span class="o">(</span><span class="n">node</span><span class="o">,</span> <span class="n">now</span><span class="o">);</span>
-
-        <span class="k">return</span> <span class="kc">false</span><span class="o">;</span>
-    <span class="o">}</span>
-
-    <span class="nd">@Override</span>
-    <span class="kd">public</span> <span class="kt">boolean</span> <span class="nf">isReady</span><span class="o">(</span><span class="n">Node</span> <span class="n">node</span><span class="o">,</span> <span class="kt">long</span> <span class="n">now</span><span class="o">)</span> <span class="o">{</span>
-        <span class="c1">// 当发现正在更新元数据时，会禁止发送请求。因为有可能集群的节点挂了，只有获取完元数据才能知道
-</span><span class="c1"></span>        <span class="c1">// 当连接没有创建完毕或者当前发送的请求过多时，也会禁止发送请求
-</span><span class="c1"></span>        <span class="k">return</span> <span class="o">!</span><span class="n">metadataUpdater</span><span class="o">.</span><span class="na">isUpdateDue</span><span class="o">(</span><span class="n">now</span><span class="o">)</span> <span class="o">&amp;&amp;</span> <span class="n">canSendRequest</span><span class="o">(</span><span class="n">node</span><span class="o">.</span><span class="na">idString</span><span class="o">());</span>
-    <span class="o">}</span>    
-    
-    <span class="c1">// 检测连接状态，检测发送请求是否过多
-</span><span class="c1"></span>    <span class="kd">private</span> <span class="kt">boolean</span> <span class="nf">canSendRequest</span><span class="o">(</span><span class="n">String</span> <span class="n">node</span><span class="o">)</span> <span class="o">{</span>
-        <span class="k">return</span> <span class="n">connectionStates</span><span class="o">.</span><span class="na">isReady</span><span class="o">(</span><span class="n">node</span><span class="o">)</span> <span class="o">&amp;&amp;</span> <span class="n">selector</span><span class="o">.</span><span class="na">isChannelReady</span><span class="o">(</span><span class="n">node</span><span class="o">)</span> <span class="o">&amp;&amp;</span> <span class="n">inFlightRequests</span><span class="o">.</span><span class="na">canSendMore</span><span class="o">(</span><span class="n">node</span><span class="o">);</span>
-    <span class="o">}</span>
-    
-    <span class="c1">// 创建连接
-</span><span class="c1"></span>    <span class="kd">private</span> <span class="kt">void</span> <span class="nf">initiateConnect</span><span class="o">(</span><span class="n">Node</span> <span class="n">node</span><span class="o">,</span> <span class="kt">long</span> <span class="n">now</span><span class="o">)</span> <span class="o">{</span>
-        <span class="n">String</span> <span class="n">nodeConnectionId</span> <span class="o">=</span> <span class="n">node</span><span class="o">.</span><span class="na">idString</span><span class="o">();</span>
-        <span class="k">try</span> <span class="o">{</span>
-            <span class="c1">// 更新连接状态为正在连接
-</span><span class="c1"></span>            <span class="k">this</span><span class="o">.</span><span class="na">connectionStates</span><span class="o">.</span><span class="na">connecting</span><span class="o">(</span><span class="n">nodeConnectionId</span><span class="o">,</span> <span class="n">now</span><span class="o">);</span>
-            <span class="c1">// 调用selector异步连接
-</span><span class="c1"></span>            <span class="n">selector</span><span class="o">.</span><span class="na">connect</span><span class="o">(</span><span class="n">nodeConnectionId</span><span class="o">,</span>
-                             <span class="k">new</span> <span class="n">InetSocketAddress</span><span class="o">(</span><span class="n">node</span><span class="o">.</span><span class="na">host</span><span class="o">(),</span> <span class="n">node</span><span class="o">.</span><span class="na">port</span><span class="o">()),</span>
-                             <span class="k">this</span><span class="o">.</span><span class="na">socketSendBuffer</span><span class="o">,</span>
-                             <span class="k">this</span><span class="o">.</span><span class="na">socketReceiveBuffer</span><span class="o">);</span>
-        <span class="o">}</span> <span class="k">catch</span> <span class="o">(</span><span class="n">IOException</span> <span class="n">e</span><span class="o">)</span> <span class="o">{</span>
-            <span class="cm">/* attempt failed, we&#39;ll try again after the backoff */</span>
-            <span class="n">connectionStates</span><span class="o">.</span><span class="na">disconnected</span><span class="o">(</span><span class="n">nodeConnectionId</span><span class="o">,</span> <span class="n">now</span><span class="o">);</span>
-            <span class="cm">/* maybe the problem is our metadata, update it */</span>
-            <span class="n">metadataUpdater</span><span class="o">.</span><span class="na">requestUpdate</span><span class="o">();</span>
-        <span class="o">}</span>
-    <span class="o">}</span>
-<span class="o">}</span>
-</code></pre></td></tr></table></div>
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">NetworkClient</span> <span class="kd">implements</span> <span class="n">KafkaClient</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">    
+</span></span><span class="line"><span class="cl">    <span class="c1">// Kafka的Selector，用来异步发送网络数据
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="kd">private</span> <span class="kd">final</span> <span class="n">Selectable</span> <span class="n">selector</span><span class="o">;</span>  
+</span></span><span class="line"><span class="cl">    <span class="c1">// 保存与每个节点的连接状态
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="kd">private</span> <span class="kd">final</span> <span class="n">ClusterConnectionStates</span> <span class="n">connectionStates</span><span class="o">;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="kd">public</span> <span class="kt">boolean</span> <span class="nf">ready</span><span class="o">(</span><span class="n">Node</span> <span class="n">node</span><span class="o">,</span> <span class="kt">long</span> <span class="n">now</span><span class="o">)</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">        <span class="k">if</span> <span class="o">(</span><span class="n">node</span><span class="o">.</span><span class="na">isEmpty</span><span class="o">())</span>
+</span></span><span class="line"><span class="cl">            <span class="k">throw</span> <span class="k">new</span> <span class="n">IllegalArgumentException</span><span class="o">(</span><span class="s">&#34;Cannot connect to empty node &#34;</span> <span class="o">+</span> <span class="n">node</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">        <span class="c1">// 判断是否允许发送请求
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>        <span class="k">if</span> <span class="o">(</span><span class="n">isReady</span><span class="o">(</span><span class="n">node</span><span class="o">,</span> <span class="n">now</span><span class="o">))</span>
+</span></span><span class="line"><span class="cl">            <span class="k">return</span> <span class="kc">true</span><span class="o">;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">        <span class="k">if</span> <span class="o">(</span><span class="n">connectionStates</span><span class="o">.</span><span class="na">canConnect</span><span class="o">(</span><span class="n">node</span><span class="o">.</span><span class="na">idString</span><span class="o">(),</span> <span class="n">now</span><span class="o">))</span>
+</span></span><span class="line"><span class="cl">            <span class="n">initiateConnect</span><span class="o">(</span><span class="n">node</span><span class="o">,</span> <span class="n">now</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">        <span class="k">return</span> <span class="kc">false</span><span class="o">;</span>
+</span></span><span class="line"><span class="cl">    <span class="o">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="nd">@Override</span>
+</span></span><span class="line"><span class="cl">    <span class="kd">public</span> <span class="kt">boolean</span> <span class="nf">isReady</span><span class="o">(</span><span class="n">Node</span> <span class="n">node</span><span class="o">,</span> <span class="kt">long</span> <span class="n">now</span><span class="o">)</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">        <span class="c1">// 当发现正在更新元数据时，会禁止发送请求。因为有可能集群的节点挂了，只有获取完元数据才能知道
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>        <span class="c1">// 当连接没有创建完毕或者当前发送的请求过多时，也会禁止发送请求
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>        <span class="k">return</span> <span class="o">!</span><span class="n">metadataUpdater</span><span class="o">.</span><span class="na">isUpdateDue</span><span class="o">(</span><span class="n">now</span><span class="o">)</span> <span class="o">&amp;&amp;</span> <span class="n">canSendRequest</span><span class="o">(</span><span class="n">node</span><span class="o">.</span><span class="na">idString</span><span class="o">());</span>
+</span></span><span class="line"><span class="cl">    <span class="o">}</span>    
+</span></span><span class="line"><span class="cl">    
+</span></span><span class="line"><span class="cl">    <span class="c1">// 检测连接状态，检测发送请求是否过多
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="kd">private</span> <span class="kt">boolean</span> <span class="nf">canSendRequest</span><span class="o">(</span><span class="n">String</span> <span class="n">node</span><span class="o">)</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">        <span class="k">return</span> <span class="n">connectionStates</span><span class="o">.</span><span class="na">isReady</span><span class="o">(</span><span class="n">node</span><span class="o">)</span> <span class="o">&amp;&amp;</span> <span class="n">selector</span><span class="o">.</span><span class="na">isChannelReady</span><span class="o">(</span><span class="n">node</span><span class="o">)</span> <span class="o">&amp;&amp;</span> <span class="n">inFlightRequests</span><span class="o">.</span><span class="na">canSendMore</span><span class="o">(</span><span class="n">node</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">    <span class="o">}</span>
+</span></span><span class="line"><span class="cl">    
+</span></span><span class="line"><span class="cl">    <span class="c1">// 创建连接
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="kd">private</span> <span class="kt">void</span> <span class="nf">initiateConnect</span><span class="o">(</span><span class="n">Node</span> <span class="n">node</span><span class="o">,</span> <span class="kt">long</span> <span class="n">now</span><span class="o">)</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">        <span class="n">String</span> <span class="n">nodeConnectionId</span> <span class="o">=</span> <span class="n">node</span><span class="o">.</span><span class="na">idString</span><span class="o">();</span>
+</span></span><span class="line"><span class="cl">        <span class="k">try</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">            <span class="c1">// 更新连接状态为正在连接
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>            <span class="k">this</span><span class="o">.</span><span class="na">connectionStates</span><span class="o">.</span><span class="na">connecting</span><span class="o">(</span><span class="n">nodeConnectionId</span><span class="o">,</span> <span class="n">now</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">            <span class="c1">// 调用selector异步连接
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>            <span class="n">selector</span><span class="o">.</span><span class="na">connect</span><span class="o">(</span><span class="n">nodeConnectionId</span><span class="o">,</span>
+</span></span><span class="line"><span class="cl">                             <span class="k">new</span> <span class="n">InetSocketAddress</span><span class="o">(</span><span class="n">node</span><span class="o">.</span><span class="na">host</span><span class="o">(),</span> <span class="n">node</span><span class="o">.</span><span class="na">port</span><span class="o">()),</span>
+</span></span><span class="line"><span class="cl">                             <span class="k">this</span><span class="o">.</span><span class="na">socketSendBuffer</span><span class="o">,</span>
+</span></span><span class="line"><span class="cl">                             <span class="k">this</span><span class="o">.</span><span class="na">socketReceiveBuffer</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">        <span class="o">}</span> <span class="k">catch</span> <span class="o">(</span><span class="n">IOException</span> <span class="n">e</span><span class="o">)</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">            <span class="cm">/* attempt failed, we&#39;ll try again after the backoff */</span>
+</span></span><span class="line"><span class="cl">            <span class="n">connectionStates</span><span class="o">.</span><span class="na">disconnected</span><span class="o">(</span><span class="n">nodeConnectionId</span><span class="o">,</span> <span class="n">now</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">            <span class="cm">/* maybe the problem is our metadata, update it */</span>
+</span></span><span class="line"><span class="cl">            <span class="n">metadataUpdater</span><span class="o">.</span><span class="na">requestUpdate</span><span class="o">();</span>
+</span></span><span class="line"><span class="cl">        <span class="o">}</span>
+</span></span><span class="line"><span class="cl">    <span class="o">}</span>
+</span></span><span class="line"><span class="cl"><span class="o">}</span>
+</span></span></code></pre></td></tr></table></div>
 </div>
 </div><p>上面讲述了如何建立socket连接，当socket连接建立后，NetworkClient还需要请求服务端的版本号。</p>
 <p>poll 方法会调用 handleConnections处理连接，并且会创建版本请求。</p>
@@ -394,31 +394,31 @@
 </span><span class="lnt">24
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">NetworkClient</span> <span class="kd">implements</span> <span class="n">KafkaClient</span> <span class="o">{</span>
-    
-    <span class="c1">// Kafka的Selector，用来异步发送网络数据
-</span><span class="c1"></span>    <span class="kd">private</span> <span class="kd">final</span> <span class="n">Selectable</span> <span class="n">selector</span><span class="o">;</span>    
-    <span class="c1">// 是否需要与服务器的版本协调，默认都为true
-</span><span class="c1"></span>    <span class="kd">private</span> <span class="kd">final</span> <span class="kt">boolean</span> <span class="n">discoverBrokerVersions</span><span class="o">;</span>
-    <span class="c1">// 存储着要发送的版本请求，Key为主机地址，Value为构建请求的Builder
-</span><span class="c1"></span>    <span class="kd">private</span> <span class="kd">final</span> <span class="n">Map</span><span class="o">&lt;</span><span class="n">String</span><span class="o">,</span> <span class="n">ApiVersionsRequest</span><span class="o">.</span><span class="na">Builder</span><span class="o">&gt;</span> <span class="n">nodesNeedingApiVersionsFetch</span> <span class="o">=</span> <span class="k">new</span> <span class="n">HashMap</span><span class="o">&lt;&gt;();</span>
-    
-    <span class="c1">// 处理连接
-</span><span class="c1"></span>    <span class="kd">private</span> <span class="kt">void</span> <span class="nf">handleConnections</span><span class="o">()</span> <span class="o">{</span>
-        <span class="c1">// 遍历刚创建完成的连接
-</span><span class="c1"></span>        <span class="k">for</span> <span class="o">(</span><span class="n">String</span> <span class="n">node</span> <span class="o">:</span> <span class="k">this</span><span class="o">.</span><span class="na">selector</span><span class="o">.</span><span class="na">connected</span><span class="o">())</span> <span class="o">{</span>
-            <span class="k">if</span> <span class="o">(</span><span class="n">discoverBrokerVersions</span><span class="o">)</span> <span class="o">{</span>
-                <span class="c1">// 更新连接的状态为版本协调状态
-</span><span class="c1"></span>                <span class="k">this</span><span class="o">.</span><span class="na">connectionStates</span><span class="o">.</span><span class="na">checkingApiVersions</span><span class="o">(</span><span class="n">node</span><span class="o">);</span>
-                <span class="c1">// 将请求保存到nodesNeedingApiVersionsFetch集合里
-</span><span class="c1"></span>                <span class="n">nodesNeedingApiVersionsFetch</span><span class="o">.</span><span class="na">put</span><span class="o">(</span><span class="n">node</span><span class="o">,</span> <span class="k">new</span> <span class="n">ApiVersionsRequest</span><span class="o">.</span><span class="na">Builder</span><span class="o">());</span>
-            <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
-                <span class="k">this</span><span class="o">.</span><span class="na">connectionStates</span><span class="o">.</span><span class="na">ready</span><span class="o">(</span><span class="n">node</span><span class="o">);</span>
-            <span class="o">}</span>
-        <span class="o">}</span>
-    <span class="o">}</span>
-<span class="o">}</span>
-</code></pre></td></tr></table></div>
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">NetworkClient</span> <span class="kd">implements</span> <span class="n">KafkaClient</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">    
+</span></span><span class="line"><span class="cl">    <span class="c1">// Kafka的Selector，用来异步发送网络数据
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="kd">private</span> <span class="kd">final</span> <span class="n">Selectable</span> <span class="n">selector</span><span class="o">;</span>    
+</span></span><span class="line"><span class="cl">    <span class="c1">// 是否需要与服务器的版本协调，默认都为true
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="kd">private</span> <span class="kd">final</span> <span class="kt">boolean</span> <span class="n">discoverBrokerVersions</span><span class="o">;</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// 存储着要发送的版本请求，Key为主机地址，Value为构建请求的Builder
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="kd">private</span> <span class="kd">final</span> <span class="n">Map</span><span class="o">&lt;</span><span class="n">String</span><span class="o">,</span> <span class="n">ApiVersionsRequest</span><span class="o">.</span><span class="na">Builder</span><span class="o">&gt;</span> <span class="n">nodesNeedingApiVersionsFetch</span> <span class="o">=</span> <span class="k">new</span> <span class="n">HashMap</span><span class="o">&lt;&gt;();</span>
+</span></span><span class="line"><span class="cl">    
+</span></span><span class="line"><span class="cl">    <span class="c1">// 处理连接
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="kd">private</span> <span class="kt">void</span> <span class="nf">handleConnections</span><span class="o">()</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">        <span class="c1">// 遍历刚创建完成的连接
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>        <span class="k">for</span> <span class="o">(</span><span class="n">String</span> <span class="n">node</span> <span class="o">:</span> <span class="k">this</span><span class="o">.</span><span class="na">selector</span><span class="o">.</span><span class="na">connected</span><span class="o">())</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">            <span class="k">if</span> <span class="o">(</span><span class="n">discoverBrokerVersions</span><span class="o">)</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">                <span class="c1">// 更新连接的状态为版本协调状态
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>                <span class="k">this</span><span class="o">.</span><span class="na">connectionStates</span><span class="o">.</span><span class="na">checkingApiVersions</span><span class="o">(</span><span class="n">node</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">                <span class="c1">// 将请求保存到nodesNeedingApiVersionsFetch集合里
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>                <span class="n">nodesNeedingApiVersionsFetch</span><span class="o">.</span><span class="na">put</span><span class="o">(</span><span class="n">node</span><span class="o">,</span> <span class="k">new</span> <span class="n">ApiVersionsRequest</span><span class="o">.</span><span class="na">Builder</span><span class="o">());</span>
+</span></span><span class="line"><span class="cl">            <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">                <span class="k">this</span><span class="o">.</span><span class="na">connectionStates</span><span class="o">.</span><span class="na">ready</span><span class="o">(</span><span class="n">node</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">            <span class="o">}</span>
+</span></span><span class="line"><span class="cl">        <span class="o">}</span>
+</span></span><span class="line"><span class="cl">    <span class="o">}</span>
+</span></span><span class="line"><span class="cl"><span class="o">}</span>
+</span></span></code></pre></td></tr></table></div>
 </div>
 </div><p>创建完版本请求，接下来看看是如何发送请求和处理响应的。poll方法会调用handleInitiateApiVersionRequests发送版本协调请求，然后调用handleApiVersionsResponse负责处理响应。</p>
 <div class="highlight"><div class="chroma">
@@ -458,40 +458,40 @@
 </span><span class="lnt">33
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="c1">// 发送版本协调请求
-</span><span class="c1"></span><span class="kd">private</span> <span class="kt">void</span> <span class="nf">handleInitiateApiVersionRequests</span><span class="o">(</span><span class="kt">long</span> <span class="n">now</span><span class="o">)</span> <span class="o">{</span>
-    <span class="c1">// 遍历请求集合nodesNeedingApiVersionsFetch
-</span><span class="c1"></span>    <span class="n">Iterator</span><span class="o">&lt;</span><span class="n">Map</span><span class="o">.</span><span class="na">Entry</span><span class="o">&lt;</span><span class="n">String</span><span class="o">,</span> <span class="n">ApiVersionsRequest</span><span class="o">.</span><span class="na">Builder</span><span class="o">&gt;&gt;</span> <span class="n">iter</span> <span class="o">=</span> <span class="n">nodesNeedingApiVersionsFetch</span><span class="o">.</span><span class="na">entrySet</span><span class="o">().</span><span class="na">iterator</span><span class="o">();</span>
-    <span class="k">while</span> <span class="o">(</span><span class="n">iter</span><span class="o">.</span><span class="na">hasNext</span><span class="o">())</span> <span class="o">{</span>
-        <span class="n">Map</span><span class="o">.</span><span class="na">Entry</span><span class="o">&lt;</span><span class="n">String</span><span class="o">,</span> <span class="n">ApiVersionsRequest</span><span class="o">.</span><span class="na">Builder</span><span class="o">&gt;</span> <span class="n">entry</span> <span class="o">=</span> <span class="n">iter</span><span class="o">.</span><span class="na">next</span><span class="o">();</span>
-        <span class="n">String</span> <span class="n">node</span> <span class="o">=</span> <span class="n">entry</span><span class="o">.</span><span class="na">getKey</span><span class="o">();</span>
-        <span class="c1">// 判断是否允许发送请求
-</span><span class="c1"></span>        <span class="k">if</span> <span class="o">(</span><span class="n">selector</span><span class="o">.</span><span class="na">isChannelReady</span><span class="o">(</span><span class="n">node</span><span class="o">)</span> <span class="o">&amp;&amp;</span> <span class="n">inFlightRequests</span><span class="o">.</span><span class="na">canSendMore</span><span class="o">(</span><span class="n">node</span><span class="o">))</span> <span class="o">{</span>
-            <span class="n">ApiVersionsRequest</span><span class="o">.</span><span class="na">Builder</span> <span class="n">apiVersionRequestBuilder</span> <span class="o">=</span> <span class="n">entry</span><span class="o">.</span><span class="na">getValue</span><span class="o">();</span>
-            <span class="c1">// 调用newClientRequest生成请求
-</span><span class="c1"></span>            <span class="n">ClientRequest</span> <span class="n">clientRequest</span> <span class="o">=</span> <span class="n">newClientRequest</span><span class="o">(</span><span class="n">node</span><span class="o">,</span> <span class="n">apiVersionRequestBuilder</span><span class="o">,</span> <span class="n">now</span><span class="o">,</span> <span class="kc">true</span><span class="o">);</span>
-            <span class="c1">// 发送请求
-</span><span class="c1"></span>            <span class="n">doSend</span><span class="o">(</span><span class="n">clientRequest</span><span class="o">,</span> <span class="kc">true</span><span class="o">,</span> <span class="n">now</span><span class="o">);</span>
-            <span class="n">iter</span><span class="o">.</span><span class="na">remove</span><span class="o">();</span>
-        <span class="o">}</span>
-    <span class="o">}</span>
-<span class="o">}</span>
-
-<span class="c1">// 处理版本协调响应
-</span><span class="c1"></span><span class="kd">private</span> <span class="kt">void</span> <span class="nf">handleApiVersionsResponse</span><span class="o">(</span><span class="n">List</span><span class="o">&lt;</span><span class="n">ClientResponse</span><span class="o">&gt;</span> <span class="n">responses</span><span class="o">,</span>
-                                       <span class="n">InFlightRequest</span> <span class="n">req</span><span class="o">,</span> <span class="kt">long</span> <span class="n">now</span><span class="o">,</span> <span class="n">ApiVersionsResponse</span> <span class="n">apiVersionsResponse</span><span class="o">)</span> <span class="o">{</span>
-    <span class="kd">final</span> <span class="n">String</span> <span class="n">node</span> <span class="o">=</span> <span class="n">req</span><span class="o">.</span><span class="na">destination</span><span class="o">;</span>
-    <span class="c1">// 判断响应和版本是否协调
-</span><span class="c1"></span>    <span class="k">if</span> <span class="o">(</span><span class="n">apiVersionsResponse</span><span class="o">.</span><span class="na">error</span><span class="o">()</span> <span class="o">!=</span> <span class="n">Errors</span><span class="o">.</span><span class="na">NONE</span><span class="o">)</span> <span class="o">{</span>
-        <span class="c1">// 处理响应异常
-</span><span class="c1"></span>        <span class="o">......</span>
-    <span class="o">}</span>
-    <span class="c1">// 更新连接状态为ready，表示可以发送正式请求了
-</span><span class="c1"></span>    <span class="k">this</span><span class="o">.</span><span class="na">connectionStates</span><span class="o">.</span><span class="na">ready</span><span class="o">(</span><span class="n">node</span><span class="o">);</span>
-
-<span class="o">}</span>
-    
-</code></pre></td></tr></table></div>
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="c1">// 发送版本协调请求
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="kd">private</span> <span class="kt">void</span> <span class="nf">handleInitiateApiVersionRequests</span><span class="o">(</span><span class="kt">long</span> <span class="n">now</span><span class="o">)</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// 遍历请求集合nodesNeedingApiVersionsFetch
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="n">Iterator</span><span class="o">&lt;</span><span class="n">Map</span><span class="o">.</span><span class="na">Entry</span><span class="o">&lt;</span><span class="n">String</span><span class="o">,</span> <span class="n">ApiVersionsRequest</span><span class="o">.</span><span class="na">Builder</span><span class="o">&gt;&gt;</span> <span class="n">iter</span> <span class="o">=</span> <span class="n">nodesNeedingApiVersionsFetch</span><span class="o">.</span><span class="na">entrySet</span><span class="o">().</span><span class="na">iterator</span><span class="o">();</span>
+</span></span><span class="line"><span class="cl">    <span class="k">while</span> <span class="o">(</span><span class="n">iter</span><span class="o">.</span><span class="na">hasNext</span><span class="o">())</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">        <span class="n">Map</span><span class="o">.</span><span class="na">Entry</span><span class="o">&lt;</span><span class="n">String</span><span class="o">,</span> <span class="n">ApiVersionsRequest</span><span class="o">.</span><span class="na">Builder</span><span class="o">&gt;</span> <span class="n">entry</span> <span class="o">=</span> <span class="n">iter</span><span class="o">.</span><span class="na">next</span><span class="o">();</span>
+</span></span><span class="line"><span class="cl">        <span class="n">String</span> <span class="n">node</span> <span class="o">=</span> <span class="n">entry</span><span class="o">.</span><span class="na">getKey</span><span class="o">();</span>
+</span></span><span class="line"><span class="cl">        <span class="c1">// 判断是否允许发送请求
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>        <span class="k">if</span> <span class="o">(</span><span class="n">selector</span><span class="o">.</span><span class="na">isChannelReady</span><span class="o">(</span><span class="n">node</span><span class="o">)</span> <span class="o">&amp;&amp;</span> <span class="n">inFlightRequests</span><span class="o">.</span><span class="na">canSendMore</span><span class="o">(</span><span class="n">node</span><span class="o">))</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">            <span class="n">ApiVersionsRequest</span><span class="o">.</span><span class="na">Builder</span> <span class="n">apiVersionRequestBuilder</span> <span class="o">=</span> <span class="n">entry</span><span class="o">.</span><span class="na">getValue</span><span class="o">();</span>
+</span></span><span class="line"><span class="cl">            <span class="c1">// 调用newClientRequest生成请求
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>            <span class="n">ClientRequest</span> <span class="n">clientRequest</span> <span class="o">=</span> <span class="n">newClientRequest</span><span class="o">(</span><span class="n">node</span><span class="o">,</span> <span class="n">apiVersionRequestBuilder</span><span class="o">,</span> <span class="n">now</span><span class="o">,</span> <span class="kc">true</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">            <span class="c1">// 发送请求
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>            <span class="n">doSend</span><span class="o">(</span><span class="n">clientRequest</span><span class="o">,</span> <span class="kc">true</span><span class="o">,</span> <span class="n">now</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">            <span class="n">iter</span><span class="o">.</span><span class="na">remove</span><span class="o">();</span>
+</span></span><span class="line"><span class="cl">        <span class="o">}</span>
+</span></span><span class="line"><span class="cl">    <span class="o">}</span>
+</span></span><span class="line"><span class="cl"><span class="o">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1">// 处理版本协调响应
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="kd">private</span> <span class="kt">void</span> <span class="nf">handleApiVersionsResponse</span><span class="o">(</span><span class="n">List</span><span class="o">&lt;</span><span class="n">ClientResponse</span><span class="o">&gt;</span> <span class="n">responses</span><span class="o">,</span>
+</span></span><span class="line"><span class="cl">                                       <span class="n">InFlightRequest</span> <span class="n">req</span><span class="o">,</span> <span class="kt">long</span> <span class="n">now</span><span class="o">,</span> <span class="n">ApiVersionsResponse</span> <span class="n">apiVersionsResponse</span><span class="o">)</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">    <span class="kd">final</span> <span class="n">String</span> <span class="n">node</span> <span class="o">=</span> <span class="n">req</span><span class="o">.</span><span class="na">destination</span><span class="o">;</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// 判断响应和版本是否协调
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="k">if</span> <span class="o">(</span><span class="n">apiVersionsResponse</span><span class="o">.</span><span class="na">error</span><span class="o">()</span> <span class="o">!=</span> <span class="n">Errors</span><span class="o">.</span><span class="na">NONE</span><span class="o">)</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">        <span class="c1">// 处理响应异常
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>        <span class="o">......</span>
+</span></span><span class="line"><span class="cl">    <span class="o">}</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// 更新连接状态为ready，表示可以发送正式请求了
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="k">this</span><span class="o">.</span><span class="na">connectionStates</span><span class="o">.</span><span class="na">ready</span><span class="o">(</span><span class="n">node</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="o">}</span>
+</span></span><span class="line"><span class="cl">    
+</span></span></code></pre></td></tr></table></div>
 </div>
 </div><h2 id="生成请求过程"><a href="#生成请求过程" class="anchor-link"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon anchor-icon"><path d="M326.612 185.391c59.747 59.809 58.927 155.698.36 214.59-.11.12-.24.25-.36.37l-67.2 67.2c-59.27 59.27-155.699 59.262-214.96 0-59.27-59.26-59.27-155.7 0-214.96l37.106-37.106c9.84-9.84 26.786-3.3 27.294 10.606.648 17.722 3.826 35.527 9.69 52.721 1.986 5.822.567 12.262-3.783 16.612l-13.087 13.087c-28.026 28.026-28.905 73.66-1.155 101.96 28.024 28.579 74.086 28.749 102.325.51l67.2-67.19c28.191-28.191 28.073-73.757 0-101.83-3.701-3.694-7.429-6.564-10.341-8.569a16.037 16.037 0 0 1-6.947-12.606c-.396-10.567 3.348-21.456 11.698-29.806l21.054-21.055c5.521-5.521 14.182-6.199 20.584-1.731a152.482 152.482 0 0 1 20.522 17.197zM467.547 44.449c-59.261-59.262-155.69-59.27-214.96 0l-67.2 67.2c-.12.12-.25.25-.36.37-58.566 58.892-59.387 154.781.36 214.59a152.454 152.454 0 0 0 20.521 17.196c6.402 4.468 15.064 3.789 20.584-1.731l21.054-21.055c8.35-8.35 12.094-19.239 11.698-29.806a16.037 16.037 0 0 0-6.947-12.606c-2.912-2.005-6.64-4.875-10.341-8.569-28.073-28.073-28.191-73.639 0-101.83l67.2-67.19c28.239-28.239 74.3-28.069 102.325.51 27.75 28.3 26.872 73.934-1.155 101.96l-13.087 13.087c-4.35 4.35-5.769 10.79-3.783 16.612 5.864 17.194 9.042 34.999 9.69 52.721.509 13.906 17.454 20.446 27.294 10.606l37.106-37.106c59.271-59.259 59.271-155.699.001-214.959z"/></svg></a>生成请求过程</h2>
 <p>NetworkClient使用ClientRequest类表示请求，它只是一些属性的集合。</p>
@@ -515,23 +515,23 @@
 </span><span class="lnt">16
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">final</span> <span class="kd">class</span> <span class="nc">ClientRequest</span> <span class="o">{</span>
-    <span class="c1">// 主机地址
-</span><span class="c1"></span>    <span class="kd">private</span> <span class="kd">final</span> <span class="n">String</span> <span class="n">destination</span><span class="o">;</span>
-    <span class="c1">// 请求体的builder
-</span><span class="c1"></span>    <span class="kd">private</span> <span class="kd">final</span> <span class="n">AbstractRequest</span><span class="o">.</span><span class="na">Builder</span><span class="o">&lt;?&gt;</span> <span class="n">requestBuilder</span><span class="o">;</span>
-    <span class="c1">// 请求头的correlation id
-</span><span class="c1"></span>    <span class="kd">private</span> <span class="kd">final</span> <span class="kt">int</span> <span class="n">correlationId</span><span class="o">;</span>
-    <span class="c1">// 请求头的client id
-</span><span class="c1"></span>    <span class="kd">private</span> <span class="kd">final</span> <span class="n">String</span> <span class="n">clientId</span><span class="o">;</span>
-    <span class="c1">// 创建时间
-</span><span class="c1"></span>    <span class="kd">private</span> <span class="kd">final</span> <span class="kt">long</span> <span class="n">createdTimeMs</span><span class="o">;</span>
-    <span class="c1">// 是否需要响应
-</span><span class="c1"></span>    <span class="kd">private</span> <span class="kd">final</span> <span class="kt">boolean</span> <span class="n">expectResponse</span><span class="o">;</span>
-    <span class="c1">// 回调函数，用于处理响应
-</span><span class="c1"></span>    <span class="kd">private</span> <span class="kd">final</span> <span class="n">RequestCompletionHandler</span> <span class="n">callback</span><span class="o">;</span>
-<span class="o">}</span>
-</code></pre></td></tr></table></div>
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="kd">public</span> <span class="kd">final</span> <span class="kd">class</span> <span class="nc">ClientRequest</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// 主机地址
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="kd">private</span> <span class="kd">final</span> <span class="n">String</span> <span class="n">destination</span><span class="o">;</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// 请求体的builder
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="kd">private</span> <span class="kd">final</span> <span class="n">AbstractRequest</span><span class="o">.</span><span class="na">Builder</span><span class="o">&lt;?&gt;</span> <span class="n">requestBuilder</span><span class="o">;</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// 请求头的correlation id
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="kd">private</span> <span class="kd">final</span> <span class="kt">int</span> <span class="n">correlationId</span><span class="o">;</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// 请求头的client id
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="kd">private</span> <span class="kd">final</span> <span class="n">String</span> <span class="n">clientId</span><span class="o">;</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// 创建时间
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="kd">private</span> <span class="kd">final</span> <span class="kt">long</span> <span class="n">createdTimeMs</span><span class="o">;</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// 是否需要响应
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="kd">private</span> <span class="kd">final</span> <span class="kt">boolean</span> <span class="n">expectResponse</span><span class="o">;</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// 回调函数，用于处理响应
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="kd">private</span> <span class="kd">final</span> <span class="n">RequestCompletionHandler</span> <span class="n">callback</span><span class="o">;</span>
+</span></span><span class="line"><span class="cl"><span class="o">}</span>
+</span></span></code></pre></td></tr></table></div>
 </div>
 </div><p>NetworkClient的newClientRequest方法负责生成ClientRequest，它的原理只是简单的实例化ClientRequest</p>
 <div class="highlight"><div class="chroma">
@@ -546,15 +546,15 @@
 </span><span class="lnt">8
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">NetworkClient</span> <span class="kd">implements</span> <span class="n">KafkaClient</span> <span class="o">{</span>
-    <span class="c1">// nodeId是请求地址，requestBuilder是请求体的构造实例
-</span><span class="c1"></span>    <span class="c1">// createdTimeMs是请求创建时间，expectResponse表示是否需要响应
-</span><span class="c1"></span>    <span class="c1">// callback是处理响应的回调函数
-</span><span class="c1"></span>    <span class="kd">public</span> <span class="n">ClientRequest</span> <span class="nf">newClientRequest</span><span class="o">(</span><span class="n">String</span> <span class="n">nodeId</span><span class="o">,</span> <span class="n">AbstractRequest</span><span class="o">.</span><span class="na">Builder</span><span class="o">&lt;?&gt;</span> <span class="n">requestBuilder</span><span class="o">,</span> <span class="kt">long</span> <span class="n">createdTimeMs</span><span class="o">,</span> <span class="kt">boolean</span> <span class="n">expectResponse</span><span class="o">,</span> <span class="n">RequestCompletionHandler</span> <span class="n">callback</span><span class="o">)</span> <span class="o">{</span>
-        <span class="k">return</span> <span class="k">new</span> <span class="n">ClientRequest</span><span class="o">(</span><span class="n">nodeId</span><span class="o">,</span> <span class="n">requestBuilder</span><span class="o">,</span> <span class="n">correlation</span><span class="o">++,</span> <span class="n">clientId</span><span class="o">,</span> <span class="n">createdTimeMs</span><span class="o">,</span> <span class="n">expectResponse</span><span class="o">,</span> <span class="n">callback</span><span class="o">);</span>
-    <span class="o">}</span>
-<span class="o">}</span>
-</code></pre></td></tr></table></div>
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">NetworkClient</span> <span class="kd">implements</span> <span class="n">KafkaClient</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// nodeId是请求地址，requestBuilder是请求体的构造实例
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="c1">// createdTimeMs是请求创建时间，expectResponse表示是否需要响应
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="c1">// callback是处理响应的回调函数
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="kd">public</span> <span class="n">ClientRequest</span> <span class="nf">newClientRequest</span><span class="o">(</span><span class="n">String</span> <span class="n">nodeId</span><span class="o">,</span> <span class="n">AbstractRequest</span><span class="o">.</span><span class="na">Builder</span><span class="o">&lt;?&gt;</span> <span class="n">requestBuilder</span><span class="o">,</span> <span class="kt">long</span> <span class="n">createdTimeMs</span><span class="o">,</span> <span class="kt">boolean</span> <span class="n">expectResponse</span><span class="o">,</span> <span class="n">RequestCompletionHandler</span> <span class="n">callback</span><span class="o">)</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">        <span class="k">return</span> <span class="k">new</span> <span class="n">ClientRequest</span><span class="o">(</span><span class="n">nodeId</span><span class="o">,</span> <span class="n">requestBuilder</span><span class="o">,</span> <span class="n">correlation</span><span class="o">++,</span> <span class="n">clientId</span><span class="o">,</span> <span class="n">createdTimeMs</span><span class="o">,</span> <span class="n">expectResponse</span><span class="o">,</span> <span class="n">callback</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">    <span class="o">}</span>
+</span></span><span class="line"><span class="cl"><span class="o">}</span>
+</span></span></code></pre></td></tr></table></div>
 </div>
 </div><h2 id="发送请求过程"><a href="#发送请求过程" class="anchor-link"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon anchor-icon"><path d="M326.612 185.391c59.747 59.809 58.927 155.698.36 214.59-.11.12-.24.25-.36.37l-67.2 67.2c-59.27 59.27-155.699 59.262-214.96 0-59.27-59.26-59.27-155.7 0-214.96l37.106-37.106c9.84-9.84 26.786-3.3 27.294 10.606.648 17.722 3.826 35.527 9.69 52.721 1.986 5.822.567 12.262-3.783 16.612l-13.087 13.087c-28.026 28.026-28.905 73.66-1.155 101.96 28.024 28.579 74.086 28.749 102.325.51l67.2-67.19c28.191-28.191 28.073-73.757 0-101.83-3.701-3.694-7.429-6.564-10.341-8.569a16.037 16.037 0 0 1-6.947-12.606c-.396-10.567 3.348-21.456 11.698-29.806l21.054-21.055c5.521-5.521 14.182-6.199 20.584-1.731a152.482 152.482 0 0 1 20.522 17.197zM467.547 44.449c-59.261-59.262-155.69-59.27-214.96 0l-67.2 67.2c-.12.12-.25.25-.36.37-58.566 58.892-59.387 154.781.36 214.59a152.454 152.454 0 0 0 20.521 17.196c6.402 4.468 15.064 3.789 20.584-1.731l21.054-21.055c8.35-8.35 12.094-19.239 11.698-29.806a16.037 16.037 0 0 0-6.947-12.606c-2.912-2.005-6.64-4.875-10.341-8.569-28.073-28.073-28.191-73.639 0-101.83l67.2-67.19c28.239-28.239 74.3-28.069 102.325.51 27.75 28.3 26.872 73.934-1.155 101.96l-13.087 13.087c-4.35 4.35-5.769 10.79-3.783 16.612 5.864 17.194 9.042 34.999 9.69 52.721.509 13.906 17.454 20.446 27.294 10.606l37.106-37.106c59.271-59.259 59.271-155.699.001-214.959z"/></svg></a>发送请求过程</h2>
 <p>NetworkClient创建完ClientRequest，会将它序列化，通过Selector异步发送出去，并且将请求封装成InFlightRequest，保存到队列InFlightRequests里。它的send方法定义如下</p>
@@ -616,61 +616,61 @@
 </span><span class="lnt">54
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">NetworkClient</span> <span class="kd">implements</span> <span class="n">KafkaClient</span> <span class="o">{</span>
-    <span class="c1">// 请求队列，保存正在发送但还没有收到响应的请求
-</span><span class="c1"></span>    <span class="kd">private</span> <span class="kd">final</span> <span class="n">InFlightRequests</span> <span class="n">inFlightRequests</span><span class="o">;</span>
-    
-    <span class="kd">private</span> <span class="kd">final</span> <span class="n">List</span><span class="o">&lt;</span><span class="n">ClientResponse</span><span class="o">&gt;</span> <span class="n">abortedSends</span> <span class="o">=</span> <span class="k">new</span> <span class="n">LinkedList</span><span class="o">&lt;&gt;();</span>
-    
-    <span class="c1">// 发送请求
-</span><span class="c1"></span>    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">send</span><span class="o">(</span><span class="n">ClientRequest</span> <span class="n">request</span><span class="o">,</span> <span class="kt">long</span> <span class="n">now</span><span class="o">)</span> <span class="o">{</span>
-        <span class="n">doSend</span><span class="o">(</span><span class="n">request</span><span class="o">,</span> <span class="kc">false</span><span class="o">,</span> <span class="n">now</span><span class="o">);</span>
-    <span class="o">}</span>
-    
-    <span class="c1">// 检测请求版本是否支持，如果支持则发送请求
-</span><span class="c1"></span>    <span class="kd">private</span> <span class="kt">void</span> <span class="nf">doSend</span><span class="o">(</span><span class="n">ClientRequest</span> <span class="n">clientRequest</span><span class="o">,</span> <span class="kt">boolean</span> <span class="n">isInternalRequest</span><span class="o">,</span> <span class="kt">long</span> <span class="n">now</span><span class="o">)</span> <span class="o">{</span>
-        <span class="n">AbstractRequest</span><span class="o">.</span><span class="na">Builder</span><span class="o">&lt;?&gt;</span> <span class="n">builder</span> <span class="o">=</span> <span class="n">clientRequest</span><span class="o">.</span><span class="na">requestBuilder</span><span class="o">();</span>
-        <span class="k">try</span> <span class="o">{</span>
-            <span class="c1">// 检测版本
-</span><span class="c1"></span>            <span class="n">NodeApiVersions</span> <span class="n">versionInfo</span> <span class="o">=</span> <span class="n">apiVersions</span><span class="o">.</span><span class="na">get</span><span class="o">(</span><span class="n">nodeId</span><span class="o">);</span>
-            <span class="o">.....</span>
-            <span class="c1">// 调用doSend方法
-</span><span class="c1"></span>            <span class="n">doSend</span><span class="o">(</span><span class="n">clientRequest</span><span class="o">,</span> <span class="n">isInternalRequest</span><span class="o">,</span> <span class="n">now</span><span class="o">,</span> <span class="n">builder</span><span class="o">.</span><span class="na">build</span><span class="o">(</span><span class="n">version</span><span class="o">));</span>
-        <span class="o">}</span> <span class="k">catch</span> <span class="o">(</span><span class="n">UnsupportedVersionException</span> <span class="n">e</span><span class="o">)</span> <span class="o">{</span>
-            <span class="c1">// 请求的版本不协调，那么生成clientResponse，添加到abortedSends集合里
-</span><span class="c1"></span>            <span class="n">ClientResponse</span> <span class="n">clientResponse</span> <span class="o">=</span> <span class="k">new</span> <span class="n">ClientResponse</span><span class="o">(</span><span class="n">clientRequest</span><span class="o">.</span><span class="na">makeHeader</span><span class="o">(</span><span class="n">builder</span><span class="o">.</span><span class="na">latestAllowedVersion</span><span class="o">()),</span>
-                    <span class="n">clientRequest</span><span class="o">.</span><span class="na">callback</span><span class="o">(),</span> <span class="n">clientRequest</span><span class="o">.</span><span class="na">destination</span><span class="o">(),</span> <span class="n">now</span><span class="o">,</span> <span class="n">now</span><span class="o">,</span>
-                    <span class="kc">false</span><span class="o">,</span> <span class="n">e</span><span class="o">,</span> <span class="kc">null</span><span class="o">);</span>
-            <span class="n">abortedSends</span><span class="o">.</span><span class="na">add</span><span class="o">(</span><span class="n">clientResponse</span><span class="o">);</span>
-        <span class="o">}</span>
-    <span class="o">}</span>
-    
-    <span class="c1">// isInternalRequest表示发送前是否需要验证连接状态，如果为true则表示使用者已经确定连接是好的
-</span><span class="c1"></span>    <span class="c1">// request表示请求体
-</span><span class="c1"></span>    <span class="kd">private</span> <span class="kt">void</span> <span class="nf">doSend</span><span class="o">(</span><span class="n">ClientRequest</span> <span class="n">clientRequest</span><span class="o">,</span> <span class="kt">boolean</span> <span class="n">isInternalRequest</span><span class="o">,</span> <span class="kt">long</span> <span class="n">now</span><span class="o">,</span> <span class="n">AbstractRequest</span> <span class="n">request</span><span class="o">)</span> <span class="o">{</span>
-        <span class="n">String</span> <span class="n">nodeId</span> <span class="o">=</span> <span class="n">clientRequest</span><span class="o">.</span><span class="na">destination</span><span class="o">();</span>
-        <span class="c1">// 生成请求头
-</span><span class="c1"></span>        <span class="n">RequestHeader</span> <span class="n">header</span> <span class="o">=</span> <span class="n">clientRequest</span><span class="o">.</span><span class="na">makeHeader</span><span class="o">(</span><span class="n">request</span><span class="o">.</span><span class="na">version</span><span class="o">());</span>
-        <span class="c1">// 结合请求头和请求体，序列化数据，保存到NetworkSend
-</span><span class="c1"></span>        <span class="n">Send</span> <span class="n">send</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="na">toSend</span><span class="o">(</span><span class="n">nodeId</span><span class="o">,</span> <span class="n">header</span><span class="o">);</span>
-        <span class="c1">// 生成InFlightRequest实例，它保存了发送前的所有信息
-</span><span class="c1"></span>        <span class="n">InFlightRequest</span> <span class="n">inFlightRequest</span> <span class="o">=</span> <span class="k">new</span> <span class="n">InFlightRequest</span><span class="o">(</span>
-                <span class="n">header</span><span class="o">,</span>
-                <span class="n">clientRequest</span><span class="o">.</span><span class="na">createdTimeMs</span><span class="o">(),</span>
-                <span class="n">clientRequest</span><span class="o">.</span><span class="na">destination</span><span class="o">(),</span>
-                <span class="n">clientRequest</span><span class="o">.</span><span class="na">callback</span><span class="o">(),</span>
-                <span class="n">clientRequest</span><span class="o">.</span><span class="na">expectResponse</span><span class="o">(),</span>
-                <span class="n">isInternalRequest</span><span class="o">,</span>
-                <span class="n">request</span><span class="o">,</span>
-                <span class="n">send</span><span class="o">,</span>
-                <span class="n">now</span><span class="o">);</span>
-        <span class="c1">// 添加到inFlightRequests集合里
-</span><span class="c1"></span>        <span class="k">this</span><span class="o">.</span><span class="na">inFlightRequests</span><span class="o">.</span><span class="na">add</span><span class="o">(</span><span class="n">inFlightRequest</span><span class="o">);</span>
-        <span class="c1">// 调用Selector异步发送数据
-</span><span class="c1"></span>        <span class="n">selector</span><span class="o">.</span><span class="na">send</span><span class="o">(</span><span class="n">inFlightRequest</span><span class="o">.</span><span class="na">send</span><span class="o">);</span>
-    <span class="o">}</span>   
-<span class="o">}</span>
-</code></pre></td></tr></table></div>
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">NetworkClient</span> <span class="kd">implements</span> <span class="n">KafkaClient</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// 请求队列，保存正在发送但还没有收到响应的请求
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="kd">private</span> <span class="kd">final</span> <span class="n">InFlightRequests</span> <span class="n">inFlightRequests</span><span class="o">;</span>
+</span></span><span class="line"><span class="cl">    
+</span></span><span class="line"><span class="cl">    <span class="kd">private</span> <span class="kd">final</span> <span class="n">List</span><span class="o">&lt;</span><span class="n">ClientResponse</span><span class="o">&gt;</span> <span class="n">abortedSends</span> <span class="o">=</span> <span class="k">new</span> <span class="n">LinkedList</span><span class="o">&lt;&gt;();</span>
+</span></span><span class="line"><span class="cl">    
+</span></span><span class="line"><span class="cl">    <span class="c1">// 发送请求
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">send</span><span class="o">(</span><span class="n">ClientRequest</span> <span class="n">request</span><span class="o">,</span> <span class="kt">long</span> <span class="n">now</span><span class="o">)</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">        <span class="n">doSend</span><span class="o">(</span><span class="n">request</span><span class="o">,</span> <span class="kc">false</span><span class="o">,</span> <span class="n">now</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">    <span class="o">}</span>
+</span></span><span class="line"><span class="cl">    
+</span></span><span class="line"><span class="cl">    <span class="c1">// 检测请求版本是否支持，如果支持则发送请求
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="kd">private</span> <span class="kt">void</span> <span class="nf">doSend</span><span class="o">(</span><span class="n">ClientRequest</span> <span class="n">clientRequest</span><span class="o">,</span> <span class="kt">boolean</span> <span class="n">isInternalRequest</span><span class="o">,</span> <span class="kt">long</span> <span class="n">now</span><span class="o">)</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">        <span class="n">AbstractRequest</span><span class="o">.</span><span class="na">Builder</span><span class="o">&lt;?&gt;</span> <span class="n">builder</span> <span class="o">=</span> <span class="n">clientRequest</span><span class="o">.</span><span class="na">requestBuilder</span><span class="o">();</span>
+</span></span><span class="line"><span class="cl">        <span class="k">try</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">            <span class="c1">// 检测版本
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>            <span class="n">NodeApiVersions</span> <span class="n">versionInfo</span> <span class="o">=</span> <span class="n">apiVersions</span><span class="o">.</span><span class="na">get</span><span class="o">(</span><span class="n">nodeId</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">            <span class="o">.....</span>
+</span></span><span class="line"><span class="cl">            <span class="c1">// 调用doSend方法
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>            <span class="n">doSend</span><span class="o">(</span><span class="n">clientRequest</span><span class="o">,</span> <span class="n">isInternalRequest</span><span class="o">,</span> <span class="n">now</span><span class="o">,</span> <span class="n">builder</span><span class="o">.</span><span class="na">build</span><span class="o">(</span><span class="n">version</span><span class="o">));</span>
+</span></span><span class="line"><span class="cl">        <span class="o">}</span> <span class="k">catch</span> <span class="o">(</span><span class="n">UnsupportedVersionException</span> <span class="n">e</span><span class="o">)</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">            <span class="c1">// 请求的版本不协调，那么生成clientResponse，添加到abortedSends集合里
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>            <span class="n">ClientResponse</span> <span class="n">clientResponse</span> <span class="o">=</span> <span class="k">new</span> <span class="n">ClientResponse</span><span class="o">(</span><span class="n">clientRequest</span><span class="o">.</span><span class="na">makeHeader</span><span class="o">(</span><span class="n">builder</span><span class="o">.</span><span class="na">latestAllowedVersion</span><span class="o">()),</span>
+</span></span><span class="line"><span class="cl">                    <span class="n">clientRequest</span><span class="o">.</span><span class="na">callback</span><span class="o">(),</span> <span class="n">clientRequest</span><span class="o">.</span><span class="na">destination</span><span class="o">(),</span> <span class="n">now</span><span class="o">,</span> <span class="n">now</span><span class="o">,</span>
+</span></span><span class="line"><span class="cl">                    <span class="kc">false</span><span class="o">,</span> <span class="n">e</span><span class="o">,</span> <span class="kc">null</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">            <span class="n">abortedSends</span><span class="o">.</span><span class="na">add</span><span class="o">(</span><span class="n">clientResponse</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">        <span class="o">}</span>
+</span></span><span class="line"><span class="cl">    <span class="o">}</span>
+</span></span><span class="line"><span class="cl">    
+</span></span><span class="line"><span class="cl">    <span class="c1">// isInternalRequest表示发送前是否需要验证连接状态，如果为true则表示使用者已经确定连接是好的
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="c1">// request表示请求体
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="kd">private</span> <span class="kt">void</span> <span class="nf">doSend</span><span class="o">(</span><span class="n">ClientRequest</span> <span class="n">clientRequest</span><span class="o">,</span> <span class="kt">boolean</span> <span class="n">isInternalRequest</span><span class="o">,</span> <span class="kt">long</span> <span class="n">now</span><span class="o">,</span> <span class="n">AbstractRequest</span> <span class="n">request</span><span class="o">)</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">        <span class="n">String</span> <span class="n">nodeId</span> <span class="o">=</span> <span class="n">clientRequest</span><span class="o">.</span><span class="na">destination</span><span class="o">();</span>
+</span></span><span class="line"><span class="cl">        <span class="c1">// 生成请求头
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>        <span class="n">RequestHeader</span> <span class="n">header</span> <span class="o">=</span> <span class="n">clientRequest</span><span class="o">.</span><span class="na">makeHeader</span><span class="o">(</span><span class="n">request</span><span class="o">.</span><span class="na">version</span><span class="o">());</span>
+</span></span><span class="line"><span class="cl">        <span class="c1">// 结合请求头和请求体，序列化数据，保存到NetworkSend
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>        <span class="n">Send</span> <span class="n">send</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="na">toSend</span><span class="o">(</span><span class="n">nodeId</span><span class="o">,</span> <span class="n">header</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">        <span class="c1">// 生成InFlightRequest实例，它保存了发送前的所有信息
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>        <span class="n">InFlightRequest</span> <span class="n">inFlightRequest</span> <span class="o">=</span> <span class="k">new</span> <span class="n">InFlightRequest</span><span class="o">(</span>
+</span></span><span class="line"><span class="cl">                <span class="n">header</span><span class="o">,</span>
+</span></span><span class="line"><span class="cl">                <span class="n">clientRequest</span><span class="o">.</span><span class="na">createdTimeMs</span><span class="o">(),</span>
+</span></span><span class="line"><span class="cl">                <span class="n">clientRequest</span><span class="o">.</span><span class="na">destination</span><span class="o">(),</span>
+</span></span><span class="line"><span class="cl">                <span class="n">clientRequest</span><span class="o">.</span><span class="na">callback</span><span class="o">(),</span>
+</span></span><span class="line"><span class="cl">                <span class="n">clientRequest</span><span class="o">.</span><span class="na">expectResponse</span><span class="o">(),</span>
+</span></span><span class="line"><span class="cl">                <span class="n">isInternalRequest</span><span class="o">,</span>
+</span></span><span class="line"><span class="cl">                <span class="n">request</span><span class="o">,</span>
+</span></span><span class="line"><span class="cl">                <span class="n">send</span><span class="o">,</span>
+</span></span><span class="line"><span class="cl">                <span class="n">now</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">        <span class="c1">// 添加到inFlightRequests集合里
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>        <span class="k">this</span><span class="o">.</span><span class="na">inFlightRequests</span><span class="o">.</span><span class="na">add</span><span class="o">(</span><span class="n">inFlightRequest</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">        <span class="c1">// 调用Selector异步发送数据
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>        <span class="n">selector</span><span class="o">.</span><span class="na">send</span><span class="o">(</span><span class="n">inFlightRequest</span><span class="o">.</span><span class="na">send</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">    <span class="o">}</span>   
+</span></span><span class="line"><span class="cl"><span class="o">}</span>
+</span></span></code></pre></td></tr></table></div>
 </div>
 </div><p>InFlightRequest表示正在发送的请求，它存储着请求发送前的所有的信息。</p>
 <p>不仅如此，它还支持生成响应ClientResponse。当正常收到响应时，completed 方法会根据响应内容生成ClientResponse。当连接突然断开，disconnected方法会生成ClientResponse。</p>
@@ -706,35 +706,35 @@
 </span><span class="lnt">28
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="kd">static</span> <span class="kd">class</span> <span class="nc">InFlightRequest</span> <span class="o">{</span>
-    <span class="c1">// 请求体
-</span><span class="c1"></span>    <span class="kd">final</span> <span class="n">RequestHeader</span> <span class="n">header</span><span class="o">;</span>
-    <span class="c1">// 请求地址
-</span><span class="c1"></span>    <span class="kd">final</span> <span class="n">String</span> <span class="n">destination</span><span class="o">;</span>
-    <span class="c1">// 回调函数
-</span><span class="c1"></span>    <span class="kd">final</span> <span class="n">RequestCompletionHandler</span> <span class="n">callback</span><span class="o">;</span>
-    <span class="c1">// 是否需要服务端返回响应
-</span><span class="c1"></span>    <span class="kd">final</span> <span class="kt">boolean</span> <span class="n">expectResponse</span><span class="o">;</span>
-    <span class="c1">// 请求体
-</span><span class="c1"></span>    <span class="kd">final</span> <span class="n">AbstractRequest</span> <span class="n">request</span><span class="o">;</span>
-    <span class="c1">// 表示发送前是否需要验证连接状态
-</span><span class="c1"></span>    <span class="kd">final</span> <span class="kt">boolean</span> <span class="n">isInternalRequest</span><span class="o">;</span> 
-    <span class="c1">// 请求的序列化数据
-</span><span class="c1"></span>    <span class="kd">final</span> <span class="n">Send</span> <span class="n">send</span><span class="o">;</span>
-    <span class="c1">// 发送时间
-</span><span class="c1"></span>    <span class="kd">final</span> <span class="kt">long</span> <span class="n">sendTimeMs</span><span class="o">;</span>
-    <span class="c1">// 请求的创建时间，这个是ClientRequest的创建时间
-</span><span class="c1"></span>    <span class="kd">final</span> <span class="kt">long</span> <span class="n">createdTimeMs</span><span class="o">;</span>
-
-    <span class="kd">public</span> <span class="n">ClientResponse</span> <span class="nf">completed</span><span class="o">(</span><span class="n">AbstractResponse</span> <span class="n">response</span><span class="o">,</span> <span class="kt">long</span> <span class="n">timeMs</span><span class="o">)</span> <span class="o">{</span>
-        <span class="k">return</span> <span class="k">new</span> <span class="n">ClientResponse</span><span class="o">(</span><span class="n">header</span><span class="o">,</span> <span class="n">callback</span><span class="o">,</span> <span class="n">destination</span><span class="o">,</span> <span class="n">createdTimeMs</span><span class="o">,</span> <span class="n">timeMs</span><span class="o">,</span> <span class="kc">false</span><span class="o">,</span> <span class="kc">null</span><span class="o">,</span> <span class="n">response</span><span class="o">);</span>
-    <span class="o">}</span>
-
-    <span class="kd">public</span> <span class="n">ClientResponse</span> <span class="nf">disconnected</span><span class="o">(</span><span class="kt">long</span> <span class="n">timeMs</span><span class="o">)</span> <span class="o">{</span>
-        <span class="k">return</span> <span class="k">new</span> <span class="n">ClientResponse</span><span class="o">(</span><span class="n">header</span><span class="o">,</span> <span class="n">callback</span><span class="o">,</span> <span class="n">destination</span><span class="o">,</span> <span class="n">createdTimeMs</span><span class="o">,</span> <span class="n">timeMs</span><span class="o">,</span> <span class="kc">true</span><span class="o">,</span> <span class="kc">null</span><span class="o">,</span> <span class="kc">null</span><span class="o">);</span>
-    <span class="o">}</span>
-<span class="o">}</span>
-</code></pre></td></tr></table></div>
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="kd">static</span> <span class="kd">class</span> <span class="nc">InFlightRequest</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// 请求体
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="kd">final</span> <span class="n">RequestHeader</span> <span class="n">header</span><span class="o">;</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// 请求地址
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="kd">final</span> <span class="n">String</span> <span class="n">destination</span><span class="o">;</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// 回调函数
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="kd">final</span> <span class="n">RequestCompletionHandler</span> <span class="n">callback</span><span class="o">;</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// 是否需要服务端返回响应
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="kd">final</span> <span class="kt">boolean</span> <span class="n">expectResponse</span><span class="o">;</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// 请求体
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="kd">final</span> <span class="n">AbstractRequest</span> <span class="n">request</span><span class="o">;</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// 表示发送前是否需要验证连接状态
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="kd">final</span> <span class="kt">boolean</span> <span class="n">isInternalRequest</span><span class="o">;</span> 
+</span></span><span class="line"><span class="cl">    <span class="c1">// 请求的序列化数据
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="kd">final</span> <span class="n">Send</span> <span class="n">send</span><span class="o">;</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// 发送时间
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="kd">final</span> <span class="kt">long</span> <span class="n">sendTimeMs</span><span class="o">;</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// 请求的创建时间，这个是ClientRequest的创建时间
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="kd">final</span> <span class="kt">long</span> <span class="n">createdTimeMs</span><span class="o">;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="kd">public</span> <span class="n">ClientResponse</span> <span class="nf">completed</span><span class="o">(</span><span class="n">AbstractResponse</span> <span class="n">response</span><span class="o">,</span> <span class="kt">long</span> <span class="n">timeMs</span><span class="o">)</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">        <span class="k">return</span> <span class="k">new</span> <span class="n">ClientResponse</span><span class="o">(</span><span class="n">header</span><span class="o">,</span> <span class="n">callback</span><span class="o">,</span> <span class="n">destination</span><span class="o">,</span> <span class="n">createdTimeMs</span><span class="o">,</span> <span class="n">timeMs</span><span class="o">,</span> <span class="kc">false</span><span class="o">,</span> <span class="kc">null</span><span class="o">,</span> <span class="n">response</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">    <span class="o">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="kd">public</span> <span class="n">ClientResponse</span> <span class="nf">disconnected</span><span class="o">(</span><span class="kt">long</span> <span class="n">timeMs</span><span class="o">)</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">        <span class="k">return</span> <span class="k">new</span> <span class="n">ClientResponse</span><span class="o">(</span><span class="n">header</span><span class="o">,</span> <span class="n">callback</span><span class="o">,</span> <span class="n">destination</span><span class="o">,</span> <span class="n">createdTimeMs</span><span class="o">,</span> <span class="n">timeMs</span><span class="o">,</span> <span class="kc">true</span><span class="o">,</span> <span class="kc">null</span><span class="o">,</span> <span class="kc">null</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">    <span class="o">}</span>
+</span></span><span class="line"><span class="cl"><span class="o">}</span>
+</span></span></code></pre></td></tr></table></div>
 </div>
 </div><p>接下来看看集合InFlightRequests，它为每个连接生成一条队列，存储着已发送但还未收到响应的请求。根据队列的长度，它能控制发送的速度。它的原理比较简单，这里介绍下它的几个重要方法</p>
 <div class="highlight"><div class="chroma">
@@ -765,31 +765,31 @@
 </span><span class="lnt">24
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="kd">final</span> <span class="kd">class</span> <span class="nc">InFlightRequests</span> <span class="o">{</span>
-    <span class="c1">// 最大的请求数目
-</span><span class="c1"></span>    <span class="kd">private</span> <span class="kd">final</span> <span class="kt">int</span> <span class="n">maxInFlightRequestsPerConnection</span><span class="o">;</span>
-    <span class="c1">// InFlightRequest集合，Key为主机地址，Value为请求队列
-</span><span class="c1"></span>    <span class="kd">private</span> <span class="kd">final</span> <span class="n">Map</span><span class="o">&lt;</span><span class="n">String</span><span class="o">,</span> <span class="n">Deque</span><span class="o">&lt;</span><span class="n">NetworkClient</span><span class="o">.</span><span class="na">InFlightRequest</span><span class="o">&gt;&gt;</span> <span class="n">requests</span> <span class="o">=</span> <span class="k">new</span> <span class="n">HashMap</span><span class="o">&lt;&gt;();</span>
-    
-    <span class="c1">// 将请求添加到队列头部
-</span><span class="c1"></span>    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">add</span><span class="o">(</span><span class="n">NetworkClient</span><span class="o">.</span><span class="na">InFlightRequest</span> <span class="n">request</span><span class="o">);</span>
-    
-    <span class="c1">// 取出该连接，最老的请求
-</span><span class="c1"></span>    <span class="kd">public</span> <span class="n">NetworkClient</span><span class="o">.</span><span class="na">InFlightRequest</span> <span class="nf">completeNext</span><span class="o">(</span><span class="n">String</span> <span class="n">node</span><span class="o">);</span>
-    
-    <span class="c1">// 取出该连接，最新的请求
-</span><span class="c1"></span>    <span class="kd">public</span> <span class="n">NetworkClient</span><span class="o">.</span><span class="na">InFlightRequest</span> <span class="nf">completeLastSent</span><span class="o">(</span><span class="n">String</span> <span class="n">node</span><span class="o">);</span>
-        
-    <span class="c1">// 判断是否该连接能发送请求
-</span><span class="c1"></span>    <span class="kd">public</span> <span class="kt">boolean</span> <span class="nf">canSendMore</span><span class="o">(</span><span class="n">String</span> <span class="n">node</span><span class="o">)</span> <span class="o">{</span>
-        <span class="n">Deque</span><span class="o">&lt;</span><span class="n">NetworkClient</span><span class="o">.</span><span class="na">InFlightRequest</span><span class="o">&gt;</span> <span class="n">queue</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="na">get</span><span class="o">(</span><span class="n">node</span><span class="o">);</span>
-        <span class="k">return</span> <span class="n">queue</span> <span class="o">==</span> <span class="kc">null</span> <span class="o">||</span> <span class="n">queue</span><span class="o">.</span><span class="na">isEmpty</span><span class="o">()</span> <span class="o">||</span>
-            <span class="c1">// 必须等待前面的请求发送完毕，
-</span><span class="c1"></span>            <span class="c1">// 并且没有响应的请求数目小于指定数目
-</span><span class="c1"></span>               <span class="o">(</span><span class="n">queue</span><span class="o">.</span><span class="na">peekFirst</span><span class="o">().</span><span class="na">send</span><span class="o">.</span><span class="na">completed</span><span class="o">()</span> <span class="o">&amp;&amp;</span> <span class="n">queue</span><span class="o">.</span><span class="na">size</span><span class="o">()</span> <span class="o">&lt;</span> <span class="k">this</span><span class="o">.</span><span class="na">maxInFlightRequestsPerConnection</span><span class="o">);</span>
-    <span class="o">}</span>    
-<span class="o">}</span>
-</code></pre></td></tr></table></div>
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="kd">final</span> <span class="kd">class</span> <span class="nc">InFlightRequests</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// 最大的请求数目
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="kd">private</span> <span class="kd">final</span> <span class="kt">int</span> <span class="n">maxInFlightRequestsPerConnection</span><span class="o">;</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// InFlightRequest集合，Key为主机地址，Value为请求队列
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="kd">private</span> <span class="kd">final</span> <span class="n">Map</span><span class="o">&lt;</span><span class="n">String</span><span class="o">,</span> <span class="n">Deque</span><span class="o">&lt;</span><span class="n">NetworkClient</span><span class="o">.</span><span class="na">InFlightRequest</span><span class="o">&gt;&gt;</span> <span class="n">requests</span> <span class="o">=</span> <span class="k">new</span> <span class="n">HashMap</span><span class="o">&lt;&gt;();</span>
+</span></span><span class="line"><span class="cl">    
+</span></span><span class="line"><span class="cl">    <span class="c1">// 将请求添加到队列头部
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">add</span><span class="o">(</span><span class="n">NetworkClient</span><span class="o">.</span><span class="na">InFlightRequest</span> <span class="n">request</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">    
+</span></span><span class="line"><span class="cl">    <span class="c1">// 取出该连接，最老的请求
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="kd">public</span> <span class="n">NetworkClient</span><span class="o">.</span><span class="na">InFlightRequest</span> <span class="nf">completeNext</span><span class="o">(</span><span class="n">String</span> <span class="n">node</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">    
+</span></span><span class="line"><span class="cl">    <span class="c1">// 取出该连接，最新的请求
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="kd">public</span> <span class="n">NetworkClient</span><span class="o">.</span><span class="na">InFlightRequest</span> <span class="nf">completeLastSent</span><span class="o">(</span><span class="n">String</span> <span class="n">node</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">        
+</span></span><span class="line"><span class="cl">    <span class="c1">// 判断是否该连接能发送请求
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="kd">public</span> <span class="kt">boolean</span> <span class="nf">canSendMore</span><span class="o">(</span><span class="n">String</span> <span class="n">node</span><span class="o">)</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">        <span class="n">Deque</span><span class="o">&lt;</span><span class="n">NetworkClient</span><span class="o">.</span><span class="na">InFlightRequest</span><span class="o">&gt;</span> <span class="n">queue</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="na">get</span><span class="o">(</span><span class="n">node</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">        <span class="k">return</span> <span class="n">queue</span> <span class="o">==</span> <span class="kc">null</span> <span class="o">||</span> <span class="n">queue</span><span class="o">.</span><span class="na">isEmpty</span><span class="o">()</span> <span class="o">||</span>
+</span></span><span class="line"><span class="cl">            <span class="c1">// 必须等待前面的请求发送完毕，
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>            <span class="c1">// 并且没有响应的请求数目小于指定数目
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>               <span class="o">(</span><span class="n">queue</span><span class="o">.</span><span class="na">peekFirst</span><span class="o">().</span><span class="na">send</span><span class="o">.</span><span class="na">completed</span><span class="o">()</span> <span class="o">&amp;&amp;</span> <span class="n">queue</span><span class="o">.</span><span class="na">size</span><span class="o">()</span> <span class="o">&lt;</span> <span class="k">this</span><span class="o">.</span><span class="na">maxInFlightRequestsPerConnection</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">    <span class="o">}</span>    
+</span></span><span class="line"><span class="cl"><span class="o">}</span>
+</span></span></code></pre></td></tr></table></div>
 </div>
 </div><h2 id="处理响应过程"><a href="#处理响应过程" class="anchor-link"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon anchor-icon"><path d="M326.612 185.391c59.747 59.809 58.927 155.698.36 214.59-.11.12-.24.25-.36.37l-67.2 67.2c-59.27 59.27-155.699 59.262-214.96 0-59.27-59.26-59.27-155.7 0-214.96l37.106-37.106c9.84-9.84 26.786-3.3 27.294 10.606.648 17.722 3.826 35.527 9.69 52.721 1.986 5.822.567 12.262-3.783 16.612l-13.087 13.087c-28.026 28.026-28.905 73.66-1.155 101.96 28.024 28.579 74.086 28.749 102.325.51l67.2-67.19c28.191-28.191 28.073-73.757 0-101.83-3.701-3.694-7.429-6.564-10.341-8.569a16.037 16.037 0 0 1-6.947-12.606c-.396-10.567 3.348-21.456 11.698-29.806l21.054-21.055c5.521-5.521 14.182-6.199 20.584-1.731a152.482 152.482 0 0 1 20.522 17.197zM467.547 44.449c-59.261-59.262-155.69-59.27-214.96 0l-67.2 67.2c-.12.12-.25.25-.36.37-58.566 58.892-59.387 154.781.36 214.59a152.454 152.454 0 0 0 20.521 17.196c6.402 4.468 15.064 3.789 20.584-1.731l21.054-21.055c8.35-8.35 12.094-19.239 11.698-29.806a16.037 16.037 0 0 0-6.947-12.606c-2.912-2.005-6.64-4.875-10.341-8.569-28.073-28.073-28.191-73.639 0-101.83l67.2-67.19c28.239-28.239 74.3-28.069 102.325.51 27.75 28.3 26.872 73.934-1.155 101.96l-13.087 13.087c-4.35 4.35-5.769 10.79-3.783 16.612 5.864 17.194 9.042 34.999 9.69 52.721.509 13.906 17.454 20.446 27.294 10.606l37.106-37.106c59.271-59.259 59.271-155.699.001-214.959z"/></svg></a>处理响应过程</h2>
 <h3 id="请求发送完成"><a href="#请求发送完成" class="anchor-link"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon anchor-icon"><path d="M326.612 185.391c59.747 59.809 58.927 155.698.36 214.59-.11.12-.24.25-.36.37l-67.2 67.2c-59.27 59.27-155.699 59.262-214.96 0-59.27-59.26-59.27-155.7 0-214.96l37.106-37.106c9.84-9.84 26.786-3.3 27.294 10.606.648 17.722 3.826 35.527 9.69 52.721 1.986 5.822.567 12.262-3.783 16.612l-13.087 13.087c-28.026 28.026-28.905 73.66-1.155 101.96 28.024 28.579 74.086 28.749 102.325.51l67.2-67.19c28.191-28.191 28.073-73.757 0-101.83-3.701-3.694-7.429-6.564-10.341-8.569a16.037 16.037 0 0 1-6.947-12.606c-.396-10.567 3.348-21.456 11.698-29.806l21.054-21.055c5.521-5.521 14.182-6.199 20.584-1.731a152.482 152.482 0 0 1 20.522 17.197zM467.547 44.449c-59.261-59.262-155.69-59.27-214.96 0l-67.2 67.2c-.12.12-.25.25-.36.37-58.566 58.892-59.387 154.781.36 214.59a152.454 152.454 0 0 0 20.521 17.196c6.402 4.468 15.064 3.789 20.584-1.731l21.054-21.055c8.35-8.35 12.094-19.239 11.698-29.806a16.037 16.037 0 0 0-6.947-12.606c-2.912-2.005-6.64-4.875-10.341-8.569-28.073-28.073-28.191-73.639 0-101.83l67.2-67.19c28.239-28.239 74.3-28.069 102.325.51 27.75 28.3 26.872 73.934-1.155 101.96l-13.087 13.087c-4.35 4.35-5.769 10.79-3.783 16.612 5.864 17.194 9.042 34.999 9.69 52.721.509 13.906 17.454 20.446 27.294 10.606l37.106-37.106c59.271-59.259 59.271-155.699.001-214.959z"/></svg></a>请求发送完成</h3>
@@ -811,20 +811,20 @@
 </span><span class="lnt">13
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="kd">private</span> <span class="kt">void</span> <span class="nf">handleCompletedSends</span><span class="o">(</span><span class="n">List</span><span class="o">&lt;</span><span class="n">ClientResponse</span><span class="o">&gt;</span> <span class="n">responses</span><span class="o">,</span> <span class="kt">long</span> <span class="n">now</span><span class="o">)</span> <span class="o">{</span>
-    <span class="c1">// 遍历发送完成的请求，通过调用Selector获得自从上一次poll开始的请求
-</span><span class="c1"></span>    <span class="k">for</span> <span class="o">(</span><span class="n">Send</span> <span class="n">send</span> <span class="o">:</span> <span class="k">this</span><span class="o">.</span><span class="na">selector</span><span class="o">.</span><span class="na">completedSends</span><span class="o">())</span> <span class="o">{</span>
-        <span class="c1">// 从队列中取出最新的请求
-</span><span class="c1"></span>        <span class="n">InFlightRequest</span> <span class="n">request</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="na">inFlightRequests</span><span class="o">.</span><span class="na">lastSent</span><span class="o">(</span><span class="n">send</span><span class="o">.</span><span class="na">destination</span><span class="o">());</span>
-        <span class="k">if</span> <span class="o">(!</span><span class="n">request</span><span class="o">.</span><span class="na">expectResponse</span><span class="o">)</span> <span class="o">{</span>
-            <span class="c1">// 如果这个请求不要求响应，则提取最新的请求
-</span><span class="c1"></span>            <span class="k">this</span><span class="o">.</span><span class="na">inFlightRequests</span><span class="o">.</span><span class="na">completeLastSent</span><span class="o">(</span><span class="n">send</span><span class="o">.</span><span class="na">destination</span><span class="o">());</span>
-            <span class="c1">// 调用completed方法生成ClientResponse
-</span><span class="c1"></span>            <span class="n">responses</span><span class="o">.</span><span class="na">add</span><span class="o">(</span><span class="n">request</span><span class="o">.</span><span class="na">completed</span><span class="o">(</span><span class="kc">null</span><span class="o">,</span> <span class="n">now</span><span class="o">));</span>
-        <span class="o">}</span>
-    <span class="o">}</span>
-<span class="o">}</span>
-</code></pre></td></tr></table></div>
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="kd">private</span> <span class="kt">void</span> <span class="nf">handleCompletedSends</span><span class="o">(</span><span class="n">List</span><span class="o">&lt;</span><span class="n">ClientResponse</span><span class="o">&gt;</span> <span class="n">responses</span><span class="o">,</span> <span class="kt">long</span> <span class="n">now</span><span class="o">)</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// 遍历发送完成的请求，通过调用Selector获得自从上一次poll开始的请求
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="k">for</span> <span class="o">(</span><span class="n">Send</span> <span class="n">send</span> <span class="o">:</span> <span class="k">this</span><span class="o">.</span><span class="na">selector</span><span class="o">.</span><span class="na">completedSends</span><span class="o">())</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">        <span class="c1">// 从队列中取出最新的请求
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>        <span class="n">InFlightRequest</span> <span class="n">request</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="na">inFlightRequests</span><span class="o">.</span><span class="na">lastSent</span><span class="o">(</span><span class="n">send</span><span class="o">.</span><span class="na">destination</span><span class="o">());</span>
+</span></span><span class="line"><span class="cl">        <span class="k">if</span> <span class="o">(!</span><span class="n">request</span><span class="o">.</span><span class="na">expectResponse</span><span class="o">)</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">            <span class="c1">// 如果这个请求不要求响应，则提取最新的请求
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>            <span class="k">this</span><span class="o">.</span><span class="na">inFlightRequests</span><span class="o">.</span><span class="na">completeLastSent</span><span class="o">(</span><span class="n">send</span><span class="o">.</span><span class="na">destination</span><span class="o">());</span>
+</span></span><span class="line"><span class="cl">            <span class="c1">// 调用completed方法生成ClientResponse
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>            <span class="n">responses</span><span class="o">.</span><span class="na">add</span><span class="o">(</span><span class="n">request</span><span class="o">.</span><span class="na">completed</span><span class="o">(</span><span class="kc">null</span><span class="o">,</span> <span class="n">now</span><span class="o">));</span>
+</span></span><span class="line"><span class="cl">        <span class="o">}</span>
+</span></span><span class="line"><span class="cl">    <span class="o">}</span>
+</span></span><span class="line"><span class="cl"><span class="o">}</span>
+</span></span></code></pre></td></tr></table></div>
 </div>
 </div><p>这里可能有点疑惑，怎么能保证从Selector返回的请求，是对应到队列中最新的请求。仔细想一下，每个请求发送，都要等待前面的请求发送完成，这样就能保证同一时间只有一个请求正在发送   。因为Selector返回的请求，是从上一次poll开始的，所以这样就能够保证。</p>
 <h3 id="请求收到响应"><a href="#请求收到响应" class="anchor-link"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon anchor-icon"><path d="M326.612 185.391c59.747 59.809 58.927 155.698.36 214.59-.11.12-.24.25-.36.37l-67.2 67.2c-59.27 59.27-155.699 59.262-214.96 0-59.27-59.26-59.27-155.7 0-214.96l37.106-37.106c9.84-9.84 26.786-3.3 27.294 10.606.648 17.722 3.826 35.527 9.69 52.721 1.986 5.822.567 12.262-3.783 16.612l-13.087 13.087c-28.026 28.026-28.905 73.66-1.155 101.96 28.024 28.579 74.086 28.749 102.325.51l67.2-67.19c28.191-28.191 28.073-73.757 0-101.83-3.701-3.694-7.429-6.564-10.341-8.569a16.037 16.037 0 0 1-6.947-12.606c-.396-10.567 3.348-21.456 11.698-29.806l21.054-21.055c5.521-5.521 14.182-6.199 20.584-1.731a152.482 152.482 0 0 1 20.522 17.197zM467.547 44.449c-59.261-59.262-155.69-59.27-214.96 0l-67.2 67.2c-.12.12-.25.25-.36.37-58.566 58.892-59.387 154.781.36 214.59a152.454 152.454 0 0 0 20.521 17.196c6.402 4.468 15.064 3.789 20.584-1.731l21.054-21.055c8.35-8.35 12.094-19.239 11.698-29.806a16.037 16.037 0 0 0-6.947-12.606c-2.912-2.005-6.64-4.875-10.341-8.569-28.073-28.073-28.191-73.639 0-101.83l67.2-67.19c28.239-28.239 74.3-28.069 102.325.51 27.75 28.3 26.872 73.934-1.155 101.96l-13.087 13.087c-4.35 4.35-5.769 10.79-3.783 16.612 5.864 17.194 9.042 34.999 9.69 52.721.509 13.906 17.454 20.446 27.294 10.606l37.106-37.106c59.271-59.259 59.271-155.699.001-214.959z"/></svg></a>请求收到响应</h3>
@@ -866,40 +866,40 @@
 </span><span class="lnt">33
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="kd">private</span> <span class="kt">void</span> <span class="nf">handleCompletedReceives</span><span class="o">(</span><span class="n">List</span><span class="o">&lt;</span><span class="n">ClientResponse</span><span class="o">&gt;</span> <span class="n">responses</span><span class="o">,</span> <span class="kt">long</span> <span class="n">now</span><span class="o">)</span> <span class="o">{</span>
-    <span class="c1">// 遍历响应，通过Selector返回未处理的响应
-</span><span class="c1"></span>    <span class="k">for</span> <span class="o">(</span><span class="n">NetworkReceive</span> <span class="n">receive</span> <span class="o">:</span> <span class="k">this</span><span class="o">.</span><span class="na">selector</span><span class="o">.</span><span class="na">completedReceives</span><span class="o">())</span> <span class="o">{</span>
-        
-        <span class="n">String</span> <span class="n">source</span> <span class="o">=</span> <span class="n">receive</span><span class="o">.</span><span class="na">source</span><span class="o">();</span>
-        <span class="c1">// 提取最老的请求
-</span><span class="c1"></span>        <span class="n">InFlightRequest</span> <span class="n">req</span> <span class="o">=</span> <span class="n">inFlightRequests</span><span class="o">.</span><span class="na">completeNext</span><span class="o">(</span><span class="n">source</span><span class="o">);</span>
-        <span class="c1">// 解析响应，并且验证响应头，生成Struct实例
-</span><span class="c1"></span>        <span class="n">Struct</span> <span class="n">responseStruct</span> <span class="o">=</span> <span class="n">parseStructMaybeUpdateThrottleTimeMetrics</span><span class="o">(</span><span class="n">receive</span><span class="o">.</span><span class="na">payload</span><span class="o">(),</span> <span class="n">req</span><span class="o">.</span><span class="na">header</span><span class="o">,</span>
-            <span class="n">throttleTimeSensor</span><span class="o">,</span> <span class="n">now</span><span class="o">);</span>
-        <span class="c1">// 生成响应体
-</span><span class="c1"></span>        <span class="n">AbstractResponse</span> <span class="n">body</span> <span class="o">=</span> <span class="n">AbstractResponse</span><span class="o">.</span><span class="na">parseResponse</span><span class="o">(</span><span class="n">req</span><span class="o">.</span><span class="na">header</span><span class="o">.</span><span class="na">apiKey</span><span class="o">(),</span> <span class="n">responseStruct</span><span class="o">);</span>
-        <span class="c1">// 处理元数据请求响应
-</span><span class="c1"></span>        <span class="k">if</span> <span class="o">(</span><span class="n">req</span><span class="o">.</span><span class="na">isInternalRequest</span> <span class="o">&amp;&amp;</span> <span class="n">body</span> <span class="k">instanceof</span> <span class="n">MetadataResponse</span><span class="o">)</span>
-            <span class="n">metadataUpdater</span><span class="o">.</span><span class="na">handleCompletedMetadataResponse</span><span class="o">(</span><span class="n">req</span><span class="o">.</span><span class="na">header</span><span class="o">,</span> <span class="n">now</span><span class="o">,</span> <span class="o">(</span><span class="n">MetadataResponse</span><span class="o">)</span> <span class="n">body</span><span class="o">);</span>
-        <span class="k">else</span> <span class="k">if</span> <span class="o">(</span><span class="n">req</span><span class="o">.</span><span class="na">isInternalRequest</span> <span class="o">&amp;&amp;</span> <span class="n">body</span> <span class="k">instanceof</span> <span class="n">ApiVersionsResponse</span><span class="o">)</span>
-            <span class="c1">// 处理版本协调响应
-</span><span class="c1"></span>            <span class="n">handleApiVersionsResponse</span><span class="o">(</span><span class="n">responses</span><span class="o">,</span> <span class="n">req</span><span class="o">,</span> <span class="n">now</span><span class="o">,</span> <span class="o">(</span><span class="n">ApiVersionsResponse</span><span class="o">)</span> <span class="n">body</span><span class="o">);</span>
-        <span class="k">else</span>
-            <span class="c1">// 生成ClientResponse添加到列表中
-</span><span class="c1"></span>            <span class="n">responses</span><span class="o">.</span><span class="na">add</span><span class="o">(</span><span class="n">req</span><span class="o">.</span><span class="na">completed</span><span class="o">(</span><span class="n">body</span><span class="o">,</span> <span class="n">now</span><span class="o">));</span>
-    <span class="o">}</span>
-<span class="o">}</span>
-
-<span class="kd">private</span> <span class="kd">static</span> <span class="n">Struct</span> <span class="nf">parseStructMaybeUpdateThrottleTimeMetrics</span><span class="o">(</span><span class="n">ByteBuffer</span> <span class="n">responseBuffer</span><span class="o">,</span> <span class="n">RequestHeader</span> <span class="n">requestHeader</span><span class="o">,</span> <span class="n">Sensor</span> <span class="n">throttleTimeSensor</span><span class="o">,</span> <span class="kt">long</span> <span class="n">now</span><span class="o">)</span> <span class="o">{</span>
-    <span class="c1">// 解析响应头
-</span><span class="c1"></span>    <span class="n">ResponseHeader</span> <span class="n">responseHeader</span> <span class="o">=</span> <span class="n">ResponseHeader</span><span class="o">.</span><span class="na">parse</span><span class="o">(</span><span class="n">responseBuffer</span><span class="o">);</span>
-    <span class="c1">// 解析响应体
-</span><span class="c1"></span>    <span class="n">Struct</span> <span class="n">responseBody</span> <span class="o">=</span> <span class="n">requestHeader</span><span class="o">.</span><span class="na">apiKey</span><span class="o">().</span><span class="na">parseResponse</span><span class="o">(</span><span class="n">requestHeader</span><span class="o">.</span><span class="na">apiVersion</span><span class="o">(),</span> <span class="n">responseBuffer</span><span class="o">);</span>
-    <span class="c1">// 验证请求头与响应头的 correlation id 必须相等
-</span><span class="c1"></span>    <span class="n">correlate</span><span class="o">(</span><span class="n">requestHeader</span><span class="o">,</span> <span class="n">responseHeader</span><span class="o">);</span>
-    <span class="k">return</span> <span class="n">responseBody</span><span class="o">;</span>
-<span class="o">}</span>
-</code></pre></td></tr></table></div>
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="kd">private</span> <span class="kt">void</span> <span class="nf">handleCompletedReceives</span><span class="o">(</span><span class="n">List</span><span class="o">&lt;</span><span class="n">ClientResponse</span><span class="o">&gt;</span> <span class="n">responses</span><span class="o">,</span> <span class="kt">long</span> <span class="n">now</span><span class="o">)</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// 遍历响应，通过Selector返回未处理的响应
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="k">for</span> <span class="o">(</span><span class="n">NetworkReceive</span> <span class="n">receive</span> <span class="o">:</span> <span class="k">this</span><span class="o">.</span><span class="na">selector</span><span class="o">.</span><span class="na">completedReceives</span><span class="o">())</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">        
+</span></span><span class="line"><span class="cl">        <span class="n">String</span> <span class="n">source</span> <span class="o">=</span> <span class="n">receive</span><span class="o">.</span><span class="na">source</span><span class="o">();</span>
+</span></span><span class="line"><span class="cl">        <span class="c1">// 提取最老的请求
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>        <span class="n">InFlightRequest</span> <span class="n">req</span> <span class="o">=</span> <span class="n">inFlightRequests</span><span class="o">.</span><span class="na">completeNext</span><span class="o">(</span><span class="n">source</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">        <span class="c1">// 解析响应，并且验证响应头，生成Struct实例
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>        <span class="n">Struct</span> <span class="n">responseStruct</span> <span class="o">=</span> <span class="n">parseStructMaybeUpdateThrottleTimeMetrics</span><span class="o">(</span><span class="n">receive</span><span class="o">.</span><span class="na">payload</span><span class="o">(),</span> <span class="n">req</span><span class="o">.</span><span class="na">header</span><span class="o">,</span>
+</span></span><span class="line"><span class="cl">            <span class="n">throttleTimeSensor</span><span class="o">,</span> <span class="n">now</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">        <span class="c1">// 生成响应体
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>        <span class="n">AbstractResponse</span> <span class="n">body</span> <span class="o">=</span> <span class="n">AbstractResponse</span><span class="o">.</span><span class="na">parseResponse</span><span class="o">(</span><span class="n">req</span><span class="o">.</span><span class="na">header</span><span class="o">.</span><span class="na">apiKey</span><span class="o">(),</span> <span class="n">responseStruct</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">        <span class="c1">// 处理元数据请求响应
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>        <span class="k">if</span> <span class="o">(</span><span class="n">req</span><span class="o">.</span><span class="na">isInternalRequest</span> <span class="o">&amp;&amp;</span> <span class="n">body</span> <span class="k">instanceof</span> <span class="n">MetadataResponse</span><span class="o">)</span>
+</span></span><span class="line"><span class="cl">            <span class="n">metadataUpdater</span><span class="o">.</span><span class="na">handleCompletedMetadataResponse</span><span class="o">(</span><span class="n">req</span><span class="o">.</span><span class="na">header</span><span class="o">,</span> <span class="n">now</span><span class="o">,</span> <span class="o">(</span><span class="n">MetadataResponse</span><span class="o">)</span> <span class="n">body</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">        <span class="k">else</span> <span class="k">if</span> <span class="o">(</span><span class="n">req</span><span class="o">.</span><span class="na">isInternalRequest</span> <span class="o">&amp;&amp;</span> <span class="n">body</span> <span class="k">instanceof</span> <span class="n">ApiVersionsResponse</span><span class="o">)</span>
+</span></span><span class="line"><span class="cl">            <span class="c1">// 处理版本协调响应
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>            <span class="n">handleApiVersionsResponse</span><span class="o">(</span><span class="n">responses</span><span class="o">,</span> <span class="n">req</span><span class="o">,</span> <span class="n">now</span><span class="o">,</span> <span class="o">(</span><span class="n">ApiVersionsResponse</span><span class="o">)</span> <span class="n">body</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">        <span class="k">else</span>
+</span></span><span class="line"><span class="cl">            <span class="c1">// 生成ClientResponse添加到列表中
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>            <span class="n">responses</span><span class="o">.</span><span class="na">add</span><span class="o">(</span><span class="n">req</span><span class="o">.</span><span class="na">completed</span><span class="o">(</span><span class="n">body</span><span class="o">,</span> <span class="n">now</span><span class="o">));</span>
+</span></span><span class="line"><span class="cl">    <span class="o">}</span>
+</span></span><span class="line"><span class="cl"><span class="o">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kd">private</span> <span class="kd">static</span> <span class="n">Struct</span> <span class="nf">parseStructMaybeUpdateThrottleTimeMetrics</span><span class="o">(</span><span class="n">ByteBuffer</span> <span class="n">responseBuffer</span><span class="o">,</span> <span class="n">RequestHeader</span> <span class="n">requestHeader</span><span class="o">,</span> <span class="n">Sensor</span> <span class="n">throttleTimeSensor</span><span class="o">,</span> <span class="kt">long</span> <span class="n">now</span><span class="o">)</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// 解析响应头
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="n">ResponseHeader</span> <span class="n">responseHeader</span> <span class="o">=</span> <span class="n">ResponseHeader</span><span class="o">.</span><span class="na">parse</span><span class="o">(</span><span class="n">responseBuffer</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// 解析响应体
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="n">Struct</span> <span class="n">responseBody</span> <span class="o">=</span> <span class="n">requestHeader</span><span class="o">.</span><span class="na">apiKey</span><span class="o">().</span><span class="na">parseResponse</span><span class="o">(</span><span class="n">requestHeader</span><span class="o">.</span><span class="na">apiVersion</span><span class="o">(),</span> <span class="n">responseBuffer</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// 验证请求头与响应头的 correlation id 必须相等
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="n">correlate</span><span class="o">(</span><span class="n">requestHeader</span><span class="o">,</span> <span class="n">responseHeader</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">    <span class="k">return</span> <span class="n">responseBody</span><span class="o">;</span>
+</span></span><span class="line"><span class="cl"><span class="o">}</span>
+</span></span></code></pre></td></tr></table></div>
 </div>
 </div><h3 id="执行处理响应函数"><a href="#执行处理响应函数" class="anchor-link"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon anchor-icon"><path d="M326.612 185.391c59.747 59.809 58.927 155.698.36 214.59-.11.12-.24.25-.36.37l-67.2 67.2c-59.27 59.27-155.699 59.262-214.96 0-59.27-59.26-59.27-155.7 0-214.96l37.106-37.106c9.84-9.84 26.786-3.3 27.294 10.606.648 17.722 3.826 35.527 9.69 52.721 1.986 5.822.567 12.262-3.783 16.612l-13.087 13.087c-28.026 28.026-28.905 73.66-1.155 101.96 28.024 28.579 74.086 28.749 102.325.51l67.2-67.19c28.191-28.191 28.073-73.757 0-101.83-3.701-3.694-7.429-6.564-10.341-8.569a16.037 16.037 0 0 1-6.947-12.606c-.396-10.567 3.348-21.456 11.698-29.806l21.054-21.055c5.521-5.521 14.182-6.199 20.584-1.731a152.482 152.482 0 0 1 20.522 17.197zM467.547 44.449c-59.261-59.262-155.69-59.27-214.96 0l-67.2 67.2c-.12.12-.25.25-.36.37-58.566 58.892-59.387 154.781.36 214.59a152.454 152.454 0 0 0 20.521 17.196c6.402 4.468 15.064 3.789 20.584-1.731l21.054-21.055c8.35-8.35 12.094-19.239 11.698-29.806a16.037 16.037 0 0 0-6.947-12.606c-2.912-2.005-6.64-4.875-10.341-8.569-28.073-28.073-28.191-73.639 0-101.83l67.2-67.19c28.239-28.239 74.3-28.069 102.325.51 27.75 28.3 26.872 73.934-1.155 101.96l-13.087 13.087c-4.35 4.35-5.769 10.79-3.783 16.612 5.864 17.194 9.042 34.999 9.69 52.721.509 13.906 17.454 20.446 27.294 10.606l37.106-37.106c59.271-59.259 59.271-155.699.001-214.959z"/></svg></a>执行处理响应函数</h3>
 <p>NetworkClient的 poll 方法，会将已完成的请求，生成ClientReponse收集起来，然后逐一执行它的回调函数。</p>
@@ -923,23 +923,23 @@
 </span><span class="lnt">16
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="n">List</span><span class="o">&lt;</span><span class="n">ClientResponse</span><span class="o">&gt;</span> <span class="nf">poll</span><span class="o">(</span><span class="kt">long</span> <span class="n">timeout</span><span class="o">,</span> <span class="kt">long</span> <span class="n">now</span><span class="o">)</span> <span class="o">{</span>
-    <span class="kt">long</span> <span class="n">updatedNow</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="na">time</span><span class="o">.</span><span class="na">milliseconds</span><span class="o">();</span>
-    <span class="c1">// 响应列表
-</span><span class="c1"></span>    <span class="n">List</span><span class="o">&lt;</span><span class="n">ClientResponse</span><span class="o">&gt;</span> <span class="n">responses</span> <span class="o">=</span> <span class="k">new</span> <span class="n">ArrayList</span><span class="o">&lt;&gt;();</span>
-    <span class="c1">// 处理各种情况，生成响应，添加到列表中
-</span><span class="c1"></span>    <span class="n">handleCompletedSends</span><span class="o">(</span><span class="n">responses</span><span class="o">,</span> <span class="n">updatedNow</span><span class="o">);</span>
-    <span class="n">handleCompletedReceives</span><span class="o">(</span><span class="n">responses</span><span class="o">,</span> <span class="n">updatedNow</span><span class="o">);</span>
-    <span class="n">handleDisconnections</span><span class="o">(</span><span class="n">responses</span><span class="o">,</span> <span class="n">updatedNow</span><span class="o">);</span>
-    <span class="n">handleConnections</span><span class="o">();</span>
-    <span class="n">handleInitiateApiVersionRequests</span><span class="o">(</span><span class="n">updatedNow</span><span class="o">);</span>
-    <span class="n">handleTimedOutRequests</span><span class="o">(</span><span class="n">responses</span><span class="o">,</span> <span class="n">updatedNow</span><span class="o">);</span>
-    <span class="c1">// 执行处理响应函数
-</span><span class="c1"></span>    <span class="n">completeResponses</span><span class="o">(</span><span class="n">responses</span><span class="o">);</span>
-
-    <span class="k">return</span> <span class="n">responses</span><span class="o">;</span>
-<span class="o">}</span>
-</code></pre></td></tr></table></div>
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="kd">public</span> <span class="n">List</span><span class="o">&lt;</span><span class="n">ClientResponse</span><span class="o">&gt;</span> <span class="nf">poll</span><span class="o">(</span><span class="kt">long</span> <span class="n">timeout</span><span class="o">,</span> <span class="kt">long</span> <span class="n">now</span><span class="o">)</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">    <span class="kt">long</span> <span class="n">updatedNow</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="na">time</span><span class="o">.</span><span class="na">milliseconds</span><span class="o">();</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// 响应列表
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="n">List</span><span class="o">&lt;</span><span class="n">ClientResponse</span><span class="o">&gt;</span> <span class="n">responses</span> <span class="o">=</span> <span class="k">new</span> <span class="n">ArrayList</span><span class="o">&lt;&gt;();</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// 处理各种情况，生成响应，添加到列表中
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="n">handleCompletedSends</span><span class="o">(</span><span class="n">responses</span><span class="o">,</span> <span class="n">updatedNow</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">    <span class="n">handleCompletedReceives</span><span class="o">(</span><span class="n">responses</span><span class="o">,</span> <span class="n">updatedNow</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">    <span class="n">handleDisconnections</span><span class="o">(</span><span class="n">responses</span><span class="o">,</span> <span class="n">updatedNow</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">    <span class="n">handleConnections</span><span class="o">();</span>
+</span></span><span class="line"><span class="cl">    <span class="n">handleInitiateApiVersionRequests</span><span class="o">(</span><span class="n">updatedNow</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">    <span class="n">handleTimedOutRequests</span><span class="o">(</span><span class="n">responses</span><span class="o">,</span> <span class="n">updatedNow</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// 执行处理响应函数
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="n">completeResponses</span><span class="o">(</span><span class="n">responses</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="k">return</span> <span class="n">responses</span><span class="o">;</span>
+</span></span><span class="line"><span class="cl"><span class="o">}</span>
+</span></span></code></pre></td></tr></table></div>
 </div>
 </div><p>在InFlightRequest类中，我们已经看到了它是如何生成ClientReponse实例的。首先看看ClientReponse的几个重要属性和方法</p>
 <div class="highlight"><div class="chroma">
@@ -959,20 +959,20 @@
 </span><span class="lnt">13
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">ClientResponse</span> <span class="o">{</span>
-    
-    <span class="c1">// 回调函数，由ClientRequest指定
-</span><span class="c1"></span>    <span class="kd">private</span> <span class="kd">final</span> <span class="n">RequestCompletionHandler</span> <span class="n">callback</span><span class="o">;</span>
-    <span class="c1">// 响应体
-</span><span class="c1"></span>    <span class="kd">private</span> <span class="kd">final</span> <span class="n">AbstractResponse</span> <span class="n">responseBody</span><span class="o">;</span>
-    
-    <span class="c1">// 响应完成的回调函数
-</span><span class="c1"></span>    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">onComplete</span><span class="o">()</span> <span class="o">{</span>
-        <span class="c1">// 调用RequestCompletionHandler回调
-</span><span class="c1"></span>        <span class="k">if</span> <span class="o">(</span><span class="n">callback</span> <span class="o">!=</span> <span class="kc">null</span><span class="o">)</span>
-            <span class="n">callback</span><span class="o">.</span><span class="na">onComplete</span><span class="o">(</span><span class="k">this</span><span class="o">);</span>
-    <span class="o">}</span>    
-</code></pre></td></tr></table></div>
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">ClientResponse</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">    
+</span></span><span class="line"><span class="cl">    <span class="c1">// 回调函数，由ClientRequest指定
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="kd">private</span> <span class="kd">final</span> <span class="n">RequestCompletionHandler</span> <span class="n">callback</span><span class="o">;</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// 响应体
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="kd">private</span> <span class="kd">final</span> <span class="n">AbstractResponse</span> <span class="n">responseBody</span><span class="o">;</span>
+</span></span><span class="line"><span class="cl">    
+</span></span><span class="line"><span class="cl">    <span class="c1">// 响应完成的回调函数
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">onComplete</span><span class="o">()</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">        <span class="c1">// 调用RequestCompletionHandler回调
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>        <span class="k">if</span> <span class="o">(</span><span class="n">callback</span> <span class="o">!=</span> <span class="kc">null</span><span class="o">)</span>
+</span></span><span class="line"><span class="cl">            <span class="n">callback</span><span class="o">.</span><span class="na">onComplete</span><span class="o">(</span><span class="k">this</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">    <span class="o">}</span>    
+</span></span></code></pre></td></tr></table></div>
 </div>
 </div><p>下面继续看看NetworkClient的completeResponses方法，这里依次执行了每个ClientResponse的onComplete回调方法</p>
 <div class="highlight"><div class="chroma">
@@ -988,16 +988,16 @@
 </span><span class="lnt">9
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="kd">private</span> <span class="kt">void</span> <span class="nf">completeResponses</span><span class="o">(</span><span class="n">List</span><span class="o">&lt;</span><span class="n">ClientResponse</span><span class="o">&gt;</span> <span class="n">responses</span><span class="o">)</span> <span class="o">{</span>
-    <span class="k">for</span> <span class="o">(</span><span class="n">ClientResponse</span> <span class="n">response</span> <span class="o">:</span> <span class="n">responses</span><span class="o">)</span> <span class="o">{</span>
-        <span class="k">try</span> <span class="o">{</span>
-            <span class="n">response</span><span class="o">.</span><span class="na">onComplete</span><span class="o">();</span>
-        <span class="o">}</span> <span class="k">catch</span> <span class="o">(</span><span class="n">Exception</span> <span class="n">e</span><span class="o">)</span> <span class="o">{</span>
-            <span class="n">log</span><span class="o">.</span><span class="na">error</span><span class="o">(</span><span class="s">&#34;Uncaught error in request completion:&#34;</span><span class="o">,</span> <span class="n">e</span><span class="o">);</span>
-        <span class="o">}</span>
-    <span class="o">}</span>
-<span class="o">}</span>
-</code></pre></td></tr></table></div>
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="kd">private</span> <span class="kt">void</span> <span class="nf">completeResponses</span><span class="o">(</span><span class="n">List</span><span class="o">&lt;</span><span class="n">ClientResponse</span><span class="o">&gt;</span> <span class="n">responses</span><span class="o">)</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">    <span class="k">for</span> <span class="o">(</span><span class="n">ClientResponse</span> <span class="n">response</span> <span class="o">:</span> <span class="n">responses</span><span class="o">)</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">        <span class="k">try</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">            <span class="n">response</span><span class="o">.</span><span class="na">onComplete</span><span class="o">();</span>
+</span></span><span class="line"><span class="cl">        <span class="o">}</span> <span class="k">catch</span> <span class="o">(</span><span class="n">Exception</span> <span class="n">e</span><span class="o">)</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">            <span class="n">log</span><span class="o">.</span><span class="na">error</span><span class="o">(</span><span class="s">&#34;Uncaught error in request completion:&#34;</span><span class="o">,</span> <span class="n">e</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">        <span class="o">}</span>
+</span></span><span class="line"><span class="cl">    <span class="o">}</span>
+</span></span><span class="line"><span class="cl"><span class="o">}</span>
+</span></span></code></pre></td></tr></table></div>
 </div>
 </div>
             </div>
@@ -1026,9 +1026,9 @@
 
         
     <div class="updated-badge-container">
-        <span title="Updated @ 2021-10-22 14:44:34 CST" style="cursor:help">
+        <span title="Updated @ 2023-07-02 16:59:09 CST" style="cursor:help">
 
-<svg xmlns="http://www.w3.org/2000/svg" width="130" height="20" class="updated-badge"><linearGradient id="b" x2="0" y2="100%"><stop offset="0" stop-color="#bbb" stop-opacity=".1"/><stop offset="1" stop-opacity=".1"/></linearGradient><clipPath id="a"><rect width="130" height="20" rx="3" fill="#fff"/></clipPath><g clip-path="url(#a)"><path class="updated-badge-left" d="M0 0h55v20H0z"/><path class="updated-badge-right" d="M55 0h75v20H55z"/><path fill="url(#b)" d="M0 0h130v20H0z"/></g><g fill="#fff" text-anchor="middle" font-size="110"><text x="285" y="150" fill="#010101" fill-opacity=".3" textLength="450" transform="scale(.1)">updated</text><text x="285" y="140" textLength="450" transform="scale(.1)">updated</text><text x="915" y="150" fill="#010101" fill-opacity=".3" textLength="650" transform="scale(.1)">2021-10-22</text><text x="915" y="140" textLength="650" transform="scale(.1)">2021-10-22</text></g></svg>
+<svg xmlns="http://www.w3.org/2000/svg" width="130" height="20" class="updated-badge"><linearGradient id="b" x2="0" y2="100%"><stop offset="0" stop-color="#bbb" stop-opacity=".1"/><stop offset="1" stop-opacity=".1"/></linearGradient><clipPath id="a"><rect width="130" height="20" rx="3" fill="#fff"/></clipPath><g clip-path="url(#a)"><path class="updated-badge-left" d="M0 0h55v20H0z"/><path class="updated-badge-right" d="M55 0h75v20H55z"/><path fill="url(#b)" d="M0 0h130v20H0z"/></g><g fill="#fff" text-anchor="middle" font-size="110"><text x="285" y="150" fill="#010101" fill-opacity=".3" textLength="450" transform="scale(.1)">updated</text><text x="285" y="140" textLength="450" transform="scale(.1)">updated</text><text x="915" y="150" fill="#010101" fill-opacity=".3" textLength="650" transform="scale(.1)">2023-07-02</text><text x="915" y="140" textLength="650" transform="scale(.1)">2023-07-02</text></g></svg>
         </span></div>
 
 

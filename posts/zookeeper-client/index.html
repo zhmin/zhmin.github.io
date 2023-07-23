@@ -3,7 +3,7 @@
     <head prefix="og: http://ogp.me/ns# article: http://ogp.me/ns/article#">
     <meta charset="UTF-8" />
 
-    <meta name="generator" content="Hugo 0.88.1" /><meta name="theme-color" content="#fff" />
+    <meta name="generator" content="Hugo 0.115.0"><meta name="theme-color" content="#fff" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     
     <meta name="format-detection" content="telephone=no, date=no, address=no, email=no" />
@@ -14,11 +14,11 @@
 
     <title>Zookeeper 原生客户端原理 | 学习笔记</title>
 
-    <link rel="stylesheet" href="/css/meme.min.2d3e1834af2bc8dda20c7d74aaa1d8134845094441b7a554a5206ccd4b472596.css"/>
+    <link rel="stylesheet" href="/css/meme.min.91e7f58f97e1c60563ef481c38d9684fa8099537801d6f17bbfc724121e7d8f1.css"/>
 
     
     
-        <script src="/js/meme.min.800f61672145711eb3e1f29fcfcc3dbe0139dd459259718b611a0390f74703d1.js"></script>
+        <script src="/js/meme.min.3210a00c2fdcf6f831170b681b8ee40f83f0224663661e986872616aec45407f.js"></script>
 
     
 
@@ -54,13 +54,13 @@
         "@context": "https://schema.org",
         "@type": "BlogPosting",
         "datePublished": "2019-08-28T20:59:24+00:00",
-        "dateModified": "2021-10-22T14:44:34+08:00",
+        "dateModified": "2023-07-02T16:59:09+08:00",
         "url": "https://zhmin.github.io/posts/zookeeper-client/",
         "headline": "Zookeeper 原生客户端原理",
         "description": "架构图 首先给出一张简单的架构图，初步的了解下流程。 客户端创建请求，将它放入到一个队列里。如果客户端采用了同步请求，那么它会等待响应。如果采用了异步请求，它会传递回调函数，立刻返回。 队列采用先进先出的方……",
         "inLanguage" : "zh-CN",
         "articleSection": "posts",
-        "wordCount":  2718 ,
+        "wordCount":  2717 ,
         "image": ["https://zhmin.github.io/zookeeper-client-thread.svg"],
         "author": {
             "@type": "Person",
@@ -98,7 +98,7 @@
 <meta property="og:locale" content="zh" /><meta property="og:image" content="https://zhmin.github.io/zookeeper-client-thread.svg" />
 <meta property="og:type" content="article" />
     <meta property="article:published_time" content="2019-08-28T20:59:24&#43;00:00" />
-    <meta property="article:modified_time" content="2021-10-22T14:44:34&#43;08:00" />
+    <meta property="article:modified_time" content="2023-07-02T16:59:09&#43;08:00" />
     
     <meta property="article:section" content="posts" />
 
@@ -223,7 +223,7 @@
     
     
         
-        <span class="post-meta-item wordcount"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon post-meta-icon"><path d="M497.9 142.1l-46.1 46.1c-4.7 4.7-12.3 4.7-17 0l-111-111c-4.7-4.7-4.7-12.3 0-17l46.1-46.1c18.7-18.7 49.1-18.7 67.9 0l60.1 60.1c18.8 18.7 18.8 49.1 0 67.9zM284.2 99.8L21.6 362.4.4 483.9c-2.9 16.4 11.4 30.6 27.8 27.8l121.5-21.3 262.6-262.6c4.7-4.7 4.7-12.3 0-17l-111-111c-4.8-4.7-12.4-4.7-17.1 0zM124.1 339.9c-5.5-5.5-5.5-14.3 0-19.8l154-154c5.5-5.5 14.3-5.5 19.8 0s5.5 14.3 0 19.8l-154 154c-5.5 5.5-14.3 5.5-19.8 0zM88 424h48v36.3l-64.5 11.3-31.1-31.1L51.7 376H88v48z"/></svg>&nbsp;2718</span>
+        <span class="post-meta-item wordcount"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon post-meta-icon"><path d="M497.9 142.1l-46.1 46.1c-4.7 4.7-12.3 4.7-17 0l-111-111c-4.7-4.7-4.7-12.3 0-17l46.1-46.1c18.7-18.7 49.1-18.7 67.9 0l60.1 60.1c18.8 18.7 18.8 49.1 0 67.9zM284.2 99.8L21.6 362.4.4 483.9c-2.9 16.4 11.4 30.6 27.8 27.8l121.5-21.3 262.6-262.6c4.7-4.7 4.7-12.3 0-17l-111-111c-4.8-4.7-12.4-4.7-17.1 0zM124.1 339.9c-5.5-5.5-5.5-14.3 0-19.8l154-154c5.5-5.5 14.3-5.5 19.8 0s5.5 14.3 0 19.8l-154 154c-5.5 5.5-14.3 5.5-19.8 0zM88 424h48v36.3l-64.5 11.3-31.1-31.1L51.7 376H88v48z"/></svg>&nbsp;2717</span>
     
     
         
@@ -292,25 +292,25 @@
 </span><span class="lnt">18
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="kd">private</span> <span class="kt">void</span> <span class="nf">finishPacket</span><span class="o">(</span><span class="n">Packet</span> <span class="n">p</span><span class="o">)</span> <span class="o">{</span>
-    <span class="o">......</span>
-    
-    <span class="c1">// cb属性代表着回调函数，如果为空则是同步请求，否则为异步请求
-</span><span class="c1"></span>    <span class="k">if</span> <span class="o">(</span><span class="n">p</span><span class="o">.</span><span class="na">cb</span> <span class="o">==</span> <span class="kc">null</span><span class="o">)</span> <span class="o">{</span>
-        <span class="kd">synchronized</span> <span class="o">(</span><span class="n">p</span><span class="o">)</span> <span class="o">{</span>
-            <span class="c1">// 设置 finished 属性
-</span><span class="c1"></span>            <span class="n">p</span><span class="o">.</span><span class="na">finished</span> <span class="o">=</span> <span class="kc">true</span><span class="o">;</span>
-            <span class="c1">// 执行通知
-</span><span class="c1"></span>            <span class="n">p</span><span class="o">.</span><span class="na">notifyAll</span><span class="o">();</span>
-        <span class="o">}</span>
-    <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
-        <span class="c1">// 设置 finished 属性
-</span><span class="c1"></span>        <span class="n">p</span><span class="o">.</span><span class="na">finished</span> <span class="o">=</span> <span class="kc">true</span><span class="o">;</span>
-        <span class="c1">// 添加到队列里
-</span><span class="c1"></span>        <span class="n">eventThread</span><span class="o">.</span><span class="na">queuePacket</span><span class="o">(</span><span class="n">p</span><span class="o">);</span>
-    <span class="o">}</span>
-<span class="o">}</span>
-</code></pre></td></tr></table></div>
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="kd">private</span> <span class="kt">void</span> <span class="nf">finishPacket</span><span class="o">(</span><span class="n">Packet</span> <span class="n">p</span><span class="o">)</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">    <span class="o">......</span>
+</span></span><span class="line"><span class="cl">    
+</span></span><span class="line"><span class="cl">    <span class="c1">// cb属性代表着回调函数，如果为空则是同步请求，否则为异步请求
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="k">if</span> <span class="o">(</span><span class="n">p</span><span class="o">.</span><span class="na">cb</span> <span class="o">==</span> <span class="kc">null</span><span class="o">)</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">        <span class="kd">synchronized</span> <span class="o">(</span><span class="n">p</span><span class="o">)</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">            <span class="c1">// 设置 finished 属性
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>            <span class="n">p</span><span class="o">.</span><span class="na">finished</span> <span class="o">=</span> <span class="kc">true</span><span class="o">;</span>
+</span></span><span class="line"><span class="cl">            <span class="c1">// 执行通知
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>            <span class="n">p</span><span class="o">.</span><span class="na">notifyAll</span><span class="o">();</span>
+</span></span><span class="line"><span class="cl">        <span class="o">}</span>
+</span></span><span class="line"><span class="cl">    <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">        <span class="c1">// 设置 finished 属性
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>        <span class="n">p</span><span class="o">.</span><span class="na">finished</span> <span class="o">=</span> <span class="kc">true</span><span class="o">;</span>
+</span></span><span class="line"><span class="cl">        <span class="c1">// 添加到队列里
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>        <span class="n">eventThread</span><span class="o">.</span><span class="na">queuePacket</span><span class="o">(</span><span class="n">p</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">    <span class="o">}</span>
+</span></span><span class="line"><span class="cl"><span class="o">}</span>
+</span></span></code></pre></td></tr></table></div>
 </div>
 </div><h2 id="后台线程"><a href="#后台线程" class="anchor-link"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon anchor-icon"><path d="M326.612 185.391c59.747 59.809 58.927 155.698.36 214.59-.11.12-.24.25-.36.37l-67.2 67.2c-59.27 59.27-155.699 59.262-214.96 0-59.27-59.26-59.27-155.7 0-214.96l37.106-37.106c9.84-9.84 26.786-3.3 27.294 10.606.648 17.722 3.826 35.527 9.69 52.721 1.986 5.822.567 12.262-3.783 16.612l-13.087 13.087c-28.026 28.026-28.905 73.66-1.155 101.96 28.024 28.579 74.086 28.749 102.325.51l67.2-67.19c28.191-28.191 28.073-73.757 0-101.83-3.701-3.694-7.429-6.564-10.341-8.569a16.037 16.037 0 0 1-6.947-12.606c-.396-10.567 3.348-21.456 11.698-29.806l21.054-21.055c5.521-5.521 14.182-6.199 20.584-1.731a152.482 152.482 0 0 1 20.522 17.197zM467.547 44.449c-59.261-59.262-155.69-59.27-214.96 0l-67.2 67.2c-.12.12-.25.25-.36.37-58.566 58.892-59.387 154.781.36 214.59a152.454 152.454 0 0 0 20.521 17.196c6.402 4.468 15.064 3.789 20.584-1.731l21.054-21.055c8.35-8.35 12.094-19.239 11.698-29.806a16.037 16.037 0 0 0-6.947-12.606c-2.912-2.005-6.64-4.875-10.341-8.569-28.073-28.073-28.191-73.639 0-101.83l67.2-67.19c28.239-28.239 74.3-28.069 102.325.51 27.75 28.3 26.872 73.934-1.155 101.96l-13.087 13.087c-4.35 4.35-5.769 10.79-3.783 16.612 5.864 17.194 9.042 34.999 9.69 52.721.509 13.906 17.454 20.446 27.294 10.606l37.106-37.106c59.271-59.259 59.271-155.699.001-214.959z"/></svg></a>后台线程</h2>
 <p>EventThread 负责执行回调函数，还包含处理 Watch 事件。EventThread 的原理很简单，只是维护了一个队列，不停的取出任务执行。对于 Watch 事件需要额外说一下，用户注册的 Watch 回调，只能用一次。我们通过 ZKWatchManager 的源码就可以看出原因，它的 materialize 方法负责获取 Watch 回调。</p>
@@ -346,41 +346,39 @@
 </span><span class="lnt">28
 </span><span class="lnt">29
 </span><span class="lnt">30
-</span><span class="lnt">31
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="kd">static</span> <span class="kd">class</span> <span class="nc">ZKWatchManager</span> <span class="kd">implements</span> <span class="n">ClientWatchManager</span> <span class="o">{</span>
-    
-    <span class="c1">// 保存节点数据变化的回调
-</span><span class="c1"></span>    <span class="kd">private</span> <span class="kd">final</span> <span class="n">Map</span><span class="o">&lt;</span><span class="n">String</span><span class="o">,</span> <span class="n">Set</span><span class="o">&lt;</span><span class="n">Watcher</span><span class="o">&gt;&gt;</span> <span class="n">dataWatches</span> <span class="o">=</span> <span class="k">new</span> <span class="n">HashMap</span><span class="o">&lt;</span><span class="n">String</span><span class="o">,</span> <span class="n">Set</span><span class="o">&lt;</span><span class="n">Watcher</span><span class="o">&gt;&gt;();</span>
-    <span class="c1">// 保存节点删除或创建的回调
-</span><span class="c1"></span>    <span class="kd">private</span> <span class="kd">final</span> <span class="n">Map</span><span class="o">&lt;</span><span class="n">String</span><span class="o">,</span> <span class="n">Set</span><span class="o">&lt;</span><span class="n">Watcher</span><span class="o">&gt;&gt;</span> <span class="n">existWatches</span> <span class="o">=</span> <span class="k">new</span> <span class="n">HashMap</span><span class="o">&lt;</span><span class="n">String</span><span class="o">,</span> <span class="n">Set</span><span class="o">&lt;</span><span class="n">Watcher</span><span class="o">&gt;&gt;();</span>
-    <span class="c1">// 保存子节点变化的回调
-</span><span class="c1"></span>    <span class="kd">private</span> <span class="kd">final</span> <span class="n">Map</span><span class="o">&lt;</span><span class="n">String</span><span class="o">,</span> <span class="n">Set</span><span class="o">&lt;</span><span class="n">Watcher</span><span class="o">&gt;&gt;</span> <span class="n">childWatches</span> <span class="o">=</span> <span class="k">new</span> <span class="n">HashMap</span><span class="o">&lt;</span><span class="n">String</span><span class="o">,</span> <span class="n">Set</span><span class="o">&lt;</span><span class="n">Watcher</span><span class="o">&gt;&gt;();</span>
-    
-    <span class="kd">public</span> <span class="n">Set</span><span class="o">&lt;</span><span class="n">Watcher</span><span class="o">&gt;</span> <span class="nf">materialize</span><span class="o">(</span><span class="n">Watcher</span><span class="o">.</span><span class="na">Event</span><span class="o">.</span><span class="na">KeeperState</span> <span class="n">state</span><span class="o">,</span> <span class="n">Watcher</span><span class="o">.</span><span class="na">Event</span><span class="o">.</span><span class="na">EventType</span> <span class="n">type</span><span class="o">,</span> <span class="n">String</span> <span class="n">clientPath</span><span class="o">)</span> <span class="o">{</span>
-        <span class="n">Set</span><span class="o">&lt;</span><span class="n">Watcher</span><span class="o">&gt;</span> <span class="n">result</span> <span class="o">=</span> <span class="k">new</span> <span class="n">HashSet</span><span class="o">&lt;</span><span class="n">Watcher</span><span class="o">&gt;();</span>
-        <span class="k">switch</span> <span class="o">(</span><span class="n">type</span><span class="o">)</span> <span class="o">{</span>
-            <span class="c1">// 这里以节点变化的情况为例
-</span><span class="c1"></span>            <span class="k">case</span> <span class="n">NodeDataChanged</span><span class="o">:</span>
-            <span class="k">case</span> <span class="n">NodeCreated</span><span class="o">:</span>
-                <span class="kd">synchronized</span> <span class="o">(</span><span class="n">dataWatches</span><span class="o">)</span> <span class="o">{</span>
-                    <span class="c1">// 从dataWatches列表删除
-</span><span class="c1"></span>                    <span class="n">addTo</span><span class="o">(</span><span class="n">dataWatches</span><span class="o">.</span><span class="na">remove</span><span class="o">(</span><span class="n">clientPath</span><span class="o">),</span> <span class="n">result</span><span class="o">);</span>
-                <span class="o">}</span>
-                <span class="kd">synchronized</span> <span class="o">(</span><span class="n">existWatches</span><span class="o">)</span> <span class="o">{</span>
-                    <span class="c1">// 从existWatches列表删除
-</span><span class="c1"></span>                    <span class="n">addTo</span><span class="o">(</span><span class="n">existWatches</span><span class="o">.</span><span class="na">remove</span><span class="o">(</span><span class="n">clientPath</span><span class="o">),</span> <span class="n">result</span><span class="o">);</span>
-                <span class="o">}</span>
-                <span class="k">break</span><span class="o">;</span>
-
-                <span class="o">.......</span>
-                <span class="c1">// 其余变化情况
-</span><span class="c1"></span>        <span class="o">}</span>
-    <span class="o">}</span>
-<span class="o">}</span>
-
-</code></pre></td></tr></table></div>
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="kd">static</span> <span class="kd">class</span> <span class="nc">ZKWatchManager</span> <span class="kd">implements</span> <span class="n">ClientWatchManager</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">    
+</span></span><span class="line"><span class="cl">    <span class="c1">// 保存节点数据变化的回调
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="kd">private</span> <span class="kd">final</span> <span class="n">Map</span><span class="o">&lt;</span><span class="n">String</span><span class="o">,</span> <span class="n">Set</span><span class="o">&lt;</span><span class="n">Watcher</span><span class="o">&gt;&gt;</span> <span class="n">dataWatches</span> <span class="o">=</span> <span class="k">new</span> <span class="n">HashMap</span><span class="o">&lt;</span><span class="n">String</span><span class="o">,</span> <span class="n">Set</span><span class="o">&lt;</span><span class="n">Watcher</span><span class="o">&gt;&gt;();</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// 保存节点删除或创建的回调
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="kd">private</span> <span class="kd">final</span> <span class="n">Map</span><span class="o">&lt;</span><span class="n">String</span><span class="o">,</span> <span class="n">Set</span><span class="o">&lt;</span><span class="n">Watcher</span><span class="o">&gt;&gt;</span> <span class="n">existWatches</span> <span class="o">=</span> <span class="k">new</span> <span class="n">HashMap</span><span class="o">&lt;</span><span class="n">String</span><span class="o">,</span> <span class="n">Set</span><span class="o">&lt;</span><span class="n">Watcher</span><span class="o">&gt;&gt;();</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// 保存子节点变化的回调
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="kd">private</span> <span class="kd">final</span> <span class="n">Map</span><span class="o">&lt;</span><span class="n">String</span><span class="o">,</span> <span class="n">Set</span><span class="o">&lt;</span><span class="n">Watcher</span><span class="o">&gt;&gt;</span> <span class="n">childWatches</span> <span class="o">=</span> <span class="k">new</span> <span class="n">HashMap</span><span class="o">&lt;</span><span class="n">String</span><span class="o">,</span> <span class="n">Set</span><span class="o">&lt;</span><span class="n">Watcher</span><span class="o">&gt;&gt;();</span>
+</span></span><span class="line"><span class="cl">    
+</span></span><span class="line"><span class="cl">    <span class="kd">public</span> <span class="n">Set</span><span class="o">&lt;</span><span class="n">Watcher</span><span class="o">&gt;</span> <span class="nf">materialize</span><span class="o">(</span><span class="n">Watcher</span><span class="o">.</span><span class="na">Event</span><span class="o">.</span><span class="na">KeeperState</span> <span class="n">state</span><span class="o">,</span> <span class="n">Watcher</span><span class="o">.</span><span class="na">Event</span><span class="o">.</span><span class="na">EventType</span> <span class="n">type</span><span class="o">,</span> <span class="n">String</span> <span class="n">clientPath</span><span class="o">)</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">        <span class="n">Set</span><span class="o">&lt;</span><span class="n">Watcher</span><span class="o">&gt;</span> <span class="n">result</span> <span class="o">=</span> <span class="k">new</span> <span class="n">HashSet</span><span class="o">&lt;</span><span class="n">Watcher</span><span class="o">&gt;();</span>
+</span></span><span class="line"><span class="cl">        <span class="k">switch</span> <span class="o">(</span><span class="n">type</span><span class="o">)</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">            <span class="c1">// 这里以节点变化的情况为例
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>            <span class="k">case</span> <span class="n">NodeDataChanged</span><span class="o">:</span>
+</span></span><span class="line"><span class="cl">            <span class="k">case</span> <span class="n">NodeCreated</span><span class="o">:</span>
+</span></span><span class="line"><span class="cl">                <span class="kd">synchronized</span> <span class="o">(</span><span class="n">dataWatches</span><span class="o">)</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">                    <span class="c1">// 从dataWatches列表删除
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>                    <span class="n">addTo</span><span class="o">(</span><span class="n">dataWatches</span><span class="o">.</span><span class="na">remove</span><span class="o">(</span><span class="n">clientPath</span><span class="o">),</span> <span class="n">result</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">                <span class="o">}</span>
+</span></span><span class="line"><span class="cl">                <span class="kd">synchronized</span> <span class="o">(</span><span class="n">existWatches</span><span class="o">)</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">                    <span class="c1">// 从existWatches列表删除
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>                    <span class="n">addTo</span><span class="o">(</span><span class="n">existWatches</span><span class="o">.</span><span class="na">remove</span><span class="o">(</span><span class="n">clientPath</span><span class="o">),</span> <span class="n">result</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">                <span class="o">}</span>
+</span></span><span class="line"><span class="cl">                <span class="k">break</span><span class="o">;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">                <span class="o">.......</span>
+</span></span><span class="line"><span class="cl">                <span class="c1">// 其余变化情况
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>        <span class="o">}</span>
+</span></span><span class="line"><span class="cl">    <span class="o">}</span>
+</span></span><span class="line"><span class="cl"><span class="o">}</span>
+</span></span></code></pre></td></tr></table></div>
 </div>
 </div><p>可以看到 ZKWatchManager 每次获取 Watch 回调时，都是从集合中删除掉。所以用户想持续性的注册 Watch，需要在回调函数中重新注册自身。</p>
 <h2 id="socket-通信"><a href="#socket-通信" class="anchor-link"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon anchor-icon"><path d="M326.612 185.391c59.747 59.809 58.927 155.698.36 214.59-.11.12-.24.25-.36.37l-67.2 67.2c-59.27 59.27-155.699 59.262-214.96 0-59.27-59.26-59.27-155.7 0-214.96l37.106-37.106c9.84-9.84 26.786-3.3 27.294 10.606.648 17.722 3.826 35.527 9.69 52.721 1.986 5.822.567 12.262-3.783 16.612l-13.087 13.087c-28.026 28.026-28.905 73.66-1.155 101.96 28.024 28.579 74.086 28.749 102.325.51l67.2-67.19c28.191-28.191 28.073-73.757 0-101.83-3.701-3.694-7.429-6.564-10.341-8.569a16.037 16.037 0 0 1-6.947-12.606c-.396-10.567 3.348-21.456 11.698-29.806l21.054-21.055c5.521-5.521 14.182-6.199 20.584-1.731a152.482 152.482 0 0 1 20.522 17.197zM467.547 44.449c-59.261-59.262-155.69-59.27-214.96 0l-67.2 67.2c-.12.12-.25.25-.36.37-58.566 58.892-59.387 154.781.36 214.59a152.454 152.454 0 0 0 20.521 17.196c6.402 4.468 15.064 3.789 20.584-1.731l21.054-21.055c8.35-8.35 12.094-19.239 11.698-29.806a16.037 16.037 0 0 0-6.947-12.606c-2.912-2.005-6.64-4.875-10.341-8.569-28.073-28.073-28.191-73.639 0-101.83l67.2-67.19c28.239-28.239 74.3-28.069 102.325.51 27.75 28.3 26.872 73.934-1.155 101.96l-13.087 13.087c-4.35 4.35-5.769 10.79-3.783 16.612 5.864 17.194 9.042 34.999 9.69 52.721.509 13.906 17.454 20.446 27.294 10.606l37.106-37.106c59.271-59.259 59.271-155.699.001-214.959z"/></svg></a>Socket 通信</h2>
@@ -431,37 +429,37 @@
 </span><span class="lnt">30
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">ZooKeeper</span> <span class="kd">implements</span> <span class="n">AutoCloseable</span> <span class="o">{</span>
-    
-    <span class="kd">protected</span> <span class="kd">final</span> <span class="n">ClientCnxn</span> <span class="n">cnxn</span><span class="o">;</span>    
-    <span class="kd">public</span> <span class="n">String</span> <span class="nf">create</span><span class="o">(</span><span class="kd">final</span> <span class="n">String</span> <span class="n">path</span><span class="o">,</span> <span class="kt">byte</span> <span class="n">data</span><span class="o">[],</span> <span class="n">List</span><span class="o">&lt;</span><span class="n">ACL</span><span class="o">&gt;</span> <span class="n">acl</span><span class="o">,</span>
-                         <span class="n">CreateMode</span> <span class="n">createMode</span><span class="o">)</span> <span class="o">{</span>
-        <span class="c1">// 创建请求
-</span><span class="c1"></span>        <span class="n">RequestHeader</span> <span class="n">h</span> <span class="o">=</span> <span class="k">new</span> <span class="n">RequestHeader</span><span class="o">();</span>
-        <span class="o">.....</span>
-        <span class="c1">// 提交请求并且等待响应
-</span><span class="c1"></span>        <span class="n">ReplyHeader</span> <span class="n">r</span> <span class="o">=</span> <span class="n">cnxn</span><span class="o">.</span><span class="na">submitRequest</span><span class="o">(</span><span class="n">h</span><span class="o">,</span> <span class="n">request</span><span class="o">,</span> <span class="n">response</span><span class="o">,</span> <span class="kc">null</span><span class="o">);</span>
-        <span class="k">return</span> <span class="n">response</span><span class="o">.</span><span class="na">getPath</span><span class="o">();</span>
-    <span class="o">}</span>
-<span class="o">}</span>
-
-<span class="kd">public</span> <span class="kd">class</span> <span class="nc">ClientCnxn</span> <span class="o">{</span>
-        <span class="kd">public</span> <span class="n">ReplyHeader</span> <span class="nf">submitRequest</span><span class="o">(...)</span> <span class="o">{</span>
-        <span class="n">ReplyHeader</span> <span class="n">r</span> <span class="o">=</span> <span class="k">new</span> <span class="n">ReplyHeader</span><span class="o">();</span>
-        <span class="c1">// 将请求放入队列中
-</span><span class="c1"></span>        <span class="n">Packet</span> <span class="n">packet</span> <span class="o">=</span> <span class="n">queuePacket</span><span class="o">(</span><span class="n">h</span><span class="o">,</span> <span class="n">r</span><span class="o">,</span> <span class="n">request</span><span class="o">,</span> <span class="n">response</span><span class="o">,</span> <span class="kc">null</span><span class="o">,</span> <span class="kc">null</span><span class="o">,</span> <span class="kc">null</span><span class="o">,</span>
-                <span class="kc">null</span><span class="o">,</span> <span class="n">watchRegistration</span><span class="o">,</span> <span class="n">watchDeregistration</span><span class="o">);</span>
-        <span class="c1">// 使用 packet 实例的监视锁
-</span><span class="c1"></span>        <span class="kd">synchronized</span> <span class="o">(</span><span class="n">packet</span><span class="o">)</span> <span class="o">{</span>
-            <span class="c1">// 判断条件是finished属性
-</span><span class="c1"></span>            <span class="k">while</span> <span class="o">(!</span><span class="n">packet</span><span class="o">.</span><span class="na">finished</span><span class="o">)</span> <span class="o">{</span>
-                <span class="n">packet</span><span class="o">.</span><span class="na">wait</span><span class="o">();</span>
-            <span class="o">}</span>
-        <span class="o">}</span>
-        <span class="k">return</span> <span class="n">r</span><span class="o">;</span>
-    <span class="o">}</span>
-<span class="o">}</span>
-</code></pre></td></tr></table></div>
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">ZooKeeper</span> <span class="kd">implements</span> <span class="n">AutoCloseable</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">    
+</span></span><span class="line"><span class="cl">    <span class="kd">protected</span> <span class="kd">final</span> <span class="n">ClientCnxn</span> <span class="n">cnxn</span><span class="o">;</span>    
+</span></span><span class="line"><span class="cl">    <span class="kd">public</span> <span class="n">String</span> <span class="nf">create</span><span class="o">(</span><span class="kd">final</span> <span class="n">String</span> <span class="n">path</span><span class="o">,</span> <span class="kt">byte</span> <span class="n">data</span><span class="o">[],</span> <span class="n">List</span><span class="o">&lt;</span><span class="n">ACL</span><span class="o">&gt;</span> <span class="n">acl</span><span class="o">,</span>
+</span></span><span class="line"><span class="cl">                         <span class="n">CreateMode</span> <span class="n">createMode</span><span class="o">)</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">        <span class="c1">// 创建请求
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>        <span class="n">RequestHeader</span> <span class="n">h</span> <span class="o">=</span> <span class="k">new</span> <span class="n">RequestHeader</span><span class="o">();</span>
+</span></span><span class="line"><span class="cl">        <span class="o">.....</span>
+</span></span><span class="line"><span class="cl">        <span class="c1">// 提交请求并且等待响应
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>        <span class="n">ReplyHeader</span> <span class="n">r</span> <span class="o">=</span> <span class="n">cnxn</span><span class="o">.</span><span class="na">submitRequest</span><span class="o">(</span><span class="n">h</span><span class="o">,</span> <span class="n">request</span><span class="o">,</span> <span class="n">response</span><span class="o">,</span> <span class="kc">null</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">        <span class="k">return</span> <span class="n">response</span><span class="o">.</span><span class="na">getPath</span><span class="o">();</span>
+</span></span><span class="line"><span class="cl">    <span class="o">}</span>
+</span></span><span class="line"><span class="cl"><span class="o">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">ClientCnxn</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">        <span class="kd">public</span> <span class="n">ReplyHeader</span> <span class="nf">submitRequest</span><span class="o">(...)</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">        <span class="n">ReplyHeader</span> <span class="n">r</span> <span class="o">=</span> <span class="k">new</span> <span class="n">ReplyHeader</span><span class="o">();</span>
+</span></span><span class="line"><span class="cl">        <span class="c1">// 将请求放入队列中
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>        <span class="n">Packet</span> <span class="n">packet</span> <span class="o">=</span> <span class="n">queuePacket</span><span class="o">(</span><span class="n">h</span><span class="o">,</span> <span class="n">r</span><span class="o">,</span> <span class="n">request</span><span class="o">,</span> <span class="n">response</span><span class="o">,</span> <span class="kc">null</span><span class="o">,</span> <span class="kc">null</span><span class="o">,</span> <span class="kc">null</span><span class="o">,</span>
+</span></span><span class="line"><span class="cl">                <span class="kc">null</span><span class="o">,</span> <span class="n">watchRegistration</span><span class="o">,</span> <span class="n">watchDeregistration</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">        <span class="c1">// 使用 packet 实例的监视锁
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>        <span class="kd">synchronized</span> <span class="o">(</span><span class="n">packet</span><span class="o">)</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">            <span class="c1">// 判断条件是finished属性
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>            <span class="k">while</span> <span class="o">(!</span><span class="n">packet</span><span class="o">.</span><span class="na">finished</span><span class="o">)</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">                <span class="n">packet</span><span class="o">.</span><span class="na">wait</span><span class="o">();</span>
+</span></span><span class="line"><span class="cl">            <span class="o">}</span>
+</span></span><span class="line"><span class="cl">        <span class="o">}</span>
+</span></span><span class="line"><span class="cl">        <span class="k">return</span> <span class="n">r</span><span class="o">;</span>
+</span></span><span class="line"><span class="cl">    <span class="o">}</span>
+</span></span><span class="line"><span class="cl"><span class="o">}</span>
+</span></span></code></pre></td></tr></table></div>
 </div>
 </div><p>回顾下 SendThread 在解析完请求，都会调用 finishPacket 方法，这里面会设置 finished 属性为 true，并且执行通知。</p>
 <h3 id="异步请求"><a href="#异步请求" class="anchor-link"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon anchor-icon"><path d="M326.612 185.391c59.747 59.809 58.927 155.698.36 214.59-.11.12-.24.25-.36.37l-67.2 67.2c-59.27 59.27-155.699 59.262-214.96 0-59.27-59.26-59.27-155.7 0-214.96l37.106-37.106c9.84-9.84 26.786-3.3 27.294 10.606.648 17.722 3.826 35.527 9.69 52.721 1.986 5.822.567 12.262-3.783 16.612l-13.087 13.087c-28.026 28.026-28.905 73.66-1.155 101.96 28.024 28.579 74.086 28.749 102.325.51l67.2-67.19c28.191-28.191 28.073-73.757 0-101.83-3.701-3.694-7.429-6.564-10.341-8.569a16.037 16.037 0 0 1-6.947-12.606c-.396-10.567 3.348-21.456 11.698-29.806l21.054-21.055c5.521-5.521 14.182-6.199 20.584-1.731a152.482 152.482 0 0 1 20.522 17.197zM467.547 44.449c-59.261-59.262-155.69-59.27-214.96 0l-67.2 67.2c-.12.12-.25.25-.36.37-58.566 58.892-59.387 154.781.36 214.59a152.454 152.454 0 0 0 20.521 17.196c6.402 4.468 15.064 3.789 20.584-1.731l21.054-21.055c8.35-8.35 12.094-19.239 11.698-29.806a16.037 16.037 0 0 0-6.947-12.606c-2.912-2.005-6.64-4.875-10.341-8.569-28.073-28.073-28.191-73.639 0-101.83l67.2-67.19c28.239-28.239 74.3-28.069 102.325.51 27.75 28.3 26.872 73.934-1.155 101.96l-13.087 13.087c-4.35 4.35-5.769 10.79-3.783 16.612 5.864 17.194 9.042 34.999 9.69 52.721.509 13.906 17.454 20.446 27.294 10.606l37.106-37.106c59.271-59.259 59.271-155.699.001-214.959z"/></svg></a>异步请求</h3>
@@ -479,17 +477,17 @@
 </span><span class="lnt">10
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">ZooKeeper</span> <span class="kd">implements</span> <span class="n">AutoCloseable</span> <span class="o">{</span>
-    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">create</span><span class="o">(</span><span class="kd">final</span> <span class="n">String</span> <span class="n">path</span><span class="o">,</span> <span class="kt">byte</span> <span class="n">data</span><span class="o">[],</span> <span class="n">List</span><span class="o">&lt;</span><span class="n">ACL</span><span class="o">&gt;</span> <span class="n">acl</span><span class="o">,</span>
-            <span class="n">CreateMode</span> <span class="n">createMode</span><span class="o">,</span> <span class="n">StringCallback</span> <span class="n">cb</span><span class="o">,</span> <span class="n">Object</span> <span class="n">ctx</span><span class="o">)</span> <span class="o">{</span>
-        <span class="c1">// 创建请求
-</span><span class="c1"></span>        <span class="n">RequestHeader</span> <span class="n">h</span> <span class="o">=</span> <span class="k">new</span> <span class="n">RequestHeader</span><span class="o">();</span>
-        <span class="o">......</span>
-        <span class="c1">// 将请求放入队列中
-</span><span class="c1"></span>        <span class="n">cnxn</span><span class="o">.</span><span class="na">queuePacket</span><span class="o">(</span><span class="n">h</span><span class="o">,</span> <span class="n">r</span><span class="o">,</span> <span class="n">request</span><span class="o">,</span> <span class="n">response</span><span class="o">,</span> <span class="n">cb</span><span class="o">,</span> <span class="n">clientPath</span><span class="o">,</span>
-                <span class="n">serverPath</span><span class="o">,</span> <span class="n">ctx</span><span class="o">,</span> <span class="kc">null</span><span class="o">);</span>
-    <span class="o">}</span>
-</code></pre></td></tr></table></div>
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">ZooKeeper</span> <span class="kd">implements</span> <span class="n">AutoCloseable</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">create</span><span class="o">(</span><span class="kd">final</span> <span class="n">String</span> <span class="n">path</span><span class="o">,</span> <span class="kt">byte</span> <span class="n">data</span><span class="o">[],</span> <span class="n">List</span><span class="o">&lt;</span><span class="n">ACL</span><span class="o">&gt;</span> <span class="n">acl</span><span class="o">,</span>
+</span></span><span class="line"><span class="cl">            <span class="n">CreateMode</span> <span class="n">createMode</span><span class="o">,</span> <span class="n">StringCallback</span> <span class="n">cb</span><span class="o">,</span> <span class="n">Object</span> <span class="n">ctx</span><span class="o">)</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">        <span class="c1">// 创建请求
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>        <span class="n">RequestHeader</span> <span class="n">h</span> <span class="o">=</span> <span class="k">new</span> <span class="n">RequestHeader</span><span class="o">();</span>
+</span></span><span class="line"><span class="cl">        <span class="o">......</span>
+</span></span><span class="line"><span class="cl">        <span class="c1">// 将请求放入队列中
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>        <span class="n">cnxn</span><span class="o">.</span><span class="na">queuePacket</span><span class="o">(</span><span class="n">h</span><span class="o">,</span> <span class="n">r</span><span class="o">,</span> <span class="n">request</span><span class="o">,</span> <span class="n">response</span><span class="o">,</span> <span class="n">cb</span><span class="o">,</span> <span class="n">clientPath</span><span class="o">,</span>
+</span></span><span class="line"><span class="cl">                <span class="n">serverPath</span><span class="o">,</span> <span class="n">ctx</span><span class="o">,</span> <span class="kc">null</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">    <span class="o">}</span>
+</span></span></code></pre></td></tr></table></div>
 </div>
 </div><p>异步请求需要传递回调函数 StringCallback， 和自定义的回调参数 Object。后台 EventThread 线程会执行回调函数。</p>
 <h2 id="异常处理"><a href="#异常处理" class="anchor-link"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon anchor-icon"><path d="M326.612 185.391c59.747 59.809 58.927 155.698.36 214.59-.11.12-.24.25-.36.37l-67.2 67.2c-59.27 59.27-155.699 59.262-214.96 0-59.27-59.26-59.27-155.7 0-214.96l37.106-37.106c9.84-9.84 26.786-3.3 27.294 10.606.648 17.722 3.826 35.527 9.69 52.721 1.986 5.822.567 12.262-3.783 16.612l-13.087 13.087c-28.026 28.026-28.905 73.66-1.155 101.96 28.024 28.579 74.086 28.749 102.325.51l67.2-67.19c28.191-28.191 28.073-73.757 0-101.83-3.701-3.694-7.429-6.564-10.341-8.569a16.037 16.037 0 0 1-6.947-12.606c-.396-10.567 3.348-21.456 11.698-29.806l21.054-21.055c5.521-5.521 14.182-6.199 20.584-1.731a152.482 152.482 0 0 1 20.522 17.197zM467.547 44.449c-59.261-59.262-155.69-59.27-214.96 0l-67.2 67.2c-.12.12-.25.25-.36.37-58.566 58.892-59.387 154.781.36 214.59a152.454 152.454 0 0 0 20.521 17.196c6.402 4.468 15.064 3.789 20.584-1.731l21.054-21.055c8.35-8.35 12.094-19.239 11.698-29.806a16.037 16.037 0 0 0-6.947-12.606c-2.912-2.005-6.64-4.875-10.341-8.569-28.073-28.073-28.191-73.639 0-101.83l67.2-67.19c28.239-28.239 74.3-28.069 102.325.51 27.75 28.3 26.872 73.934-1.155 101.96l-13.087 13.087c-4.35 4.35-5.769 10.79-3.783 16.612 5.864 17.194 9.042 34.999 9.69 52.721.509 13.906 17.454 20.446 27.294 10.606l37.106-37.106c59.271-59.259 59.271-155.699.001-214.959z"/></svg></a>异常处理</h2>
@@ -503,11 +501,11 @@
 </span><span class="lnt">4
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="kd">abstract</span> <span class="kd">class</span> <span class="nc">ClientCnxnSocket</span> <span class="o">{</span>
-    <span class="kd">abstract</span> <span class="kt">void</span> <span class="nf">doTransport</span><span class="o">(</span><span class="kt">int</span> <span class="n">waitTimeOut</span><span class="o">,</span> <span class="n">List</span><span class="o">&lt;</span><span class="n">Packet</span><span class="o">&gt;</span> <span class="n">pendingQueue</span><span class="o">,</span> <span class="n">ClientCnxn</span> <span class="n">cnxn</span><span class="o">)</span>
-            <span class="kd">throws</span> <span class="n">IOException</span><span class="o">,</span> <span class="n">InterruptedException</span><span class="o">;</span>
-<span class="o">}</span>
-</code></pre></td></tr></table></div>
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="kd">abstract</span> <span class="kd">class</span> <span class="nc">ClientCnxnSocket</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">    <span class="kd">abstract</span> <span class="kt">void</span> <span class="nf">doTransport</span><span class="o">(</span><span class="kt">int</span> <span class="n">waitTimeOut</span><span class="o">,</span> <span class="n">List</span><span class="o">&lt;</span><span class="n">Packet</span><span class="o">&gt;</span> <span class="n">pendingQueue</span><span class="o">,</span> <span class="n">ClientCnxn</span> <span class="n">cnxn</span><span class="o">)</span>
+</span></span><span class="line"><span class="cl">            <span class="kd">throws</span> <span class="n">IOException</span><span class="o">,</span> <span class="n">InterruptedException</span><span class="o">;</span>
+</span></span><span class="line"><span class="cl"><span class="o">}</span>
+</span></span></code></pre></td></tr></table></div>
 </div>
 </div><p>doTransport 接口负责处理 socket 的连接，读写事件，在 SendThread 线程中被循环调用。继续看 SendThread 是如何处理这些异常的，下面代码做了部分简化。</p>
 <p>这里还要额外说下 zookeeper 集群，从 3.4.0 版本开始，支持只读模式，默认是关闭的。如果开启了只读模式，那么这个节点即使与集群的连接断开，仍能提供读操作。客户端如果连接的节点是只读模式，那么它会试图找到正常模式的节点。</p>
@@ -572,64 +570,64 @@
 </span><span class="lnt">57
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="kd">class</span> <span class="nc">SendThread</span> <span class="kd">extends</span> <span class="n">ZooKeeperThread</span> <span class="o">{</span>
-    <span class="c1">// 正常模式的服务端地址
-</span><span class="c1"></span>    <span class="kd">private</span> <span class="n">InetSocketAddress</span> <span class="n">rwServerAddress</span> <span class="o">=</span> <span class="kc">null</span><span class="o">;</span>
-    
-    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">run</span><span class="o">()</span> <span class="o">{</span>
-        <span class="kt">int</span> <span class="n">to</span><span class="o">;</span>
-        <span class="n">InetSocketAddress</span> <span class="n">serverAddress</span> <span class="o">=</span> <span class="kc">null</span><span class="o">;</span>
-        <span class="k">while</span> <span class="o">(</span><span class="n">state</span><span class="o">.</span><span class="na">isAlive</span><span class="o">())</span> <span class="o">{</span>
-            <span class="k">try</span> <span class="o">{</span>
-                <span class="c1">// 检查连接是否正常，否则可能需要重新建立
-</span><span class="c1"></span>                <span class="k">if</span> <span class="o">(!</span><span class="n">clientCnxnSocket</span><span class="o">.</span><span class="na">isConnected</span><span class="o">())</span> <span class="o">{</span>
-                    <span class="c1">// 如果指定了closing，那么表示需要退出循环
-</span><span class="c1"></span>                    <span class="k">if</span> <span class="o">(</span><span class="n">closing</span><span class="o">)</span> <span class="o">{</span>
-                        <span class="k">break</span><span class="o">;</span>
-                    <span class="o">}</span>
-                    <span class="k">if</span> <span class="o">(</span><span class="n">rwServerAddress</span> <span class="o">!=</span> <span class="kc">null</span><span class="o">)</span> <span class="o">{</span>
-                        <span class="c1">// 如果发现集群是正常模式
-</span><span class="c1"></span>                        <span class="n">serverAddress</span> <span class="o">=</span> <span class="n">rwServerAddress</span><span class="o">;</span>
-                        <span class="n">rwServerAddress</span> <span class="o">=</span> <span class="kc">null</span><span class="o">;</span>
-                    <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
-                        <span class="c1">// 挑选下一个地址进行连接
-</span><span class="c1"></span>                        <span class="n">serverAddress</span> <span class="o">=</span> <span class="n">hostProvider</span><span class="o">.</span><span class="na">next</span><span class="o">(</span><span class="n">1000</span><span class="o">);</span>
-                    <span class="o">}</span>
-                    <span class="c1">// 连接服务端
-</span><span class="c1"></span>                    <span class="n">startConnect</span><span class="o">(</span><span class="n">serverAddress</span><span class="o">);</span>
-                <span class="o">}</span>
-                
-                <span class="c1">// 计算是否超时
-</span><span class="c1"></span>                <span class="k">if</span> <span class="o">(</span><span class="n">state</span><span class="o">.</span><span class="na">isConnected</span><span class="o">())</span> <span class="o">{</span>
-                    <span class="n">to</span> <span class="o">=</span> <span class="n">readTimeout</span> <span class="o">-</span> <span class="n">clientCnxnSocket</span><span class="o">.</span><span class="na">getIdleRecv</span><span class="o">();</span>
-                <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
-                    <span class="n">to</span> <span class="o">=</span> <span class="n">connectTimeout</span> <span class="o">-</span> <span class="n">clientCnxnSocket</span><span class="o">.</span><span class="na">getIdleRecv</span><span class="o">();</span>
-                <span class="o">}</span>
-                <span class="c1">// 如果超时，则抛出异常
-</span><span class="c1"></span>                <span class="k">if</span> <span class="o">(</span><span class="n">to</span> <span class="o">&lt;=</span> <span class="n">0</span><span class="o">)</span> <span class="o">{</span>
-                    <span class="k">throw</span> <span class="k">new</span> <span class="n">SessionTimeoutException</span><span class="o">(</span><span class="n">warnInfo</span><span class="o">);</span>
-                <span class="o">}</span>
-                
-                <span class="k">if</span> <span class="o">(</span><span class="n">state</span> <span class="o">==</span> <span class="n">States</span><span class="o">.</span><span class="na">CONNECTEDREADONLY</span><span class="o">)</span> <span class="o">{</span>
-                    <span class="c1">// 当前是只读模式，那么向其他节点发送ping请求，检查集群是否为正常模式
-</span><span class="c1"></span>                    <span class="c1">// 如果是正常模式，那么抛出异常 RWServerFoundException
-</span><span class="c1"></span>                    <span class="n">pingRwServer</span><span class="o">();</span>
-                <span class="o">}</span>
-                
-                <span class="c1">// 处理socket事件
-</span><span class="c1"></span>                <span class="n">clientCnxnSocket</span><span class="o">.</span><span class="na">doTransport</span><span class="o">(</span><span class="n">to</span><span class="o">,</span> <span class="n">pendingQueue</span><span class="o">,</span> <span class="n">ClientCnxn</span><span class="o">.</span><span class="na">this</span><span class="o">);</span>
-            <span class="o">}</span> <span class="k">catch</span> <span class="o">(</span><span class="n">Throwable</span> <span class="n">e</span><span class="o">)</span> <span class="o">{</span>
-                <span class="k">if</span> <span class="o">(</span><span class="n">closing</span><span class="o">)</span> <span class="o">{</span>
-                    <span class="k">break</span><span class="o">;</span>
-                <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
-                    <span class="c1">// 这里的cleanup方法，首先重置了底层的socket，然后对于队列里的请求都立即响应ConnectionLost 异常
-</span><span class="c1"></span>                    <span class="n">cleanup</span><span class="o">();</span>
-                <span class="o">}</span>
-            <span class="o">}</span>
-        <span class="o">}</span>
-    <span class="o">}</span>
-<span class="o">}</span>
-</code></pre></td></tr></table></div>
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="kd">class</span> <span class="nc">SendThread</span> <span class="kd">extends</span> <span class="n">ZooKeeperThread</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// 正常模式的服务端地址
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="kd">private</span> <span class="n">InetSocketAddress</span> <span class="n">rwServerAddress</span> <span class="o">=</span> <span class="kc">null</span><span class="o">;</span>
+</span></span><span class="line"><span class="cl">    
+</span></span><span class="line"><span class="cl">    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">run</span><span class="o">()</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">        <span class="kt">int</span> <span class="n">to</span><span class="o">;</span>
+</span></span><span class="line"><span class="cl">        <span class="n">InetSocketAddress</span> <span class="n">serverAddress</span> <span class="o">=</span> <span class="kc">null</span><span class="o">;</span>
+</span></span><span class="line"><span class="cl">        <span class="k">while</span> <span class="o">(</span><span class="n">state</span><span class="o">.</span><span class="na">isAlive</span><span class="o">())</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">            <span class="k">try</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">                <span class="c1">// 检查连接是否正常，否则可能需要重新建立
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>                <span class="k">if</span> <span class="o">(!</span><span class="n">clientCnxnSocket</span><span class="o">.</span><span class="na">isConnected</span><span class="o">())</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">                    <span class="c1">// 如果指定了closing，那么表示需要退出循环
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>                    <span class="k">if</span> <span class="o">(</span><span class="n">closing</span><span class="o">)</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">                        <span class="k">break</span><span class="o">;</span>
+</span></span><span class="line"><span class="cl">                    <span class="o">}</span>
+</span></span><span class="line"><span class="cl">                    <span class="k">if</span> <span class="o">(</span><span class="n">rwServerAddress</span> <span class="o">!=</span> <span class="kc">null</span><span class="o">)</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">                        <span class="c1">// 如果发现集群是正常模式
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>                        <span class="n">serverAddress</span> <span class="o">=</span> <span class="n">rwServerAddress</span><span class="o">;</span>
+</span></span><span class="line"><span class="cl">                        <span class="n">rwServerAddress</span> <span class="o">=</span> <span class="kc">null</span><span class="o">;</span>
+</span></span><span class="line"><span class="cl">                    <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">                        <span class="c1">// 挑选下一个地址进行连接
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>                        <span class="n">serverAddress</span> <span class="o">=</span> <span class="n">hostProvider</span><span class="o">.</span><span class="na">next</span><span class="o">(</span><span class="mi">1000</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">                    <span class="o">}</span>
+</span></span><span class="line"><span class="cl">                    <span class="c1">// 连接服务端
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>                    <span class="n">startConnect</span><span class="o">(</span><span class="n">serverAddress</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">                <span class="o">}</span>
+</span></span><span class="line"><span class="cl">                
+</span></span><span class="line"><span class="cl">                <span class="c1">// 计算是否超时
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>                <span class="k">if</span> <span class="o">(</span><span class="n">state</span><span class="o">.</span><span class="na">isConnected</span><span class="o">())</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">                    <span class="n">to</span> <span class="o">=</span> <span class="n">readTimeout</span> <span class="o">-</span> <span class="n">clientCnxnSocket</span><span class="o">.</span><span class="na">getIdleRecv</span><span class="o">();</span>
+</span></span><span class="line"><span class="cl">                <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">                    <span class="n">to</span> <span class="o">=</span> <span class="n">connectTimeout</span> <span class="o">-</span> <span class="n">clientCnxnSocket</span><span class="o">.</span><span class="na">getIdleRecv</span><span class="o">();</span>
+</span></span><span class="line"><span class="cl">                <span class="o">}</span>
+</span></span><span class="line"><span class="cl">                <span class="c1">// 如果超时，则抛出异常
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>                <span class="k">if</span> <span class="o">(</span><span class="n">to</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="o">)</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">                    <span class="k">throw</span> <span class="k">new</span> <span class="n">SessionTimeoutException</span><span class="o">(</span><span class="n">warnInfo</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">                <span class="o">}</span>
+</span></span><span class="line"><span class="cl">                
+</span></span><span class="line"><span class="cl">                <span class="k">if</span> <span class="o">(</span><span class="n">state</span> <span class="o">==</span> <span class="n">States</span><span class="o">.</span><span class="na">CONNECTEDREADONLY</span><span class="o">)</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">                    <span class="c1">// 当前是只读模式，那么向其他节点发送ping请求，检查集群是否为正常模式
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>                    <span class="c1">// 如果是正常模式，那么抛出异常 RWServerFoundException
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>                    <span class="n">pingRwServer</span><span class="o">();</span>
+</span></span><span class="line"><span class="cl">                <span class="o">}</span>
+</span></span><span class="line"><span class="cl">                
+</span></span><span class="line"><span class="cl">                <span class="c1">// 处理socket事件
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>                <span class="n">clientCnxnSocket</span><span class="o">.</span><span class="na">doTransport</span><span class="o">(</span><span class="n">to</span><span class="o">,</span> <span class="n">pendingQueue</span><span class="o">,</span> <span class="n">ClientCnxn</span><span class="o">.</span><span class="na">this</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">            <span class="o">}</span> <span class="k">catch</span> <span class="o">(</span><span class="n">Throwable</span> <span class="n">e</span><span class="o">)</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">                <span class="k">if</span> <span class="o">(</span><span class="n">closing</span><span class="o">)</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">                    <span class="k">break</span><span class="o">;</span>
+</span></span><span class="line"><span class="cl">                <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">                    <span class="c1">// 这里的cleanup方法，首先重置了底层的socket，然后对于队列里的请求都立即响应ConnectionLost 异常
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>                    <span class="n">cleanup</span><span class="o">();</span>
+</span></span><span class="line"><span class="cl">                <span class="o">}</span>
+</span></span><span class="line"><span class="cl">            <span class="o">}</span>
+</span></span><span class="line"><span class="cl">        <span class="o">}</span>
+</span></span><span class="line"><span class="cl">    <span class="o">}</span>
+</span></span><span class="line"><span class="cl"><span class="o">}</span>
+</span></span></code></pre></td></tr></table></div>
 </div>
 </div><p>这里简单说下上面代码的流程，首先它最外层是一个循坏，循环里面处理着创建连接，读写通信。首先是从提供的地址列表中，选出一个地址创建连接，然后根据 ConnectRequest 请求的响应，可以判断出该节点是否处于只读模式。如果处于只读模式，那么 state 属性值为 CONNECTEDREADONLY。它会试图调用 pingRwServer 方法向别的节点发送请求，查看是否处于正常模式，如果发现是正常模式，那么会抛出异常，然后调用 cleanup 方法重置 socket 。</p>
 <p>如果底层的 socket 通信断开抛出异常，那么同样会被捕获到，触发 cleanup 方法重置 socket，然后从地址列表中挑选出另外一个进行连接。</p>
@@ -660,9 +658,9 @@
 
         
     <div class="updated-badge-container">
-        <span title="Updated @ 2021-10-22 14:44:34 CST" style="cursor:help">
+        <span title="Updated @ 2023-07-02 16:59:09 CST" style="cursor:help">
 
-<svg xmlns="http://www.w3.org/2000/svg" width="130" height="20" class="updated-badge"><linearGradient id="b" x2="0" y2="100%"><stop offset="0" stop-color="#bbb" stop-opacity=".1"/><stop offset="1" stop-opacity=".1"/></linearGradient><clipPath id="a"><rect width="130" height="20" rx="3" fill="#fff"/></clipPath><g clip-path="url(#a)"><path class="updated-badge-left" d="M0 0h55v20H0z"/><path class="updated-badge-right" d="M55 0h75v20H55z"/><path fill="url(#b)" d="M0 0h130v20H0z"/></g><g fill="#fff" text-anchor="middle" font-size="110"><text x="285" y="150" fill="#010101" fill-opacity=".3" textLength="450" transform="scale(.1)">updated</text><text x="285" y="140" textLength="450" transform="scale(.1)">updated</text><text x="915" y="150" fill="#010101" fill-opacity=".3" textLength="650" transform="scale(.1)">2021-10-22</text><text x="915" y="140" textLength="650" transform="scale(.1)">2021-10-22</text></g></svg>
+<svg xmlns="http://www.w3.org/2000/svg" width="130" height="20" class="updated-badge"><linearGradient id="b" x2="0" y2="100%"><stop offset="0" stop-color="#bbb" stop-opacity=".1"/><stop offset="1" stop-opacity=".1"/></linearGradient><clipPath id="a"><rect width="130" height="20" rx="3" fill="#fff"/></clipPath><g clip-path="url(#a)"><path class="updated-badge-left" d="M0 0h55v20H0z"/><path class="updated-badge-right" d="M55 0h75v20H55z"/><path fill="url(#b)" d="M0 0h130v20H0z"/></g><g fill="#fff" text-anchor="middle" font-size="110"><text x="285" y="150" fill="#010101" fill-opacity=".3" textLength="450" transform="scale(.1)">updated</text><text x="285" y="140" textLength="450" transform="scale(.1)">updated</text><text x="915" y="150" fill="#010101" fill-opacity=".3" textLength="650" transform="scale(.1)">2023-07-02</text><text x="915" y="140" textLength="650" transform="scale(.1)">2023-07-02</text></g></svg>
         </span></div>
 
 

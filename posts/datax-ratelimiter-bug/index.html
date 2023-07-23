@@ -3,7 +3,7 @@
     <head prefix="og: http://ogp.me/ns# article: http://ogp.me/ns/article#">
     <meta charset="UTF-8" />
 
-    <meta name="generator" content="Hugo 0.88.1" /><meta name="theme-color" content="#fff" />
+    <meta name="generator" content="Hugo 0.115.0"><meta name="theme-color" content="#fff" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     
     <meta name="format-detection" content="telephone=no, date=no, address=no, email=no" />
@@ -14,11 +14,11 @@
 
     <title>Datax限速bug | 学习笔记</title>
 
-    <link rel="stylesheet" href="/css/meme.min.2d3e1834af2bc8dda20c7d74aaa1d8134845094441b7a554a5206ccd4b472596.css"/>
+    <link rel="stylesheet" href="/css/meme.min.91e7f58f97e1c60563ef481c38d9684fa8099537801d6f17bbfc724121e7d8f1.css"/>
 
     
     
-        <script src="/js/meme.min.800f61672145711eb3e1f29fcfcc3dbe0139dd459259718b611a0390f74703d1.js"></script>
+        <script src="/js/meme.min.3210a00c2fdcf6f831170b681b8ee40f83f0224663661e986872616aec45407f.js"></script>
 
     
 
@@ -54,13 +54,13 @@
         "@context": "https://schema.org",
         "@type": "BlogPosting",
         "datePublished": "2018-12-16T14:40:20+00:00",
-        "dateModified": "2021-10-22T14:44:34+08:00",
+        "dateModified": "2023-07-02T16:59:09+08:00",
         "url": "https://zhmin.github.io/posts/datax-ratelimiter-bug/",
         "headline": "Datax限速bug",
         "description": "Datax 限速原理 使用 官方文档并没有写到怎么配置限速，通过观察源码才得知，需要配置core.transport.channel.speed.byte或core.transport.channel.speed.……",
         "inLanguage" : "zh-CN",
         "articleSection": "posts",
-        "wordCount":  1296 ,
+        "wordCount":  1292 ,
         "image": "https://zhmin.github.io/icons/apple-touch-icon.png",
         "author": {
             "@type": "Person",
@@ -98,7 +98,7 @@
 <meta property="og:locale" content="zh" /><meta property="og:image" content="https://zhmin.github.io/icons/apple-touch-icon.png" />
     <meta property="og:type" content="article" />
     <meta property="article:published_time" content="2018-12-16T14:40:20&#43;00:00" />
-    <meta property="article:modified_time" content="2021-10-22T14:44:34&#43;08:00" />
+    <meta property="article:modified_time" content="2023-07-02T16:59:09&#43;08:00" />
     
     <meta property="article:section" content="posts" />
 
@@ -223,7 +223,7 @@
     
     
         
-        <span class="post-meta-item wordcount"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon post-meta-icon"><path d="M497.9 142.1l-46.1 46.1c-4.7 4.7-12.3 4.7-17 0l-111-111c-4.7-4.7-4.7-12.3 0-17l46.1-46.1c18.7-18.7 49.1-18.7 67.9 0l60.1 60.1c18.8 18.7 18.8 49.1 0 67.9zM284.2 99.8L21.6 362.4.4 483.9c-2.9 16.4 11.4 30.6 27.8 27.8l121.5-21.3 262.6-262.6c4.7-4.7 4.7-12.3 0-17l-111-111c-4.8-4.7-12.4-4.7-17.1 0zM124.1 339.9c-5.5-5.5-5.5-14.3 0-19.8l154-154c5.5-5.5 14.3-5.5 19.8 0s5.5 14.3 0 19.8l-154 154c-5.5 5.5-14.3 5.5-19.8 0zM88 424h48v36.3l-64.5 11.3-31.1-31.1L51.7 376H88v48z"/></svg>&nbsp;1296</span>
+        <span class="post-meta-item wordcount"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon post-meta-icon"><path d="M497.9 142.1l-46.1 46.1c-4.7 4.7-12.3 4.7-17 0l-111-111c-4.7-4.7-4.7-12.3 0-17l46.1-46.1c18.7-18.7 49.1-18.7 67.9 0l60.1 60.1c18.8 18.7 18.8 49.1 0 67.9zM284.2 99.8L21.6 362.4.4 483.9c-2.9 16.4 11.4 30.6 27.8 27.8l121.5-21.3 262.6-262.6c4.7-4.7 4.7-12.3 0-17l-111-111c-4.8-4.7-12.4-4.7-17.1 0zM124.1 339.9c-5.5-5.5-5.5-14.3 0-19.8l154-154c5.5-5.5 14.3-5.5 19.8 0s5.5 14.3 0 19.8l-154 154c-5.5 5.5-14.3 5.5-19.8 0zM88 424h48v36.3l-64.5 11.3-31.1-31.1L51.7 376H88v48z"/></svg>&nbsp;1292</span>
     
     
         
@@ -292,54 +292,54 @@
 </span><span class="lnt">47
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-json" data-lang="json"><span class="p">{</span>
-    <span class="nt">&#34;core&#34;</span><span class="p">:</span> <span class="p">{</span>
-         <span class="nt">&#34;transport&#34;</span> <span class="p">:</span> <span class="p">{</span>
-              <span class="nt">&#34;channel&#34;</span><span class="p">:</span> <span class="p">{</span>
-                   <span class="nt">&#34;speed&#34;</span><span class="p">:</span> <span class="p">{</span>
-                       <span class="nt">&#34;record&#34;</span><span class="p">:</span> <span class="mi">100</span>
-                    <span class="p">}</span>
-               <span class="p">}</span>
-         <span class="p">}</span>
-    <span class="p">},</span>
-    <span class="nt">&#34;job&#34;</span><span class="p">:</span> <span class="p">{</span>
-        <span class="nt">&#34;setting&#34;</span><span class="p">:</span> <span class="p">{</span>
-            <span class="nt">&#34;speed&#34;</span><span class="p">:</span> <span class="p">{</span>
-                <span class="nt">&#34;channel&#34;</span><span class="p">:</span> <span class="mi">5</span><span class="p">,</span>
-            <span class="p">}</span>
-        <span class="p">},</span>
-        <span class="nt">&#34;content&#34;</span><span class="p">:</span> <span class="p">[</span>
-            <span class="p">{</span>
-                <span class="nt">&#34;reader&#34;</span><span class="p">:</span> <span class="p">{</span>
-                    <span class="nt">&#34;name&#34;</span><span class="p">:</span> <span class="s2">&#34;postgresqlreader&#34;</span><span class="p">,</span>
-                    <span class="nt">&#34;parameter&#34;</span><span class="p">:</span> <span class="p">{</span>
-
-                        <span class="nt">&#34;username&#34;</span><span class="p">:</span> <span class="s2">&#34;xx&#34;</span><span class="p">,</span>
-                        <span class="nt">&#34;password&#34;</span><span class="p">:</span> <span class="s2">&#34;xx&#34;</span><span class="p">,</span>
-                        <span class="nt">&#34;connection&#34;</span><span class="p">:</span> <span class="p">[</span>
-                            <span class="p">{</span>
-                                <span class="nt">&#34;querySql&#34;</span><span class="p">:</span> <span class="p">[</span>
-                                    <span class="s2">&#34;SELECT * from mytable LIMIT 100 &#34;</span>
-                                <span class="p">],</span>
-                                <span class="nt">&#34;jdbcUrl&#34;</span><span class="p">:</span> <span class="p">[</span>
-                                    <span class="s2">&#34;jdbc:postgresql://host:port/database&#34;</span>
-                                <span class="p">]</span>
-                            <span class="p">}</span>
-                        <span class="p">]</span>
-                    <span class="p">}</span>
-                <span class="p">},</span>
-               <span class="nt">&#34;writer&#34;</span><span class="p">:</span> <span class="p">{</span>
-                    <span class="nt">&#34;name&#34;</span><span class="p">:</span> <span class="s2">&#34;streamwriter&#34;</span><span class="p">,</span>
-                    <span class="nt">&#34;parameter&#34;</span><span class="p">:</span> <span class="p">{</span>
-                        <span class="nt">&#34;print&#34;</span><span class="p">:</span> <span class="kc">false</span><span class="p">,</span>
-                        <span class="nt">&#34;encoding&#34;</span><span class="p">:</span> <span class="s2">&#34;UTF-8&#34;</span>
-                    <span class="p">}</span>
-                <span class="p">}</span>
-            <span class="p">}</span>
-        <span class="p">]</span>
-    <span class="p">}</span>
-<span class="p">}</span>
-</code></pre></td></tr></table></div>
+<pre tabindex="0" class="chroma"><code class="language-json" data-lang="json"><span class="line"><span class="cl"><span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="nt">&#34;core&#34;</span><span class="p">:</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">         <span class="nt">&#34;transport&#34;</span> <span class="p">:</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">              <span class="nt">&#34;channel&#34;</span><span class="p">:</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">                   <span class="nt">&#34;speed&#34;</span><span class="p">:</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">                       <span class="nt">&#34;record&#34;</span><span class="p">:</span> <span class="mi">100</span>
+</span></span><span class="line"><span class="cl">                    <span class="p">}</span>
+</span></span><span class="line"><span class="cl">               <span class="p">}</span>
+</span></span><span class="line"><span class="cl">         <span class="p">}</span>
+</span></span><span class="line"><span class="cl">    <span class="p">},</span>
+</span></span><span class="line"><span class="cl">    <span class="nt">&#34;job&#34;</span><span class="p">:</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="nt">&#34;setting&#34;</span><span class="p">:</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">            <span class="nt">&#34;speed&#34;</span><span class="p">:</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">                <span class="nt">&#34;channel&#34;</span><span class="p">:</span> <span class="mi">5</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">            <span class="p">}</span>
+</span></span><span class="line"><span class="cl">        <span class="p">},</span>
+</span></span><span class="line"><span class="cl">        <span class="nt">&#34;content&#34;</span><span class="p">:</span> <span class="p">[</span>
+</span></span><span class="line"><span class="cl">            <span class="p">{</span>
+</span></span><span class="line"><span class="cl">                <span class="nt">&#34;reader&#34;</span><span class="p">:</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">                    <span class="nt">&#34;name&#34;</span><span class="p">:</span> <span class="s2">&#34;postgresqlreader&#34;</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">                    <span class="nt">&#34;parameter&#34;</span><span class="p">:</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">                        <span class="nt">&#34;username&#34;</span><span class="p">:</span> <span class="s2">&#34;xx&#34;</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">                        <span class="nt">&#34;password&#34;</span><span class="p">:</span> <span class="s2">&#34;xx&#34;</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">                        <span class="nt">&#34;connection&#34;</span><span class="p">:</span> <span class="p">[</span>
+</span></span><span class="line"><span class="cl">                            <span class="p">{</span>
+</span></span><span class="line"><span class="cl">                                <span class="nt">&#34;querySql&#34;</span><span class="p">:</span> <span class="p">[</span>
+</span></span><span class="line"><span class="cl">                                    <span class="s2">&#34;SELECT * from mytable LIMIT 100 &#34;</span>
+</span></span><span class="line"><span class="cl">                                <span class="p">],</span>
+</span></span><span class="line"><span class="cl">                                <span class="nt">&#34;jdbcUrl&#34;</span><span class="p">:</span> <span class="p">[</span>
+</span></span><span class="line"><span class="cl">                                    <span class="s2">&#34;jdbc:postgresql://host:port/database&#34;</span>
+</span></span><span class="line"><span class="cl">                                <span class="p">]</span>
+</span></span><span class="line"><span class="cl">                            <span class="p">}</span>
+</span></span><span class="line"><span class="cl">                        <span class="p">]</span>
+</span></span><span class="line"><span class="cl">                    <span class="p">}</span>
+</span></span><span class="line"><span class="cl">                <span class="p">},</span>
+</span></span><span class="line"><span class="cl">               <span class="nt">&#34;writer&#34;</span><span class="p">:</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">                    <span class="nt">&#34;name&#34;</span><span class="p">:</span> <span class="s2">&#34;streamwriter&#34;</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">                    <span class="nt">&#34;parameter&#34;</span><span class="p">:</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">                        <span class="nt">&#34;print&#34;</span><span class="p">:</span> <span class="kc">false</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">                        <span class="nt">&#34;encoding&#34;</span><span class="p">:</span> <span class="s2">&#34;UTF-8&#34;</span>
+</span></span><span class="line"><span class="cl">                    <span class="p">}</span>
+</span></span><span class="line"><span class="cl">                <span class="p">}</span>
+</span></span><span class="line"><span class="cl">            <span class="p">}</span>
+</span></span><span class="line"><span class="cl">        <span class="p">]</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table></div>
 </div>
 </div><h2 id="bug"><a href="#bug" class="anchor-link"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon anchor-icon"><path d="M326.612 185.391c59.747 59.809 58.927 155.698.36 214.59-.11.12-.24.25-.36.37l-67.2 67.2c-59.27 59.27-155.699 59.262-214.96 0-59.27-59.26-59.27-155.7 0-214.96l37.106-37.106c9.84-9.84 26.786-3.3 27.294 10.606.648 17.722 3.826 35.527 9.69 52.721 1.986 5.822.567 12.262-3.783 16.612l-13.087 13.087c-28.026 28.026-28.905 73.66-1.155 101.96 28.024 28.579 74.086 28.749 102.325.51l67.2-67.19c28.191-28.191 28.073-73.757 0-101.83-3.701-3.694-7.429-6.564-10.341-8.569a16.037 16.037 0 0 1-6.947-12.606c-.396-10.567 3.348-21.456 11.698-29.806l21.054-21.055c5.521-5.521 14.182-6.199 20.584-1.731a152.482 152.482 0 0 1 20.522 17.197zM467.547 44.449c-59.261-59.262-155.69-59.27-214.96 0l-67.2 67.2c-.12.12-.25.25-.36.37-58.566 58.892-59.387 154.781.36 214.59a152.454 152.454 0 0 0 20.521 17.196c6.402 4.468 15.064 3.789 20.584-1.731l21.054-21.055c8.35-8.35 12.094-19.239 11.698-29.806a16.037 16.037 0 0 0-6.947-12.606c-2.912-2.005-6.64-4.875-10.341-8.569-28.073-28.073-28.191-73.639 0-101.83l67.2-67.19c28.239-28.239 74.3-28.069 102.325.51 27.75 28.3 26.872 73.934-1.155 101.96l-13.087 13.087c-4.35 4.35-5.769 10.79-3.783 16.612 5.864 17.194 9.042 34.999 9.69 52.721.509 13.906 17.454 20.446 27.294 10.606l37.106-37.106c59.271-59.259 59.271-155.699.001-214.959z"/></svg></a>Bug</h2>
 <p>当指定了ob.setting.speed配置，是必须同时指定core.transport.channel.speed的配置，但是目前datax却没有抛出错误。这里可以看看datax的源码，是如何检查值的。</p>
@@ -365,14 +365,14 @@
                 */
                 DataXException.asDataXException(
                         FrameworkErrorCode.CONFIG_ERROR,
-                        &quot;在有总bps限速条件下，单个channel的bps值不能为空，也不能为非正数&quot;);
+                        &#34;在有总bps限速条件下，单个channel的bps值不能为空，也不能为非正数&#34;);
             }
 
             needChannelNumberByByte =
                     (int) (globalLimitedByteSpeed / channelLimitedByteSpeed);
             needChannelNumberByByte =
                     needChannelNumberByByte &gt; 0 ? needChannelNumberByByte : 1;
-            LOG.info(&quot;Job set Max-Byte-Speed to &quot; + globalLimitedByteSpeed + &quot; bytes.&quot;);
+            LOG.info(&#34;Job set Max-Byte-Speed to &#34; + globalLimitedByteSpeed + &#34; bytes.&#34;);
         }
 
         boolean isRecordLimit = (this.configuration.getInt(
@@ -384,14 +384,14 @@
                     CoreConstant.DATAX_CORE_TRANSPORT_CHANNEL_SPEED_RECORD);
             if (channelLimitedRecordSpeed == null || channelLimitedRecordSpeed &lt;= 0) {
                 throw DataXException.asDataXException(FrameworkErrorCode.CONFIG_ERROR,
-                        &quot;在有总tps限速条件下，单个channel的tps值不能为空，也不能为非正数&quot;);
+                        &#34;在有总tps限速条件下，单个channel的tps值不能为空，也不能为非正数&#34;);
             }
 
             needChannelNumberByRecord =
                     (int) (globalLimitedRecordSpeed / channelLimitedRecordSpeed);
             needChannelNumberByRecord =
                     needChannelNumberByRecord &gt; 0 ? needChannelNumberByRecord : 1;
-            LOG.info(&quot;Job set Max-Record-Speed to &quot; + globalLimitedRecordSpeed + &quot; records.&quot;);
+            LOG.info(&#34;Job set Max-Record-Speed to &#34; + globalLimitedRecordSpeed + &#34; records.&#34;);
         }
 
         ........
@@ -427,9 +427,9 @@
 
         
     <div class="updated-badge-container">
-        <span title="Updated @ 2021-10-22 14:44:34 CST" style="cursor:help">
+        <span title="Updated @ 2023-07-02 16:59:09 CST" style="cursor:help">
 
-<svg xmlns="http://www.w3.org/2000/svg" width="130" height="20" class="updated-badge"><linearGradient id="b" x2="0" y2="100%"><stop offset="0" stop-color="#bbb" stop-opacity=".1"/><stop offset="1" stop-opacity=".1"/></linearGradient><clipPath id="a"><rect width="130" height="20" rx="3" fill="#fff"/></clipPath><g clip-path="url(#a)"><path class="updated-badge-left" d="M0 0h55v20H0z"/><path class="updated-badge-right" d="M55 0h75v20H55z"/><path fill="url(#b)" d="M0 0h130v20H0z"/></g><g fill="#fff" text-anchor="middle" font-size="110"><text x="285" y="150" fill="#010101" fill-opacity=".3" textLength="450" transform="scale(.1)">updated</text><text x="285" y="140" textLength="450" transform="scale(.1)">updated</text><text x="915" y="150" fill="#010101" fill-opacity=".3" textLength="650" transform="scale(.1)">2021-10-22</text><text x="915" y="140" textLength="650" transform="scale(.1)">2021-10-22</text></g></svg>
+<svg xmlns="http://www.w3.org/2000/svg" width="130" height="20" class="updated-badge"><linearGradient id="b" x2="0" y2="100%"><stop offset="0" stop-color="#bbb" stop-opacity=".1"/><stop offset="1" stop-opacity=".1"/></linearGradient><clipPath id="a"><rect width="130" height="20" rx="3" fill="#fff"/></clipPath><g clip-path="url(#a)"><path class="updated-badge-left" d="M0 0h55v20H0z"/><path class="updated-badge-right" d="M55 0h75v20H55z"/><path fill="url(#b)" d="M0 0h130v20H0z"/></g><g fill="#fff" text-anchor="middle" font-size="110"><text x="285" y="150" fill="#010101" fill-opacity=".3" textLength="450" transform="scale(.1)">updated</text><text x="285" y="140" textLength="450" transform="scale(.1)">updated</text><text x="915" y="150" fill="#010101" fill-opacity=".3" textLength="650" transform="scale(.1)">2023-07-02</text><text x="915" y="140" textLength="650" transform="scale(.1)">2023-07-02</text></g></svg>
         </span></div>
 
 

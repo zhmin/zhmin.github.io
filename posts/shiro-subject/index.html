@@ -3,7 +3,7 @@
     <head prefix="og: http://ogp.me/ns# article: http://ogp.me/ns/article#">
     <meta charset="UTF-8" />
 
-    <meta name="generator" content="Hugo 0.88.1" /><meta name="theme-color" content="#fff" />
+    <meta name="generator" content="Hugo 0.115.0"><meta name="theme-color" content="#fff" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     
     <meta name="format-detection" content="telephone=no, date=no, address=no, email=no" />
@@ -14,11 +14,11 @@
 
     <title>Apache Shiro Subject 原理 | 学习笔记</title>
 
-    <link rel="stylesheet" href="/css/meme.min.2d3e1834af2bc8dda20c7d74aaa1d8134845094441b7a554a5206ccd4b472596.css"/>
+    <link rel="stylesheet" href="/css/meme.min.91e7f58f97e1c60563ef481c38d9684fa8099537801d6f17bbfc724121e7d8f1.css"/>
 
     
     
-        <script src="/js/meme.min.800f61672145711eb3e1f29fcfcc3dbe0139dd459259718b611a0390f74703d1.js"></script>
+        <script src="/js/meme.min.3210a00c2fdcf6f831170b681b8ee40f83f0224663661e986872616aec45407f.js"></script>
 
     
 
@@ -54,7 +54,7 @@
         "@context": "https://schema.org",
         "@type": "BlogPosting",
         "datePublished": "2020-04-09T22:40:41+00:00",
-        "dateModified": "2021-10-22T14:44:34+08:00",
+        "dateModified": "2023-07-02T16:59:09+08:00",
         "url": "https://zhmin.github.io/posts/shiro-subject/",
         "headline": "Apache Shiro Subject 原理",
         "description": "前言 Subject是 我们在 shiro 框架中，第一个介绍的概念。它表示用户，存储了用户身份认证的相关配置信息。除此之外，还支持登录，退出，session 等接口操作。本篇文章会先介绍Subject的种类，然后介绍……",
@@ -98,7 +98,7 @@
 <meta property="og:locale" content="zh" /><meta property="og:image" content="https://zhmin.github.io/icons/apple-touch-icon.png" />
     <meta property="og:type" content="article" />
     <meta property="article:published_time" content="2020-04-09T22:40:41&#43;00:00" />
-    <meta property="article:modified_time" content="2021-10-22T14:44:34&#43;08:00" />
+    <meta property="article:modified_time" content="2023-07-02T16:59:09&#43;08:00" />
     
     <meta property="article:section" content="posts" />
 
@@ -275,11 +275,11 @@
 </span><span class="lnt">4
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">interface</span> <span class="nc">SubjectFactory</span> <span class="o">{</span>
-	<span class="c1">// 创建 Subject, SubjectContex表示初始化参数
-</span><span class="c1"></span>    <span class="n">Subject</span> <span class="nf">createSubject</span><span class="o">(</span><span class="n">SubjectContext</span> <span class="n">context</span><span class="o">);</span>
-<span class="o">}</span>
-</code></pre></td></tr></table></div>
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="kd">public</span> <span class="kd">interface</span> <span class="nc">SubjectFactory</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">	<span class="c1">// 创建 Subject, SubjectContex表示初始化参数
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="n">Subject</span> <span class="nf">createSubject</span><span class="o">(</span><span class="n">SubjectContext</span> <span class="n">context</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl"><span class="o">}</span>
+</span></span></code></pre></td></tr></table></div>
 </div>
 </div><p>它有两个子类，<code>DefaultSubjectFactory</code>使用在非 Web 环境下，会创建<code>DelegatingSubject</code>实例。<code>DefaultWebSubjectFactory</code>则对应在 Web 环境下，会创建<code>WebDelegatingSubject</code>实例。</p>
 <h3 id="初始化参数--subjectcontext"><a href="#初始化参数--subjectcontext" class="anchor-link"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon anchor-icon"><path d="M326.612 185.391c59.747 59.809 58.927 155.698.36 214.59-.11.12-.24.25-.36.37l-67.2 67.2c-59.27 59.27-155.699 59.262-214.96 0-59.27-59.26-59.27-155.7 0-214.96l37.106-37.106c9.84-9.84 26.786-3.3 27.294 10.606.648 17.722 3.826 35.527 9.69 52.721 1.986 5.822.567 12.262-3.783 16.612l-13.087 13.087c-28.026 28.026-28.905 73.66-1.155 101.96 28.024 28.579 74.086 28.749 102.325.51l67.2-67.19c28.191-28.191 28.073-73.757 0-101.83-3.701-3.694-7.429-6.564-10.341-8.569a16.037 16.037 0 0 1-6.947-12.606c-.396-10.567 3.348-21.456 11.698-29.806l21.054-21.055c5.521-5.521 14.182-6.199 20.584-1.731a152.482 152.482 0 0 1 20.522 17.197zM467.547 44.449c-59.261-59.262-155.69-59.27-214.96 0l-67.2 67.2c-.12.12-.25.25-.36.37-58.566 58.892-59.387 154.781.36 214.59a152.454 152.454 0 0 0 20.521 17.196c6.402 4.468 15.064 3.789 20.584-1.731l21.054-21.055c8.35-8.35 12.094-19.239 11.698-29.806a16.037 16.037 0 0 0-6.947-12.606c-2.912-2.005-6.64-4.875-10.341-8.569-28.073-28.073-28.191-73.639 0-101.83l67.2-67.19c28.239-28.239 74.3-28.069 102.325.51 27.75 28.3 26.872 73.934-1.155 101.96l-13.087 13.087c-4.35 4.35-5.769 10.79-3.783 16.612 5.864 17.194 9.042 34.999 9.69 52.721.509 13.906 17.454 20.446 27.294 10.606l37.106-37.106c59.271-59.259 59.271-155.699.001-214.959z"/></svg></a>初始化参数  SubjectContext</h3>
@@ -306,7 +306,6 @@
     class DefaultWebSubjectContext
     DefaultSubjectContext &lt;|-- DefaultWebSubjectContext
     WebSubjectContext &lt;|-- DefaultWebSubjectContext
-
 </code></pre><p><code>SubjectContext</code>提供了<code>SecurityManager</code>、<code>Session</code>、身份凭证<code>AuthenticationToken</code>、身份信息<code>AuthenticationInfo</code>、客户端 ip 等参数。</p>
 <p><code>DefaultSubjectContext</code>实现了<code>SubjectContext</code>接口，它相当于<code>JavaBean</code>，是上述这些信息的集合类。</p>
 <p><code>DefaultSubjectContext</code>只是在<code>DefaultSubjectContext</code>基础之上，添加了<code>ServletRequest</code>和<code>ServletResponse</code>的操作。</p>
@@ -324,15 +323,15 @@
 </span><span class="lnt">8
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">interface</span> <span class="nc">SubjectDAO</span> <span class="o">{</span>
-    
-    <span class="c1">// 存储
-</span><span class="c1"></span>    <span class="n">Subject</span> <span class="nf">save</span><span class="o">(</span><span class="n">Subject</span> <span class="n">subject</span><span class="o">);</span>
-    
-    <span class="c1">// 删除
-</span><span class="c1"></span>    <span class="kt">void</span> <span class="nf">delete</span><span class="o">(</span><span class="n">Subject</span> <span class="n">subject</span><span class="o">);</span>
-<span class="o">}</span>
-</code></pre></td></tr></table></div>
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="kd">public</span> <span class="kd">interface</span> <span class="nc">SubjectDAO</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">    
+</span></span><span class="line"><span class="cl">    <span class="c1">// 存储
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="n">Subject</span> <span class="nf">save</span><span class="o">(</span><span class="n">Subject</span> <span class="n">subject</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">    
+</span></span><span class="line"><span class="cl">    <span class="c1">// 删除
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="kt">void</span> <span class="nf">delete</span><span class="o">(</span><span class="n">Subject</span> <span class="n">subject</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl"><span class="o">}</span>
+</span></span></code></pre></td></tr></table></div>
 </div>
 </div><p>目前只有一个实现类<code>DefaultSubjectDAO</code>，它的原理也比较简单，使用了 session 存储信息。它只是存储了用户的身份信息和是否已经成功认证。</p>
 <div class="table-container"><table>
@@ -372,17 +371,17 @@
 </span><span class="lnt">10
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">DefaultSecurityManager</span> <span class="kd">extends</span> <span class="n">SessionsSecurityManager</span> <span class="o">{</span>
-    
-    <span class="kd">public</span> <span class="n">Subject</span> <span class="nf">login</span><span class="o">(</span><span class="n">Subject</span> <span class="n">subject</span><span class="o">,</span> <span class="n">AuthenticationToken</span> <span class="n">token</span><span class="o">)</span> <span class="kd">throws</span> <span class="n">AuthenticationException</span> <span class="o">{</span>
-        <span class="c1">// 执行身份验证，如果验证失败则会抛出异常
-</span><span class="c1"></span>        <span class="n">AuthenticationInfo</span> <span class="n">info</span> <span class="o">=</span> <span class="n">authenticate</span><span class="o">(</span><span class="n">token</span><span class="o">);</span>
-        <span class="c1">// 验证成功后，创建新的Subject实例
-</span><span class="c1"></span>        <span class="n">Subject</span> <span class="n">loggedIn</span> <span class="o">=</span> <span class="n">createSubject</span><span class="o">(</span><span class="n">token</span><span class="o">,</span> <span class="n">info</span><span class="o">,</span> <span class="n">subject</span><span class="o">);</span>
-        <span class="k">return</span> <span class="n">loggedIn</span><span class="o">;</span>
-    <span class="o">}</span>
-<span class="o">}</span>
-</code></pre></td></tr></table></div>
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">DefaultSecurityManager</span> <span class="kd">extends</span> <span class="n">SessionsSecurityManager</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">    
+</span></span><span class="line"><span class="cl">    <span class="kd">public</span> <span class="n">Subject</span> <span class="nf">login</span><span class="o">(</span><span class="n">Subject</span> <span class="n">subject</span><span class="o">,</span> <span class="n">AuthenticationToken</span> <span class="n">token</span><span class="o">)</span> <span class="kd">throws</span> <span class="n">AuthenticationException</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">        <span class="c1">// 执行身份验证，如果验证失败则会抛出异常
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>        <span class="n">AuthenticationInfo</span> <span class="n">info</span> <span class="o">=</span> <span class="n">authenticate</span><span class="o">(</span><span class="n">token</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">        <span class="c1">// 验证成功后，创建新的Subject实例
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>        <span class="n">Subject</span> <span class="n">loggedIn</span> <span class="o">=</span> <span class="n">createSubject</span><span class="o">(</span><span class="n">token</span><span class="o">,</span> <span class="n">info</span><span class="o">,</span> <span class="n">subject</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">        <span class="k">return</span> <span class="n">loggedIn</span><span class="o">;</span>
+</span></span><span class="line"><span class="cl">    <span class="o">}</span>
+</span></span><span class="line"><span class="cl"><span class="o">}</span>
+</span></span></code></pre></td></tr></table></div>
 </div>
 </div><p>再继续看看<code>Subject</code>的创建过程</p>
 <div class="highlight"><div class="chroma">
@@ -416,34 +415,34 @@
 </span><span class="lnt">27
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">DefaultSecurityManager</span> <span class="kd">extends</span> <span class="n">SessionsSecurityManager</span> <span class="o">{</span>
-
-    <span class="kd">protected</span> <span class="n">Subject</span> <span class="nf">createSubject</span><span class="o">(</span><span class="n">AuthenticationToken</span> <span class="n">token</span><span class="o">,</span> <span class="n">AuthenticationInfo</span> <span class="n">info</span><span class="o">,</span> <span class="n">Subject</span> <span class="n">existing</span><span class="o">)</span> <span class="o">{</span>
-        <span class="c1">// 创建并且初始化SubjectContext
-</span><span class="c1"></span>        <span class="n">SubjectContext</span> <span class="n">context</span> <span class="o">=</span> <span class="n">createSubjectContext</span><span class="o">();</span>
-        <span class="n">context</span><span class="o">.</span><span class="na">setAuthenticated</span><span class="o">(</span><span class="kc">true</span><span class="o">);</span>
-        <span class="n">context</span><span class="o">.</span><span class="na">setAuthenticationToken</span><span class="o">(</span><span class="n">token</span><span class="o">);</span>
-        <span class="n">context</span><span class="o">.</span><span class="na">setAuthenticationInfo</span><span class="o">(</span><span class="n">info</span><span class="o">);</span>
-        <span class="n">context</span><span class="o">.</span><span class="na">setSecurityManager</span><span class="o">(</span><span class="k">this</span><span class="o">);</span>
-        <span class="k">if</span> <span class="o">(</span><span class="n">existing</span> <span class="o">!=</span> <span class="kc">null</span><span class="o">)</span> <span class="o">{</span>
-            <span class="n">context</span><span class="o">.</span><span class="na">setSubject</span><span class="o">(</span><span class="n">existing</span><span class="o">);</span>
-        <span class="o">}</span>
-        <span class="c1">// 使用SubjectContext创建Subject
-</span><span class="c1"></span>        <span class="k">return</span> <span class="n">createSubject</span><span class="o">(</span><span class="n">context</span><span class="o">);</span>
-    <span class="o">}</span>
-    
-    <span class="kd">public</span> <span class="n">Subject</span> <span class="nf">createSubject</span><span class="o">(</span><span class="n">SubjectContext</span> <span class="n">subjectContext</span><span class="o">)</span> <span class="o">{</span>
-        <span class="c1">// .... 继续设置SubjectContext
-</span><span class="c1"></span>        
-        <span class="c1">// 创建Subject
-</span><span class="c1"></span>        <span class="n">Subject</span> <span class="n">subject</span> <span class="o">=</span> <span class="n">doCreateSubject</span><span class="o">(</span><span class="n">context</span><span class="o">);</span>
-        
-        <span class="c1">// 持久化Subject 
-</span><span class="c1"></span>        <span class="n">save</span><span class="o">(</span><span class="n">subject</span><span class="o">);</span>
-        <span class="k">return</span> <span class="n">subject</span><span class="o">;</span>
-    <span class="o">}</span>
-<span class="o">}</span>
-</code></pre></td></tr></table></div>
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">DefaultSecurityManager</span> <span class="kd">extends</span> <span class="n">SessionsSecurityManager</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="kd">protected</span> <span class="n">Subject</span> <span class="nf">createSubject</span><span class="o">(</span><span class="n">AuthenticationToken</span> <span class="n">token</span><span class="o">,</span> <span class="n">AuthenticationInfo</span> <span class="n">info</span><span class="o">,</span> <span class="n">Subject</span> <span class="n">existing</span><span class="o">)</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">        <span class="c1">// 创建并且初始化SubjectContext
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>        <span class="n">SubjectContext</span> <span class="n">context</span> <span class="o">=</span> <span class="n">createSubjectContext</span><span class="o">();</span>
+</span></span><span class="line"><span class="cl">        <span class="n">context</span><span class="o">.</span><span class="na">setAuthenticated</span><span class="o">(</span><span class="kc">true</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">        <span class="n">context</span><span class="o">.</span><span class="na">setAuthenticationToken</span><span class="o">(</span><span class="n">token</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">        <span class="n">context</span><span class="o">.</span><span class="na">setAuthenticationInfo</span><span class="o">(</span><span class="n">info</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">        <span class="n">context</span><span class="o">.</span><span class="na">setSecurityManager</span><span class="o">(</span><span class="k">this</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">        <span class="k">if</span> <span class="o">(</span><span class="n">existing</span> <span class="o">!=</span> <span class="kc">null</span><span class="o">)</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">            <span class="n">context</span><span class="o">.</span><span class="na">setSubject</span><span class="o">(</span><span class="n">existing</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">        <span class="o">}</span>
+</span></span><span class="line"><span class="cl">        <span class="c1">// 使用SubjectContext创建Subject
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>        <span class="k">return</span> <span class="n">createSubject</span><span class="o">(</span><span class="n">context</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">    <span class="o">}</span>
+</span></span><span class="line"><span class="cl">    
+</span></span><span class="line"><span class="cl">    <span class="kd">public</span> <span class="n">Subject</span> <span class="nf">createSubject</span><span class="o">(</span><span class="n">SubjectContext</span> <span class="n">subjectContext</span><span class="o">)</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">        <span class="c1">// .... 继续设置SubjectContext
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>        
+</span></span><span class="line"><span class="cl">        <span class="c1">// 创建Subject
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>        <span class="n">Subject</span> <span class="n">subject</span> <span class="o">=</span> <span class="n">doCreateSubject</span><span class="o">(</span><span class="n">context</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">        
+</span></span><span class="line"><span class="cl">        <span class="c1">// 持久化Subject 
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>        <span class="n">save</span><span class="o">(</span><span class="n">subject</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">        <span class="k">return</span> <span class="n">subject</span><span class="o">;</span>
+</span></span><span class="line"><span class="cl">    <span class="o">}</span>
+</span></span><span class="line"><span class="cl"><span class="o">}</span>
+</span></span></code></pre></td></tr></table></div>
 </div>
 </div><p>上面调用了两个方法<code>doCreateSubject</code>和<code>save</code>方法，最后来看看它们的原理</p>
 <div class="highlight"><div class="chroma">
@@ -462,19 +461,19 @@
 </span><span class="lnt">12
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">DefaultSecurityManager</span> <span class="kd">extends</span> <span class="n">SessionsSecurityManager</span> <span class="o">{</span>
-
-    <span class="c1">// 使用SubjectFactory创建
-</span><span class="c1"></span>    <span class="kd">protected</span> <span class="n">Subject</span> <span class="nf">doCreateSubject</span><span class="o">(</span><span class="n">SubjectContext</span> <span class="n">context</span><span class="o">)</span> <span class="o">{</span>
-        <span class="k">return</span> <span class="n">getSubjectFactory</span><span class="o">().</span><span class="na">createSubject</span><span class="o">(</span><span class="n">context</span><span class="o">);</span>
-    <span class="o">}</span>
-
-    <span class="c1">//使用SubjectDAO持久化
-</span><span class="c1"></span>    <span class="kd">protected</span> <span class="kt">void</span> <span class="nf">save</span><span class="o">(</span><span class="n">Subject</span> <span class="n">subject</span><span class="o">)</span> <span class="o">{</span>
-        <span class="k">this</span><span class="o">.</span><span class="na">subjectDAO</span><span class="o">.</span><span class="na">save</span><span class="o">(</span><span class="n">subject</span><span class="o">);</span>
-    <span class="o">}</span>
-<span class="o">}</span>
-</code></pre></td></tr></table></div>
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">DefaultSecurityManager</span> <span class="kd">extends</span> <span class="n">SessionsSecurityManager</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="c1">// 使用SubjectFactory创建
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="kd">protected</span> <span class="n">Subject</span> <span class="nf">doCreateSubject</span><span class="o">(</span><span class="n">SubjectContext</span> <span class="n">context</span><span class="o">)</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">        <span class="k">return</span> <span class="n">getSubjectFactory</span><span class="o">().</span><span class="na">createSubject</span><span class="o">(</span><span class="n">context</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">    <span class="o">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="c1">//使用SubjectDAO持久化
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="kd">protected</span> <span class="kt">void</span> <span class="nf">save</span><span class="o">(</span><span class="n">Subject</span> <span class="n">subject</span><span class="o">)</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">        <span class="k">this</span><span class="o">.</span><span class="na">subjectDAO</span><span class="o">.</span><span class="na">save</span><span class="o">(</span><span class="n">subject</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">    <span class="o">}</span>
+</span></span><span class="line"><span class="cl"><span class="o">}</span>
+</span></span></code></pre></td></tr></table></div>
 </div>
 </div><p>整个 login 流程如下图所示：</p>
 <pre tabindex="0"><code class="language-mermaid" data-lang="mermaid">sequenceDiagram
@@ -520,9 +519,9 @@
 
         
     <div class="updated-badge-container">
-        <span title="Updated @ 2021-10-22 14:44:34 CST" style="cursor:help">
+        <span title="Updated @ 2023-07-02 16:59:09 CST" style="cursor:help">
 
-<svg xmlns="http://www.w3.org/2000/svg" width="130" height="20" class="updated-badge"><linearGradient id="b" x2="0" y2="100%"><stop offset="0" stop-color="#bbb" stop-opacity=".1"/><stop offset="1" stop-opacity=".1"/></linearGradient><clipPath id="a"><rect width="130" height="20" rx="3" fill="#fff"/></clipPath><g clip-path="url(#a)"><path class="updated-badge-left" d="M0 0h55v20H0z"/><path class="updated-badge-right" d="M55 0h75v20H55z"/><path fill="url(#b)" d="M0 0h130v20H0z"/></g><g fill="#fff" text-anchor="middle" font-size="110"><text x="285" y="150" fill="#010101" fill-opacity=".3" textLength="450" transform="scale(.1)">updated</text><text x="285" y="140" textLength="450" transform="scale(.1)">updated</text><text x="915" y="150" fill="#010101" fill-opacity=".3" textLength="650" transform="scale(.1)">2021-10-22</text><text x="915" y="140" textLength="650" transform="scale(.1)">2021-10-22</text></g></svg>
+<svg xmlns="http://www.w3.org/2000/svg" width="130" height="20" class="updated-badge"><linearGradient id="b" x2="0" y2="100%"><stop offset="0" stop-color="#bbb" stop-opacity=".1"/><stop offset="1" stop-opacity=".1"/></linearGradient><clipPath id="a"><rect width="130" height="20" rx="3" fill="#fff"/></clipPath><g clip-path="url(#a)"><path class="updated-badge-left" d="M0 0h55v20H0z"/><path class="updated-badge-right" d="M55 0h75v20H55z"/><path fill="url(#b)" d="M0 0h130v20H0z"/></g><g fill="#fff" text-anchor="middle" font-size="110"><text x="285" y="150" fill="#010101" fill-opacity=".3" textLength="450" transform="scale(.1)">updated</text><text x="285" y="140" textLength="450" transform="scale(.1)">updated</text><text x="915" y="150" fill="#010101" fill-opacity=".3" textLength="650" transform="scale(.1)">2023-07-02</text><text x="915" y="140" textLength="650" transform="scale(.1)">2023-07-02</text></g></svg>
         </span></div>
 
 

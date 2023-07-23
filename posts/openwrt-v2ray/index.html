@@ -3,7 +3,7 @@
     <head prefix="og: http://ogp.me/ns# article: http://ogp.me/ns/article#">
     <meta charset="UTF-8" />
 
-    <meta name="generator" content="Hugo 0.88.1" /><meta name="theme-color" content="#fff" />
+    <meta name="generator" content="Hugo 0.115.0"><meta name="theme-color" content="#fff" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     
     <meta name="format-detection" content="telephone=no, date=no, address=no, email=no" />
@@ -14,11 +14,11 @@
 
     <title>Openwrt 路由器折腾 | 学习笔记</title>
 
-    <link rel="stylesheet" href="/css/meme.min.2d3e1834af2bc8dda20c7d74aaa1d8134845094441b7a554a5206ccd4b472596.css"/>
+    <link rel="stylesheet" href="/css/meme.min.91e7f58f97e1c60563ef481c38d9684fa8099537801d6f17bbfc724121e7d8f1.css"/>
 
     
     
-        <script src="/js/meme.min.800f61672145711eb3e1f29fcfcc3dbe0139dd459259718b611a0390f74703d1.js"></script>
+        <script src="/js/meme.min.3210a00c2fdcf6f831170b681b8ee40f83f0224663661e986872616aec45407f.js"></script>
 
     
 
@@ -54,7 +54,7 @@
         "@context": "https://schema.org",
         "@type": "BlogPosting",
         "datePublished": "2020-01-05T20:56:18+00:00",
-        "dateModified": "2021-10-22T14:44:34+08:00",
+        "dateModified": "2023-07-02T16:59:09+08:00",
         "url": "https://zhmin.github.io/posts/openwrt-v2ray/",
         "headline": "Openwrt 路由器折腾",
         "description": "前言 最近看到了闲置已久的小米路由器3，可以刷 lede 系统了，就想着做个透明代理来试试。经过两三个星期的折腾，总算是成功了，下面讲解下透明代理实现的方案和原理。 网络框架 整个框架由域名解析和 ip 分流两部分组成。域……",
@@ -98,7 +98,7 @@
 <meta property="og:locale" content="zh" /><meta property="og:image" content="https://zhmin.github.io/icons/apple-touch-icon.png" />
     <meta property="og:type" content="article" />
     <meta property="article:published_time" content="2020-01-05T20:56:18&#43;00:00" />
-    <meta property="article:modified_time" content="2021-10-22T14:44:34&#43;08:00" />
+    <meta property="article:modified_time" content="2023-07-02T16:59:09&#43;08:00" />
     
     <meta property="article:section" content="posts" />
 
@@ -253,7 +253,6 @@ foreign_dns_server[国外dns服务器]
 dns_request--&gt;overture
 overture--国内域名--&gt;china_dns_server
 overture--国外域名--&gt;socks5--&gt;foreign_dns_server
-
 </code></pre><h3 id="透明代理"><a href="#透明代理" class="anchor-link"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon anchor-icon"><path d="M326.612 185.391c59.747 59.809 58.927 155.698.36 214.59-.11.12-.24.25-.36.37l-67.2 67.2c-59.27 59.27-155.699 59.262-214.96 0-59.27-59.26-59.27-155.7 0-214.96l37.106-37.106c9.84-9.84 26.786-3.3 27.294 10.606.648 17.722 3.826 35.527 9.69 52.721 1.986 5.822.567 12.262-3.783 16.612l-13.087 13.087c-28.026 28.026-28.905 73.66-1.155 101.96 28.024 28.579 74.086 28.749 102.325.51l67.2-67.19c28.191-28.191 28.073-73.757 0-101.83-3.701-3.694-7.429-6.564-10.341-8.569a16.037 16.037 0 0 1-6.947-12.606c-.396-10.567 3.348-21.456 11.698-29.806l21.054-21.055c5.521-5.521 14.182-6.199 20.584-1.731a152.482 152.482 0 0 1 20.522 17.197zM467.547 44.449c-59.261-59.262-155.69-59.27-214.96 0l-67.2 67.2c-.12.12-.25.25-.36.37-58.566 58.892-59.387 154.781.36 214.59a152.454 152.454 0 0 0 20.521 17.196c6.402 4.468 15.064 3.789 20.584-1.731l21.054-21.055c8.35-8.35 12.094-19.239 11.698-29.806a16.037 16.037 0 0 0-6.947-12.606c-2.912-2.005-6.64-4.875-10.341-8.569-28.073-28.073-28.191-73.639 0-101.83l67.2-67.19c28.239-28.239 74.3-28.069 102.325.51 27.75 28.3 26.872 73.934-1.155 101.96l-13.087 13.087c-4.35 4.35-5.769 10.79-3.783 16.612 5.864 17.194 9.042 34.999 9.69 52.721.509 13.906 17.454 20.446 27.294 10.606l37.106-37.106c59.271-59.259 59.271-155.699.001-214.959z"/></svg></a>透明代理</h3>
 <p>使用 iptables 来进行 ip 分流，国内请求直连，国外请求走代理</p>
 <pre tabindex="0"><code class="language-mermaid" data-lang="mermaid">graph LR
@@ -292,17 +291,17 @@ iptables--国外ip--&gt;proxy
 </span><span class="lnt">10
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell">git clone https://github.com/felixonmars/dnsmasq-china-list.git
-<span class="nb">cd</span> dnsmasq-china-list
-<span class="c1"># 提取原始域名列表</span>
-make raw
-<span class="c1"># google有些服务可以在国内使用</span>
-cat  google.china.raw.txt &gt;&gt; china-domain.txt
-<span class="c1"># apple有些服务可以在国内使用</span>
-cat apple.china.raw.txt &gt;&gt; china-domain.txt
-<span class="c1"># 国内域名列表</span>
-cat accelerated-domains.china.raw.txt &gt;&gt; china-domain.txt
-</code></pre></td></tr></table></div>
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">git clone https://github.com/felixonmars/dnsmasq-china-list.git
+</span></span><span class="line"><span class="cl"><span class="nb">cd</span> dnsmasq-china-list
+</span></span><span class="line"><span class="cl"><span class="c1"># 提取原始域名列表</span>
+</span></span><span class="line"><span class="cl">make raw
+</span></span><span class="line"><span class="cl"><span class="c1"># google有些服务可以在国内使用</span>
+</span></span><span class="line"><span class="cl">cat  google.china.raw.txt &gt;&gt; china-domain.txt
+</span></span><span class="line"><span class="cl"><span class="c1"># apple有些服务可以在国内使用</span>
+</span></span><span class="line"><span class="cl">cat apple.china.raw.txt &gt;&gt; china-domain.txt
+</span></span><span class="line"><span class="cl"><span class="c1"># 国内域名列表</span>
+</span></span><span class="line"><span class="cl">cat accelerated-domains.china.raw.txt &gt;&gt; china-domain.txt
+</span></span></code></pre></td></tr></table></div>
 </div>
 </div><p>因为 overture 项目不支持 https 方式，所以我自己修改源码，目前已经提交 pull request，等待合并中。还有一点是，overture 不能仅仅通过域名来决定转发给哪个 dns，我也提交了 pull request。如果想要使用的话，得要自行编译或者等待作者合并。</p>
 <p>下面是我的配置文件，可以参考</p>
@@ -356,53 +355,53 @@ cat accelerated-domains.china.raw.txt &gt;&gt; china-domain.txt
 </span><span class="lnt">46
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-json" data-lang="json"><span class="p">{</span>
-  <span class="nt">&#34;BindAddress&#34;</span><span class="p">:</span> <span class="s2">&#34;:53&#34;</span><span class="p">,</span>
-  <span class="nt">&#34;DebugHTTPAddress&#34;</span><span class="p">:</span> <span class="s2">&#34;0.0.0.0:5555&#34;</span><span class="p">,</span>
-  <span class="nt">&#34;PrimaryDNS&#34;</span><span class="p">:</span> <span class="p">[</span>
-    <span class="p">{</span>
-      <span class="nt">&#34;Name&#34;</span><span class="p">:</span> <span class="s2">&#34;DNSPod&#34;</span><span class="p">,</span>
-      <span class="nt">&#34;Address&#34;</span><span class="p">:</span> <span class="s2">&#34;119.29.29.29:53&#34;</span><span class="p">,</span>
-      <span class="nt">&#34;Protocol&#34;</span><span class="p">:</span> <span class="s2">&#34;udp&#34;</span><span class="p">,</span>
-      <span class="nt">&#34;SOCKS5Address&#34;</span><span class="p">:</span> <span class="s2">&#34;&#34;</span><span class="p">,</span>
-      <span class="nt">&#34;Timeout&#34;</span><span class="p">:</span> <span class="mi">15</span><span class="p">,</span>
-      <span class="nt">&#34;EDNSClientSubnet&#34;</span><span class="p">:</span> <span class="p">{</span>
-        <span class="nt">&#34;Policy&#34;</span><span class="p">:</span> <span class="s2">&#34;disable&#34;</span><span class="p">,</span>
-        <span class="nt">&#34;ExternalIP&#34;</span><span class="p">:</span> <span class="s2">&#34;&#34;</span><span class="p">,</span>
-        <span class="nt">&#34;NoCookie&#34;</span><span class="p">:</span> <span class="kc">true</span>
-      <span class="p">}</span>
-    <span class="p">}</span>
-  <span class="p">],</span>
-  <span class="nt">&#34;AlternativeDNS&#34;</span><span class="p">:</span> <span class="p">[</span>
-    <span class="p">{</span>
-      <span class="nt">&#34;Name&#34;</span><span class="p">:</span> <span class="s2">&#34;Google&#34;</span><span class="p">,</span>
-      <span class="nt">&#34;Address&#34;</span><span class="p">:</span> <span class="s2">&#34;https://dns.google/dns-query&#34;</span><span class="p">,</span>
-      <span class="nt">&#34;Protocol&#34;</span><span class="p">:</span> <span class="s2">&#34;https&#34;</span><span class="p">,</span>
-      <span class="nt">&#34;SOCKS5Address&#34;</span><span class="p">:</span> <span class="s2">&#34;127.0.0.1:7891&#34;</span><span class="p">,</span>
-      <span class="nt">&#34;Timeout&#34;</span><span class="p">:</span> <span class="mi">60</span><span class="p">,</span>
-      <span class="nt">&#34;EDNSClientSubnet&#34;</span><span class="p">:</span> <span class="p">{</span>
-        <span class="nt">&#34;Policy&#34;</span><span class="p">:</span> <span class="s2">&#34;disable&#34;</span><span class="p">,</span>
-        <span class="nt">&#34;ExternalIP&#34;</span><span class="p">:</span> <span class="s2">&#34;&#34;</span><span class="p">,</span>
-        <span class="nt">&#34;NoCookie&#34;</span><span class="p">:</span> <span class="kc">true</span>
-      <span class="p">}</span>
-    <span class="p">}</span>
-  <span class="p">],</span>
-  <span class="nt">&#34;OnlyPrimaryDNS&#34;</span><span class="p">:</span> <span class="kc">false</span><span class="p">,</span>
-  <span class="nt">&#34;IPv6UseAlternativeDNS&#34;</span><span class="p">:</span> <span class="kc">false</span><span class="p">,</span>
-  <span class="nt">&#34;WhenPrimaryDNSAnswerNoneUse&#34;</span><span class="p">:</span> <span class="s2">&#34;AlternativeDNS&#34;</span><span class="p">,</span>
-  <span class="nt">&#34;DomainFile&#34;</span><span class="p">:</span> <span class="p">{</span>
-    <span class="nt">&#34;Primary&#34;</span><span class="p">:</span> <span class="s2">&#34;./china-domain.txt&#34;</span><span class="p">,</span>
-    <span class="nt">&#34;Alternative&#34;</span><span class="p">:</span> <span class="s2">&#34;&#34;</span><span class="p">,</span>
-    <span class="nt">&#34;PrimaryMatcher&#34;</span><span class="p">:</span>  <span class="s2">&#34;suffix-tree&#34;</span><span class="p">,</span>
-    <span class="nt">&#34;AlternativeMatcher&#34;</span><span class="p">:</span> <span class="s2">&#34;final&#34;</span>
-  <span class="p">},</span>
-  <span class="nt">&#34;HostsFile&#34;</span><span class="p">:</span> <span class="s2">&#34;./hosts_sample&#34;</span><span class="p">,</span>
-  <span class="nt">&#34;MinimumTTL&#34;</span><span class="p">:</span> <span class="mi">60</span><span class="p">,</span>
-  <span class="nt">&#34;DomainTTLFile&#34;</span> <span class="p">:</span> <span class="s2">&#34;&#34;</span><span class="p">,</span>
-  <span class="nt">&#34;CacheSize&#34;</span> <span class="p">:</span> <span class="mi">2000</span><span class="p">,</span>
-  <span class="nt">&#34;RejectQType&#34;</span><span class="p">:</span> <span class="p">[</span><span class="mi">255</span><span class="p">]</span>
-<span class="p">}</span>
-</code></pre></td></tr></table></div>
+<pre tabindex="0" class="chroma"><code class="language-json" data-lang="json"><span class="line"><span class="cl"><span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="nt">&#34;BindAddress&#34;</span><span class="p">:</span> <span class="s2">&#34;:53&#34;</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">  <span class="nt">&#34;DebugHTTPAddress&#34;</span><span class="p">:</span> <span class="s2">&#34;0.0.0.0:5555&#34;</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">  <span class="nt">&#34;PrimaryDNS&#34;</span><span class="p">:</span> <span class="p">[</span>
+</span></span><span class="line"><span class="cl">    <span class="p">{</span>
+</span></span><span class="line"><span class="cl">      <span class="nt">&#34;Name&#34;</span><span class="p">:</span> <span class="s2">&#34;DNSPod&#34;</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">      <span class="nt">&#34;Address&#34;</span><span class="p">:</span> <span class="s2">&#34;119.29.29.29:53&#34;</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">      <span class="nt">&#34;Protocol&#34;</span><span class="p">:</span> <span class="s2">&#34;udp&#34;</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">      <span class="nt">&#34;SOCKS5Address&#34;</span><span class="p">:</span> <span class="s2">&#34;&#34;</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">      <span class="nt">&#34;Timeout&#34;</span><span class="p">:</span> <span class="mi">15</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">      <span class="nt">&#34;EDNSClientSubnet&#34;</span><span class="p">:</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="nt">&#34;Policy&#34;</span><span class="p">:</span> <span class="s2">&#34;disable&#34;</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">        <span class="nt">&#34;ExternalIP&#34;</span><span class="p">:</span> <span class="s2">&#34;&#34;</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">        <span class="nt">&#34;NoCookie&#34;</span><span class="p">:</span> <span class="kc">true</span>
+</span></span><span class="line"><span class="cl">      <span class="p">}</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl">  <span class="p">],</span>
+</span></span><span class="line"><span class="cl">  <span class="nt">&#34;AlternativeDNS&#34;</span><span class="p">:</span> <span class="p">[</span>
+</span></span><span class="line"><span class="cl">    <span class="p">{</span>
+</span></span><span class="line"><span class="cl">      <span class="nt">&#34;Name&#34;</span><span class="p">:</span> <span class="s2">&#34;Google&#34;</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">      <span class="nt">&#34;Address&#34;</span><span class="p">:</span> <span class="s2">&#34;https://dns.google/dns-query&#34;</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">      <span class="nt">&#34;Protocol&#34;</span><span class="p">:</span> <span class="s2">&#34;https&#34;</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">      <span class="nt">&#34;SOCKS5Address&#34;</span><span class="p">:</span> <span class="s2">&#34;127.0.0.1:7891&#34;</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">      <span class="nt">&#34;Timeout&#34;</span><span class="p">:</span> <span class="mi">60</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">      <span class="nt">&#34;EDNSClientSubnet&#34;</span><span class="p">:</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="nt">&#34;Policy&#34;</span><span class="p">:</span> <span class="s2">&#34;disable&#34;</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">        <span class="nt">&#34;ExternalIP&#34;</span><span class="p">:</span> <span class="s2">&#34;&#34;</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">        <span class="nt">&#34;NoCookie&#34;</span><span class="p">:</span> <span class="kc">true</span>
+</span></span><span class="line"><span class="cl">      <span class="p">}</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl">  <span class="p">],</span>
+</span></span><span class="line"><span class="cl">  <span class="nt">&#34;OnlyPrimaryDNS&#34;</span><span class="p">:</span> <span class="kc">false</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">  <span class="nt">&#34;IPv6UseAlternativeDNS&#34;</span><span class="p">:</span> <span class="kc">false</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">  <span class="nt">&#34;WhenPrimaryDNSAnswerNoneUse&#34;</span><span class="p">:</span> <span class="s2">&#34;AlternativeDNS&#34;</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">  <span class="nt">&#34;DomainFile&#34;</span><span class="p">:</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="nt">&#34;Primary&#34;</span><span class="p">:</span> <span class="s2">&#34;./china-domain.txt&#34;</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">    <span class="nt">&#34;Alternative&#34;</span><span class="p">:</span> <span class="s2">&#34;&#34;</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">    <span class="nt">&#34;PrimaryMatcher&#34;</span><span class="p">:</span>  <span class="s2">&#34;suffix-tree&#34;</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">    <span class="nt">&#34;AlternativeMatcher&#34;</span><span class="p">:</span> <span class="s2">&#34;final&#34;</span>
+</span></span><span class="line"><span class="cl">  <span class="p">},</span>
+</span></span><span class="line"><span class="cl">  <span class="nt">&#34;HostsFile&#34;</span><span class="p">:</span> <span class="s2">&#34;./hosts_sample&#34;</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">  <span class="nt">&#34;MinimumTTL&#34;</span><span class="p">:</span> <span class="mi">60</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">  <span class="nt">&#34;DomainTTLFile&#34;</span> <span class="p">:</span> <span class="s2">&#34;&#34;</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">  <span class="nt">&#34;CacheSize&#34;</span> <span class="p">:</span> <span class="mi">2000</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">  <span class="nt">&#34;RejectQType&#34;</span><span class="p">:</span> <span class="p">[</span><span class="mi">255</span><span class="p">]</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table></div>
 </div>
 </div><p>当有域名请求过来时，会先去国内域名列表中匹配，如果找到了，那么转发给<code>119.29.29.29</code>服务。注意到<code>PrimaryMatcher</code>必须设置为<code>suffix-tree</code>，这样才能高效的匹配。</p>
 <p>还应该注意到<code>AlternativeMatcher</code>必须为<code>final</code>，表示其余的域名都由它来处理。如果不设置，那么<code>overture</code>会向<code>119.29.29.29</code>请求获取该域名的 ip ，然后再根据 ip 来选择哪个 dns，显然这没有任何意思。</p>
@@ -430,21 +429,21 @@ cat accelerated-domains.china.raw.txt &gt;&gt; china-domain.txt
 </span><span class="lnt">14
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="c1"># 下载国内ip数据</span>
-wget https://raw.githubusercontent.com/metowolf/iplist/master/data/special/china.txt
-
-<span class="c1"># 创建集合，叫做China，类型为net，表示支持ip和网段</span>
-ipset -N China hash:net
-
-<span class="c1"># 遍历ip，添加到集合</span>
-<span class="k">for</span> i in <span class="sb">`</span>cat china.txt <span class="sb">`</span>
-<span class="k">do</span>
-  ipset -A China <span class="nv">$i</span>
-<span class="k">done</span>
-
-<span class="c1"># 持久化ipset，防止机器重启无效</span>
-ipset save &gt; /etc/ipset.conf
-</code></pre></td></tr></table></div>
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl"><span class="c1"># 下载国内ip数据</span>
+</span></span><span class="line"><span class="cl">wget https://raw.githubusercontent.com/metowolf/iplist/master/data/special/china.txt
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># 创建集合，叫做China，类型为net，表示支持ip和网段</span>
+</span></span><span class="line"><span class="cl">ipset -N China hash:net
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># 遍历ip，添加到集合</span>
+</span></span><span class="line"><span class="cl"><span class="k">for</span> i in <span class="sb">`</span>cat china.txt <span class="sb">`</span>
+</span></span><span class="line"><span class="cl"><span class="k">do</span>
+</span></span><span class="line"><span class="cl">  ipset -A China <span class="nv">$i</span>
+</span></span><span class="line"><span class="cl"><span class="k">done</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># 持久化ipset，防止机器重启无效</span>
+</span></span><span class="line"><span class="cl">ipset save &gt; /etc/ipset.conf
+</span></span></code></pre></td></tr></table></div>
 </div>
 </div><div class="highlight"><div class="chroma">
 <div class="table-container"><table class="lntable"><tr><td class="lntd">
@@ -464,21 +463,21 @@ ipset save &gt; /etc/ipset.conf
 </span><span class="lnt">14
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="c1"># 下载国内ip数据</span>
-wget https://raw.githubusercontent.com/metowolf/iplist/master/data/special/china.txt
-
-<span class="c1"># 创建集合，叫做China，类型为net，表示支持ip和网段</span>
-ipset -N China hash:net
-
-<span class="c1"># 遍历ip，添加到集合</span>
-<span class="k">for</span> i in <span class="sb">`</span>cat china.txt <span class="sb">`</span>
-<span class="k">do</span>
-  ipset -A China <span class="nv">$i</span>
-<span class="k">done</span>
-
-<span class="c1"># 持久化ipset，防止机器重启无效</span>
-ipset save &gt; /etc/ipset.conf
-</code></pre></td></tr></table></div>
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl"><span class="c1"># 下载国内ip数据</span>
+</span></span><span class="line"><span class="cl">wget https://raw.githubusercontent.com/metowolf/iplist/master/data/special/china.txt
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># 创建集合，叫做China，类型为net，表示支持ip和网段</span>
+</span></span><span class="line"><span class="cl">ipset -N China hash:net
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># 遍历ip，添加到集合</span>
+</span></span><span class="line"><span class="cl"><span class="k">for</span> i in <span class="sb">`</span>cat china.txt <span class="sb">`</span>
+</span></span><span class="line"><span class="cl"><span class="k">do</span>
+</span></span><span class="line"><span class="cl">  ipset -A China <span class="nv">$i</span>
+</span></span><span class="line"><span class="cl"><span class="k">done</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># 持久化ipset，防止机器重启无效</span>
+</span></span><span class="line"><span class="cl">ipset save &gt; /etc/ipset.conf
+</span></span></code></pre></td></tr></table></div>
 </div>
 </div><h3 id="iptables-配置"><a href="#iptables-配置" class="anchor-link"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon anchor-icon"><path d="M326.612 185.391c59.747 59.809 58.927 155.698.36 214.59-.11.12-.24.25-.36.37l-67.2 67.2c-59.27 59.27-155.699 59.262-214.96 0-59.27-59.26-59.27-155.7 0-214.96l37.106-37.106c9.84-9.84 26.786-3.3 27.294 10.606.648 17.722 3.826 35.527 9.69 52.721 1.986 5.822.567 12.262-3.783 16.612l-13.087 13.087c-28.026 28.026-28.905 73.66-1.155 101.96 28.024 28.579 74.086 28.749 102.325.51l67.2-67.19c28.191-28.191 28.073-73.757 0-101.83-3.701-3.694-7.429-6.564-10.341-8.569a16.037 16.037 0 0 1-6.947-12.606c-.396-10.567 3.348-21.456 11.698-29.806l21.054-21.055c5.521-5.521 14.182-6.199 20.584-1.731a152.482 152.482 0 0 1 20.522 17.197zM467.547 44.449c-59.261-59.262-155.69-59.27-214.96 0l-67.2 67.2c-.12.12-.25.25-.36.37-58.566 58.892-59.387 154.781.36 214.59a152.454 152.454 0 0 0 20.521 17.196c6.402 4.468 15.064 3.789 20.584-1.731l21.054-21.055c8.35-8.35 12.094-19.239 11.698-29.806a16.037 16.037 0 0 0-6.947-12.606c-2.912-2.005-6.64-4.875-10.341-8.569-28.073-28.073-28.191-73.639 0-101.83l67.2-67.19c28.239-28.239 74.3-28.069 102.325.51 27.75 28.3 26.872 73.934-1.155 101.96l-13.087 13.087c-4.35 4.35-5.769 10.79-3.783 16.612 5.864 17.194 9.042 34.999 9.69 52.721.509 13.906 17.454 20.446 27.294 10.606l37.106-37.106c59.271-59.259 59.271-155.699.001-214.959z"/></svg></a>iptables 配置</h3>
 <p>iptables 会实现透明代理</p>
@@ -506,27 +505,27 @@ ipset save &gt; /etc/ipset.conf
 </span><span class="lnt">20
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="c1"># 创建DIRECT_TCP规则</span>
-iptables -t nat -N DIRECT_IP
-
-<span class="c1"># 放行环回地址，</span>
-iptables -t nat -A DIRECT_IP -d 0/8 -j RETURN
-iptables -t nat -A DIRECT_IP -d 127/8 -j RETURN
-<span class="c1"># 放行局域网地址，因为我的局域网地址为192.168网段，所以只需要匹配它</span>
-iptables -t nat -A DIRECT_IP -d 192.168/16 -j RETURN
-
-<span class="c1"># 放行 socks5 port，我的socks服务运行在7891端口</span>
-iptables -t nat -I DIRECT_IP -p tcp --dport <span class="m">7891</span> -j RETURN
-
-<span class="c1"># 放行国内ip</span>
-iptables -t nat -A DIRECT_IP -m <span class="nb">set</span> --match-set China dst -j RETURN
-
-<span class="c1"># 重定向 tcp 数据包至 redir 端口，我的redir服务运行在7892端口</span>
-iptables -t nat -A DIRECT_IP -p tcp -j REDIRECT --to-port <span class="m">7892</span>
-
-<span class="c1"># 添加到 PREROUTING 链条</span>
-iptables -t nat -A PREROUTING -p tcp -j DIRECT_IP
-</code></pre></td></tr></table></div>
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl"><span class="c1"># 创建DIRECT_TCP规则</span>
+</span></span><span class="line"><span class="cl">iptables -t nat -N DIRECT_IP
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># 放行环回地址，</span>
+</span></span><span class="line"><span class="cl">iptables -t nat -A DIRECT_IP -d 0/8 -j RETURN
+</span></span><span class="line"><span class="cl">iptables -t nat -A DIRECT_IP -d 127/8 -j RETURN
+</span></span><span class="line"><span class="cl"><span class="c1"># 放行局域网地址，因为我的局域网地址为192.168网段，所以只需要匹配它</span>
+</span></span><span class="line"><span class="cl">iptables -t nat -A DIRECT_IP -d 192.168/16 -j RETURN
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># 放行 socks5 port，我的socks服务运行在7891端口</span>
+</span></span><span class="line"><span class="cl">iptables -t nat -I DIRECT_IP -p tcp --dport <span class="m">7891</span> -j RETURN
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># 放行国内ip</span>
+</span></span><span class="line"><span class="cl">iptables -t nat -A DIRECT_IP -m <span class="nb">set</span> --match-set China dst -j RETURN
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># 重定向 tcp 数据包至 redir 端口，我的redir服务运行在7892端口</span>
+</span></span><span class="line"><span class="cl">iptables -t nat -A DIRECT_IP -p tcp -j REDIRECT --to-port <span class="m">7892</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># 添加到 PREROUTING 链条</span>
+</span></span><span class="line"><span class="cl">iptables -t nat -A PREROUTING -p tcp -j DIRECT_IP
+</span></span></code></pre></td></tr></table></div>
 </div>
 </div><h2 id="路由器系统"><a href="#路由器系统" class="anchor-link"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon anchor-icon"><path d="M326.612 185.391c59.747 59.809 58.927 155.698.36 214.59-.11.12-.24.25-.36.37l-67.2 67.2c-59.27 59.27-155.699 59.262-214.96 0-59.27-59.26-59.27-155.7 0-214.96l37.106-37.106c9.84-9.84 26.786-3.3 27.294 10.606.648 17.722 3.826 35.527 9.69 52.721 1.986 5.822.567 12.262-3.783 16.612l-13.087 13.087c-28.026 28.026-28.905 73.66-1.155 101.96 28.024 28.579 74.086 28.749 102.325.51l67.2-67.19c28.191-28.191 28.073-73.757 0-101.83-3.701-3.694-7.429-6.564-10.341-8.569a16.037 16.037 0 0 1-6.947-12.606c-.396-10.567 3.348-21.456 11.698-29.806l21.054-21.055c5.521-5.521 14.182-6.199 20.584-1.731a152.482 152.482 0 0 1 20.522 17.197zM467.547 44.449c-59.261-59.262-155.69-59.27-214.96 0l-67.2 67.2c-.12.12-.25.25-.36.37-58.566 58.892-59.387 154.781.36 214.59a152.454 152.454 0 0 0 20.521 17.196c6.402 4.468 15.064 3.789 20.584-1.731l21.054-21.055c8.35-8.35 12.094-19.239 11.698-29.806a16.037 16.037 0 0 0-6.947-12.606c-2.912-2.005-6.64-4.875-10.341-8.569-28.073-28.073-28.191-73.639 0-101.83l67.2-67.19c28.239-28.239 74.3-28.069 102.325.51 27.75 28.3 26.872 73.934-1.155 101.96l-13.087 13.087c-4.35 4.35-5.769 10.79-3.783 16.612 5.864 17.194 9.042 34.999 9.69 52.721.509 13.906 17.454 20.446 27.294 10.606l37.106-37.106c59.271-59.259 59.271-155.699.001-214.959z"/></svg></a>路由器系统</h2>
 <p>因为这里使用的几个软件都是 golang 开发的，它支持跨平台，我们需要找到自己设备对应的平台版本。路由器的芯片不相同，其对应的系统平台也不一样。一般根据芯片生产商来区分，比如 mtk 芯片的一般都是 mips平台，博通或者高通芯片一般都是 arm 平台。</p>
@@ -543,9 +542,9 @@ iptables -t nat -A PREROUTING -p tcp -j DIRECT_IP
 </span><span class="lnt">2
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell">opkg update
-opkg install ca-certificates openssl-util ca-bundle
-</code></pre></td></tr></table></div>
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">opkg update
+</span></span><span class="line"><span class="cl">opkg install ca-certificates openssl-util ca-bundle
+</span></span></code></pre></td></tr></table></div>
 </div>
 </div><h3 id="域名服务启动"><a href="#域名服务启动" class="anchor-link"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon anchor-icon"><path d="M326.612 185.391c59.747 59.809 58.927 155.698.36 214.59-.11.12-.24.25-.36.37l-67.2 67.2c-59.27 59.27-155.699 59.262-214.96 0-59.27-59.26-59.27-155.7 0-214.96l37.106-37.106c9.84-9.84 26.786-3.3 27.294 10.606.648 17.722 3.826 35.527 9.69 52.721 1.986 5.822.567 12.262-3.783 16.612l-13.087 13.087c-28.026 28.026-28.905 73.66-1.155 101.96 28.024 28.579 74.086 28.749 102.325.51l67.2-67.19c28.191-28.191 28.073-73.757 0-101.83-3.701-3.694-7.429-6.564-10.341-8.569a16.037 16.037 0 0 1-6.947-12.606c-.396-10.567 3.348-21.456 11.698-29.806l21.054-21.055c5.521-5.521 14.182-6.199 20.584-1.731a152.482 152.482 0 0 1 20.522 17.197zM467.547 44.449c-59.261-59.262-155.69-59.27-214.96 0l-67.2 67.2c-.12.12-.25.25-.36.37-58.566 58.892-59.387 154.781.36 214.59a152.454 152.454 0 0 0 20.521 17.196c6.402 4.468 15.064 3.789 20.584-1.731l21.054-21.055c8.35-8.35 12.094-19.239 11.698-29.806a16.037 16.037 0 0 0-6.947-12.606c-2.912-2.005-6.64-4.875-10.341-8.569-28.073-28.073-28.191-73.639 0-101.83l67.2-67.19c28.239-28.239 74.3-28.069 102.325.51 27.75 28.3 26.872 73.934-1.155 101.96l-13.087 13.087c-4.35 4.35-5.769 10.79-3.783 16.612 5.864 17.194 9.042 34.999 9.69 52.721.509 13.906 17.454 20.446 27.294 10.606l37.106-37.106c59.271-59.259 59.271-155.699.001-214.959z"/></svg></a>域名服务启动</h3>
 <p>下载 overture 和 国内域名列表，上传到路由器上，并且修改好配置文件。</p>
@@ -557,8 +556,8 @@ opkg install ca-certificates openssl-util ca-bundle
 <pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell">nohup ./overture-linux-mipsle-softfloat <span class="p">&amp;</span>
-</code></pre></td></tr></table></div>
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">nohup ./overture-linux-mipsle-softfloat <span class="p">&amp;</span>
+</span></span></code></pre></td></tr></table></div>
 </div>
 </div><h3 id="透明代理设置"><a href="#透明代理设置" class="anchor-link"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon anchor-icon"><path d="M326.612 185.391c59.747 59.809 58.927 155.698.36 214.59-.11.12-.24.25-.36.37l-67.2 67.2c-59.27 59.27-155.699 59.262-214.96 0-59.27-59.26-59.27-155.7 0-214.96l37.106-37.106c9.84-9.84 26.786-3.3 27.294 10.606.648 17.722 3.826 35.527 9.69 52.721 1.986 5.822.567 12.262-3.783 16.612l-13.087 13.087c-28.026 28.026-28.905 73.66-1.155 101.96 28.024 28.579 74.086 28.749 102.325.51l67.2-67.19c28.191-28.191 28.073-73.757 0-101.83-3.701-3.694-7.429-6.564-10.341-8.569a16.037 16.037 0 0 1-6.947-12.606c-.396-10.567 3.348-21.456 11.698-29.806l21.054-21.055c5.521-5.521 14.182-6.199 20.584-1.731a152.482 152.482 0 0 1 20.522 17.197zM467.547 44.449c-59.261-59.262-155.69-59.27-214.96 0l-67.2 67.2c-.12.12-.25.25-.36.37-58.566 58.892-59.387 154.781.36 214.59a152.454 152.454 0 0 0 20.521 17.196c6.402 4.468 15.064 3.789 20.584-1.731l21.054-21.055c8.35-8.35 12.094-19.239 11.698-29.806a16.037 16.037 0 0 0-6.947-12.606c-2.912-2.005-6.64-4.875-10.341-8.569-28.073-28.073-28.191-73.639 0-101.83l67.2-67.19c28.239-28.239 74.3-28.069 102.325.51 27.75 28.3 26.872 73.934-1.155 101.96l-13.087 13.087c-4.35 4.35-5.769 10.79-3.783 16.612 5.864 17.194 9.042 34.999 9.69 52.721.509 13.906 17.454 20.446 27.294 10.606l37.106-37.106c59.271-59.259 59.271-155.699.001-214.959z"/></svg></a>透明代理设置</h3>
 <p>上面已经讲述过了如何设置透明代理和 ip 分流。</p>
@@ -595,9 +594,9 @@ opkg install ca-certificates openssl-util ca-bundle
 
         
     <div class="updated-badge-container">
-        <span title="Updated @ 2021-10-22 14:44:34 CST" style="cursor:help">
+        <span title="Updated @ 2023-07-02 16:59:09 CST" style="cursor:help">
 
-<svg xmlns="http://www.w3.org/2000/svg" width="130" height="20" class="updated-badge"><linearGradient id="b" x2="0" y2="100%"><stop offset="0" stop-color="#bbb" stop-opacity=".1"/><stop offset="1" stop-opacity=".1"/></linearGradient><clipPath id="a"><rect width="130" height="20" rx="3" fill="#fff"/></clipPath><g clip-path="url(#a)"><path class="updated-badge-left" d="M0 0h55v20H0z"/><path class="updated-badge-right" d="M55 0h75v20H55z"/><path fill="url(#b)" d="M0 0h130v20H0z"/></g><g fill="#fff" text-anchor="middle" font-size="110"><text x="285" y="150" fill="#010101" fill-opacity=".3" textLength="450" transform="scale(.1)">updated</text><text x="285" y="140" textLength="450" transform="scale(.1)">updated</text><text x="915" y="150" fill="#010101" fill-opacity=".3" textLength="650" transform="scale(.1)">2021-10-22</text><text x="915" y="140" textLength="650" transform="scale(.1)">2021-10-22</text></g></svg>
+<svg xmlns="http://www.w3.org/2000/svg" width="130" height="20" class="updated-badge"><linearGradient id="b" x2="0" y2="100%"><stop offset="0" stop-color="#bbb" stop-opacity=".1"/><stop offset="1" stop-opacity=".1"/></linearGradient><clipPath id="a"><rect width="130" height="20" rx="3" fill="#fff"/></clipPath><g clip-path="url(#a)"><path class="updated-badge-left" d="M0 0h55v20H0z"/><path class="updated-badge-right" d="M55 0h75v20H55z"/><path fill="url(#b)" d="M0 0h130v20H0z"/></g><g fill="#fff" text-anchor="middle" font-size="110"><text x="285" y="150" fill="#010101" fill-opacity=".3" textLength="450" transform="scale(.1)">updated</text><text x="285" y="140" textLength="450" transform="scale(.1)">updated</text><text x="915" y="150" fill="#010101" fill-opacity=".3" textLength="650" transform="scale(.1)">2023-07-02</text><text x="915" y="140" textLength="650" transform="scale(.1)">2023-07-02</text></g></svg>
         </span></div>
 
 

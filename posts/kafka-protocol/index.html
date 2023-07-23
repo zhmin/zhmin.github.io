@@ -3,7 +3,7 @@
     <head prefix="og: http://ogp.me/ns# article: http://ogp.me/ns/article#">
     <meta charset="UTF-8" />
 
-    <meta name="generator" content="Hugo 0.88.1" /><meta name="theme-color" content="#fff" />
+    <meta name="generator" content="Hugo 0.115.0"><meta name="theme-color" content="#fff" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     
     <meta name="format-detection" content="telephone=no, date=no, address=no, email=no" />
@@ -14,11 +14,11 @@
 
     <title>Kafka 协议格式 | 学习笔记</title>
 
-    <link rel="stylesheet" href="/css/meme.min.2d3e1834af2bc8dda20c7d74aaa1d8134845094441b7a554a5206ccd4b472596.css"/>
+    <link rel="stylesheet" href="/css/meme.min.91e7f58f97e1c60563ef481c38d9684fa8099537801d6f17bbfc724121e7d8f1.css"/>
 
     
     
-        <script src="/js/meme.min.800f61672145711eb3e1f29fcfcc3dbe0139dd459259718b611a0390f74703d1.js"></script>
+        <script src="/js/meme.min.3210a00c2fdcf6f831170b681b8ee40f83f0224663661e986872616aec45407f.js"></script>
 
     
 
@@ -54,7 +54,7 @@
         "@context": "https://schema.org",
         "@type": "BlogPosting",
         "datePublished": "2019-03-04T23:49:00+00:00",
-        "dateModified": "2021-10-22T14:44:34+08:00",
+        "dateModified": "2023-07-02T16:59:09+08:00",
         "url": "https://zhmin.github.io/posts/kafka-protocol/",
         "headline": "Kafka 协议格式",
         "description": "Kafka 协议格式 Kafka通常作为一个集群存在，集群内部会有着很多的通信，包括客户端与服务端的通信，服务端内部的通信。这些通信都有着固定的协议格式，通过了解这些协议格式，可以使我们对Kafka的原理有着更好……",
@@ -98,7 +98,7 @@
 <meta property="og:locale" content="zh" /><meta property="og:image" content="https://zhmin.github.io/kafka-protocol-produce-request.svg" />
 <meta property="og:type" content="article" />
     <meta property="article:published_time" content="2019-03-04T23:49:00&#43;00:00" />
-    <meta property="article:modified_time" content="2021-10-22T14:44:34&#43;08:00" />
+    <meta property="article:modified_time" content="2023-07-02T16:59:09&#43;08:00" />
     
     <meta property="article:section" content="posts" />
 
@@ -284,44 +284,44 @@
 </span><span class="lnt">37
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java">    <span class="kd">public</span> <span class="kd">static</span> <span class="kd">final</span> <span class="n">Type</span> <span class="n">STRING</span> <span class="o">=</span> <span class="k">new</span> <span class="n">Type</span><span class="o">()</span> <span class="o">{</span>
-         
-        <span class="nd">@Override</span>
-        <span class="kd">public</span> <span class="kt">void</span> <span class="nf">write</span><span class="o">(</span><span class="n">ByteBuffer</span> <span class="n">buffer</span><span class="o">,</span> <span class="n">Object</span> <span class="n">o</span><span class="o">)</span> <span class="o">{</span>
-            <span class="c1">// 将string按照utf8编码，生成byte数组
-</span><span class="c1"></span>            <span class="kt">byte</span><span class="o">[]</span> <span class="n">bytes</span> <span class="o">=</span> <span class="n">Utils</span><span class="o">.</span><span class="na">utf8</span><span class="o">((</span><span class="n">String</span><span class="o">)</span> <span class="n">o</span><span class="o">);</span>
-            <span class="c1">// 因为只有2个字节表示string长度，所以需要检查string长度是否超过最大值
-</span><span class="c1"></span>            <span class="k">if</span> <span class="o">(</span><span class="n">bytes</span><span class="o">.</span><span class="na">length</span> <span class="o">&gt;</span> <span class="n">Short</span><span class="o">.</span><span class="na">MAX_VALUE</span><span class="o">)</span>
-                <span class="k">throw</span> <span class="k">new</span> <span class="n">SchemaException</span><span class="o">(</span><span class="s">&#34;String length &#34;</span> <span class="o">+</span> <span class="n">bytes</span><span class="o">.</span><span class="na">length</span> <span class="o">+</span> <span class="s">&#34; is larger than the maximum string length.&#34;</span><span class="o">);</span>
-            <span class="c1">// 写入string长度
-</span><span class="c1"></span>            <span class="n">buffer</span><span class="o">.</span><span class="na">putShort</span><span class="o">((</span><span class="kt">short</span><span class="o">)</span> <span class="n">bytes</span><span class="o">.</span><span class="na">length</span><span class="o">);</span>
-            <span class="c1">// 写入数据
-</span><span class="c1"></span>            <span class="n">buffer</span><span class="o">.</span><span class="na">put</span><span class="o">(</span><span class="n">bytes</span><span class="o">);</span>
-        <span class="o">}</span>
-
-        <span class="nd">@Override</span>
-        <span class="kd">public</span> <span class="n">String</span> <span class="nf">read</span><span class="o">(</span><span class="n">ByteBuffer</span> <span class="n">buffer</span><span class="o">)</span> <span class="o">{</span>
-            <span class="c1">// 读取string长度
-</span><span class="c1"></span>            <span class="kt">short</span> <span class="n">length</span> <span class="o">=</span> <span class="n">buffer</span><span class="o">.</span><span class="na">getShort</span><span class="o">();</span>
-            <span class="c1">// 检测数据长度
-</span><span class="c1"></span>            <span class="k">if</span> <span class="o">(</span><span class="n">length</span> <span class="o">&lt;</span> <span class="n">0</span><span class="o">)</span>
-                <span class="k">throw</span> <span class="k">new</span> <span class="n">SchemaException</span><span class="o">(</span><span class="s">&#34;String length &#34;</span> <span class="o">+</span> <span class="n">length</span> <span class="o">+</span> <span class="s">&#34; cannot be negative&#34;</span><span class="o">);</span>
-            <span class="k">if</span> <span class="o">(</span><span class="n">length</span> <span class="o">&gt;</span> <span class="n">buffer</span><span class="o">.</span><span class="na">remaining</span><span class="o">())</span>
-                <span class="k">throw</span> <span class="k">new</span> <span class="n">SchemaException</span><span class="o">(</span><span class="s">&#34;Error reading string of length &#34;</span> <span class="o">+</span> <span class="n">length</span> <span class="o">+</span> <span class="s">&#34;, only &#34;</span> <span class="o">+</span> <span class="n">buffer</span><span class="o">.</span><span class="na">remaining</span><span class="o">()</span> <span class="o">+</span> <span class="s">&#34; bytes available&#34;</span><span class="o">);</span>
-            <span class="c1">// 读取字符串
-</span><span class="c1"></span>            <span class="n">String</span> <span class="n">result</span> <span class="o">=</span> <span class="n">Utils</span><span class="o">.</span><span class="na">utf8</span><span class="o">(</span><span class="n">buffer</span><span class="o">,</span> <span class="n">length</span><span class="o">);</span>
-            <span class="c1">// 移动buffer的读取位置
-</span><span class="c1"></span>            <span class="n">buffer</span><span class="o">.</span><span class="na">position</span><span class="o">(</span><span class="n">buffer</span><span class="o">.</span><span class="na">position</span><span class="o">()</span> <span class="o">+</span> <span class="n">length</span><span class="o">);</span>
-            <span class="k">return</span> <span class="n">result</span><span class="o">;</span>
-        <span class="o">}</span>
-
-        <span class="nd">@Override</span>
-        <span class="kd">public</span> <span class="kt">int</span> <span class="nf">sizeOf</span><span class="o">(</span><span class="n">Object</span> <span class="n">o</span><span class="o">)</span> <span class="o">{</span>
-            <span class="c1">// 返回整个字段的长度
-</span><span class="c1"></span>            <span class="k">return</span> <span class="n">2</span> <span class="o">+</span> <span class="n">Utils</span><span class="o">.</span><span class="na">utf8Length</span><span class="o">((</span><span class="n">String</span><span class="o">)</span> <span class="n">o</span><span class="o">);</span>
-        <span class="o">}</span>
-    <span class="o">};</span>
-</code></pre></td></tr></table></div>
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl">    <span class="kd">public</span> <span class="kd">static</span> <span class="kd">final</span> <span class="n">Type</span> <span class="n">STRING</span> <span class="o">=</span> <span class="k">new</span> <span class="n">Type</span><span class="o">()</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">         
+</span></span><span class="line"><span class="cl">        <span class="nd">@Override</span>
+</span></span><span class="line"><span class="cl">        <span class="kd">public</span> <span class="kt">void</span> <span class="nf">write</span><span class="o">(</span><span class="n">ByteBuffer</span> <span class="n">buffer</span><span class="o">,</span> <span class="n">Object</span> <span class="n">o</span><span class="o">)</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">            <span class="c1">// 将string按照utf8编码，生成byte数组
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>            <span class="kt">byte</span><span class="o">[]</span> <span class="n">bytes</span> <span class="o">=</span> <span class="n">Utils</span><span class="o">.</span><span class="na">utf8</span><span class="o">((</span><span class="n">String</span><span class="o">)</span> <span class="n">o</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">            <span class="c1">// 因为只有2个字节表示string长度，所以需要检查string长度是否超过最大值
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>            <span class="k">if</span> <span class="o">(</span><span class="n">bytes</span><span class="o">.</span><span class="na">length</span> <span class="o">&gt;</span> <span class="n">Short</span><span class="o">.</span><span class="na">MAX_VALUE</span><span class="o">)</span>
+</span></span><span class="line"><span class="cl">                <span class="k">throw</span> <span class="k">new</span> <span class="n">SchemaException</span><span class="o">(</span><span class="s">&#34;String length &#34;</span> <span class="o">+</span> <span class="n">bytes</span><span class="o">.</span><span class="na">length</span> <span class="o">+</span> <span class="s">&#34; is larger than the maximum string length.&#34;</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">            <span class="c1">// 写入string长度
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>            <span class="n">buffer</span><span class="o">.</span><span class="na">putShort</span><span class="o">((</span><span class="kt">short</span><span class="o">)</span> <span class="n">bytes</span><span class="o">.</span><span class="na">length</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">            <span class="c1">// 写入数据
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>            <span class="n">buffer</span><span class="o">.</span><span class="na">put</span><span class="o">(</span><span class="n">bytes</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">        <span class="o">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">        <span class="nd">@Override</span>
+</span></span><span class="line"><span class="cl">        <span class="kd">public</span> <span class="n">String</span> <span class="nf">read</span><span class="o">(</span><span class="n">ByteBuffer</span> <span class="n">buffer</span><span class="o">)</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">            <span class="c1">// 读取string长度
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>            <span class="kt">short</span> <span class="n">length</span> <span class="o">=</span> <span class="n">buffer</span><span class="o">.</span><span class="na">getShort</span><span class="o">();</span>
+</span></span><span class="line"><span class="cl">            <span class="c1">// 检测数据长度
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>            <span class="k">if</span> <span class="o">(</span><span class="n">length</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="o">)</span>
+</span></span><span class="line"><span class="cl">                <span class="k">throw</span> <span class="k">new</span> <span class="n">SchemaException</span><span class="o">(</span><span class="s">&#34;String length &#34;</span> <span class="o">+</span> <span class="n">length</span> <span class="o">+</span> <span class="s">&#34; cannot be negative&#34;</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">            <span class="k">if</span> <span class="o">(</span><span class="n">length</span> <span class="o">&gt;</span> <span class="n">buffer</span><span class="o">.</span><span class="na">remaining</span><span class="o">())</span>
+</span></span><span class="line"><span class="cl">                <span class="k">throw</span> <span class="k">new</span> <span class="n">SchemaException</span><span class="o">(</span><span class="s">&#34;Error reading string of length &#34;</span> <span class="o">+</span> <span class="n">length</span> <span class="o">+</span> <span class="s">&#34;, only &#34;</span> <span class="o">+</span> <span class="n">buffer</span><span class="o">.</span><span class="na">remaining</span><span class="o">()</span> <span class="o">+</span> <span class="s">&#34; bytes available&#34;</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">            <span class="c1">// 读取字符串
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>            <span class="n">String</span> <span class="n">result</span> <span class="o">=</span> <span class="n">Utils</span><span class="o">.</span><span class="na">utf8</span><span class="o">(</span><span class="n">buffer</span><span class="o">,</span> <span class="n">length</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">            <span class="c1">// 移动buffer的读取位置
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>            <span class="n">buffer</span><span class="o">.</span><span class="na">position</span><span class="o">(</span><span class="n">buffer</span><span class="o">.</span><span class="na">position</span><span class="o">()</span> <span class="o">+</span> <span class="n">length</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">            <span class="k">return</span> <span class="n">result</span><span class="o">;</span>
+</span></span><span class="line"><span class="cl">        <span class="o">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">        <span class="nd">@Override</span>
+</span></span><span class="line"><span class="cl">        <span class="kd">public</span> <span class="kt">int</span> <span class="nf">sizeOf</span><span class="o">(</span><span class="n">Object</span> <span class="n">o</span><span class="o">)</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">            <span class="c1">// 返回整个字段的长度
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>            <span class="k">return</span> <span class="mi">2</span> <span class="o">+</span> <span class="n">Utils</span><span class="o">.</span><span class="na">utf8Length</span><span class="o">((</span><span class="n">String</span><span class="o">)</span> <span class="n">o</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">        <span class="o">}</span>
+</span></span><span class="line"><span class="cl">    <span class="o">};</span>
+</span></span></code></pre></td></tr></table></div>
 </div>
 </div><p>字段都是由Field的基类表示，每个字段都对应着一个Type。Field的原理也很简单，它没有方法，只是包含了一些属性</p>
 <div class="highlight"><div class="chroma">
@@ -340,19 +340,19 @@
 </span><span class="lnt">12
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">Field</span> <span class="o">{</span>
-    <span class="c1">// 字段名称
-</span><span class="c1"></span>    <span class="kd">public</span> <span class="kd">final</span> <span class="n">String</span> <span class="n">name</span><span class="o">;</span>
-    <span class="c1">// 字段注释
-</span><span class="c1"></span>    <span class="kd">public</span> <span class="kd">final</span> <span class="n">String</span> <span class="n">docString</span><span class="o">;</span>
-    <span class="c1">// 字段类型
-</span><span class="c1"></span>    <span class="kd">public</span> <span class="kd">final</span> <span class="n">Type</span> <span class="n">type</span><span class="o">;</span>
-    <span class="c1">// 是否有默认值
-</span><span class="c1"></span>    <span class="kd">public</span> <span class="kd">final</span> <span class="kt">boolean</span> <span class="n">hasDefaultValue</span><span class="o">;</span>
-    <span class="c1">// 默认值
-</span><span class="c1"></span>    <span class="kd">public</span> <span class="kd">final</span> <span class="n">Object</span> <span class="n">defaultValue</span><span class="o">;</span>
-<span class="o">}</span>
-</code></pre></td></tr></table></div>
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">Field</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// 字段名称
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="kd">public</span> <span class="kd">final</span> <span class="n">String</span> <span class="n">name</span><span class="o">;</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// 字段注释
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="kd">public</span> <span class="kd">final</span> <span class="n">String</span> <span class="n">docString</span><span class="o">;</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// 字段类型
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="kd">public</span> <span class="kd">final</span> <span class="n">Type</span> <span class="n">type</span><span class="o">;</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// 是否有默认值
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="kd">public</span> <span class="kd">final</span> <span class="kt">boolean</span> <span class="n">hasDefaultValue</span><span class="o">;</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// 默认值
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="kd">public</span> <span class="kd">final</span> <span class="n">Object</span> <span class="n">defaultValue</span><span class="o">;</span>
+</span></span><span class="line"><span class="cl"><span class="o">}</span>
+</span></span></code></pre></td></tr></table></div>
 </div>
 </div><p>以Int32字段为例，它指定了字段类型为Type.INT32</p>
 <div class="highlight"><div class="chroma">
@@ -368,16 +368,16 @@
 </span><span class="lnt">9
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">static</span> <span class="kd">class</span> <span class="nc">Int32</span> <span class="kd">extends</span> <span class="n">Field</span> <span class="o">{</span>
-    <span class="kd">public</span> <span class="nf">Int32</span><span class="o">(</span><span class="n">String</span> <span class="n">name</span><span class="o">,</span> <span class="n">String</span> <span class="n">docString</span><span class="o">)</span> <span class="o">{</span>
-        <span class="kd">super</span><span class="o">(</span><span class="n">name</span><span class="o">,</span> <span class="n">Type</span><span class="o">.</span><span class="na">INT32</span><span class="o">,</span> <span class="n">docString</span><span class="o">,</span> <span class="kc">false</span><span class="o">,</span> <span class="kc">null</span><span class="o">);</span>
-    <span class="o">}</span>
-
-    <span class="kd">public</span> <span class="nf">Int32</span><span class="o">(</span><span class="n">String</span> <span class="n">name</span><span class="o">,</span> <span class="n">String</span> <span class="n">docString</span><span class="o">,</span> <span class="kt">int</span> <span class="n">defaultValue</span><span class="o">)</span> <span class="o">{</span>
-        <span class="kd">super</span><span class="o">(</span><span class="n">name</span><span class="o">,</span> <span class="n">Type</span><span class="o">.</span><span class="na">INT32</span><span class="o">,</span> <span class="n">docString</span><span class="o">,</span> <span class="kc">true</span><span class="o">,</span> <span class="n">defaultValue</span><span class="o">);</span>
-    <span class="o">}</span>
-<span class="o">}</span>
-</code></pre></td></tr></table></div>
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="kd">public</span> <span class="kd">static</span> <span class="kd">class</span> <span class="nc">Int32</span> <span class="kd">extends</span> <span class="n">Field</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">    <span class="kd">public</span> <span class="nf">Int32</span><span class="o">(</span><span class="n">String</span> <span class="n">name</span><span class="o">,</span> <span class="n">String</span> <span class="n">docString</span><span class="o">)</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">        <span class="kd">super</span><span class="o">(</span><span class="n">name</span><span class="o">,</span> <span class="n">Type</span><span class="o">.</span><span class="na">INT32</span><span class="o">,</span> <span class="n">docString</span><span class="o">,</span> <span class="kc">false</span><span class="o">,</span> <span class="kc">null</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">    <span class="o">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="kd">public</span> <span class="nf">Int32</span><span class="o">(</span><span class="n">String</span> <span class="n">name</span><span class="o">,</span> <span class="n">String</span> <span class="n">docString</span><span class="o">,</span> <span class="kt">int</span> <span class="n">defaultValue</span><span class="o">)</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">        <span class="kd">super</span><span class="o">(</span><span class="n">name</span><span class="o">,</span> <span class="n">Type</span><span class="o">.</span><span class="na">INT32</span><span class="o">,</span> <span class="n">docString</span><span class="o">,</span> <span class="kc">true</span><span class="o">,</span> <span class="n">defaultValue</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">    <span class="o">}</span>
+</span></span><span class="line"><span class="cl"><span class="o">}</span>
+</span></span></code></pre></td></tr></table></div>
 </div>
 </div><p>这里还需介绍一个特殊的字段类型，它表示数组。</p>
 <div class="highlight"><div class="chroma">
@@ -425,48 +425,48 @@
 </span><span class="lnt">41
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">ArrayOf</span> <span class="kd">extends</span> <span class="n">Type</span> <span class="o">{</span>
-    <span class="c1">// 数组元素的类型
-</span><span class="c1"></span>    <span class="kd">private</span> <span class="kd">final</span> <span class="n">Type</span> <span class="n">type</span><span class="o">;</span>
-    <span class="c1">// 是否允许数组为空
-</span><span class="c1"></span>    <span class="kd">private</span> <span class="kd">final</span> <span class="kt">boolean</span> <span class="n">nullable</span><span class="o">;</span>
-
-    <span class="nd">@Override</span>
-    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">write</span><span class="o">(</span><span class="n">ByteBuffer</span> <span class="n">buffer</span><span class="o">,</span> <span class="n">Object</span> <span class="n">o</span><span class="o">)</span> <span class="o">{</span>
-        <span class="c1">// 如果值为null，那么数组长度为-1表示这种情况
-</span><span class="c1"></span>        <span class="k">if</span> <span class="o">(</span><span class="n">o</span> <span class="o">==</span> <span class="kc">null</span><span class="o">)</span> <span class="o">{</span>
-            <span class="n">buffer</span><span class="o">.</span><span class="na">putInt</span><span class="o">(-</span><span class="n">1</span><span class="o">);</span>
-            <span class="k">return</span><span class="o">;</span>
-        <span class="o">}</span>
-        <span class="n">Object</span><span class="o">[]</span> <span class="n">objs</span> <span class="o">=</span> <span class="o">(</span><span class="n">Object</span><span class="o">[])</span> <span class="n">o</span><span class="o">;</span>
-        <span class="c1">// 获取数组长度，并且写入
-</span><span class="c1"></span>        <span class="kt">int</span> <span class="n">size</span> <span class="o">=</span> <span class="n">objs</span><span class="o">.</span><span class="na">length</span><span class="o">;</span>
-        <span class="n">buffer</span><span class="o">.</span><span class="na">putInt</span><span class="o">(</span><span class="n">size</span><span class="o">);</span>
-        <span class="c1">// 遍历数组，依次将元素写入buffer
-</span><span class="c1"></span>        <span class="k">for</span> <span class="o">(</span><span class="n">Object</span> <span class="n">obj</span> <span class="o">:</span> <span class="n">objs</span><span class="o">)</span>
-            <span class="n">type</span><span class="o">.</span><span class="na">write</span><span class="o">(</span><span class="n">buffer</span><span class="o">,</span> <span class="n">obj</span><span class="o">);</span>
-    <span class="o">}</span>
-
-    <span class="nd">@Override</span>
-    <span class="kd">public</span> <span class="n">Object</span> <span class="nf">read</span><span class="o">(</span><span class="n">ByteBuffer</span> <span class="n">buffer</span><span class="o">)</span> <span class="o">{</span>
-        <span class="c1">// 读取数据长度
-</span><span class="c1"></span>        <span class="kt">int</span> <span class="n">size</span> <span class="o">=</span> <span class="n">buffer</span><span class="o">.</span><span class="na">getInt</span><span class="o">();</span>
-        <span class="c1">// 检测数组是否为空
-</span><span class="c1"></span>        <span class="k">if</span> <span class="o">(</span><span class="n">size</span> <span class="o">&lt;</span> <span class="n">0</span> <span class="o">&amp;&amp;</span> <span class="n">isNullable</span><span class="o">())</span>
-            <span class="k">return</span> <span class="kc">null</span><span class="o">;</span>
-        <span class="k">else</span> <span class="k">if</span> <span class="o">(</span><span class="n">size</span> <span class="o">&lt;</span> <span class="n">0</span><span class="o">)</span>
-            <span class="k">throw</span> <span class="k">new</span> <span class="n">SchemaException</span><span class="o">(</span><span class="s">&#34;Array size &#34;</span> <span class="o">+</span> <span class="n">size</span> <span class="o">+</span> <span class="s">&#34; cannot be negative&#34;</span><span class="o">);</span>
-        <span class="c1">// 检测数据的长度，这里只是粗略的检测，因为一个元素至少是一个字节(这种情况表示数据类型为Int8)
-</span><span class="c1"></span>        <span class="k">if</span> <span class="o">(</span><span class="n">size</span> <span class="o">&gt;</span> <span class="n">buffer</span><span class="o">.</span><span class="na">remaining</span><span class="o">())</span>
-            <span class="k">throw</span> <span class="k">new</span> <span class="n">SchemaException</span><span class="o">(</span><span class="s">&#34;Error reading array of size &#34;</span> <span class="o">+</span> <span class="n">size</span> <span class="o">+</span> <span class="s">&#34;, only &#34;</span> <span class="o">+</span> <span class="n">buffer</span><span class="o">.</span><span class="na">remaining</span><span class="o">()</span> <span class="o">+</span> <span class="s">&#34; bytes available&#34;</span><span class="o">);</span>
-        <span class="c1">// 依次读取数据，生成数组
-</span><span class="c1"></span>        <span class="n">Object</span><span class="o">[]</span> <span class="n">objs</span> <span class="o">=</span> <span class="k">new</span> <span class="n">Object</span><span class="o">[</span><span class="n">size</span><span class="o">];</span>
-        <span class="k">for</span> <span class="o">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="n">0</span><span class="o">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">size</span><span class="o">;</span> <span class="n">i</span><span class="o">++)</span>
-            <span class="n">objs</span><span class="o">[</span><span class="n">i</span><span class="o">]</span> <span class="o">=</span> <span class="n">type</span><span class="o">.</span><span class="na">read</span><span class="o">(</span><span class="n">buffer</span><span class="o">);</span>
-        <span class="k">return</span> <span class="n">objs</span><span class="o">;</span>
-    <span class="o">}</span>
-<span class="o">}</span>
-</code></pre></td></tr></table></div>
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">ArrayOf</span> <span class="kd">extends</span> <span class="n">Type</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// 数组元素的类型
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="kd">private</span> <span class="kd">final</span> <span class="n">Type</span> <span class="n">type</span><span class="o">;</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// 是否允许数组为空
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="kd">private</span> <span class="kd">final</span> <span class="kt">boolean</span> <span class="n">nullable</span><span class="o">;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="nd">@Override</span>
+</span></span><span class="line"><span class="cl">    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">write</span><span class="o">(</span><span class="n">ByteBuffer</span> <span class="n">buffer</span><span class="o">,</span> <span class="n">Object</span> <span class="n">o</span><span class="o">)</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">        <span class="c1">// 如果值为null，那么数组长度为-1表示这种情况
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>        <span class="k">if</span> <span class="o">(</span><span class="n">o</span> <span class="o">==</span> <span class="kc">null</span><span class="o">)</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">            <span class="n">buffer</span><span class="o">.</span><span class="na">putInt</span><span class="o">(-</span><span class="mi">1</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">            <span class="k">return</span><span class="o">;</span>
+</span></span><span class="line"><span class="cl">        <span class="o">}</span>
+</span></span><span class="line"><span class="cl">        <span class="n">Object</span><span class="o">[]</span> <span class="n">objs</span> <span class="o">=</span> <span class="o">(</span><span class="n">Object</span><span class="o">[])</span> <span class="n">o</span><span class="o">;</span>
+</span></span><span class="line"><span class="cl">        <span class="c1">// 获取数组长度，并且写入
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>        <span class="kt">int</span> <span class="n">size</span> <span class="o">=</span> <span class="n">objs</span><span class="o">.</span><span class="na">length</span><span class="o">;</span>
+</span></span><span class="line"><span class="cl">        <span class="n">buffer</span><span class="o">.</span><span class="na">putInt</span><span class="o">(</span><span class="n">size</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">        <span class="c1">// 遍历数组，依次将元素写入buffer
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>        <span class="k">for</span> <span class="o">(</span><span class="n">Object</span> <span class="n">obj</span> <span class="o">:</span> <span class="n">objs</span><span class="o">)</span>
+</span></span><span class="line"><span class="cl">            <span class="n">type</span><span class="o">.</span><span class="na">write</span><span class="o">(</span><span class="n">buffer</span><span class="o">,</span> <span class="n">obj</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">    <span class="o">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="nd">@Override</span>
+</span></span><span class="line"><span class="cl">    <span class="kd">public</span> <span class="n">Object</span> <span class="nf">read</span><span class="o">(</span><span class="n">ByteBuffer</span> <span class="n">buffer</span><span class="o">)</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">        <span class="c1">// 读取数据长度
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>        <span class="kt">int</span> <span class="n">size</span> <span class="o">=</span> <span class="n">buffer</span><span class="o">.</span><span class="na">getInt</span><span class="o">();</span>
+</span></span><span class="line"><span class="cl">        <span class="c1">// 检测数组是否为空
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>        <span class="k">if</span> <span class="o">(</span><span class="n">size</span> <span class="o">&lt;</span> <span class="mi">0</span> <span class="o">&amp;&amp;</span> <span class="n">isNullable</span><span class="o">())</span>
+</span></span><span class="line"><span class="cl">            <span class="k">return</span> <span class="kc">null</span><span class="o">;</span>
+</span></span><span class="line"><span class="cl">        <span class="k">else</span> <span class="k">if</span> <span class="o">(</span><span class="n">size</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="o">)</span>
+</span></span><span class="line"><span class="cl">            <span class="k">throw</span> <span class="k">new</span> <span class="n">SchemaException</span><span class="o">(</span><span class="s">&#34;Array size &#34;</span> <span class="o">+</span> <span class="n">size</span> <span class="o">+</span> <span class="s">&#34; cannot be negative&#34;</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">        <span class="c1">// 检测数据的长度，这里只是粗略的检测，因为一个元素至少是一个字节(这种情况表示数据类型为Int8)
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>        <span class="k">if</span> <span class="o">(</span><span class="n">size</span> <span class="o">&gt;</span> <span class="n">buffer</span><span class="o">.</span><span class="na">remaining</span><span class="o">())</span>
+</span></span><span class="line"><span class="cl">            <span class="k">throw</span> <span class="k">new</span> <span class="n">SchemaException</span><span class="o">(</span><span class="s">&#34;Error reading array of size &#34;</span> <span class="o">+</span> <span class="n">size</span> <span class="o">+</span> <span class="s">&#34;, only &#34;</span> <span class="o">+</span> <span class="n">buffer</span><span class="o">.</span><span class="na">remaining</span><span class="o">()</span> <span class="o">+</span> <span class="s">&#34; bytes available&#34;</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">        <span class="c1">// 依次读取数据，生成数组
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>        <span class="n">Object</span><span class="o">[]</span> <span class="n">objs</span> <span class="o">=</span> <span class="k">new</span> <span class="n">Object</span><span class="o">[</span><span class="n">size</span><span class="o">];</span>
+</span></span><span class="line"><span class="cl">        <span class="k">for</span> <span class="o">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="o">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">size</span><span class="o">;</span> <span class="n">i</span><span class="o">++)</span>
+</span></span><span class="line"><span class="cl">            <span class="n">objs</span><span class="o">[</span><span class="n">i</span><span class="o">]</span> <span class="o">=</span> <span class="n">type</span><span class="o">.</span><span class="na">read</span><span class="o">(</span><span class="n">buffer</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">        <span class="k">return</span> <span class="n">objs</span><span class="o">;</span>
+</span></span><span class="line"><span class="cl">    <span class="o">}</span>
+</span></span><span class="line"><span class="cl"><span class="o">}</span>
+</span></span></code></pre></td></tr></table></div>
 </div>
 </div><h3 id="格式定义"><a href="#格式定义" class="anchor-link"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon anchor-icon"><path d="M326.612 185.391c59.747 59.809 58.927 155.698.36 214.59-.11.12-.24.25-.36.37l-67.2 67.2c-59.27 59.27-155.699 59.262-214.96 0-59.27-59.26-59.27-155.7 0-214.96l37.106-37.106c9.84-9.84 26.786-3.3 27.294 10.606.648 17.722 3.826 35.527 9.69 52.721 1.986 5.822.567 12.262-3.783 16.612l-13.087 13.087c-28.026 28.026-28.905 73.66-1.155 101.96 28.024 28.579 74.086 28.749 102.325.51l67.2-67.19c28.191-28.191 28.073-73.757 0-101.83-3.701-3.694-7.429-6.564-10.341-8.569a16.037 16.037 0 0 1-6.947-12.606c-.396-10.567 3.348-21.456 11.698-29.806l21.054-21.055c5.521-5.521 14.182-6.199 20.584-1.731a152.482 152.482 0 0 1 20.522 17.197zM467.547 44.449c-59.261-59.262-155.69-59.27-214.96 0l-67.2 67.2c-.12.12-.25.25-.36.37-58.566 58.892-59.387 154.781.36 214.59a152.454 152.454 0 0 0 20.521 17.196c6.402 4.468 15.064 3.789 20.584-1.731l21.054-21.055c8.35-8.35 12.094-19.239 11.698-29.806a16.037 16.037 0 0 0-6.947-12.606c-2.912-2.005-6.64-4.875-10.341-8.569-28.073-28.073-28.191-73.639 0-101.83l67.2-67.19c28.239-28.239 74.3-28.069 102.325.51 27.75 28.3 26.872 73.934-1.155 101.96l-13.087 13.087c-4.35 4.35-5.769 10.79-3.783 16.612 5.864 17.194 9.042 34.999 9.69 52.721.509 13.906 17.454 20.446 27.294 10.606l37.106-37.106c59.271-59.259 59.271-155.699.001-214.959z"/></svg></a>格式定义</h3>
 <p>上面讲完了字段，协议的格式也是由这些字段组成。Schema中的字段，使用了BoundField类表示。其实BoundField只是简单包含了Field，表示这个字段属于某个Schema。</p>
@@ -493,26 +493,26 @@
 </span><span class="lnt">19
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">Schema</span> <span class="kd">extends</span> <span class="n">Type</span> <span class="o">{</span>
-    <span class="c1">// 字段列表
-</span><span class="c1"></span>    <span class="kd">private</span> <span class="kd">final</span> <span class="n">BoundField</span><span class="o">[]</span> <span class="n">fields</span><span class="o">;</span>
-    <span class="c1">// 可以根据名称找到字段
-</span><span class="c1"></span>    <span class="kd">private</span> <span class="kd">final</span> <span class="n">Map</span><span class="o">&lt;</span><span class="n">String</span><span class="o">,</span> <span class="n">BoundField</span><span class="o">&gt;</span> <span class="n">fieldsByName</span><span class="o">;</span>
-
-    <span class="kd">public</span> <span class="nf">Schema</span><span class="o">(</span><span class="n">Field</span><span class="o">...</span> <span class="n">fs</span><span class="o">)</span> <span class="o">{</span>
-        <span class="k">this</span><span class="o">.</span><span class="na">fields</span> <span class="o">=</span> <span class="k">new</span> <span class="n">BoundField</span><span class="o">[</span><span class="n">fs</span><span class="o">.</span><span class="na">length</span><span class="o">];</span>
-        <span class="k">this</span><span class="o">.</span><span class="na">fieldsByName</span> <span class="o">=</span> <span class="k">new</span> <span class="n">HashMap</span><span class="o">&lt;&gt;();</span>
-        <span class="k">for</span> <span class="o">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="n">0</span><span class="o">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="k">this</span><span class="o">.</span><span class="na">fields</span><span class="o">.</span><span class="na">length</span><span class="o">;</span> <span class="n">i</span><span class="o">++)</span> <span class="o">{</span>
-            <span class="n">Field</span> <span class="n">def</span> <span class="o">=</span> <span class="n">fs</span><span class="o">[</span><span class="n">i</span><span class="o">];</span>
-            <span class="k">if</span> <span class="o">(</span><span class="n">fieldsByName</span><span class="o">.</span><span class="na">containsKey</span><span class="o">(</span><span class="n">def</span><span class="o">.</span><span class="na">name</span><span class="o">))</span>
-                <span class="k">throw</span> <span class="k">new</span> <span class="n">SchemaException</span><span class="o">(</span><span class="s">&#34;Schema contains a duplicate field: &#34;</span> <span class="o">+</span> <span class="n">def</span><span class="o">.</span><span class="na">name</span><span class="o">);</span>
-            <span class="c1">// 实例化BoundField
-</span><span class="c1"></span>            <span class="k">this</span><span class="o">.</span><span class="na">fields</span><span class="o">[</span><span class="n">i</span><span class="o">]</span> <span class="o">=</span> <span class="k">new</span> <span class="n">BoundField</span><span class="o">(</span><span class="n">def</span><span class="o">,</span> <span class="k">this</span><span class="o">,</span> <span class="n">i</span><span class="o">);</span>
-            <span class="k">this</span><span class="o">.</span><span class="na">fieldsByName</span><span class="o">.</span><span class="na">put</span><span class="o">(</span><span class="n">def</span><span class="o">.</span><span class="na">name</span><span class="o">,</span> <span class="k">this</span><span class="o">.</span><span class="na">fields</span><span class="o">[</span><span class="n">i</span><span class="o">]);</span>
-        <span class="o">}</span>
-    <span class="o">}</span>
-<span class="o">}</span>
-</code></pre></td></tr></table></div>
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">Schema</span> <span class="kd">extends</span> <span class="n">Type</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// 字段列表
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="kd">private</span> <span class="kd">final</span> <span class="n">BoundField</span><span class="o">[]</span> <span class="n">fields</span><span class="o">;</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// 可以根据名称找到字段
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="kd">private</span> <span class="kd">final</span> <span class="n">Map</span><span class="o">&lt;</span><span class="n">String</span><span class="o">,</span> <span class="n">BoundField</span><span class="o">&gt;</span> <span class="n">fieldsByName</span><span class="o">;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="kd">public</span> <span class="nf">Schema</span><span class="o">(</span><span class="n">Field</span><span class="o">...</span> <span class="n">fs</span><span class="o">)</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">        <span class="k">this</span><span class="o">.</span><span class="na">fields</span> <span class="o">=</span> <span class="k">new</span> <span class="n">BoundField</span><span class="o">[</span><span class="n">fs</span><span class="o">.</span><span class="na">length</span><span class="o">];</span>
+</span></span><span class="line"><span class="cl">        <span class="k">this</span><span class="o">.</span><span class="na">fieldsByName</span> <span class="o">=</span> <span class="k">new</span> <span class="n">HashMap</span><span class="o">&lt;&gt;();</span>
+</span></span><span class="line"><span class="cl">        <span class="k">for</span> <span class="o">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="o">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="k">this</span><span class="o">.</span><span class="na">fields</span><span class="o">.</span><span class="na">length</span><span class="o">;</span> <span class="n">i</span><span class="o">++)</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">            <span class="n">Field</span> <span class="n">def</span> <span class="o">=</span> <span class="n">fs</span><span class="o">[</span><span class="n">i</span><span class="o">];</span>
+</span></span><span class="line"><span class="cl">            <span class="k">if</span> <span class="o">(</span><span class="n">fieldsByName</span><span class="o">.</span><span class="na">containsKey</span><span class="o">(</span><span class="n">def</span><span class="o">.</span><span class="na">name</span><span class="o">))</span>
+</span></span><span class="line"><span class="cl">                <span class="k">throw</span> <span class="k">new</span> <span class="n">SchemaException</span><span class="o">(</span><span class="s">&#34;Schema contains a duplicate field: &#34;</span> <span class="o">+</span> <span class="n">def</span><span class="o">.</span><span class="na">name</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">            <span class="c1">// 实例化BoundField
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>            <span class="k">this</span><span class="o">.</span><span class="na">fields</span><span class="o">[</span><span class="n">i</span><span class="o">]</span> <span class="o">=</span> <span class="k">new</span> <span class="n">BoundField</span><span class="o">(</span><span class="n">def</span><span class="o">,</span> <span class="k">this</span><span class="o">,</span> <span class="n">i</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">            <span class="k">this</span><span class="o">.</span><span class="na">fieldsByName</span><span class="o">.</span><span class="na">put</span><span class="o">(</span><span class="n">def</span><span class="o">.</span><span class="na">name</span><span class="o">,</span> <span class="k">this</span><span class="o">.</span><span class="na">fields</span><span class="o">[</span><span class="n">i</span><span class="o">]);</span>
+</span></span><span class="line"><span class="cl">        <span class="o">}</span>
+</span></span><span class="line"><span class="cl">    <span class="o">}</span>
+</span></span><span class="line"><span class="cl"><span class="o">}</span>
+</span></span></code></pre></td></tr></table></div>
 </div>
 </div><p>上面注意到Schema也是Type的子类，说明Schema也是一种类型。既然Schema包含了多个字段，而且这些字段的类型可以是Schema，那么表示Schema也可以嵌套了。</p>
 <p>Schema的数据读写原理很简单，就是按照字段的顺序依次读写。</p>
@@ -527,11 +527,11 @@
 </span><span class="lnt">4
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">Struct</span> <span class="o">{</span>
-    <span class="kd">private</span> <span class="kd">final</span> <span class="n">Schema</span> <span class="n">schema</span><span class="o">;</span>
-    <span class="kd">private</span> <span class="kd">final</span> <span class="n">Object</span><span class="o">[]</span> <span class="n">values</span><span class="o">;</span>
-<span class="o">}</span>
-</code></pre></td></tr></table></div>
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">Struct</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">    <span class="kd">private</span> <span class="kd">final</span> <span class="n">Schema</span> <span class="n">schema</span><span class="o">;</span>
+</span></span><span class="line"><span class="cl">    <span class="kd">private</span> <span class="kd">final</span> <span class="n">Object</span><span class="o">[]</span> <span class="n">values</span><span class="o">;</span>
+</span></span><span class="line"><span class="cl"><span class="o">}</span>
+</span></span></code></pre></td></tr></table></div>
 </div>
 </div><h2 id="请求协议"><a href="#请求协议" class="anchor-link"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon anchor-icon"><path d="M326.612 185.391c59.747 59.809 58.927 155.698.36 214.59-.11.12-.24.25-.36.37l-67.2 67.2c-59.27 59.27-155.699 59.262-214.96 0-59.27-59.26-59.27-155.7 0-214.96l37.106-37.106c9.84-9.84 26.786-3.3 27.294 10.606.648 17.722 3.826 35.527 9.69 52.721 1.986 5.822.567 12.262-3.783 16.612l-13.087 13.087c-28.026 28.026-28.905 73.66-1.155 101.96 28.024 28.579 74.086 28.749 102.325.51l67.2-67.19c28.191-28.191 28.073-73.757 0-101.83-3.701-3.694-7.429-6.564-10.341-8.569a16.037 16.037 0 0 1-6.947-12.606c-.396-10.567 3.348-21.456 11.698-29.806l21.054-21.055c5.521-5.521 14.182-6.199 20.584-1.731a152.482 152.482 0 0 1 20.522 17.197zM467.547 44.449c-59.261-59.262-155.69-59.27-214.96 0l-67.2 67.2c-.12.12-.25.25-.36.37-58.566 58.892-59.387 154.781.36 214.59a152.454 152.454 0 0 0 20.521 17.196c6.402 4.468 15.064 3.789 20.584-1.731l21.054-21.055c8.35-8.35 12.094-19.239 11.698-29.806a16.037 16.037 0 0 0-6.947-12.606c-2.912-2.005-6.64-4.875-10.341-8.569-28.073-28.073-28.191-73.639 0-101.83l67.2-67.19c28.239-28.239 74.3-28.069 102.325.51 27.75 28.3 26.872 73.934-1.155 101.96l-13.087 13.087c-4.35 4.35-5.769 10.79-3.783 16.612 5.864 17.194 9.042 34.999 9.69 52.721.509 13.906 17.454 20.446 27.294 10.606l37.106-37.106c59.271-59.259 59.271-155.699.001-214.959z"/></svg></a>请求协议</h2>
 <p>Kafka的所有请求也有着自己固定的格式，但是这些请求也有部分数据的格式是相同的，Kafka将这部分数据提取为请求头。所以一个完成的Kafka请求是由请求头和请求体两部分组成的。下面首先来看看请求头。</p>
@@ -554,20 +554,20 @@
 </span><span class="lnt">13
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">RequestHeader</span> <span class="kd">extends</span> <span class="n">AbstractRequestResponse</span> <span class="o">{</span>
-    
-    <span class="kd">private</span> <span class="kd">static</span> <span class="kd">final</span> <span class="n">String</span> <span class="n">API_KEY_FIELD_NAME</span> <span class="o">=</span> <span class="s">&#34;api_key&#34;</span><span class="o">;</span>
-    <span class="kd">private</span> <span class="kd">static</span> <span class="kd">final</span> <span class="n">String</span> <span class="n">API_VERSION_FIELD_NAME</span> <span class="o">=</span> <span class="s">&#34;api_version&#34;</span><span class="o">;</span>
-    <span class="kd">private</span> <span class="kd">static</span> <span class="kd">final</span> <span class="n">String</span> <span class="n">CLIENT_ID_FIELD_NAME</span> <span class="o">=</span> <span class="s">&#34;client_id&#34;</span><span class="o">;</span>
-    <span class="kd">private</span> <span class="kd">static</span> <span class="kd">final</span> <span class="n">String</span> <span class="n">CORRELATION_ID_FIELD_NAME</span> <span class="o">=</span> <span class="s">&#34;correlation_id&#34;</span><span class="o">;</span>
-
-    <span class="kd">public</span> <span class="kd">static</span> <span class="kd">final</span> <span class="n">Schema</span> <span class="n">SCHEMA</span> <span class="o">=</span> <span class="k">new</span> <span class="n">Schema</span><span class="o">(</span>
-            <span class="k">new</span> <span class="n">Field</span><span class="o">(</span><span class="n">API_KEY_FIELD_NAME</span><span class="o">,</span> <span class="n">INT16</span><span class="o">,</span> <span class="s">&#34;The id of the request type.&#34;</span><span class="o">),</span>
-            <span class="k">new</span> <span class="n">Field</span><span class="o">(</span><span class="n">API_VERSION_FIELD_NAME</span><span class="o">,</span> <span class="n">INT16</span><span class="o">,</span> <span class="s">&#34;The version of the API.&#34;</span><span class="o">),</span>
-            <span class="k">new</span> <span class="n">Field</span><span class="o">(</span><span class="n">CORRELATION_ID_FIELD_NAME</span><span class="o">,</span> <span class="n">INT32</span><span class="o">,</span> <span class="s">&#34;A user-supplied integer value that will be passed back with the response&#34;</span><span class="o">),</span>
-            <span class="k">new</span> <span class="n">Field</span><span class="o">(</span><span class="n">CLIENT_ID_FIELD_NAME</span><span class="o">,</span> <span class="n">NULLABLE_STRING</span><span class="o">,</span> <span class="s">&#34;A user specified identifier for the client making the request.&#34;</span><span class="o">,</span> <span class="s">&#34;&#34;</span><span class="o">));</span>
-<span class="o">}</span>
-</code></pre></td></tr></table></div>
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">RequestHeader</span> <span class="kd">extends</span> <span class="n">AbstractRequestResponse</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">    
+</span></span><span class="line"><span class="cl">    <span class="kd">private</span> <span class="kd">static</span> <span class="kd">final</span> <span class="n">String</span> <span class="n">API_KEY_FIELD_NAME</span> <span class="o">=</span> <span class="s">&#34;api_key&#34;</span><span class="o">;</span>
+</span></span><span class="line"><span class="cl">    <span class="kd">private</span> <span class="kd">static</span> <span class="kd">final</span> <span class="n">String</span> <span class="n">API_VERSION_FIELD_NAME</span> <span class="o">=</span> <span class="s">&#34;api_version&#34;</span><span class="o">;</span>
+</span></span><span class="line"><span class="cl">    <span class="kd">private</span> <span class="kd">static</span> <span class="kd">final</span> <span class="n">String</span> <span class="n">CLIENT_ID_FIELD_NAME</span> <span class="o">=</span> <span class="s">&#34;client_id&#34;</span><span class="o">;</span>
+</span></span><span class="line"><span class="cl">    <span class="kd">private</span> <span class="kd">static</span> <span class="kd">final</span> <span class="n">String</span> <span class="n">CORRELATION_ID_FIELD_NAME</span> <span class="o">=</span> <span class="s">&#34;correlation_id&#34;</span><span class="o">;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="kd">public</span> <span class="kd">static</span> <span class="kd">final</span> <span class="n">Schema</span> <span class="n">SCHEMA</span> <span class="o">=</span> <span class="k">new</span> <span class="n">Schema</span><span class="o">(</span>
+</span></span><span class="line"><span class="cl">            <span class="k">new</span> <span class="n">Field</span><span class="o">(</span><span class="n">API_KEY_FIELD_NAME</span><span class="o">,</span> <span class="n">INT16</span><span class="o">,</span> <span class="s">&#34;The id of the request type.&#34;</span><span class="o">),</span>
+</span></span><span class="line"><span class="cl">            <span class="k">new</span> <span class="n">Field</span><span class="o">(</span><span class="n">API_VERSION_FIELD_NAME</span><span class="o">,</span> <span class="n">INT16</span><span class="o">,</span> <span class="s">&#34;The version of the API.&#34;</span><span class="o">),</span>
+</span></span><span class="line"><span class="cl">            <span class="k">new</span> <span class="n">Field</span><span class="o">(</span><span class="n">CORRELATION_ID_FIELD_NAME</span><span class="o">,</span> <span class="n">INT32</span><span class="o">,</span> <span class="s">&#34;A user-supplied integer value that will be passed back with the response&#34;</span><span class="o">),</span>
+</span></span><span class="line"><span class="cl">            <span class="k">new</span> <span class="n">Field</span><span class="o">(</span><span class="n">CLIENT_ID_FIELD_NAME</span><span class="o">,</span> <span class="n">NULLABLE_STRING</span><span class="o">,</span> <span class="s">&#34;A user specified identifier for the client making the request.&#34;</span><span class="o">,</span> <span class="s">&#34;&#34;</span><span class="o">));</span>
+</span></span><span class="line"><span class="cl"><span class="o">}</span>
+</span></span></code></pre></td></tr></table></div>
 </div>
 </div><p>它有四个字段，含义如下：</p>
 <ul>
@@ -600,24 +600,24 @@
 </span><span class="lnt">17
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">abstract</span> <span class="kd">class</span> <span class="nc">AbstractRequest</span> <span class="kd">extends</span> <span class="n">AbstractRequestResponse</span> <span class="o">{</span>
-    
-    <span class="c1">// 构建该请求的Builder
-</span><span class="c1"></span>    <span class="kd">public</span> <span class="kd">static</span> <span class="kd">abstract</span> <span class="kd">class</span> <span class="nc">Builder</span><span class="o">&lt;</span><span class="n">T</span> <span class="kd">extends</span> <span class="n">AbstractRequest</span><span class="o">&gt;</span> <span class="o">{</span>
-        <span class="c1">// ApiKeys是枚举类，表示请求类型
-</span><span class="c1"></span>        <span class="kd">private</span> <span class="kd">final</span> <span class="n">ApiKeys</span> <span class="n">apiKey</span><span class="o">;</span>
-        <span class="c1">// 请求版本的要求
-</span><span class="c1"></span>        <span class="kd">private</span> <span class="kd">final</span> <span class="kt">short</span> <span class="n">oldestAllowedVersion</span><span class="o">;</span>
-        <span class="kd">private</span> <span class="kd">final</span> <span class="kt">short</span> <span class="n">latestAllowedVersion</span><span class="o">;</span>
-        
-        <span class="c1">//子类需要实现buidl方法，构造请求
-</span><span class="c1"></span>        <span class="kd">public</span> <span class="kd">abstract</span> <span class="n">T</span> <span class="nf">build</span><span class="o">(</span><span class="kt">short</span> <span class="n">version</span><span class="o">);</span>
-    <span class="o">}</span>
-    
-    <span class="c1">// 子类需要实现toStruct方法，才能利用Struct序列化请求
-</span><span class="c1"></span>    <span class="kd">protected</span> <span class="kd">abstract</span> <span class="n">Struct</span> <span class="nf">toStruct</span><span class="o">();</span>
-<span class="o">}</span>    
-</code></pre></td></tr></table></div>
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="kd">public</span> <span class="kd">abstract</span> <span class="kd">class</span> <span class="nc">AbstractRequest</span> <span class="kd">extends</span> <span class="n">AbstractRequestResponse</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">    
+</span></span><span class="line"><span class="cl">    <span class="c1">// 构建该请求的Builder
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="kd">public</span> <span class="kd">static</span> <span class="kd">abstract</span> <span class="kd">class</span> <span class="nc">Builder</span><span class="o">&lt;</span><span class="n">T</span> <span class="kd">extends</span> <span class="n">AbstractRequest</span><span class="o">&gt;</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">        <span class="c1">// ApiKeys是枚举类，表示请求类型
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>        <span class="kd">private</span> <span class="kd">final</span> <span class="n">ApiKeys</span> <span class="n">apiKey</span><span class="o">;</span>
+</span></span><span class="line"><span class="cl">        <span class="c1">// 请求版本的要求
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>        <span class="kd">private</span> <span class="kd">final</span> <span class="kt">short</span> <span class="n">oldestAllowedVersion</span><span class="o">;</span>
+</span></span><span class="line"><span class="cl">        <span class="kd">private</span> <span class="kd">final</span> <span class="kt">short</span> <span class="n">latestAllowedVersion</span><span class="o">;</span>
+</span></span><span class="line"><span class="cl">        
+</span></span><span class="line"><span class="cl">        <span class="c1">//子类需要实现buidl方法，构造请求
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>        <span class="kd">public</span> <span class="kd">abstract</span> <span class="n">T</span> <span class="nf">build</span><span class="o">(</span><span class="kt">short</span> <span class="n">version</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">    <span class="o">}</span>
+</span></span><span class="line"><span class="cl">    
+</span></span><span class="line"><span class="cl">    <span class="c1">// 子类需要实现toStruct方法，才能利用Struct序列化请求
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="kd">protected</span> <span class="kd">abstract</span> <span class="n">Struct</span> <span class="nf">toStruct</span><span class="o">();</span>
+</span></span><span class="line"><span class="cl"><span class="o">}</span>    
+</span></span></code></pre></td></tr></table></div>
 </div>
 </div><p>我们以ProduceRequest为例，它表示向kafka添加数据的请求。它的请求格式比较复杂，最新版的格式，如下图所示</p>
 <p><img src="kafka-protocol-produce-request.svg" alt="produce-request"></p>
@@ -650,32 +650,32 @@
 </span><span class="lnt">25
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">ProduceRequest</span> <span class="kd">extends</span> <span class="n">AbstractRequest</span> <span class="o">{</span>
-    <span class="kd">private</span> <span class="kd">static</span> <span class="kd">final</span> <span class="n">String</span> <span class="n">ACKS_KEY_NAME</span> <span class="o">=</span> <span class="s">&#34;acks&#34;</span><span class="o">;</span>
-    <span class="kd">private</span> <span class="kd">static</span> <span class="kd">final</span> <span class="n">String</span> <span class="n">TIMEOUT_KEY_NAME</span> <span class="o">=</span> <span class="s">&#34;timeout&#34;</span><span class="o">;</span>
-    <span class="kd">private</span> <span class="kd">static</span> <span class="kd">final</span> <span class="n">String</span> <span class="n">TOPIC_DATA_KEY_NAME</span> <span class="o">=</span> <span class="s">&#34;topic_data&#34;</span><span class="o">;</span>
-
-    <span class="c1">// topic level field names
-</span><span class="c1"></span>    <span class="kd">private</span> <span class="kd">static</span> <span class="kd">final</span> <span class="n">String</span> <span class="n">PARTITION_DATA_KEY_NAME</span> <span class="o">=</span> <span class="s">&#34;data&#34;</span><span class="o">;</span>
-
-    <span class="c1">// partition level field names
-</span><span class="c1"></span>    <span class="kd">private</span> <span class="kd">static</span> <span class="kd">final</span> <span class="n">String</span> <span class="n">RECORD_SET_KEY_NAME</span> <span class="o">=</span> <span class="s">&#34;record_set&#34;</span><span class="o">;</span>
-
-    <span class="c1">// 每个topic的数据格式
-</span><span class="c1"></span>    <span class="kd">private</span> <span class="kd">static</span> <span class="kd">final</span> <span class="n">Schema</span> <span class="n">TOPIC_PRODUCE_DATA_V0</span> <span class="o">=</span> <span class="k">new</span> <span class="n">Schema</span><span class="o">(</span>
-            <span class="n">TOPIC_NAME</span><span class="o">,</span>
-            <span class="k">new</span> <span class="n">Field</span><span class="o">(</span><span class="n">PARTITION_DATA_KEY_NAME</span><span class="o">,</span> <span class="k">new</span> <span class="n">ArrayOf</span><span class="o">(</span><span class="k">new</span> <span class="n">Schema</span><span class="o">(</span>
-                    <span class="n">PARTITION_ID</span><span class="o">,</span>
-                    <span class="k">new</span> <span class="n">Field</span><span class="o">(</span><span class="n">RECORD_SET_KEY_NAME</span><span class="o">,</span> <span class="n">RECORDS</span><span class="o">)))));</span>
-    <span class="c1">// 最新版的请求格式
-</span><span class="c1"></span>    <span class="kd">private</span> <span class="kd">static</span> <span class="kd">final</span> <span class="n">Schema</span> <span class="n">PRODUCE_REQUEST_V3</span> <span class="o">=</span> <span class="k">new</span> <span class="n">Schema</span><span class="o">(</span>
-            <span class="n">CommonFields</span><span class="o">.</span><span class="na">NULLABLE_TRANSACTIONAL_ID</span><span class="o">,</span>
-            <span class="k">new</span> <span class="n">Field</span><span class="o">(</span><span class="n">ACKS_KEY_NAME</span><span class="o">,</span> <span class="n">INT16</span><span class="o">,</span> <span class="s">&#34;...&#34;</span><span class="o">),</span>
-            <span class="k">new</span> <span class="n">Field</span><span class="o">(</span><span class="n">TIMEOUT_KEY_NAME</span><span class="o">,</span> <span class="n">INT32</span><span class="o">,</span> <span class="s">&#34;The time to await a response in ms.&#34;</span><span class="o">),</span>
-            <span class="c1">// TOPIC_PRODUCE_DATA_V0数组类型
-</span><span class="c1"></span>            <span class="k">new</span> <span class="n">Field</span><span class="o">(</span><span class="n">TOPIC_DATA_KEY_NAME</span><span class="o">,</span> <span class="k">new</span> <span class="n">ArrayOf</span><span class="o">(</span><span class="n">TOPIC_PRODUCE_DATA_V0</span><span class="o">)));</span>                    <span class="o">}</span>
-          
-</code></pre></td></tr></table></div>
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">ProduceRequest</span> <span class="kd">extends</span> <span class="n">AbstractRequest</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">    <span class="kd">private</span> <span class="kd">static</span> <span class="kd">final</span> <span class="n">String</span> <span class="n">ACKS_KEY_NAME</span> <span class="o">=</span> <span class="s">&#34;acks&#34;</span><span class="o">;</span>
+</span></span><span class="line"><span class="cl">    <span class="kd">private</span> <span class="kd">static</span> <span class="kd">final</span> <span class="n">String</span> <span class="n">TIMEOUT_KEY_NAME</span> <span class="o">=</span> <span class="s">&#34;timeout&#34;</span><span class="o">;</span>
+</span></span><span class="line"><span class="cl">    <span class="kd">private</span> <span class="kd">static</span> <span class="kd">final</span> <span class="n">String</span> <span class="n">TOPIC_DATA_KEY_NAME</span> <span class="o">=</span> <span class="s">&#34;topic_data&#34;</span><span class="o">;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="c1">// topic level field names
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="kd">private</span> <span class="kd">static</span> <span class="kd">final</span> <span class="n">String</span> <span class="n">PARTITION_DATA_KEY_NAME</span> <span class="o">=</span> <span class="s">&#34;data&#34;</span><span class="o">;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="c1">// partition level field names
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="kd">private</span> <span class="kd">static</span> <span class="kd">final</span> <span class="n">String</span> <span class="n">RECORD_SET_KEY_NAME</span> <span class="o">=</span> <span class="s">&#34;record_set&#34;</span><span class="o">;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="c1">// 每个topic的数据格式
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="kd">private</span> <span class="kd">static</span> <span class="kd">final</span> <span class="n">Schema</span> <span class="n">TOPIC_PRODUCE_DATA_V0</span> <span class="o">=</span> <span class="k">new</span> <span class="n">Schema</span><span class="o">(</span>
+</span></span><span class="line"><span class="cl">            <span class="n">TOPIC_NAME</span><span class="o">,</span>
+</span></span><span class="line"><span class="cl">            <span class="k">new</span> <span class="n">Field</span><span class="o">(</span><span class="n">PARTITION_DATA_KEY_NAME</span><span class="o">,</span> <span class="k">new</span> <span class="n">ArrayOf</span><span class="o">(</span><span class="k">new</span> <span class="n">Schema</span><span class="o">(</span>
+</span></span><span class="line"><span class="cl">                    <span class="n">PARTITION_ID</span><span class="o">,</span>
+</span></span><span class="line"><span class="cl">                    <span class="k">new</span> <span class="n">Field</span><span class="o">(</span><span class="n">RECORD_SET_KEY_NAME</span><span class="o">,</span> <span class="n">RECORDS</span><span class="o">)))));</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// 最新版的请求格式
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="kd">private</span> <span class="kd">static</span> <span class="kd">final</span> <span class="n">Schema</span> <span class="n">PRODUCE_REQUEST_V3</span> <span class="o">=</span> <span class="k">new</span> <span class="n">Schema</span><span class="o">(</span>
+</span></span><span class="line"><span class="cl">            <span class="n">CommonFields</span><span class="o">.</span><span class="na">NULLABLE_TRANSACTIONAL_ID</span><span class="o">,</span>
+</span></span><span class="line"><span class="cl">            <span class="k">new</span> <span class="n">Field</span><span class="o">(</span><span class="n">ACKS_KEY_NAME</span><span class="o">,</span> <span class="n">INT16</span><span class="o">,</span> <span class="s">&#34;...&#34;</span><span class="o">),</span>
+</span></span><span class="line"><span class="cl">            <span class="k">new</span> <span class="n">Field</span><span class="o">(</span><span class="n">TIMEOUT_KEY_NAME</span><span class="o">,</span> <span class="n">INT32</span><span class="o">,</span> <span class="s">&#34;The time to await a response in ms.&#34;</span><span class="o">),</span>
+</span></span><span class="line"><span class="cl">            <span class="c1">// TOPIC_PRODUCE_DATA_V0数组类型
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>            <span class="k">new</span> <span class="n">Field</span><span class="o">(</span><span class="n">TOPIC_DATA_KEY_NAME</span><span class="o">,</span> <span class="k">new</span> <span class="n">ArrayOf</span><span class="o">(</span><span class="n">TOPIC_PRODUCE_DATA_V0</span><span class="o">)));</span>                    <span class="o">}</span>
+</span></span><span class="line"><span class="cl">          
+</span></span></code></pre></td></tr></table></div>
 </div>
 </div><p>继续看它的toStruct方法，ProduceRequest会从上往下一层层的生成Struct实例。遇到Schema类型的字段，则生成Struct实例。遇到数组类型的字段，则生成Object数组。</p>
 <div class="highlight"><div class="chroma">
@@ -720,45 +720,45 @@
 </span><span class="lnt">38
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="nd">@Override</span>
-<span class="kd">public</span> <span class="n">Struct</span> <span class="nf">toStruct</span><span class="o">()</span> <span class="o">{</span>
-    <span class="c1">// Store it in a local variable to protect against concurrent updates
-</span><span class="c1"></span>    <span class="n">Map</span><span class="o">&lt;</span><span class="n">TopicPartition</span><span class="o">,</span> <span class="n">MemoryRecords</span><span class="o">&gt;</span> <span class="n">partitionRecords</span> <span class="o">=</span> <span class="n">partitionRecordsOrFail</span><span class="o">();</span>
-    <span class="kt">short</span> <span class="n">version</span> <span class="o">=</span> <span class="n">version</span><span class="o">();</span>
-    <span class="c1">// requestSchema方法会根据版本，返回对应的Schema
-</span><span class="c1"></span>    <span class="n">Struct</span> <span class="n">struct</span> <span class="o">=</span> <span class="k">new</span> <span class="n">Struct</span><span class="o">(</span><span class="n">ApiKeys</span><span class="o">.</span><span class="na">PRODUCE</span><span class="o">.</span><span class="na">requestSchema</span><span class="o">(</span><span class="n">version</span><span class="o">));</span>
-    
-    <span class="n">Map</span><span class="o">&lt;</span><span class="n">String</span><span class="o">,</span> <span class="n">Map</span><span class="o">&lt;</span><span class="n">Integer</span><span class="o">,</span> <span class="n">MemoryRecords</span><span class="o">&gt;&gt;</span> <span class="n">recordsByTopic</span> <span class="o">=</span> <span class="n">CollectionUtils</span><span class="o">.</span><span class="na">groupDataByTopic</span><span class="o">(</span><span class="n">partitionRecords</span><span class="o">);</span>
-    <span class="c1">// 设置对应的属性
-</span><span class="c1"></span>    <span class="n">struct</span><span class="o">.</span><span class="na">set</span><span class="o">(</span><span class="n">ACKS_KEY_NAME</span><span class="o">,</span> <span class="n">acks</span><span class="o">);</span>
-    <span class="n">struct</span><span class="o">.</span><span class="na">set</span><span class="o">(</span><span class="n">TIMEOUT_KEY_NAME</span><span class="o">,</span> <span class="n">timeout</span><span class="o">);</span>
-    <span class="n">struct</span><span class="o">.</span><span class="na">setIfExists</span><span class="o">(</span><span class="n">NULLABLE_TRANSACTIONAL_ID</span><span class="o">,</span> <span class="n">transactionalId</span><span class="o">);</span>
-
-    <span class="n">List</span><span class="o">&lt;</span><span class="n">Struct</span><span class="o">&gt;</span> <span class="n">topicDatas</span> <span class="o">=</span> <span class="k">new</span> <span class="n">ArrayList</span><span class="o">&lt;&gt;(</span><span class="n">recordsByTopic</span><span class="o">.</span><span class="na">size</span><span class="o">());</span>
-    <span class="k">for</span> <span class="o">(</span><span class="n">Map</span><span class="o">.</span><span class="na">Entry</span><span class="o">&lt;</span><span class="n">String</span><span class="o">,</span> <span class="n">Map</span><span class="o">&lt;</span><span class="n">Integer</span><span class="o">,</span> <span class="n">MemoryRecords</span><span class="o">&gt;&gt;</span> <span class="n">topicEntry</span> <span class="o">:</span> <span class="n">recordsByTopic</span><span class="o">.</span><span class="na">entrySet</span><span class="o">())</span> <span class="o">{</span>
-        <span class="c1">// 因为TOPIC_DATA_KEY_NAME字段是Schema类型的，这里调用了instance方法实例化Struct
-</span><span class="c1"></span>        <span class="n">Struct</span> <span class="n">topicData</span> <span class="o">=</span> <span class="n">struct</span><span class="o">.</span><span class="na">instance</span><span class="o">(</span><span class="n">TOPIC_DATA_KEY_NAME</span><span class="o">);</span>
-        
-        <span class="n">topicData</span><span class="o">.</span><span class="na">set</span><span class="o">(</span><span class="n">TOPIC_NAME</span><span class="o">,</span> <span class="n">topicEntry</span><span class="o">.</span><span class="na">getKey</span><span class="o">());</span>
-        <span class="n">List</span><span class="o">&lt;</span><span class="n">Struct</span><span class="o">&gt;</span> <span class="n">partitionArray</span> <span class="o">=</span> <span class="k">new</span> <span class="n">ArrayList</span><span class="o">&lt;&gt;();</span>
-        <span class="k">for</span> <span class="o">(</span><span class="n">Map</span><span class="o">.</span><span class="na">Entry</span><span class="o">&lt;</span><span class="n">Integer</span><span class="o">,</span> <span class="n">MemoryRecords</span><span class="o">&gt;</span> <span class="n">partitionEntry</span> <span class="o">:</span> <span class="n">topicEntry</span><span class="o">.</span><span class="na">getValue</span><span class="o">().</span><span class="na">entrySet</span><span class="o">())</span> <span class="o">{</span>
-            <span class="n">MemoryRecords</span> <span class="n">records</span> <span class="o">=</span> <span class="n">partitionEntry</span><span class="o">.</span><span class="na">getValue</span><span class="o">();</span>
-            <span class="c1">// 因为PARTITION_DATA_KEY_NAME字段是Schema类型，这里调用了instance实例化Struct
-</span><span class="c1"></span>            <span class="n">Struct</span> <span class="n">part</span> <span class="o">=</span> <span class="n">topicData</span><span class="o">.</span><span class="na">instance</span><span class="o">(</span><span class="n">PARTITION_DATA_KEY_NAME</span><span class="o">)</span>
-                    <span class="o">.</span><span class="na">set</span><span class="o">(</span><span class="n">PARTITION_ID</span><span class="o">,</span> <span class="n">partitionEntry</span><span class="o">.</span><span class="na">getKey</span><span class="o">())</span>
-                    <span class="o">.</span><span class="na">set</span><span class="o">(</span><span class="n">RECORD_SET_KEY_NAME</span><span class="o">,</span> <span class="n">records</span><span class="o">);</span>
-            <span class="c1">// 添加partition数据
-</span><span class="c1"></span>            <span class="n">partitionArray</span><span class="o">.</span><span class="na">add</span><span class="o">(</span><span class="n">part</span><span class="o">);</span>
-        <span class="o">}</span>
-        <span class="c1">// 设置PARTITION_DATA_KEY_NAME字段
-</span><span class="c1"></span>        <span class="n">topicData</span><span class="o">.</span><span class="na">set</span><span class="o">(</span><span class="n">PARTITION_DATA_KEY_NAME</span><span class="o">,</span> <span class="n">partitionArray</span><span class="o">.</span><span class="na">toArray</span><span class="o">());</span>
-        <span class="n">topicDatas</span><span class="o">.</span><span class="na">add</span><span class="o">(</span><span class="n">topicData</span><span class="o">);</span>
-    <span class="o">}</span>
-    <span class="c1">// 设置topic字段的数据
-</span><span class="c1"></span>    <span class="n">struct</span><span class="o">.</span><span class="na">set</span><span class="o">(</span><span class="n">TOPIC_DATA_KEY_NAME</span><span class="o">,</span> <span class="n">topicDatas</span><span class="o">.</span><span class="na">toArray</span><span class="o">());</span>
-    <span class="k">return</span> <span class="n">struct</span><span class="o">;</span>
-<span class="o">}</span>
-</code></pre></td></tr></table></div>
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="nd">@Override</span>
+</span></span><span class="line"><span class="cl"><span class="kd">public</span> <span class="n">Struct</span> <span class="nf">toStruct</span><span class="o">()</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// Store it in a local variable to protect against concurrent updates
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="n">Map</span><span class="o">&lt;</span><span class="n">TopicPartition</span><span class="o">,</span> <span class="n">MemoryRecords</span><span class="o">&gt;</span> <span class="n">partitionRecords</span> <span class="o">=</span> <span class="n">partitionRecordsOrFail</span><span class="o">();</span>
+</span></span><span class="line"><span class="cl">    <span class="kt">short</span> <span class="n">version</span> <span class="o">=</span> <span class="n">version</span><span class="o">();</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// requestSchema方法会根据版本，返回对应的Schema
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="n">Struct</span> <span class="n">struct</span> <span class="o">=</span> <span class="k">new</span> <span class="n">Struct</span><span class="o">(</span><span class="n">ApiKeys</span><span class="o">.</span><span class="na">PRODUCE</span><span class="o">.</span><span class="na">requestSchema</span><span class="o">(</span><span class="n">version</span><span class="o">));</span>
+</span></span><span class="line"><span class="cl">    
+</span></span><span class="line"><span class="cl">    <span class="n">Map</span><span class="o">&lt;</span><span class="n">String</span><span class="o">,</span> <span class="n">Map</span><span class="o">&lt;</span><span class="n">Integer</span><span class="o">,</span> <span class="n">MemoryRecords</span><span class="o">&gt;&gt;</span> <span class="n">recordsByTopic</span> <span class="o">=</span> <span class="n">CollectionUtils</span><span class="o">.</span><span class="na">groupDataByTopic</span><span class="o">(</span><span class="n">partitionRecords</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// 设置对应的属性
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="n">struct</span><span class="o">.</span><span class="na">set</span><span class="o">(</span><span class="n">ACKS_KEY_NAME</span><span class="o">,</span> <span class="n">acks</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">    <span class="n">struct</span><span class="o">.</span><span class="na">set</span><span class="o">(</span><span class="n">TIMEOUT_KEY_NAME</span><span class="o">,</span> <span class="n">timeout</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">    <span class="n">struct</span><span class="o">.</span><span class="na">setIfExists</span><span class="o">(</span><span class="n">NULLABLE_TRANSACTIONAL_ID</span><span class="o">,</span> <span class="n">transactionalId</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="n">List</span><span class="o">&lt;</span><span class="n">Struct</span><span class="o">&gt;</span> <span class="n">topicDatas</span> <span class="o">=</span> <span class="k">new</span> <span class="n">ArrayList</span><span class="o">&lt;&gt;(</span><span class="n">recordsByTopic</span><span class="o">.</span><span class="na">size</span><span class="o">());</span>
+</span></span><span class="line"><span class="cl">    <span class="k">for</span> <span class="o">(</span><span class="n">Map</span><span class="o">.</span><span class="na">Entry</span><span class="o">&lt;</span><span class="n">String</span><span class="o">,</span> <span class="n">Map</span><span class="o">&lt;</span><span class="n">Integer</span><span class="o">,</span> <span class="n">MemoryRecords</span><span class="o">&gt;&gt;</span> <span class="n">topicEntry</span> <span class="o">:</span> <span class="n">recordsByTopic</span><span class="o">.</span><span class="na">entrySet</span><span class="o">())</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">        <span class="c1">// 因为TOPIC_DATA_KEY_NAME字段是Schema类型的，这里调用了instance方法实例化Struct
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>        <span class="n">Struct</span> <span class="n">topicData</span> <span class="o">=</span> <span class="n">struct</span><span class="o">.</span><span class="na">instance</span><span class="o">(</span><span class="n">TOPIC_DATA_KEY_NAME</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">        
+</span></span><span class="line"><span class="cl">        <span class="n">topicData</span><span class="o">.</span><span class="na">set</span><span class="o">(</span><span class="n">TOPIC_NAME</span><span class="o">,</span> <span class="n">topicEntry</span><span class="o">.</span><span class="na">getKey</span><span class="o">());</span>
+</span></span><span class="line"><span class="cl">        <span class="n">List</span><span class="o">&lt;</span><span class="n">Struct</span><span class="o">&gt;</span> <span class="n">partitionArray</span> <span class="o">=</span> <span class="k">new</span> <span class="n">ArrayList</span><span class="o">&lt;&gt;();</span>
+</span></span><span class="line"><span class="cl">        <span class="k">for</span> <span class="o">(</span><span class="n">Map</span><span class="o">.</span><span class="na">Entry</span><span class="o">&lt;</span><span class="n">Integer</span><span class="o">,</span> <span class="n">MemoryRecords</span><span class="o">&gt;</span> <span class="n">partitionEntry</span> <span class="o">:</span> <span class="n">topicEntry</span><span class="o">.</span><span class="na">getValue</span><span class="o">().</span><span class="na">entrySet</span><span class="o">())</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">            <span class="n">MemoryRecords</span> <span class="n">records</span> <span class="o">=</span> <span class="n">partitionEntry</span><span class="o">.</span><span class="na">getValue</span><span class="o">();</span>
+</span></span><span class="line"><span class="cl">            <span class="c1">// 因为PARTITION_DATA_KEY_NAME字段是Schema类型，这里调用了instance实例化Struct
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>            <span class="n">Struct</span> <span class="n">part</span> <span class="o">=</span> <span class="n">topicData</span><span class="o">.</span><span class="na">instance</span><span class="o">(</span><span class="n">PARTITION_DATA_KEY_NAME</span><span class="o">)</span>
+</span></span><span class="line"><span class="cl">                    <span class="o">.</span><span class="na">set</span><span class="o">(</span><span class="n">PARTITION_ID</span><span class="o">,</span> <span class="n">partitionEntry</span><span class="o">.</span><span class="na">getKey</span><span class="o">())</span>
+</span></span><span class="line"><span class="cl">                    <span class="o">.</span><span class="na">set</span><span class="o">(</span><span class="n">RECORD_SET_KEY_NAME</span><span class="o">,</span> <span class="n">records</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">            <span class="c1">// 添加partition数据
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>            <span class="n">partitionArray</span><span class="o">.</span><span class="na">add</span><span class="o">(</span><span class="n">part</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">        <span class="o">}</span>
+</span></span><span class="line"><span class="cl">        <span class="c1">// 设置PARTITION_DATA_KEY_NAME字段
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>        <span class="n">topicData</span><span class="o">.</span><span class="na">set</span><span class="o">(</span><span class="n">PARTITION_DATA_KEY_NAME</span><span class="o">,</span> <span class="n">partitionArray</span><span class="o">.</span><span class="na">toArray</span><span class="o">());</span>
+</span></span><span class="line"><span class="cl">        <span class="n">topicDatas</span><span class="o">.</span><span class="na">add</span><span class="o">(</span><span class="n">topicData</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">    <span class="o">}</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// 设置topic字段的数据
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="n">struct</span><span class="o">.</span><span class="na">set</span><span class="o">(</span><span class="n">TOPIC_DATA_KEY_NAME</span><span class="o">,</span> <span class="n">topicDatas</span><span class="o">.</span><span class="na">toArray</span><span class="o">());</span>
+</span></span><span class="line"><span class="cl">    <span class="k">return</span> <span class="n">struct</span><span class="o">;</span>
+</span></span><span class="line"><span class="cl"><span class="o">}</span>
+</span></span></code></pre></td></tr></table></div>
 </div>
 </div><p>同样ProduceRequest内部也实现了Buidler类，它的build方法实例化并返回了ProduceRequest对象</p>
 <div class="highlight"><div class="chroma">
@@ -778,20 +778,20 @@
 </span><span class="lnt">13
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">ProduceRequest</span> <span class="kd">extends</span> <span class="n">AbstractRequest</span> <span class="o">{</span>
-    <span class="kd">public</span> <span class="kd">static</span> <span class="kd">class</span> <span class="nc">Builder</span> <span class="kd">extends</span> <span class="n">AbstractRequest</span><span class="o">.</span><span class="na">Builder</span><span class="o">&lt;</span><span class="n">ProduceRequest</span><span class="o">&gt;</span> <span class="o">{</span>
-        <span class="kd">private</span> <span class="kd">final</span> <span class="kt">short</span> <span class="n">acks</span><span class="o">;</span>
-        <span class="kd">private</span> <span class="kd">final</span> <span class="kt">int</span> <span class="n">timeout</span><span class="o">;</span>
-        <span class="kd">private</span> <span class="kd">final</span> <span class="n">Map</span><span class="o">&lt;</span><span class="n">TopicPartition</span><span class="o">,</span> <span class="n">MemoryRecords</span><span class="o">&gt;</span> <span class="n">partitionRecords</span><span class="o">;</span>
-        <span class="kd">private</span> <span class="kd">final</span> <span class="n">String</span> <span class="n">transactionalId</span><span class="o">;</span> 
-        
-        <span class="nd">@Override</span>
-        <span class="kd">public</span> <span class="n">ProduceRequest</span> <span class="nf">build</span><span class="o">(</span><span class="kt">short</span> <span class="n">version</span><span class="o">)</span> <span class="o">{</span>
-            <span class="k">return</span> <span class="k">new</span> <span class="n">ProduceRequest</span><span class="o">(</span><span class="n">version</span><span class="o">,</span> <span class="n">acks</span><span class="o">,</span> <span class="n">timeout</span><span class="o">,</span> <span class="n">partitionRecords</span><span class="o">,</span> <span class="n">transactionalId</span><span class="o">);</span>
-        <span class="o">}</span>        
-    <span class="o">}</span>
-<span class="o">}</span>
-</code></pre></td></tr></table></div>
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">ProduceRequest</span> <span class="kd">extends</span> <span class="n">AbstractRequest</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">    <span class="kd">public</span> <span class="kd">static</span> <span class="kd">class</span> <span class="nc">Builder</span> <span class="kd">extends</span> <span class="n">AbstractRequest</span><span class="o">.</span><span class="na">Builder</span><span class="o">&lt;</span><span class="n">ProduceRequest</span><span class="o">&gt;</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">        <span class="kd">private</span> <span class="kd">final</span> <span class="kt">short</span> <span class="n">acks</span><span class="o">;</span>
+</span></span><span class="line"><span class="cl">        <span class="kd">private</span> <span class="kd">final</span> <span class="kt">int</span> <span class="n">timeout</span><span class="o">;</span>
+</span></span><span class="line"><span class="cl">        <span class="kd">private</span> <span class="kd">final</span> <span class="n">Map</span><span class="o">&lt;</span><span class="n">TopicPartition</span><span class="o">,</span> <span class="n">MemoryRecords</span><span class="o">&gt;</span> <span class="n">partitionRecords</span><span class="o">;</span>
+</span></span><span class="line"><span class="cl">        <span class="kd">private</span> <span class="kd">final</span> <span class="n">String</span> <span class="n">transactionalId</span><span class="o">;</span> 
+</span></span><span class="line"><span class="cl">        
+</span></span><span class="line"><span class="cl">        <span class="nd">@Override</span>
+</span></span><span class="line"><span class="cl">        <span class="kd">public</span> <span class="n">ProduceRequest</span> <span class="nf">build</span><span class="o">(</span><span class="kt">short</span> <span class="n">version</span><span class="o">)</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">            <span class="k">return</span> <span class="k">new</span> <span class="n">ProduceRequest</span><span class="o">(</span><span class="n">version</span><span class="o">,</span> <span class="n">acks</span><span class="o">,</span> <span class="n">timeout</span><span class="o">,</span> <span class="n">partitionRecords</span><span class="o">,</span> <span class="n">transactionalId</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">        <span class="o">}</span>        
+</span></span><span class="line"><span class="cl">    <span class="o">}</span>
+</span></span><span class="line"><span class="cl"><span class="o">}</span>
+</span></span></code></pre></td></tr></table></div>
 </div>
 </div><h3 id="序列化"><a href="#序列化" class="anchor-link"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon anchor-icon"><path d="M326.612 185.391c59.747 59.809 58.927 155.698.36 214.59-.11.12-.24.25-.36.37l-67.2 67.2c-59.27 59.27-155.699 59.262-214.96 0-59.27-59.26-59.27-155.7 0-214.96l37.106-37.106c9.84-9.84 26.786-3.3 27.294 10.606.648 17.722 3.826 35.527 9.69 52.721 1.986 5.822.567 12.262-3.783 16.612l-13.087 13.087c-28.026 28.026-28.905 73.66-1.155 101.96 28.024 28.579 74.086 28.749 102.325.51l67.2-67.19c28.191-28.191 28.073-73.757 0-101.83-3.701-3.694-7.429-6.564-10.341-8.569a16.037 16.037 0 0 1-6.947-12.606c-.396-10.567 3.348-21.456 11.698-29.806l21.054-21.055c5.521-5.521 14.182-6.199 20.584-1.731a152.482 152.482 0 0 1 20.522 17.197zM467.547 44.449c-59.261-59.262-155.69-59.27-214.96 0l-67.2 67.2c-.12.12-.25.25-.36.37-58.566 58.892-59.387 154.781.36 214.59a152.454 152.454 0 0 0 20.521 17.196c6.402 4.468 15.064 3.789 20.584-1.731l21.054-21.055c8.35-8.35 12.094-19.239 11.698-29.806a16.037 16.037 0 0 0-6.947-12.606c-2.912-2.005-6.64-4.875-10.341-8.569-28.073-28.073-28.191-73.639 0-101.83l67.2-67.19c28.239-28.239 74.3-28.069 102.325.51 27.75 28.3 26.872 73.934-1.155 101.96l-13.087 13.087c-4.35 4.35-5.769 10.79-3.783 16.612 5.864 17.194 9.042 34.999 9.69 52.721.509 13.906 17.454 20.446 27.294 10.606l37.106-37.106c59.271-59.259 59.271-155.699.001-214.959z"/></svg></a>序列化</h3>
 <p>Kafka通过Builder构建完请求体后，会将请求体一起序列化。AbstractRequest基类的serialize方法，会序列化请求。</p>
@@ -817,25 +817,25 @@
 </span><span class="lnt">18
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">abstract</span> <span class="kd">class</span> <span class="nc">AbstractRequest</span> <span class="kd">extends</span> <span class="n">AbstractRequestResponse</span> <span class="o">{</span>
-    
-    <span class="kd">public</span> <span class="n">ByteBuffer</span> <span class="nf">serialize</span><span class="o">(</span><span class="n">RequestHeader</span> <span class="n">header</span><span class="o">)</span> <span class="o">{</span>
-        <span class="c1">// 接收请求头，然后调用父类的serialize序列化请求
-</span><span class="c1"></span>        <span class="k">return</span> <span class="n">serialize</span><span class="o">(</span><span class="n">header</span><span class="o">.</span><span class="na">toStruct</span><span class="o">(),</span> <span class="n">toStruct</span><span class="o">());</span>
-    <span class="o">}</span>
-<span class="o">}</span>
-
-<span class="kd">public</span> <span class="kd">abstract</span> <span class="kd">class</span> <span class="nc">AbstractRequestResponse</span> <span class="o">{</span>
-    <span class="c1">// 将请求头和请求体，序列化到ByteBuffer
-</span><span class="c1"></span>    <span class="kd">public</span> <span class="kd">static</span> <span class="n">ByteBuffer</span> <span class="nf">serialize</span><span class="o">(</span><span class="n">Struct</span> <span class="n">headerStruct</span><span class="o">,</span> <span class="n">Struct</span> <span class="n">bodyStruct</span><span class="o">)</span> <span class="o">{</span>
-        <span class="n">ByteBuffer</span> <span class="n">buffer</span> <span class="o">=</span> <span class="n">ByteBuffer</span><span class="o">.</span><span class="na">allocate</span><span class="o">(</span><span class="n">headerStruct</span><span class="o">.</span><span class="na">sizeOf</span><span class="o">()</span> <span class="o">+</span> <span class="n">bodyStruct</span><span class="o">.</span><span class="na">sizeOf</span><span class="o">());</span>
-        <span class="n">headerStruct</span><span class="o">.</span><span class="na">writeTo</span><span class="o">(</span><span class="n">buffer</span><span class="o">);</span>
-        <span class="n">bodyStruct</span><span class="o">.</span><span class="na">writeTo</span><span class="o">(</span><span class="n">buffer</span><span class="o">);</span>
-        <span class="n">buffer</span><span class="o">.</span><span class="na">rewind</span><span class="o">();</span>
-        <span class="k">return</span> <span class="n">buffer</span><span class="o">;</span>
-    <span class="o">}</span>
-<span class="o">}</span>
-</code></pre></td></tr></table></div>
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="kd">public</span> <span class="kd">abstract</span> <span class="kd">class</span> <span class="nc">AbstractRequest</span> <span class="kd">extends</span> <span class="n">AbstractRequestResponse</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">    
+</span></span><span class="line"><span class="cl">    <span class="kd">public</span> <span class="n">ByteBuffer</span> <span class="nf">serialize</span><span class="o">(</span><span class="n">RequestHeader</span> <span class="n">header</span><span class="o">)</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">        <span class="c1">// 接收请求头，然后调用父类的serialize序列化请求
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>        <span class="k">return</span> <span class="n">serialize</span><span class="o">(</span><span class="n">header</span><span class="o">.</span><span class="na">toStruct</span><span class="o">(),</span> <span class="n">toStruct</span><span class="o">());</span>
+</span></span><span class="line"><span class="cl">    <span class="o">}</span>
+</span></span><span class="line"><span class="cl"><span class="o">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kd">public</span> <span class="kd">abstract</span> <span class="kd">class</span> <span class="nc">AbstractRequestResponse</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// 将请求头和请求体，序列化到ByteBuffer
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="kd">public</span> <span class="kd">static</span> <span class="n">ByteBuffer</span> <span class="nf">serialize</span><span class="o">(</span><span class="n">Struct</span> <span class="n">headerStruct</span><span class="o">,</span> <span class="n">Struct</span> <span class="n">bodyStruct</span><span class="o">)</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">        <span class="n">ByteBuffer</span> <span class="n">buffer</span> <span class="o">=</span> <span class="n">ByteBuffer</span><span class="o">.</span><span class="na">allocate</span><span class="o">(</span><span class="n">headerStruct</span><span class="o">.</span><span class="na">sizeOf</span><span class="o">()</span> <span class="o">+</span> <span class="n">bodyStruct</span><span class="o">.</span><span class="na">sizeOf</span><span class="o">());</span>
+</span></span><span class="line"><span class="cl">        <span class="n">headerStruct</span><span class="o">.</span><span class="na">writeTo</span><span class="o">(</span><span class="n">buffer</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">        <span class="n">bodyStruct</span><span class="o">.</span><span class="na">writeTo</span><span class="o">(</span><span class="n">buffer</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">        <span class="n">buffer</span><span class="o">.</span><span class="na">rewind</span><span class="o">();</span>
+</span></span><span class="line"><span class="cl">        <span class="k">return</span> <span class="n">buffer</span><span class="o">;</span>
+</span></span><span class="line"><span class="cl">    <span class="o">}</span>
+</span></span><span class="line"><span class="cl"><span class="o">}</span>
+</span></span></code></pre></td></tr></table></div>
 </div>
 </div><h2 id="响应协议"><a href="#响应协议" class="anchor-link"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon anchor-icon"><path d="M326.612 185.391c59.747 59.809 58.927 155.698.36 214.59-.11.12-.24.25-.36.37l-67.2 67.2c-59.27 59.27-155.699 59.262-214.96 0-59.27-59.26-59.27-155.7 0-214.96l37.106-37.106c9.84-9.84 26.786-3.3 27.294 10.606.648 17.722 3.826 35.527 9.69 52.721 1.986 5.822.567 12.262-3.783 16.612l-13.087 13.087c-28.026 28.026-28.905 73.66-1.155 101.96 28.024 28.579 74.086 28.749 102.325.51l67.2-67.19c28.191-28.191 28.073-73.757 0-101.83-3.701-3.694-7.429-6.564-10.341-8.569a16.037 16.037 0 0 1-6.947-12.606c-.396-10.567 3.348-21.456 11.698-29.806l21.054-21.055c5.521-5.521 14.182-6.199 20.584-1.731a152.482 152.482 0 0 1 20.522 17.197zM467.547 44.449c-59.261-59.262-155.69-59.27-214.96 0l-67.2 67.2c-.12.12-.25.25-.36.37-58.566 58.892-59.387 154.781.36 214.59a152.454 152.454 0 0 0 20.521 17.196c6.402 4.468 15.064 3.789 20.584-1.731l21.054-21.055c8.35-8.35 12.094-19.239 11.698-29.806a16.037 16.037 0 0 0-6.947-12.606c-2.912-2.005-6.64-4.875-10.341-8.569-28.073-28.073-28.191-73.639 0-101.83l67.2-67.19c28.239-28.239 74.3-28.069 102.325.51 27.75 28.3 26.872 73.934-1.155 101.96l-13.087 13.087c-4.35 4.35-5.769 10.79-3.783 16.612 5.864 17.194 9.042 34.999 9.69 52.721.509 13.906 17.454 20.446 27.294 10.606l37.106-37.106c59.271-59.259 59.271-155.699.001-214.959z"/></svg></a>响应协议</h2>
 <p>kafka的响应协议通请求协议一样，分为响应头部和响应体两部分。</p>
@@ -849,11 +849,11 @@
 </span><span class="lnt">4
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">ResponseHeader</span> <span class="kd">extends</span> <span class="n">AbstractRequestResponse</span> <span class="o">{</span>
-    <span class="kd">public</span> <span class="kd">static</span> <span class="kd">final</span> <span class="n">Schema</span> <span class="n">SCHEMA</span> <span class="o">=</span> <span class="k">new</span> <span class="n">Schema</span><span class="o">(</span>
-            <span class="k">new</span> <span class="n">Field</span><span class="o">(</span><span class="s">&#34;correlation_id&#34;</span><span class="o">,</span> <span class="n">INT32</span><span class="o">,</span> <span class="s">&#34;The user-supplied value passed in with the request&#34;</span><span class="o">));</span>
-<span class="o">}</span>
-</code></pre></td></tr></table></div>
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">ResponseHeader</span> <span class="kd">extends</span> <span class="n">AbstractRequestResponse</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">    <span class="kd">public</span> <span class="kd">static</span> <span class="kd">final</span> <span class="n">Schema</span> <span class="n">SCHEMA</span> <span class="o">=</span> <span class="k">new</span> <span class="n">Schema</span><span class="o">(</span>
+</span></span><span class="line"><span class="cl">            <span class="k">new</span> <span class="n">Field</span><span class="o">(</span><span class="s">&#34;correlation_id&#34;</span><span class="o">,</span> <span class="n">INT32</span><span class="o">,</span> <span class="s">&#34;The user-supplied value passed in with the request&#34;</span><span class="o">));</span>
+</span></span><span class="line"><span class="cl"><span class="o">}</span>
+</span></span></code></pre></td></tr></table></div>
 </div>
 </div><h3 id="响应体"><a href="#响应体" class="anchor-link"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon anchor-icon"><path d="M326.612 185.391c59.747 59.809 58.927 155.698.36 214.59-.11.12-.24.25-.36.37l-67.2 67.2c-59.27 59.27-155.699 59.262-214.96 0-59.27-59.26-59.27-155.7 0-214.96l37.106-37.106c9.84-9.84 26.786-3.3 27.294 10.606.648 17.722 3.826 35.527 9.69 52.721 1.986 5.822.567 12.262-3.783 16.612l-13.087 13.087c-28.026 28.026-28.905 73.66-1.155 101.96 28.024 28.579 74.086 28.749 102.325.51l67.2-67.19c28.191-28.191 28.073-73.757 0-101.83-3.701-3.694-7.429-6.564-10.341-8.569a16.037 16.037 0 0 1-6.947-12.606c-.396-10.567 3.348-21.456 11.698-29.806l21.054-21.055c5.521-5.521 14.182-6.199 20.584-1.731a152.482 152.482 0 0 1 20.522 17.197zM467.547 44.449c-59.261-59.262-155.69-59.27-214.96 0l-67.2 67.2c-.12.12-.25.25-.36.37-58.566 58.892-59.387 154.781.36 214.59a152.454 152.454 0 0 0 20.521 17.196c6.402 4.468 15.064 3.789 20.584-1.731l21.054-21.055c8.35-8.35 12.094-19.239 11.698-29.806a16.037 16.037 0 0 0-6.947-12.606c-2.912-2.005-6.64-4.875-10.341-8.569-28.073-28.073-28.191-73.639 0-101.83l67.2-67.19c28.239-28.239 74.3-28.069 102.325.51 27.75 28.3 26.872 73.934-1.155 101.96l-13.087 13.087c-4.35 4.35-5.769 10.79-3.783 16.612 5.864 17.194 9.042 34.999 9.69 52.721.509 13.906 17.454 20.446 27.294 10.606l37.106-37.106c59.271-59.259 59.271-155.699.001-214.959z"/></svg></a>响应体</h3>
 <p>Kafka的响应体都是由AbstractResponse的子类，有下列重要方法</p>
@@ -876,22 +876,22 @@
 </span><span class="lnt">15
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">abstract</span> <span class="kd">class</span> <span class="nc">AbstractResponse</span> <span class="kd">extends</span> <span class="n">AbstractRequestResponse</span> <span class="o">{</span>
-    <span class="c1">// 序列化并且保存到NetworkSend，后面会由网络发送出去
-</span><span class="c1"></span>    <span class="kd">protected</span> <span class="n">Send</span> <span class="nf">toSend</span><span class="o">(</span><span class="n">String</span> <span class="n">destination</span><span class="o">,</span> <span class="n">ResponseHeader</span> <span class="n">header</span><span class="o">,</span> <span class="kt">short</span> <span class="n">apiVersion</span><span class="o">)</span> <span class="o">{</span>
-        <span class="k">return</span> <span class="k">new</span> <span class="n">NetworkSend</span><span class="o">(</span><span class="n">destination</span><span class="o">,</span> <span class="n">serialize</span><span class="o">(</span><span class="n">apiVersion</span><span class="o">,</span> <span class="n">header</span><span class="o">));</span>
-    <span class="o">}</span>
-    
-    <span class="c1">// 接收响应头部，并且序列化到buffer
-</span><span class="c1"></span>    <span class="kd">public</span> <span class="n">ByteBuffer</span> <span class="nf">serialize</span><span class="o">(</span><span class="kt">short</span> <span class="n">version</span><span class="o">,</span> <span class="n">ResponseHeader</span> <span class="n">responseHeader</span><span class="o">)</span> <span class="o">{</span>
-        <span class="k">return</span> <span class="n">serialize</span><span class="o">(</span><span class="n">responseHeader</span><span class="o">.</span><span class="na">toStruct</span><span class="o">(),</span> <span class="n">toStruct</span><span class="o">(</span><span class="n">version</span><span class="o">));</span>
-    <span class="o">}</span>
-    
-    <span class="c1">// 转化为struct实例
-</span><span class="c1"></span>    <span class="kd">protected</span> <span class="kd">abstract</span> <span class="n">Struct</span> <span class="nf">toStruct</span><span class="o">(</span><span class="kt">short</span> <span class="n">version</span><span class="o">);</span>
-<span class="o">}</span>
-    
-</code></pre></td></tr></table></div>
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="kd">public</span> <span class="kd">abstract</span> <span class="kd">class</span> <span class="nc">AbstractResponse</span> <span class="kd">extends</span> <span class="n">AbstractRequestResponse</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// 序列化并且保存到NetworkSend，后面会由网络发送出去
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="kd">protected</span> <span class="n">Send</span> <span class="nf">toSend</span><span class="o">(</span><span class="n">String</span> <span class="n">destination</span><span class="o">,</span> <span class="n">ResponseHeader</span> <span class="n">header</span><span class="o">,</span> <span class="kt">short</span> <span class="n">apiVersion</span><span class="o">)</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">        <span class="k">return</span> <span class="k">new</span> <span class="n">NetworkSend</span><span class="o">(</span><span class="n">destination</span><span class="o">,</span> <span class="n">serialize</span><span class="o">(</span><span class="n">apiVersion</span><span class="o">,</span> <span class="n">header</span><span class="o">));</span>
+</span></span><span class="line"><span class="cl">    <span class="o">}</span>
+</span></span><span class="line"><span class="cl">    
+</span></span><span class="line"><span class="cl">    <span class="c1">// 接收响应头部，并且序列化到buffer
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="kd">public</span> <span class="n">ByteBuffer</span> <span class="nf">serialize</span><span class="o">(</span><span class="kt">short</span> <span class="n">version</span><span class="o">,</span> <span class="n">ResponseHeader</span> <span class="n">responseHeader</span><span class="o">)</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">        <span class="k">return</span> <span class="n">serialize</span><span class="o">(</span><span class="n">responseHeader</span><span class="o">.</span><span class="na">toStruct</span><span class="o">(),</span> <span class="n">toStruct</span><span class="o">(</span><span class="n">version</span><span class="o">));</span>
+</span></span><span class="line"><span class="cl">    <span class="o">}</span>
+</span></span><span class="line"><span class="cl">    
+</span></span><span class="line"><span class="cl">    <span class="c1">// 转化为struct实例
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="kd">protected</span> <span class="kd">abstract</span> <span class="n">Struct</span> <span class="nf">toStruct</span><span class="o">(</span><span class="kt">short</span> <span class="n">version</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl"><span class="o">}</span>
+</span></span><span class="line"><span class="cl">    
+</span></span></code></pre></td></tr></table></div>
 </div>
 </div><p>以ProduceResponse响应为例，它的格式如下图所示：</p>
 <p><img src="kafka-protocol-produce-response.svg" alt="produce-response"></p>
@@ -918,26 +918,26 @@
 </span><span class="lnt">19
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">ProduceResponse</span> <span class="kd">extends</span> <span class="n">AbstractResponse</span> <span class="o">{</span>
-
-    <span class="kd">private</span> <span class="kd">static</span> <span class="kd">final</span> <span class="n">String</span> <span class="n">RESPONSES_KEY_NAME</span> <span class="o">=</span> <span class="s">&#34;responses&#34;</span><span class="o">;</span>
-    <span class="kd">private</span> <span class="kd">static</span> <span class="kd">final</span> <span class="n">String</span> <span class="n">PARTITION_RESPONSES_KEY_NAME</span> <span class="o">=</span> <span class="s">&#34;partition_responses&#34;</span><span class="o">;</span>
-    <span class="kd">private</span> <span class="kd">static</span> <span class="kd">final</span> <span class="n">String</span> <span class="n">BASE_OFFSET_KEY_NAME</span> <span class="o">=</span> <span class="s">&#34;base_offset&#34;</span><span class="o">;</span>
-    <span class="kd">private</span> <span class="kd">static</span> <span class="kd">final</span> <span class="n">String</span> <span class="n">LOG_APPEND_TIME_KEY_NAME</span> <span class="o">=</span> <span class="s">&#34;log_append_time&#34;</span><span class="o">;</span>
-    
-    <span class="kd">private</span> <span class="kd">static</span> <span class="kd">final</span> <span class="n">Schema</span> <span class="n">PRODUCE_RESPONSE_V2</span> <span class="o">=</span> <span class="k">new</span> <span class="n">Schema</span><span class="o">(</span>
-            <span class="k">new</span> <span class="n">Field</span><span class="o">(</span><span class="n">RESPONSES_KEY_NAME</span><span class="o">,</span> <span class="k">new</span> <span class="n">ArrayOf</span><span class="o">(</span><span class="k">new</span> <span class="n">Schema</span><span class="o">(</span>
-                    <span class="n">TOPIC_NAME</span><span class="o">,</span>
-                    <span class="k">new</span> <span class="n">Field</span><span class="o">(</span><span class="n">PARTITION_RESPONSES_KEY_NAME</span><span class="o">,</span> <span class="k">new</span> <span class="n">ArrayOf</span><span class="o">(</span><span class="k">new</span> <span class="n">Schema</span><span class="o">(</span>
-                            <span class="n">PARTITION_ID</span><span class="o">,</span>
-                            <span class="n">ERROR_CODE</span><span class="o">,</span>
-                            <span class="k">new</span> <span class="n">Field</span><span class="o">(</span><span class="n">BASE_OFFSET_KEY_NAME</span><span class="o">,</span> <span class="n">INT64</span><span class="o">),</span>
-                            <span class="k">new</span> <span class="n">Field</span><span class="o">(</span><span class="n">LOG_APPEND_TIME_KEY_NAME</span><span class="o">,</span> <span class="n">INT64</span><span class="o">,</span> <span class="s">&#34;...&#34;</span><span class="o">))))))),</span>
-            <span class="n">THROTTLE_TIME_MS</span><span class="o">);</span>
-
-    <span class="kd">private</span> <span class="kd">static</span> <span class="kd">final</span> <span class="n">Schema</span> <span class="n">PRODUCE_RESPONSE_V3</span> <span class="o">=</span> <span class="n">PRODUCE_RESPONSE_V2</span><span class="o">;</span>
-<span class="o">}</span>
-</code></pre></td></tr></table></div>
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">ProduceResponse</span> <span class="kd">extends</span> <span class="n">AbstractResponse</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="kd">private</span> <span class="kd">static</span> <span class="kd">final</span> <span class="n">String</span> <span class="n">RESPONSES_KEY_NAME</span> <span class="o">=</span> <span class="s">&#34;responses&#34;</span><span class="o">;</span>
+</span></span><span class="line"><span class="cl">    <span class="kd">private</span> <span class="kd">static</span> <span class="kd">final</span> <span class="n">String</span> <span class="n">PARTITION_RESPONSES_KEY_NAME</span> <span class="o">=</span> <span class="s">&#34;partition_responses&#34;</span><span class="o">;</span>
+</span></span><span class="line"><span class="cl">    <span class="kd">private</span> <span class="kd">static</span> <span class="kd">final</span> <span class="n">String</span> <span class="n">BASE_OFFSET_KEY_NAME</span> <span class="o">=</span> <span class="s">&#34;base_offset&#34;</span><span class="o">;</span>
+</span></span><span class="line"><span class="cl">    <span class="kd">private</span> <span class="kd">static</span> <span class="kd">final</span> <span class="n">String</span> <span class="n">LOG_APPEND_TIME_KEY_NAME</span> <span class="o">=</span> <span class="s">&#34;log_append_time&#34;</span><span class="o">;</span>
+</span></span><span class="line"><span class="cl">    
+</span></span><span class="line"><span class="cl">    <span class="kd">private</span> <span class="kd">static</span> <span class="kd">final</span> <span class="n">Schema</span> <span class="n">PRODUCE_RESPONSE_V2</span> <span class="o">=</span> <span class="k">new</span> <span class="n">Schema</span><span class="o">(</span>
+</span></span><span class="line"><span class="cl">            <span class="k">new</span> <span class="n">Field</span><span class="o">(</span><span class="n">RESPONSES_KEY_NAME</span><span class="o">,</span> <span class="k">new</span> <span class="n">ArrayOf</span><span class="o">(</span><span class="k">new</span> <span class="n">Schema</span><span class="o">(</span>
+</span></span><span class="line"><span class="cl">                    <span class="n">TOPIC_NAME</span><span class="o">,</span>
+</span></span><span class="line"><span class="cl">                    <span class="k">new</span> <span class="n">Field</span><span class="o">(</span><span class="n">PARTITION_RESPONSES_KEY_NAME</span><span class="o">,</span> <span class="k">new</span> <span class="n">ArrayOf</span><span class="o">(</span><span class="k">new</span> <span class="n">Schema</span><span class="o">(</span>
+</span></span><span class="line"><span class="cl">                            <span class="n">PARTITION_ID</span><span class="o">,</span>
+</span></span><span class="line"><span class="cl">                            <span class="n">ERROR_CODE</span><span class="o">,</span>
+</span></span><span class="line"><span class="cl">                            <span class="k">new</span> <span class="n">Field</span><span class="o">(</span><span class="n">BASE_OFFSET_KEY_NAME</span><span class="o">,</span> <span class="n">INT64</span><span class="o">),</span>
+</span></span><span class="line"><span class="cl">                            <span class="k">new</span> <span class="n">Field</span><span class="o">(</span><span class="n">LOG_APPEND_TIME_KEY_NAME</span><span class="o">,</span> <span class="n">INT64</span><span class="o">,</span> <span class="s">&#34;...&#34;</span><span class="o">))))))),</span>
+</span></span><span class="line"><span class="cl">            <span class="n">THROTTLE_TIME_MS</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="kd">private</span> <span class="kd">static</span> <span class="kd">final</span> <span class="n">Schema</span> <span class="n">PRODUCE_RESPONSE_V3</span> <span class="o">=</span> <span class="n">PRODUCE_RESPONSE_V2</span><span class="o">;</span>
+</span></span><span class="line"><span class="cl"><span class="o">}</span>
+</span></span></code></pre></td></tr></table></div>
 </div>
 </div><p>ProduceResponse的toStruct方法的原理，同ProduceRequest的原理相同。</p>
 <p>ProduceResponse的序列化的原理，同ProduceRequest的原理相同。</p>
@@ -970,9 +970,9 @@
 
         
     <div class="updated-badge-container">
-        <span title="Updated @ 2021-10-22 14:44:34 CST" style="cursor:help">
+        <span title="Updated @ 2023-07-02 16:59:09 CST" style="cursor:help">
 
-<svg xmlns="http://www.w3.org/2000/svg" width="130" height="20" class="updated-badge"><linearGradient id="b" x2="0" y2="100%"><stop offset="0" stop-color="#bbb" stop-opacity=".1"/><stop offset="1" stop-opacity=".1"/></linearGradient><clipPath id="a"><rect width="130" height="20" rx="3" fill="#fff"/></clipPath><g clip-path="url(#a)"><path class="updated-badge-left" d="M0 0h55v20H0z"/><path class="updated-badge-right" d="M55 0h75v20H55z"/><path fill="url(#b)" d="M0 0h130v20H0z"/></g><g fill="#fff" text-anchor="middle" font-size="110"><text x="285" y="150" fill="#010101" fill-opacity=".3" textLength="450" transform="scale(.1)">updated</text><text x="285" y="140" textLength="450" transform="scale(.1)">updated</text><text x="915" y="150" fill="#010101" fill-opacity=".3" textLength="650" transform="scale(.1)">2021-10-22</text><text x="915" y="140" textLength="650" transform="scale(.1)">2021-10-22</text></g></svg>
+<svg xmlns="http://www.w3.org/2000/svg" width="130" height="20" class="updated-badge"><linearGradient id="b" x2="0" y2="100%"><stop offset="0" stop-color="#bbb" stop-opacity=".1"/><stop offset="1" stop-opacity=".1"/></linearGradient><clipPath id="a"><rect width="130" height="20" rx="3" fill="#fff"/></clipPath><g clip-path="url(#a)"><path class="updated-badge-left" d="M0 0h55v20H0z"/><path class="updated-badge-right" d="M55 0h75v20H55z"/><path fill="url(#b)" d="M0 0h130v20H0z"/></g><g fill="#fff" text-anchor="middle" font-size="110"><text x="285" y="150" fill="#010101" fill-opacity=".3" textLength="450" transform="scale(.1)">updated</text><text x="285" y="140" textLength="450" transform="scale(.1)">updated</text><text x="915" y="150" fill="#010101" fill-opacity=".3" textLength="650" transform="scale(.1)">2023-07-02</text><text x="915" y="140" textLength="650" transform="scale(.1)">2023-07-02</text></g></svg>
         </span></div>
 
 

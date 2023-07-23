@@ -3,7 +3,7 @@
     <head prefix="og: http://ogp.me/ns# article: http://ogp.me/ns/article#">
     <meta charset="UTF-8" />
 
-    <meta name="generator" content="Hugo 0.88.1" /><meta name="theme-color" content="#fff" />
+    <meta name="generator" content="Hugo 0.115.0"><meta name="theme-color" content="#fff" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     
     <meta name="format-detection" content="telephone=no, date=no, address=no, email=no" />
@@ -14,11 +14,11 @@
 
     <title>Postgresql 缓存替换算法 | 学习笔记</title>
 
-    <link rel="stylesheet" href="/css/meme.min.2d3e1834af2bc8dda20c7d74aaa1d8134845094441b7a554a5206ccd4b472596.css"/>
+    <link rel="stylesheet" href="/css/meme.min.91e7f58f97e1c60563ef481c38d9684fa8099537801d6f17bbfc724121e7d8f1.css"/>
 
     
     
-        <script src="/js/meme.min.800f61672145711eb3e1f29fcfcc3dbe0139dd459259718b611a0390f74703d1.js"></script>
+        <script src="/js/meme.min.3210a00c2fdcf6f831170b681b8ee40f83f0224663661e986872616aec45407f.js"></script>
 
     
 
@@ -54,13 +54,13 @@
         "@context": "https://schema.org",
         "@type": "BlogPosting",
         "datePublished": "2019-10-21T20:38:37+00:00",
-        "dateModified": "2021-10-22T14:44:34+08:00",
+        "dateModified": "2023-07-02T16:59:09+08:00",
         "url": "https://zhmin.github.io/posts/postgresql-buffer-replace/",
         "headline": "Postgresql 缓存替换算法",
         "description": "前言 postgresql 使用缓存来作为与磁盘读写的中间层，但是缓存的大小是有限的，当缓存不够用时需要剔除一些不常用的。但是如何高效的选出那些需要剔除的缓存呢，postgresql 针对不同的应用场景，提供了简单高效的不同……",
         "inLanguage" : "zh-CN",
         "articleSection": "posts",
-        "wordCount":  2546 ,
+        "wordCount":  2545 ,
         "image": "https://zhmin.github.io/icons/apple-touch-icon.png",
         "author": {
             "@type": "Person",
@@ -98,7 +98,7 @@
 <meta property="og:locale" content="zh" /><meta property="og:image" content="https://zhmin.github.io/icons/apple-touch-icon.png" />
     <meta property="og:type" content="article" />
     <meta property="article:published_time" content="2019-10-21T20:38:37&#43;00:00" />
-    <meta property="article:modified_time" content="2021-10-22T14:44:34&#43;08:00" />
+    <meta property="article:modified_time" content="2023-07-02T16:59:09&#43;08:00" />
     
     <meta property="article:section" content="posts" />
 
@@ -223,7 +223,7 @@
     
     
         
-        <span class="post-meta-item wordcount"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon post-meta-icon"><path d="M497.9 142.1l-46.1 46.1c-4.7 4.7-12.3 4.7-17 0l-111-111c-4.7-4.7-4.7-12.3 0-17l46.1-46.1c18.7-18.7 49.1-18.7 67.9 0l60.1 60.1c18.8 18.7 18.8 49.1 0 67.9zM284.2 99.8L21.6 362.4.4 483.9c-2.9 16.4 11.4 30.6 27.8 27.8l121.5-21.3 262.6-262.6c4.7-4.7 4.7-12.3 0-17l-111-111c-4.8-4.7-12.4-4.7-17.1 0zM124.1 339.9c-5.5-5.5-5.5-14.3 0-19.8l154-154c5.5-5.5 14.3-5.5 19.8 0s5.5 14.3 0 19.8l-154 154c-5.5 5.5-14.3 5.5-19.8 0zM88 424h48v36.3l-64.5 11.3-31.1-31.1L51.7 376H88v48z"/></svg>&nbsp;2546</span>
+        <span class="post-meta-item wordcount"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon post-meta-icon"><path d="M497.9 142.1l-46.1 46.1c-4.7 4.7-12.3 4.7-17 0l-111-111c-4.7-4.7-4.7-12.3 0-17l46.1-46.1c18.7-18.7 49.1-18.7 67.9 0l60.1 60.1c18.8 18.7 18.8 49.1 0 67.9zM284.2 99.8L21.6 362.4.4 483.9c-2.9 16.4 11.4 30.6 27.8 27.8l121.5-21.3 262.6-262.6c4.7-4.7 4.7-12.3 0-17l-111-111c-4.8-4.7-12.4-4.7-17.1 0zM124.1 339.9c-5.5-5.5-5.5-14.3 0-19.8l154-154c5.5-5.5 14.3-5.5 19.8 0s5.5 14.3 0 19.8l-154 154c-5.5 5.5-14.3 5.5-19.8 0zM88 424h48v36.3l-64.5 11.3-31.1-31.1L51.7 376H88v48z"/></svg>&nbsp;2545</span>
     
     
         
@@ -260,18 +260,18 @@
 </span><span class="lnt">11
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="k">typedef</span> <span class="k">struct</span> <span class="n">BufferAccessStrategyData</span>
-<span class="p">{</span>
-	
-	<span class="n">BufferAccessStrategyType</span> <span class="n">btype</span><span class="p">;</span>          <span class="c1">// 策略类型
-</span><span class="c1"></span>	<span class="kt">int</span>			<span class="n">ring_size</span><span class="p">;</span>                  <span class="c1">// 环大小	
-</span><span class="c1"></span>	<span class="kt">int</span>			<span class="n">current</span><span class="p">;</span>                    <span class="c1">// 数组的遍历当前位置
-</span><span class="c1"></span>	<span class="kt">bool</span>		<span class="n">current_was_in_ring</span><span class="p">;</span>        <span class="c1">// 数组当前位置的元素，有没有分配buffer
-</span><span class="c1"></span>
-    <span class="c1">// 这里使用数组来表示环，当元素的值为InvalidBuffer(也就是0)，表示还分配buffer给这个元素
-</span><span class="c1"></span>	<span class="n">Buffer</span>		<span class="n">buffers</span><span class="p">[</span><span class="n">FLEXIBLE_ARRAY_MEMBER</span><span class="p">];</span>
-<span class="p">}</span> <span class="n">BufferAccessStrategyData</span><span class="p">;</span>
-</code></pre></td></tr></table></div>
+<pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="line"><span class="cl"><span class="k">typedef</span> <span class="k">struct</span> <span class="n">BufferAccessStrategyData</span>
+</span></span><span class="line"><span class="cl"><span class="p">{</span>
+</span></span><span class="line"><span class="cl">	
+</span></span><span class="line"><span class="cl">	<span class="n">BufferAccessStrategyType</span> <span class="n">btype</span><span class="p">;</span>          <span class="c1">// 策略类型
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="kt">int</span>			<span class="n">ring_size</span><span class="p">;</span>                  <span class="c1">// 环大小	
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="kt">int</span>			<span class="n">current</span><span class="p">;</span>                    <span class="c1">// 数组的遍历当前位置
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="kt">bool</span>		<span class="n">current_was_in_ring</span><span class="p">;</span>        <span class="c1">// 数组当前位置的元素，有没有分配buffer
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// 这里使用数组来表示环，当元素的值为InvalidBuffer(也就是0)，表示还分配buffer给这个元素
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="n">Buffer</span>		<span class="n">buffers</span><span class="p">[</span><span class="n">FLEXIBLE_ARRAY_MEMBER</span><span class="p">];</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span> <span class="n">BufferAccessStrategyData</span><span class="p">;</span>
+</span></span></code></pre></td></tr></table></div>
 </div>
 </div><p>上面的<code>BufferAccessStrategyType</code>定义了哪种策略，定义如下</p>
 <div class="table-container"><table>
@@ -328,24 +328,24 @@
 </span><span class="lnt">17
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="k">typedef</span> <span class="k">struct</span>
-<span class="p">{</span>
-	<span class="n">slock_t</span>		<span class="n">buffer_strategy_lock</span><span class="p">;</span>      <span class="c1">// 自旋锁，用来保护下面的成员
-</span><span class="c1"></span>	<span class="n">pg_atomic_uint32</span> <span class="n">nextVictimBuffer</span><span class="p">;</span>     <span class="c1">// 下次遍历位置
-</span><span class="c1"></span>
-	<span class="kt">int</span>			<span class="n">firstFreeBuffer</span><span class="p">;</span>	     <span class="c1">// 空闲buffer链表的头部
-</span><span class="c1"></span>	<span class="kt">int</span>			<span class="n">lastFreeBuffer</span><span class="p">;</span>          <span class="c1">// 空闲buffer链表的尾部
-</span><span class="c1"></span>
-	<span class="n">uint32</span>		<span class="n">completePasses</span><span class="p">;</span> <span class="c1">// 记录遍历完数组的次数
-</span><span class="c1"></span>	<span class="n">pg_atomic_uint32</span> <span class="n">numBufferAllocs</span><span class="p">;</span>	<span class="cm">/* Buffers allocated since last reset */</span>
-
-	<span class="cm">/*
-</span><span class="cm">	 * Bgworker process to be notified upon activity or -1 if none. See
-</span><span class="cm">	 * StrategyNotifyBgWriter.
-</span><span class="cm">	 */</span>
-	<span class="kt">int</span>			<span class="n">bgwprocno</span><span class="p">;</span>
-<span class="p">}</span> <span class="n">BufferStrategyControl</span><span class="p">;</span>
-</code></pre></td></tr></table></div>
+<pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="line"><span class="cl"><span class="k">typedef</span> <span class="k">struct</span>
+</span></span><span class="line"><span class="cl"><span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="kt">slock_t</span>		<span class="n">buffer_strategy_lock</span><span class="p">;</span>      <span class="c1">// 自旋锁，用来保护下面的成员
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="n">pg_atomic_uint32</span> <span class="n">nextVictimBuffer</span><span class="p">;</span>     <span class="c1">// 下次遍历位置
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>
+</span></span><span class="line"><span class="cl">	<span class="kt">int</span>			<span class="n">firstFreeBuffer</span><span class="p">;</span>	     <span class="c1">// 空闲buffer链表的头部
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="kt">int</span>			<span class="n">lastFreeBuffer</span><span class="p">;</span>          <span class="c1">// 空闲buffer链表的尾部
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>
+</span></span><span class="line"><span class="cl">	<span class="n">uint32</span>		<span class="n">completePasses</span><span class="p">;</span> <span class="c1">// 记录遍历完数组的次数
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="n">pg_atomic_uint32</span> <span class="n">numBufferAllocs</span><span class="p">;</span>	<span class="cm">/* Buffers allocated since last reset */</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">	<span class="cm">/*
+</span></span></span><span class="line"><span class="cl"><span class="cm">	 * Bgworker process to be notified upon activity or -1 if none. See
+</span></span></span><span class="line"><span class="cl"><span class="cm">	 * StrategyNotifyBgWriter.
+</span></span></span><span class="line"><span class="cl"><span class="cm">	 */</span>
+</span></span><span class="line"><span class="cl">	<span class="kt">int</span>			<span class="n">bgwprocno</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span> <span class="n">BufferStrategyControl</span><span class="p">;</span>
+</span></span></code></pre></td></tr></table></div>
 </div>
 </div><p>每次从上次位置开始轮询，然后检查buffer 的引用次数 refcount 和访问次数 usagecount。</p>
 <ol>
@@ -387,12 +387,12 @@
 </span><span class="lnt">5
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="k">typedef</span> <span class="k">struct</span> <span class="n">PrivateRefCountEntry</span>
-<span class="p">{</span>
-	<span class="n">Buffer</span>		<span class="n">buffer</span><span class="p">;</span>  <span class="c1">// 类型为int，等于buffer_id
-</span><span class="c1"></span>	<span class="n">int32</span>		<span class="n">refcount</span><span class="p">;</span>  <span class="c1">// 引用计数器
-</span><span class="c1"></span><span class="p">}</span> <span class="n">PrivateRefCountEntry</span><span class="p">;</span>
-</code></pre></td></tr></table></div>
+<pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="line"><span class="cl"><span class="k">typedef</span> <span class="k">struct</span> <span class="n">PrivateRefCountEntry</span>
+</span></span><span class="line"><span class="cl"><span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="n">Buffer</span>		<span class="n">buffer</span><span class="p">;</span>  <span class="c1">// 类型为int，等于buffer_id
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="n">int32</span>		<span class="n">refcount</span><span class="p">;</span>  <span class="c1">// 引用计数器
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="p">}</span> <span class="n">PrivateRefCountEntry</span><span class="p">;</span>
+</span></span></code></pre></td></tr></table></div>
 </div>
 </div><p>为了快速找到指定buffer的引用计数，postgresql 提供了一个数组作为一级缓存，使用哈希表作为二级缓存。这个数组的长度为8，每个元素占有 8byte，选择数字8，刚好等于64byte，这个长度与CPU的缓存大小刚好相关。</p>
 <div class="highlight"><div class="chroma">
@@ -406,14 +406,14 @@
 </span><span class="lnt">7
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="cp">#define REFCOUNT_ARRAY_ENTRIES 8
-</span><span class="cp"></span><span class="k">static</span> <span class="k">struct</span> <span class="n">PrivateRefCountEntry</span> <span class="n">PrivateRefCountArray</span><span class="p">[</span><span class="n">REFCOUNT_ARRAY_ENTRIES</span><span class="p">];</span>  <span class="c1">// 数组
-</span><span class="c1"></span><span class="k">static</span> <span class="n">PrivateRefCountEntry</span> <span class="o">*</span> <span class="n">ReservedRefCountEntry</span> <span class="o">=</span> <span class="nb">NULL</span><span class="p">;</span>   <span class="c1">// 指向数组中空余的位置
-</span><span class="c1"></span>
-
-<span class="k">static</span> <span class="n">HTAB</span> <span class="o">*</span><span class="n">PrivateRefCountHash</span> <span class="o">=</span> <span class="nb">NULL</span><span class="p">;</span>  <span class="c1">// 哈希表，key为buffer_id，value为引用次数
-</span><span class="c1"></span><span class="k">static</span> <span class="n">int32</span> <span class="n">PrivateRefCountOverflowed</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>  <span class="c1">// 哈希表包含entry的数目
-</span></code></pre></td></tr></table></div>
+<pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="line"><span class="cl"><span class="cp">#define REFCOUNT_ARRAY_ENTRIES 8
+</span></span></span><span class="line"><span class="cl"><span class="cp"></span><span class="k">static</span> <span class="k">struct</span> <span class="n">PrivateRefCountEntry</span> <span class="n">PrivateRefCountArray</span><span class="p">[</span><span class="n">REFCOUNT_ARRAY_ENTRIES</span><span class="p">];</span>  <span class="c1">// 数组
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="k">static</span> <span class="n">PrivateRefCountEntry</span> <span class="o">*</span> <span class="n">ReservedRefCountEntry</span> <span class="o">=</span> <span class="nb">NULL</span><span class="p">;</span>   <span class="c1">// 指向数组中空余的位置
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="k">static</span> <span class="n">HTAB</span> <span class="o">*</span><span class="n">PrivateRefCountHash</span> <span class="o">=</span> <span class="nb">NULL</span><span class="p">;</span>  <span class="c1">// 哈希表，key为buffer_id，value为引用次数
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="k">static</span> <span class="n">int32</span> <span class="n">PrivateRefCountOverflowed</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>  <span class="c1">// 哈希表包含entry的数目
+</span></span></span></code></pre></td></tr></table></div>
 </div>
 </div><h3 id="使用示例"><a href="#使用示例" class="anchor-link"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon anchor-icon"><path d="M326.612 185.391c59.747 59.809 58.927 155.698.36 214.59-.11.12-.24.25-.36.37l-67.2 67.2c-59.27 59.27-155.699 59.262-214.96 0-59.27-59.26-59.27-155.7 0-214.96l37.106-37.106c9.84-9.84 26.786-3.3 27.294 10.606.648 17.722 3.826 35.527 9.69 52.721 1.986 5.822.567 12.262-3.783 16.612l-13.087 13.087c-28.026 28.026-28.905 73.66-1.155 101.96 28.024 28.579 74.086 28.749 102.325.51l67.2-67.19c28.191-28.191 28.073-73.757 0-101.83-3.701-3.694-7.429-6.564-10.341-8.569a16.037 16.037 0 0 1-6.947-12.606c-.396-10.567 3.348-21.456 11.698-29.806l21.054-21.055c5.521-5.521 14.182-6.199 20.584-1.731a152.482 152.482 0 0 1 20.522 17.197zM467.547 44.449c-59.261-59.262-155.69-59.27-214.96 0l-67.2 67.2c-.12.12-.25.25-.36.37-58.566 58.892-59.387 154.781.36 214.59a152.454 152.454 0 0 0 20.521 17.196c6.402 4.468 15.064 3.789 20.584-1.731l21.054-21.055c8.35-8.35 12.094-19.239 11.698-29.806a16.037 16.037 0 0 0-6.947-12.606c-2.912-2.005-6.64-4.875-10.341-8.569-28.073-28.073-28.191-73.639 0-101.83l67.2-67.19c28.239-28.239 74.3-28.069 102.325.51 27.75 28.3 26.872 73.934-1.155 101.96l-13.087 13.087c-4.35 4.35-5.769 10.79-3.783 16.612 5.864 17.194 9.042 34.999 9.69 52.721.509 13.906 17.454 20.446 27.294 10.606l37.106-37.106c59.271-59.259 59.271-155.699.001-214.959z"/></svg></a>使用示例</h3>
 <p>下面列举了常用的函数：</p>
@@ -437,23 +437,23 @@
 </span><span class="lnt">16
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="c1">// 寻找顺组中的空闲位置，如果没有找到，那么就将数组挑选出一个，将其转移到哈希表中
-</span><span class="c1">// 挑选策略采用了轮询
-</span><span class="c1"></span><span class="k">static</span> <span class="kt">void</span> <span class="nf">ReservePrivateRefCountEntry</span><span class="p">(</span><span class="kt">void</span><span class="p">);</span>
-
-<span class="c1">// 将buffer添加到数组空闲位置
-</span><span class="c1"></span><span class="k">static</span> <span class="n">PrivateRefCountEntry</span><span class="o">*</span> <span class="nf">NewPrivateRefCountEntry</span><span class="p">(</span><span class="n">Buffer</span> <span class="n">buffer</span><span class="p">);</span>
-
-<span class="c1">// 寻找指定buffer对应的PrivateRefCountEntry，
-</span><span class="c1">// 参数do_move为true时，表示当数据在哈希表里，需要将其转移到数组
-</span><span class="c1"></span><span class="k">static</span> <span class="n">PrivateRefCountEntry</span><span class="o">*</span> <span class="nf">GetPrivateRefCountEntry</span><span class="p">(</span><span class="n">Buffer</span> <span class="n">buffer</span><span class="p">,</span> <span class="kt">bool</span> <span class="n">do_move</span><span class="p">);</span>
-
-<span class="c1">// 返回引用次数，这里调用了GetPrivateRefCountEntry方法
-</span><span class="c1"></span><span class="k">static</span> <span class="kr">inline</span> <span class="n">int32</span> <span class="nf">GetPrivateRefCount</span><span class="p">(</span><span class="n">Buffer</span> <span class="n">buffer</span><span class="p">);</span>
-
-<span class="c1">// 释放PrivateRefCountEntry，通过比较数组的内存起始位置和结束位置，可以很快判断出是否在数组中
-</span><span class="c1"></span><span class="k">static</span> <span class="kt">void</span> <span class="nf">ForgetPrivateRefCountEntry</span><span class="p">(</span><span class="n">PrivateRefCountEntry</span> <span class="o">*</span><span class="n">ref</span><span class="p">);</span>
-</code></pre></td></tr></table></div>
+<pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="line"><span class="cl"><span class="c1">// 寻找顺组中的空闲位置，如果没有找到，那么就将数组挑选出一个，将其转移到哈希表中
+</span></span></span><span class="line"><span class="cl"><span class="c1">// 挑选策略采用了轮询
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="k">static</span> <span class="kt">void</span> <span class="nf">ReservePrivateRefCountEntry</span><span class="p">(</span><span class="kt">void</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1">// 将buffer添加到数组空闲位置
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="k">static</span> <span class="n">PrivateRefCountEntry</span><span class="o">*</span> <span class="nf">NewPrivateRefCountEntry</span><span class="p">(</span><span class="n">Buffer</span> <span class="n">buffer</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1">// 寻找指定buffer对应的PrivateRefCountEntry，
+</span></span></span><span class="line"><span class="cl"><span class="c1">// 参数do_move为true时，表示当数据在哈希表里，需要将其转移到数组
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="k">static</span> <span class="n">PrivateRefCountEntry</span><span class="o">*</span> <span class="nf">GetPrivateRefCountEntry</span><span class="p">(</span><span class="n">Buffer</span> <span class="n">buffer</span><span class="p">,</span> <span class="kt">bool</span> <span class="n">do_move</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1">// 返回引用次数，这里调用了GetPrivateRefCountEntry方法
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="k">static</span> <span class="kr">inline</span> <span class="n">int32</span> <span class="nf">GetPrivateRefCount</span><span class="p">(</span><span class="n">Buffer</span> <span class="n">buffer</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1">// 释放PrivateRefCountEntry，通过比较数组的内存起始位置和结束位置，可以很快判断出是否在数组中
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="k">static</span> <span class="kt">void</span> <span class="nf">ForgetPrivateRefCountEntry</span><span class="p">(</span><span class="n">PrivateRefCountEntry</span> <span class="o">*</span><span class="n">ref</span><span class="p">);</span>
+</span></span></code></pre></td></tr></table></div>
 </div>
 </div><p>下面以新添加一个buffer的计数器为例：</p>
 <div class="highlight"><div class="chroma">
@@ -464,11 +464,11 @@
 </span><span class="lnt">4
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="n">Buffer</span> <span class="n">buffer</span><span class="p">;</span>  <span class="c1">// 指定buffer
-</span><span class="c1"></span><span class="n">ReservePrivateRefCountEntry</span><span class="p">();</span>   <span class="c1">// 保证数组有一个空闲位置
-</span><span class="c1"></span><span class="n">ref</span> <span class="o">=</span> <span class="n">NewPrivateRefCountEntry</span><span class="p">(</span><span class="n">buffer</span><span class="p">);</span>  <span class="c1">// 为buffer创建计数器
-</span><span class="c1"></span><span class="n">ref</span><span class="o">-&gt;</span><span class="n">refcount</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span> <span class="c1">// 设置引用次数
-</span></code></pre></td></tr></table></div>
+<pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="line"><span class="cl"><span class="n">Buffer</span> <span class="n">buffer</span><span class="p">;</span>  <span class="c1">// 指定buffer
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="nf">ReservePrivateRefCountEntry</span><span class="p">();</span>   <span class="c1">// 保证数组有一个空闲位置
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="n">ref</span> <span class="o">=</span> <span class="nf">NewPrivateRefCountEntry</span><span class="p">(</span><span class="n">buffer</span><span class="p">);</span>  <span class="c1">// 为buffer创建计数器
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="n">ref</span><span class="o">-&gt;</span><span class="n">refcount</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span> <span class="c1">// 设置引用次数
+</span></span></span></code></pre></td></tr></table></div>
 </div>
 </div><h2 id="修改引用次数"><a href="#修改引用次数" class="anchor-link"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon anchor-icon"><path d="M326.612 185.391c59.747 59.809 58.927 155.698.36 214.59-.11.12-.24.25-.36.37l-67.2 67.2c-59.27 59.27-155.699 59.262-214.96 0-59.27-59.26-59.27-155.7 0-214.96l37.106-37.106c9.84-9.84 26.786-3.3 27.294 10.606.648 17.722 3.826 35.527 9.69 52.721 1.986 5.822.567 12.262-3.783 16.612l-13.087 13.087c-28.026 28.026-28.905 73.66-1.155 101.96 28.024 28.579 74.086 28.749 102.325.51l67.2-67.19c28.191-28.191 28.073-73.757 0-101.83-3.701-3.694-7.429-6.564-10.341-8.569a16.037 16.037 0 0 1-6.947-12.606c-.396-10.567 3.348-21.456 11.698-29.806l21.054-21.055c5.521-5.521 14.182-6.199 20.584-1.731a152.482 152.482 0 0 1 20.522 17.197zM467.547 44.449c-59.261-59.262-155.69-59.27-214.96 0l-67.2 67.2c-.12.12-.25.25-.36.37-58.566 58.892-59.387 154.781.36 214.59a152.454 152.454 0 0 0 20.521 17.196c6.402 4.468 15.064 3.789 20.584-1.731l21.054-21.055c8.35-8.35 12.094-19.239 11.698-29.806a16.037 16.037 0 0 0-6.947-12.606c-2.912-2.005-6.64-4.875-10.341-8.569-28.073-28.073-28.191-73.639 0-101.83l67.2-67.19c28.239-28.239 74.3-28.069 102.325.51 27.75 28.3 26.872 73.934-1.155 101.96l-13.087 13.087c-4.35 4.35-5.769 10.79-3.783 16.612 5.864 17.194 9.042 34.999 9.69 52.721.509 13.906 17.454 20.446 27.294 10.606l37.106-37.106c59.271-59.259 59.271-155.699.001-214.959z"/></svg></a>修改引用次数</h2>
 <p>在增加或减少buffer的引用次数时，会涉及到 buffer头部的 state 字段，和引用计数的更新。</p>
@@ -482,13 +482,11 @@
 <div class="table-container"><table class="lntable"><tr><td class="lntd">
 <pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
-</span><span class="lnt">3
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="c1">// 增加引用次数，参数buf为指定的buffer，参数strategy指定了替换算法
-</span><span class="c1"></span><span class="k">static</span> <span class="kt">bool</span> <span class="nf">PinBuffer</span><span class="p">(</span><span class="n">BufferDesc</span> <span class="o">*</span><span class="n">buf</span><span class="p">,</span> <span class="n">BufferAccessStrategy</span> <span class="n">strategy</span><span class="p">);</span>
-
-</code></pre></td></tr></table></div>
+<pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="line"><span class="cl"><span class="c1">// 增加引用次数，参数buf为指定的buffer，参数strategy指定了替换算法
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="k">static</span> <span class="kt">bool</span> <span class="nf">PinBuffer</span><span class="p">(</span><span class="n">BufferDesc</span> <span class="o">*</span><span class="n">buf</span><span class="p">,</span> <span class="n">BufferAccessStrategy</span> <span class="n">strategy</span><span class="p">);</span>
+</span></span></code></pre></td></tr></table></div>
 </div>
 </div><h3 id="减少引用次数"><a href="#减少引用次数" class="anchor-link"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon anchor-icon"><path d="M326.612 185.391c59.747 59.809 58.927 155.698.36 214.59-.11.12-.24.25-.36.37l-67.2 67.2c-59.27 59.27-155.699 59.262-214.96 0-59.27-59.26-59.27-155.7 0-214.96l37.106-37.106c9.84-9.84 26.786-3.3 27.294 10.606.648 17.722 3.826 35.527 9.69 52.721 1.986 5.822.567 12.262-3.783 16.612l-13.087 13.087c-28.026 28.026-28.905 73.66-1.155 101.96 28.024 28.579 74.086 28.749 102.325.51l67.2-67.19c28.191-28.191 28.073-73.757 0-101.83-3.701-3.694-7.429-6.564-10.341-8.569a16.037 16.037 0 0 1-6.947-12.606c-.396-10.567 3.348-21.456 11.698-29.806l21.054-21.055c5.521-5.521 14.182-6.199 20.584-1.731a152.482 152.482 0 0 1 20.522 17.197zM467.547 44.449c-59.261-59.262-155.69-59.27-214.96 0l-67.2 67.2c-.12.12-.25.25-.36.37-58.566 58.892-59.387 154.781.36 214.59a152.454 152.454 0 0 0 20.521 17.196c6.402 4.468 15.064 3.789 20.584-1.731l21.054-21.055c8.35-8.35 12.094-19.239 11.698-29.806a16.037 16.037 0 0 0-6.947-12.606c-2.912-2.005-6.64-4.875-10.341-8.569-28.073-28.073-28.191-73.639 0-101.83l67.2-67.19c28.239-28.239 74.3-28.069 102.325.51 27.75 28.3 26.872 73.934-1.155 101.96l-13.087 13.087c-4.35 4.35-5.769 10.79-3.783 16.612 5.864 17.194 9.042 34.999 9.69 52.721.509 13.906 17.454 20.446 27.294 10.606l37.106-37.106c59.271-59.259 59.271-155.699.001-214.959z"/></svg></a>减少引用次数</h3>
 <p>在减少引用次数，先在引用计数器减少1，如果引用次数变为0，那么需要减少state字段的计数器，并且</p>
@@ -498,9 +496,9 @@
 </span><span class="lnt">2
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="c1">// 减少引用次数
-</span><span class="c1"></span><span class="k">static</span> <span class="kt">void</span> <span class="nf">UnpinBuffer</span><span class="p">(</span><span class="n">BufferDesc</span> <span class="o">*</span><span class="n">buf</span><span class="p">,</span> <span class="kt">bool</span> <span class="n">fixOwner</span><span class="p">);</span>
-</code></pre></td></tr></table></div>
+<pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="line"><span class="cl"><span class="c1">// 减少引用次数
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="k">static</span> <span class="kt">void</span> <span class="nf">UnpinBuffer</span><span class="p">(</span><span class="n">BufferDesc</span> <span class="o">*</span><span class="n">buf</span><span class="p">,</span> <span class="kt">bool</span> <span class="n">fixOwner</span><span class="p">);</span>
+</span></span></code></pre></td></tr></table></div>
 </div>
 </div>
             </div>
@@ -529,9 +527,9 @@
 
         
     <div class="updated-badge-container">
-        <span title="Updated @ 2021-10-22 14:44:34 CST" style="cursor:help">
+        <span title="Updated @ 2023-07-02 16:59:09 CST" style="cursor:help">
 
-<svg xmlns="http://www.w3.org/2000/svg" width="130" height="20" class="updated-badge"><linearGradient id="b" x2="0" y2="100%"><stop offset="0" stop-color="#bbb" stop-opacity=".1"/><stop offset="1" stop-opacity=".1"/></linearGradient><clipPath id="a"><rect width="130" height="20" rx="3" fill="#fff"/></clipPath><g clip-path="url(#a)"><path class="updated-badge-left" d="M0 0h55v20H0z"/><path class="updated-badge-right" d="M55 0h75v20H55z"/><path fill="url(#b)" d="M0 0h130v20H0z"/></g><g fill="#fff" text-anchor="middle" font-size="110"><text x="285" y="150" fill="#010101" fill-opacity=".3" textLength="450" transform="scale(.1)">updated</text><text x="285" y="140" textLength="450" transform="scale(.1)">updated</text><text x="915" y="150" fill="#010101" fill-opacity=".3" textLength="650" transform="scale(.1)">2021-10-22</text><text x="915" y="140" textLength="650" transform="scale(.1)">2021-10-22</text></g></svg>
+<svg xmlns="http://www.w3.org/2000/svg" width="130" height="20" class="updated-badge"><linearGradient id="b" x2="0" y2="100%"><stop offset="0" stop-color="#bbb" stop-opacity=".1"/><stop offset="1" stop-opacity=".1"/></linearGradient><clipPath id="a"><rect width="130" height="20" rx="3" fill="#fff"/></clipPath><g clip-path="url(#a)"><path class="updated-badge-left" d="M0 0h55v20H0z"/><path class="updated-badge-right" d="M55 0h75v20H55z"/><path fill="url(#b)" d="M0 0h130v20H0z"/></g><g fill="#fff" text-anchor="middle" font-size="110"><text x="285" y="150" fill="#010101" fill-opacity=".3" textLength="450" transform="scale(.1)">updated</text><text x="285" y="140" textLength="450" transform="scale(.1)">updated</text><text x="915" y="150" fill="#010101" fill-opacity=".3" textLength="650" transform="scale(.1)">2023-07-02</text><text x="915" y="140" textLength="650" transform="scale(.1)">2023-07-02</text></g></svg>
         </span></div>
 
 

@@ -3,7 +3,7 @@
     <head prefix="og: http://ogp.me/ns# article: http://ogp.me/ns/article#">
     <meta charset="UTF-8" />
 
-    <meta name="generator" content="Hugo 0.88.1" /><meta name="theme-color" content="#fff" />
+    <meta name="generator" content="Hugo 0.115.0"><meta name="theme-color" content="#fff" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     
     <meta name="format-detection" content="telephone=no, date=no, address=no, email=no" />
@@ -14,11 +14,11 @@
 
     <title>Curator 框架介绍 | 学习笔记</title>
 
-    <link rel="stylesheet" href="/css/meme.min.2d3e1834af2bc8dda20c7d74aaa1d8134845094441b7a554a5206ccd4b472596.css"/>
+    <link rel="stylesheet" href="/css/meme.min.91e7f58f97e1c60563ef481c38d9684fa8099537801d6f17bbfc724121e7d8f1.css"/>
 
     
     
-        <script src="/js/meme.min.800f61672145711eb3e1f29fcfcc3dbe0139dd459259718b611a0390f74703d1.js"></script>
+        <script src="/js/meme.min.3210a00c2fdcf6f831170b681b8ee40f83f0224663661e986872616aec45407f.js"></script>
 
     
 
@@ -54,7 +54,7 @@
         "@context": "https://schema.org",
         "@type": "BlogPosting",
         "datePublished": "2019-09-02T19:56:26+00:00",
-        "dateModified": "2021-10-22T14:44:34+08:00",
+        "dateModified": "2023-07-02T16:59:09+08:00",
         "url": "https://zhmin.github.io/posts/zookeeper-curator/",
         "headline": "Curator 框架介绍",
         "description": "前言 zookeeper 的原生客户端使用起来比较繁琐，一般生成环境很少使用。curator 在外面封装了一层，使用起来更加方便，并且还提供了常用的场景，比如 leader 选举，分布式锁，分布式队列。本篇博客会首先介绍 curator 的基本使用，然……",
@@ -98,7 +98,7 @@
 <meta property="og:locale" content="zh" /><meta property="og:image" content="https://zhmin.github.io/curator-distributed-lock.svg" />
 <meta property="og:type" content="article" />
     <meta property="article:published_time" content="2019-09-02T19:56:26&#43;00:00" />
-    <meta property="article:modified_time" content="2021-10-22T14:44:34&#43;08:00" />
+    <meta property="article:modified_time" content="2023-07-02T16:59:09&#43;08:00" />
     
     <meta property="article:section" content="posts" />
 
@@ -249,11 +249,11 @@
 </span><span class="lnt">4
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">static</span> <span class="kt">void</span> <span class="nf">createEphemeral</span><span class="o">(</span><span class="n">CuratorFramework</span> <span class="n">client</span><span class="o">,</span> <span class="n">String</span> <span class="n">path</span><span class="o">,</span> <span class="kt">byte</span><span class="o">[]</span> <span class="n">payload</span><span class="o">)</span> <span class="kd">throws</span> <span class="n">Exception</span> <span class="o">{</span>
-    <span class="c1">// builder都需要调用client接口实例化，这里创建了一个临时节点，路径为path，节点数据为payload
-</span><span class="c1"></span>    <span class="n">client</span><span class="o">.</span><span class="na">create</span><span class="o">().</span><span class="na">withMode</span><span class="o">(</span><span class="n">CreateMode</span><span class="o">.</span><span class="na">EPHEMERAL</span><span class="o">).</span><span class="na">forPath</span><span class="o">(</span><span class="n">path</span><span class="o">,</span> <span class="n">payload</span><span class="o">);</span>
-<span class="o">}</span>
-</code></pre></td></tr></table></div>
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="kd">public</span> <span class="kd">static</span> <span class="kt">void</span> <span class="nf">createEphemeral</span><span class="o">(</span><span class="n">CuratorFramework</span> <span class="n">client</span><span class="o">,</span> <span class="n">String</span> <span class="n">path</span><span class="o">,</span> <span class="kt">byte</span><span class="o">[]</span> <span class="n">payload</span><span class="o">)</span> <span class="kd">throws</span> <span class="n">Exception</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// builder都需要调用client接口实例化，这里创建了一个临时节点，路径为path，节点数据为payload
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="n">client</span><span class="o">.</span><span class="na">create</span><span class="o">().</span><span class="na">withMode</span><span class="o">(</span><span class="n">CreateMode</span><span class="o">.</span><span class="na">EPHEMERAL</span><span class="o">).</span><span class="na">forPath</span><span class="o">(</span><span class="n">path</span><span class="o">,</span> <span class="n">payload</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl"><span class="o">}</span>
+</span></span></code></pre></td></tr></table></div>
 </div>
 </div><h3 id="异步回调封装"><a href="#异步回调封装" class="anchor-link"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon anchor-icon"><path d="M326.612 185.391c59.747 59.809 58.927 155.698.36 214.59-.11.12-.24.25-.36.37l-67.2 67.2c-59.27 59.27-155.699 59.262-214.96 0-59.27-59.26-59.27-155.7 0-214.96l37.106-37.106c9.84-9.84 26.786-3.3 27.294 10.606.648 17.722 3.826 35.527 9.69 52.721 1.986 5.822.567 12.262-3.783 16.612l-13.087 13.087c-28.026 28.026-28.905 73.66-1.155 101.96 28.024 28.579 74.086 28.749 102.325.51l67.2-67.19c28.191-28.191 28.073-73.757 0-101.83-3.701-3.694-7.429-6.564-10.341-8.569a16.037 16.037 0 0 1-6.947-12.606c-.396-10.567 3.348-21.456 11.698-29.806l21.054-21.055c5.521-5.521 14.182-6.199 20.584-1.731a152.482 152.482 0 0 1 20.522 17.197zM467.547 44.449c-59.261-59.262-155.69-59.27-214.96 0l-67.2 67.2c-.12.12-.25.25-.36.37-58.566 58.892-59.387 154.781.36 214.59a152.454 152.454 0 0 0 20.521 17.196c6.402 4.468 15.064 3.789 20.584-1.731l21.054-21.055c8.35-8.35 12.094-19.239 11.698-29.806a16.037 16.037 0 0 0-6.947-12.606c-2.912-2.005-6.64-4.875-10.341-8.569-28.073-28.073-28.191-73.639 0-101.83l67.2-67.19c28.239-28.239 74.3-28.069 102.325.51 27.75 28.3 26.872 73.934-1.155 101.96l-13.087 13.087c-4.35 4.35-5.769 10.79-3.783 16.612 5.864 17.194 9.042 34.999 9.69 52.721.509 13.906 17.454 20.446 27.294 10.606l37.106-37.106c59.271-59.259 59.271-155.699.001-214.959z"/></svg></a>异步回调封装</h3>
 <p>原生的 zookeeper 客户端，同样支持异步请求，但是对于每种请求，都有着不同类型的回调函数，比如。而 curator 则统一了这些回调函数，使用起来更加方便。用户只需要实现 BackgroundCallback 接口就行，参数 CuratorEvent 统一封装了不同类型的响应。</p>
@@ -265,11 +265,11 @@
 </span><span class="lnt">4
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">interface</span> <span class="nc">BackgroundCallback</span>
-<span class="o">{</span>
-    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">processResult</span><span class="o">(</span><span class="n">CuratorFramework</span> <span class="n">client</span><span class="o">,</span> <span class="n">CuratorEvent</span> <span class="n">event</span><span class="o">)</span> <span class="kd">throws</span> <span class="n">Exception</span><span class="o">;</span>
-<span class="o">}</span>
-</code></pre></td></tr></table></div>
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="kd">public</span> <span class="kd">interface</span> <span class="nc">BackgroundCallback</span>
+</span></span><span class="line"><span class="cl"><span class="o">{</span>
+</span></span><span class="line"><span class="cl">    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">processResult</span><span class="o">(</span><span class="n">CuratorFramework</span> <span class="n">client</span><span class="o">,</span> <span class="n">CuratorEvent</span> <span class="n">event</span><span class="o">)</span> <span class="kd">throws</span> <span class="n">Exception</span><span class="o">;</span>
+</span></span><span class="line"><span class="cl"><span class="o">}</span>
+</span></span></code></pre></td></tr></table></div>
 </div>
 </div><p>当使用异步请求时，请求都会被添加到 CuratorFrameworkImpl 的一个队列里，它有一个后台线程，负责发送这些请求。它的本质任然时调用了原生 zookeeper 客户端的异步通信，这些函数回调的执行是由原生 zookeeper 客户端的后台线程里。</p>
 <h3 id="重试策略"><a href="#重试策略" class="anchor-link"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon anchor-icon"><path d="M326.612 185.391c59.747 59.809 58.927 155.698.36 214.59-.11.12-.24.25-.36.37l-67.2 67.2c-59.27 59.27-155.699 59.262-214.96 0-59.27-59.26-59.27-155.7 0-214.96l37.106-37.106c9.84-9.84 26.786-3.3 27.294 10.606.648 17.722 3.826 35.527 9.69 52.721 1.986 5.822.567 12.262-3.783 16.612l-13.087 13.087c-28.026 28.026-28.905 73.66-1.155 101.96 28.024 28.579 74.086 28.749 102.325.51l67.2-67.19c28.191-28.191 28.073-73.757 0-101.83-3.701-3.694-7.429-6.564-10.341-8.569a16.037 16.037 0 0 1-6.947-12.606c-.396-10.567 3.348-21.456 11.698-29.806l21.054-21.055c5.521-5.521 14.182-6.199 20.584-1.731a152.482 152.482 0 0 1 20.522 17.197zM467.547 44.449c-59.261-59.262-155.69-59.27-214.96 0l-67.2 67.2c-.12.12-.25.25-.36.37-58.566 58.892-59.387 154.781.36 214.59a152.454 152.454 0 0 0 20.521 17.196c6.402 4.468 15.064 3.789 20.584-1.731l21.054-21.055c8.35-8.35 12.094-19.239 11.698-29.806a16.037 16.037 0 0 0-6.947-12.606c-2.912-2.005-6.64-4.875-10.341-8.569-28.073-28.073-28.191-73.639 0-101.83l67.2-67.19c28.239-28.239 74.3-28.069 102.325.51 27.75 28.3 26.872 73.934-1.155 101.96l-13.087 13.087c-4.35 4.35-5.769 10.79-3.783 16.612 5.864 17.194 9.042 34.999 9.69 52.721.509 13.906 17.454 20.446 27.294 10.606l37.106-37.106c59.271-59.259 59.271-155.699.001-214.959z"/></svg></a>重试策略</h3>
@@ -334,18 +334,18 @@
 </span><span class="lnt">11
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="o">[</span>zk: localhost:2181<span class="o">(</span>CONNECTED<span class="o">)</span> 35<span class="o">]</span> create  /sequence
-<span class="o">[</span>zk: localhost:2181<span class="o">(</span>CONNECTED<span class="o">)</span> 35<span class="o">]</span> create  /sequence
-Created /sequence
-<span class="o">[</span>zk: localhost:2181<span class="o">(</span>CONNECTED<span class="o">)</span> 36<span class="o">]</span> create -s /sequence/number-
-Created /sequence/number-0000000000
-<span class="o">[</span>zk: localhost:2181<span class="o">(</span>CONNECTED<span class="o">)</span> 37<span class="o">]</span> create -s /sequence/number-
-Created /sequence/number-0000000001
-<span class="o">[</span>zk: localhost:2181<span class="o">(</span>CONNECTED<span class="o">)</span> 38<span class="o">]</span> create -s /sequence/number-
-Created /sequence/number-0000000002
-<span class="o">[</span>zk: localhost:2181<span class="o">(</span>CONNECTED<span class="o">)</span> 39<span class="o">]</span> ls /sequence
-<span class="o">[</span>number-0000000000, number-0000000001, number-0000000002<span class="o">]</span>
-</code></pre></td></tr></table></div>
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl"><span class="o">[</span>zk: localhost:2181<span class="o">(</span>CONNECTED<span class="o">)</span> 35<span class="o">]</span> create  /sequence
+</span></span><span class="line"><span class="cl"><span class="o">[</span>zk: localhost:2181<span class="o">(</span>CONNECTED<span class="o">)</span> 35<span class="o">]</span> create  /sequence
+</span></span><span class="line"><span class="cl">Created /sequence
+</span></span><span class="line"><span class="cl"><span class="o">[</span>zk: localhost:2181<span class="o">(</span>CONNECTED<span class="o">)</span> 36<span class="o">]</span> create -s /sequence/number-
+</span></span><span class="line"><span class="cl">Created /sequence/number-0000000000
+</span></span><span class="line"><span class="cl"><span class="o">[</span>zk: localhost:2181<span class="o">(</span>CONNECTED<span class="o">)</span> 37<span class="o">]</span> create -s /sequence/number-
+</span></span><span class="line"><span class="cl">Created /sequence/number-0000000001
+</span></span><span class="line"><span class="cl"><span class="o">[</span>zk: localhost:2181<span class="o">(</span>CONNECTED<span class="o">)</span> 38<span class="o">]</span> create -s /sequence/number-
+</span></span><span class="line"><span class="cl">Created /sequence/number-0000000002
+</span></span><span class="line"><span class="cl"><span class="o">[</span>zk: localhost:2181<span class="o">(</span>CONNECTED<span class="o">)</span> 39<span class="o">]</span> ls /sequence
+</span></span><span class="line"><span class="cl"><span class="o">[</span>number-0000000000, number-0000000001, number-0000000002<span class="o">]</span>
+</span></span></code></pre></td></tr></table></div>
 </div>
 </div><p>可以看到 /sequence 的子节点，因为指定了 sequence，所以路径后面都自动填充了数字。这里需要强调下，填充的数字是唯一递增的，是 zookeeper 所有节点共享的，不与特定的路径绑定。比如下面：</p>
 <div class="highlight"><div class="chroma">
@@ -354,9 +354,9 @@ Created /sequence/number-0000000002
 </span><span class="lnt">2
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="o">[</span>zk: localhost:2181<span class="o">(</span>CONNECTED<span class="o">)</span> 1<span class="o">]</span> create -s /other-
-Created /other-0000000003
-</code></pre></td></tr></table></div>
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl"><span class="o">[</span>zk: localhost:2181<span class="o">(</span>CONNECTED<span class="o">)</span> 1<span class="o">]</span> create -s /other-
+</span></span><span class="line"><span class="cl">Created /other-0000000003
+</span></span></code></pre></td></tr></table></div>
 </div>
 </div><h2 id="分布式锁"><a href="#分布式锁" class="anchor-link"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon anchor-icon"><path d="M326.612 185.391c59.747 59.809 58.927 155.698.36 214.59-.11.12-.24.25-.36.37l-67.2 67.2c-59.27 59.27-155.699 59.262-214.96 0-59.27-59.26-59.27-155.7 0-214.96l37.106-37.106c9.84-9.84 26.786-3.3 27.294 10.606.648 17.722 3.826 35.527 9.69 52.721 1.986 5.822.567 12.262-3.783 16.612l-13.087 13.087c-28.026 28.026-28.905 73.66-1.155 101.96 28.024 28.579 74.086 28.749 102.325.51l67.2-67.19c28.191-28.191 28.073-73.757 0-101.83-3.701-3.694-7.429-6.564-10.341-8.569a16.037 16.037 0 0 1-6.947-12.606c-.396-10.567 3.348-21.456 11.698-29.806l21.054-21.055c5.521-5.521 14.182-6.199 20.584-1.731a152.482 152.482 0 0 1 20.522 17.197zM467.547 44.449c-59.261-59.262-155.69-59.27-214.96 0l-67.2 67.2c-.12.12-.25.25-.36.37-58.566 58.892-59.387 154.781.36 214.59a152.454 152.454 0 0 0 20.521 17.196c6.402 4.468 15.064 3.789 20.584-1.731l21.054-21.055c8.35-8.35 12.094-19.239 11.698-29.806a16.037 16.037 0 0 0-6.947-12.606c-2.912-2.005-6.64-4.875-10.341-8.569-28.073-28.073-28.191-73.639 0-101.83l67.2-67.19c28.239-28.239 74.3-28.069 102.325.51 27.75 28.3 26.872 73.934-1.155 101.96l-13.087 13.087c-4.35 4.35-5.769 10.79-3.783 16.612 5.864 17.194 9.042 34.999 9.69 52.721.509 13.906 17.454 20.446 27.294 10.606l37.106-37.106c59.271-59.259 59.271-155.699.001-214.959z"/></svg></a>分布式锁</h2>
 <h3 id="互斥锁"><a href="#互斥锁" class="anchor-link"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon anchor-icon"><path d="M326.612 185.391c59.747 59.809 58.927 155.698.36 214.59-.11.12-.24.25-.36.37l-67.2 67.2c-59.27 59.27-155.699 59.262-214.96 0-59.27-59.26-59.27-155.7 0-214.96l37.106-37.106c9.84-9.84 26.786-3.3 27.294 10.606.648 17.722 3.826 35.527 9.69 52.721 1.986 5.822.567 12.262-3.783 16.612l-13.087 13.087c-28.026 28.026-28.905 73.66-1.155 101.96 28.024 28.579 74.086 28.749 102.325.51l67.2-67.19c28.191-28.191 28.073-73.757 0-101.83-3.701-3.694-7.429-6.564-10.341-8.569a16.037 16.037 0 0 1-6.947-12.606c-.396-10.567 3.348-21.456 11.698-29.806l21.054-21.055c5.521-5.521 14.182-6.199 20.584-1.731a152.482 152.482 0 0 1 20.522 17.197zM467.547 44.449c-59.261-59.262-155.69-59.27-214.96 0l-67.2 67.2c-.12.12-.25.25-.36.37-58.566 58.892-59.387 154.781.36 214.59a152.454 152.454 0 0 0 20.521 17.196c6.402 4.468 15.064 3.789 20.584-1.731l21.054-21.055c8.35-8.35 12.094-19.239 11.698-29.806a16.037 16.037 0 0 0-6.947-12.606c-2.912-2.005-6.64-4.875-10.341-8.569-28.073-28.073-28.191-73.639 0-101.83l67.2-67.19c28.239-28.239 74.3-28.069 102.325.51 27.75 28.3 26.872 73.934-1.155 101.96l-13.087 13.087c-4.35 4.35-5.769 10.79-3.783 16.612 5.864 17.194 9.042 34.999 9.69 52.721.509 13.906 17.454 20.446 27.294 10.606l37.106-37.106c59.271-59.259 59.271-155.699.001-214.959z"/></svg></a>互斥锁</h3>
@@ -400,15 +400,15 @@ Created /other-0000000003
 </span><span class="lnt">8
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">interface</span> <span class="nc">LeaderLatchListener</span>
-<span class="o">{</span>
-  <span class="c1">// 当角色从follower转为leader，会执行此方法
-</span><span class="c1"></span>  <span class="kd">public</span> <span class="kt">void</span> <span class="nf">isLeader</span><span class="o">();</span>
-
-  <span class="c1">// 当角色从leader转为follower，会执行此方法
-</span><span class="c1"></span>  <span class="kd">public</span> <span class="kt">void</span> <span class="nf">notLeader</span><span class="o">();</span>
-<span class="o">}</span>
-</code></pre></td></tr></table></div>
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="kd">public</span> <span class="kd">interface</span> <span class="nc">LeaderLatchListener</span>
+</span></span><span class="line"><span class="cl"><span class="o">{</span>
+</span></span><span class="line"><span class="cl">  <span class="c1">// 当角色从follower转为leader，会执行此方法
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="kd">public</span> <span class="kt">void</span> <span class="nf">isLeader</span><span class="o">();</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="c1">// 当角色从leader转为follower，会执行此方法
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="kd">public</span> <span class="kt">void</span> <span class="nf">notLeader</span><span class="o">();</span>
+</span></span><span class="line"><span class="cl"><span class="o">}</span>
+</span></span></code></pre></td></tr></table></div>
 </div>
 </div><p>它的原理和互斥锁比较类似，就不再详细介绍了。 LeaderLatch 选举依靠递增序列号来实现的，所以它的选举顺序是先来先到。当参与者从 leader 变换 follower 之后，就不再参与之后的选举。</p>
 <h3 id="leaderselector"><a href="#leaderselector" class="anchor-link"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon anchor-icon"><path d="M326.612 185.391c59.747 59.809 58.927 155.698.36 214.59-.11.12-.24.25-.36.37l-67.2 67.2c-59.27 59.27-155.699 59.262-214.96 0-59.27-59.26-59.27-155.7 0-214.96l37.106-37.106c9.84-9.84 26.786-3.3 27.294 10.606.648 17.722 3.826 35.527 9.69 52.721 1.986 5.822.567 12.262-3.783 16.612l-13.087 13.087c-28.026 28.026-28.905 73.66-1.155 101.96 28.024 28.579 74.086 28.749 102.325.51l67.2-67.19c28.191-28.191 28.073-73.757 0-101.83-3.701-3.694-7.429-6.564-10.341-8.569a16.037 16.037 0 0 1-6.947-12.606c-.396-10.567 3.348-21.456 11.698-29.806l21.054-21.055c5.521-5.521 14.182-6.199 20.584-1.731a152.482 152.482 0 0 1 20.522 17.197zM467.547 44.449c-59.261-59.262-155.69-59.27-214.96 0l-67.2 67.2c-.12.12-.25.25-.36.37-58.566 58.892-59.387 154.781.36 214.59a152.454 152.454 0 0 0 20.521 17.196c6.402 4.468 15.064 3.789 20.584-1.731l21.054-21.055c8.35-8.35 12.094-19.239 11.698-29.806a16.037 16.037 0 0 0-6.947-12.606c-2.912-2.005-6.64-4.875-10.341-8.569-28.073-28.073-28.191-73.639 0-101.83l67.2-67.19c28.239-28.239 74.3-28.069 102.325.51 27.75 28.3 26.872 73.934-1.155 101.96l-13.087 13.087c-4.35 4.35-5.769 10.79-3.783 16.612 5.864 17.194 9.042 34.999 9.69 52.721.509 13.906 17.454 20.446 27.294 10.606l37.106-37.106c59.271-59.259 59.271-155.699.001-214.959z"/></svg></a>LeaderSelector</h3>
@@ -423,13 +423,13 @@ Created /other-0000000003
 </span><span class="lnt">6
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">interface</span> <span class="nc">LeaderSelectorListener</span> <span class="kd">extends</span> <span class="n">ConnectionStateListener</span>
-<span class="o">{</span>
-    <span class="c1">// 当称为leader角色后，会执行此函数
-</span><span class="c1"></span>    <span class="c1">// 注意函数退出时，会自动变成follower角色
-</span><span class="c1"></span>    <span class="kd">public</span> <span class="kt">void</span>         <span class="nf">takeLeadership</span><span class="o">(</span><span class="n">CuratorFramework</span> <span class="n">client</span><span class="o">)</span> <span class="kd">throws</span> <span class="n">Exception</span><span class="o">;</span>
-<span class="o">}</span>
-</code></pre></td></tr></table></div>
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="kd">public</span> <span class="kd">interface</span> <span class="nc">LeaderSelectorListener</span> <span class="kd">extends</span> <span class="n">ConnectionStateListener</span>
+</span></span><span class="line"><span class="cl"><span class="o">{</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// 当称为leader角色后，会执行此函数
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="c1">// 注意函数退出时，会自动变成follower角色
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="kd">public</span> <span class="kt">void</span>         <span class="nf">takeLeadership</span><span class="o">(</span><span class="n">CuratorFramework</span> <span class="n">client</span><span class="o">)</span> <span class="kd">throws</span> <span class="n">Exception</span><span class="o">;</span>
+</span></span><span class="line"><span class="cl"><span class="o">}</span>
+</span></span></code></pre></td></tr></table></div>
 </div>
 </div><p>LeaderSelector 选举使用了分布式锁 InterProcessMutex，设置它的锁并发数为1，这样就限制了同一时刻只有一个线程可以获取锁。当获取锁成功时，它就成为了 leader 角色。</p>
 <p>当参与者从 leader 角色变为 follower 后，如果指定了 autoRequeue 属性，那么它会自动重新参与之后的选举。</p>
@@ -473,9 +473,9 @@ Created /other-0000000003
 
         
     <div class="updated-badge-container">
-        <span title="Updated @ 2021-10-22 14:44:34 CST" style="cursor:help">
+        <span title="Updated @ 2023-07-02 16:59:09 CST" style="cursor:help">
 
-<svg xmlns="http://www.w3.org/2000/svg" width="130" height="20" class="updated-badge"><linearGradient id="b" x2="0" y2="100%"><stop offset="0" stop-color="#bbb" stop-opacity=".1"/><stop offset="1" stop-opacity=".1"/></linearGradient><clipPath id="a"><rect width="130" height="20" rx="3" fill="#fff"/></clipPath><g clip-path="url(#a)"><path class="updated-badge-left" d="M0 0h55v20H0z"/><path class="updated-badge-right" d="M55 0h75v20H55z"/><path fill="url(#b)" d="M0 0h130v20H0z"/></g><g fill="#fff" text-anchor="middle" font-size="110"><text x="285" y="150" fill="#010101" fill-opacity=".3" textLength="450" transform="scale(.1)">updated</text><text x="285" y="140" textLength="450" transform="scale(.1)">updated</text><text x="915" y="150" fill="#010101" fill-opacity=".3" textLength="650" transform="scale(.1)">2021-10-22</text><text x="915" y="140" textLength="650" transform="scale(.1)">2021-10-22</text></g></svg>
+<svg xmlns="http://www.w3.org/2000/svg" width="130" height="20" class="updated-badge"><linearGradient id="b" x2="0" y2="100%"><stop offset="0" stop-color="#bbb" stop-opacity=".1"/><stop offset="1" stop-opacity=".1"/></linearGradient><clipPath id="a"><rect width="130" height="20" rx="3" fill="#fff"/></clipPath><g clip-path="url(#a)"><path class="updated-badge-left" d="M0 0h55v20H0z"/><path class="updated-badge-right" d="M55 0h75v20H55z"/><path fill="url(#b)" d="M0 0h130v20H0z"/></g><g fill="#fff" text-anchor="middle" font-size="110"><text x="285" y="150" fill="#010101" fill-opacity=".3" textLength="450" transform="scale(.1)">updated</text><text x="285" y="140" textLength="450" transform="scale(.1)">updated</text><text x="915" y="150" fill="#010101" fill-opacity=".3" textLength="650" transform="scale(.1)">2023-07-02</text><text x="915" y="140" textLength="650" transform="scale(.1)">2023-07-02</text></g></svg>
         </span></div>
 
 

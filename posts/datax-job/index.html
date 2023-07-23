@@ -3,7 +3,7 @@
     <head prefix="og: http://ogp.me/ns# article: http://ogp.me/ns/article#">
     <meta charset="UTF-8" />
 
-    <meta name="generator" content="Hugo 0.88.1" /><meta name="theme-color" content="#fff" />
+    <meta name="generator" content="Hugo 0.115.0"><meta name="theme-color" content="#fff" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     
     <meta name="format-detection" content="telephone=no, date=no, address=no, email=no" />
@@ -14,11 +14,11 @@
 
     <title>Datax 任务分配原理 | 学习笔记</title>
 
-    <link rel="stylesheet" href="/css/meme.min.2d3e1834af2bc8dda20c7d74aaa1d8134845094441b7a554a5206ccd4b472596.css"/>
+    <link rel="stylesheet" href="/css/meme.min.91e7f58f97e1c60563ef481c38d9684fa8099537801d6f17bbfc724121e7d8f1.css"/>
 
     
     
-        <script src="/js/meme.min.800f61672145711eb3e1f29fcfcc3dbe0139dd459259718b611a0390f74703d1.js"></script>
+        <script src="/js/meme.min.3210a00c2fdcf6f831170b681b8ee40f83f0224663661e986872616aec45407f.js"></script>
 
     
 
@@ -54,7 +54,7 @@
         "@context": "https://schema.org",
         "@type": "BlogPosting",
         "datePublished": "2018-12-28T22:14:13+00:00",
-        "dateModified": "2021-10-22T14:44:34+08:00",
+        "dateModified": "2023-07-02T16:59:09+08:00",
         "url": "https://zhmin.github.io/posts/datax-job/",
         "headline": "Datax 任务分配原理",
         "description": "Datax 任务分配原理 Datax根首先据配置文件，确定好channel的并发数目。然后将整个job分成一个个小的task，然后划分成组。 确定channel数目 如果指定字节数限速，则计算字节限速后的并发数目。如……",
@@ -98,7 +98,7 @@
 <meta property="og:locale" content="zh" /><meta property="og:image" content="https://zhmin.github.io/icons/apple-touch-icon.png" />
     <meta property="og:type" content="article" />
     <meta property="article:published_time" content="2018-12-28T22:14:13&#43;00:00" />
-    <meta property="article:modified_time" content="2021-10-22T14:44:34&#43;08:00" />
+    <meta property="article:modified_time" content="2023-07-02T16:59:09&#43;08:00" />
     
     <meta property="article:section" content="posts" />
 
@@ -266,28 +266,28 @@
 </span><span class="lnt">21
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-json" data-lang="json"><span class="p">{</span>
-    <span class="nt">&#34;core&#34;</span><span class="p">:</span> <span class="p">{</span>
-       <span class="nt">&#34;transport&#34;</span> <span class="p">:</span> <span class="p">{</span>
-          <span class="nt">&#34;channel&#34;</span><span class="p">:</span> <span class="p">{</span>
-             <span class="nt">&#34;speed&#34;</span><span class="p">:</span> <span class="p">{</span>
-                <span class="nt">&#34;record&#34;</span><span class="p">:</span> <span class="mi">100</span><span class="p">,</span>
-                <span class="nt">&#34;byte&#34;</span><span class="p">:</span> <span class="mi">100</span>
-             <span class="p">}</span>
-          <span class="p">}</span>
-       <span class="p">}</span>
-    <span class="p">},</span>
-    <span class="nt">&#34;job&#34;</span><span class="p">:</span> <span class="p">{</span>
-      <span class="nt">&#34;setting&#34;</span><span class="p">:</span> <span class="p">{</span>
-        <span class="nt">&#34;speed&#34;</span><span class="p">:</span> <span class="p">{</span>
-          <span class="nt">&#34;record&#34;</span><span class="p">:</span> <span class="mi">500</span><span class="p">,</span>
-          <span class="nt">&#34;byte&#34;</span><span class="p">:</span> <span class="mi">1000</span><span class="p">,</span>
-          <span class="nt">&#34;channel&#34;</span> <span class="p">:</span> <span class="mi">1</span>
-        <span class="p">}</span>
-      <span class="p">}</span>
-    <span class="p">}</span>
-<span class="p">}</span>
-</code></pre></td></tr></table></div>
+<pre tabindex="0" class="chroma"><code class="language-json" data-lang="json"><span class="line"><span class="cl"><span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="nt">&#34;core&#34;</span><span class="p">:</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">       <span class="nt">&#34;transport&#34;</span> <span class="p">:</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">          <span class="nt">&#34;channel&#34;</span><span class="p">:</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">             <span class="nt">&#34;speed&#34;</span><span class="p">:</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">                <span class="nt">&#34;record&#34;</span><span class="p">:</span> <span class="mi">100</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">                <span class="nt">&#34;byte&#34;</span><span class="p">:</span> <span class="mi">100</span>
+</span></span><span class="line"><span class="cl">             <span class="p">}</span>
+</span></span><span class="line"><span class="cl">          <span class="p">}</span>
+</span></span><span class="line"><span class="cl">       <span class="p">}</span>
+</span></span><span class="line"><span class="cl">    <span class="p">},</span>
+</span></span><span class="line"><span class="cl">    <span class="nt">&#34;job&#34;</span><span class="p">:</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">      <span class="nt">&#34;setting&#34;</span><span class="p">:</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="nt">&#34;speed&#34;</span><span class="p">:</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">          <span class="nt">&#34;record&#34;</span><span class="p">:</span> <span class="mi">500</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">          <span class="nt">&#34;byte&#34;</span><span class="p">:</span> <span class="mi">1000</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">          <span class="nt">&#34;channel&#34;</span> <span class="p">:</span> <span class="mi">1</span>
+</span></span><span class="line"><span class="cl">        <span class="p">}</span>
+</span></span><span class="line"><span class="cl">      <span class="p">}</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table></div>
 </div>
 </div><p>首先计算按照字节数限速，channel的数目应该为 500 / 100 = 5</p>
 <p>然后按照记录数限速， channel的数目应该为 1000 ／ 100 = 10</p>
@@ -371,81 +371,81 @@
 </span><span class="lnt">74
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="kd">private</span> <span class="kt">void</span> <span class="nf">adjustChannelNumber</span><span class="o">()</span> <span class="o">{</span>
-    <span class="kt">int</span> <span class="n">needChannelNumberByByte</span> <span class="o">=</span> <span class="n">Integer</span><span class="o">.</span><span class="na">MAX_VALUE</span><span class="o">;</span>
-    <span class="kt">int</span> <span class="n">needChannelNumberByRecord</span> <span class="o">=</span> <span class="n">Integer</span><span class="o">.</span><span class="na">MAX_VALUE</span><span class="o">;</span>
-
-    <span class="c1">// 是否指定字节数限速
-</span><span class="c1"></span>    <span class="kt">boolean</span> <span class="n">isByteLimit</span> <span class="o">=</span> <span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="na">configuration</span><span class="o">.</span><span class="na">getInt</span><span class="o">(</span>
-            <span class="n">CoreConstant</span><span class="o">.</span><span class="na">DATAX_JOB_SETTING_SPEED_BYTE</span><span class="o">,</span> <span class="n">0</span><span class="o">)</span> <span class="o">&gt;</span> <span class="n">0</span><span class="o">);</span>
-    <span class="k">if</span> <span class="o">(</span><span class="n">isByteLimit</span><span class="o">)</span> <span class="o">{</span>
-        <span class="c1">// 总的限速字节数
-</span><span class="c1"></span>        <span class="kt">long</span> <span class="n">globalLimitedByteSpeed</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="na">configuration</span><span class="o">.</span><span class="na">getInt</span><span class="o">(</span>
-                <span class="n">CoreConstant</span><span class="o">.</span><span class="na">DATAX_JOB_SETTING_SPEED_BYTE</span><span class="o">,</span> <span class="n">10</span> <span class="o">*</span> <span class="n">1024</span> <span class="o">*</span> <span class="n">1024</span><span class="o">);</span>
-
-        <span class="c1">// 单个Channel的字节数
-</span><span class="c1"></span>        <span class="n">Long</span> <span class="n">channelLimitedByteSpeed</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="na">configuration</span>
-                <span class="o">.</span><span class="na">getLong</span><span class="o">(</span><span class="n">CoreConstant</span><span class="o">.</span><span class="na">DATAX_CORE_TRANSPORT_CHANNEL_SPEED_BYTE</span><span class="o">);</span>
-        <span class="k">if</span> <span class="o">(</span><span class="n">channelLimitedByteSpeed</span> <span class="o">==</span> <span class="kc">null</span> <span class="o">||</span> <span class="n">channelLimitedByteSpeed</span> <span class="o">&lt;=</span> <span class="n">0</span><span class="o">)</span> <span class="o">{</span>
-            <span class="n">DataXException</span><span class="o">.</span><span class="na">asDataXException</span><span class="o">(</span>
-                    <span class="n">FrameworkErrorCode</span><span class="o">.</span><span class="na">CONFIG_ERROR</span><span class="o">,</span>
-                    <span class="s">&#34;在有总bps限速条件下，单个channel的bps值不能为空，也不能为非正数&#34;</span><span class="o">);</span>
-        <span class="o">}</span>
-        <span class="c1">// 计算所需要的channel数目
-</span><span class="c1"></span>        <span class="n">needChannelNumberByByte</span> <span class="o">=</span>
-                <span class="o">(</span><span class="kt">int</span><span class="o">)</span> <span class="o">(</span><span class="n">globalLimitedByteSpeed</span> <span class="o">/</span> <span class="n">channelLimitedByteSpeed</span><span class="o">);</span>
-        <span class="n">needChannelNumberByByte</span> <span class="o">=</span>
-                <span class="n">needChannelNumberByByte</span> <span class="o">&gt;</span> <span class="n">0</span> <span class="o">?</span> <span class="n">needChannelNumberByByte</span> <span class="o">:</span> <span class="n">1</span><span class="o">;</span>
-    <span class="o">}</span>
-    <span class="c1">// 是否指定记录数限速
-</span><span class="c1"></span>    <span class="kt">boolean</span> <span class="n">isRecordLimit</span> <span class="o">=</span> <span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="na">configuration</span><span class="o">.</span><span class="na">getInt</span><span class="o">(</span>
-            <span class="n">CoreConstant</span><span class="o">.</span><span class="na">DATAX_JOB_SETTING_SPEED_RECORD</span><span class="o">,</span> <span class="n">0</span><span class="o">))</span> <span class="o">&gt;</span> <span class="n">0</span><span class="o">;</span>
-    <span class="k">if</span> <span class="o">(</span><span class="n">isRecordLimit</span><span class="o">)</span> <span class="o">{</span>
-        <span class="c1">// 总的限速记录数
-</span><span class="c1"></span>        <span class="kt">long</span> <span class="n">globalLimitedRecordSpeed</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="na">configuration</span><span class="o">.</span><span class="na">getInt</span><span class="o">(</span>
-                <span class="n">CoreConstant</span><span class="o">.</span><span class="na">DATAX_JOB_SETTING_SPEED_RECORD</span><span class="o">,</span> <span class="n">100000</span><span class="o">);</span>
-        <span class="c1">// 获取单个channel的限定的记录数
-</span><span class="c1"></span>        <span class="n">Long</span> <span class="n">channelLimitedRecordSpeed</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="na">configuration</span><span class="o">.</span><span class="na">getLong</span><span class="o">(</span>
-                <span class="n">CoreConstant</span><span class="o">.</span><span class="na">DATAX_CORE_TRANSPORT_CHANNEL_SPEED_RECORD</span><span class="o">);</span>
-        <span class="k">if</span> <span class="o">(</span><span class="n">channelLimitedRecordSpeed</span> <span class="o">==</span> <span class="kc">null</span> <span class="o">||</span> <span class="n">channelLimitedRecordSpeed</span> <span class="o">&lt;=</span> <span class="n">0</span><span class="o">)</span> <span class="o">{</span>
-            <span class="n">DataXException</span><span class="o">.</span><span class="na">asDataXException</span><span class="o">(</span><span class="n">FrameworkErrorCode</span><span class="o">.</span><span class="na">CONFIG_ERROR</span><span class="o">,</span>
-                    <span class="s">&#34;在有总tps限速条件下，单个channel的tps值不能为空，也不能为非正数&#34;</span><span class="o">);</span>
-        <span class="o">}</span>
-        <span class="c1">// 计算所需要的channel数目
-</span><span class="c1"></span>        <span class="n">needChannelNumberByRecord</span> <span class="o">=</span>
-                <span class="o">(</span><span class="kt">int</span><span class="o">)</span> <span class="o">(</span><span class="n">globalLimitedRecordSpeed</span> <span class="o">/</span> <span class="n">channelLimitedRecordSpeed</span><span class="o">);</span>
-        <span class="n">needChannelNumberByRecord</span> <span class="o">=</span>
-                <span class="n">needChannelNumberByRecord</span> <span class="o">&gt;</span> <span class="n">0</span> <span class="o">?</span> <span class="n">needChannelNumberByRecord</span> <span class="o">:</span> <span class="n">1</span><span class="o">;</span>
-        <span class="n">LOG</span><span class="o">.</span><span class="na">info</span><span class="o">(</span><span class="s">&#34;Job set Max-Record-Speed to &#34;</span> <span class="o">+</span> <span class="n">globalLimitedRecordSpeed</span> <span class="o">+</span> <span class="s">&#34; records.&#34;</span><span class="o">);</span>
-    <span class="o">}</span>
-
-    <span class="c1">// 取较小值
-</span><span class="c1"></span>    <span class="k">this</span><span class="o">.</span><span class="na">needChannelNumber</span> <span class="o">=</span> <span class="n">needChannelNumberByByte</span> <span class="o">&lt;</span> <span class="n">needChannelNumberByRecord</span> <span class="o">?</span>
-            <span class="n">needChannelNumberByByte</span> <span class="o">:</span> <span class="n">needChannelNumberByRecord</span><span class="o">;</span>
-
-    <span class="c1">// 返回最小值
-</span><span class="c1"></span>    <span class="k">if</span> <span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="na">needChannelNumber</span> <span class="o">&lt;</span> <span class="n">Integer</span><span class="o">.</span><span class="na">MAX_VALUE</span><span class="o">)</span> <span class="o">{</span>
-        <span class="k">return</span><span class="o">;</span>
-    <span class="o">}</span>
-
-    <span class="c1">// 是否指定了channel数目
-</span><span class="c1"></span>    <span class="kt">boolean</span> <span class="n">isChannelLimit</span> <span class="o">=</span> <span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="na">configuration</span><span class="o">.</span><span class="na">getInt</span><span class="o">(</span>
-            <span class="n">CoreConstant</span><span class="o">.</span><span class="na">DATAX_JOB_SETTING_SPEED_CHANNEL</span><span class="o">,</span> <span class="n">0</span><span class="o">)</span> <span class="o">&gt;</span> <span class="n">0</span><span class="o">);</span>
-    <span class="k">if</span> <span class="o">(</span><span class="n">isChannelLimit</span><span class="o">)</span> <span class="o">{</span>
-        <span class="k">this</span><span class="o">.</span><span class="na">needChannelNumber</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="na">configuration</span><span class="o">.</span><span class="na">getInt</span><span class="o">(</span>
-                <span class="n">CoreConstant</span><span class="o">.</span><span class="na">DATAX_JOB_SETTING_SPEED_CHANNEL</span><span class="o">);</span>
-
-        <span class="n">LOG</span><span class="o">.</span><span class="na">info</span><span class="o">(</span><span class="s">&#34;Job set Channel-Number to &#34;</span> <span class="o">+</span> <span class="k">this</span><span class="o">.</span><span class="na">needChannelNumber</span>
-                <span class="o">+</span> <span class="s">&#34; channels.&#34;</span><span class="o">);</span>
-
-        <span class="k">return</span><span class="o">;</span>
-    <span class="o">}</span>
-
-    <span class="k">throw</span> <span class="n">DataXException</span><span class="o">.</span><span class="na">asDataXException</span><span class="o">(</span>
-            <span class="n">FrameworkErrorCode</span><span class="o">.</span><span class="na">CONFIG_ERROR</span><span class="o">,</span>
-            <span class="s">&#34;Job运行速度必须设置&#34;</span><span class="o">);</span>
-<span class="o">}</span>
-</code></pre></td></tr></table></div>
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="kd">private</span> <span class="kt">void</span> <span class="nf">adjustChannelNumber</span><span class="o">()</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">    <span class="kt">int</span> <span class="n">needChannelNumberByByte</span> <span class="o">=</span> <span class="n">Integer</span><span class="o">.</span><span class="na">MAX_VALUE</span><span class="o">;</span>
+</span></span><span class="line"><span class="cl">    <span class="kt">int</span> <span class="n">needChannelNumberByRecord</span> <span class="o">=</span> <span class="n">Integer</span><span class="o">.</span><span class="na">MAX_VALUE</span><span class="o">;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="c1">// 是否指定字节数限速
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="kt">boolean</span> <span class="n">isByteLimit</span> <span class="o">=</span> <span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="na">configuration</span><span class="o">.</span><span class="na">getInt</span><span class="o">(</span>
+</span></span><span class="line"><span class="cl">            <span class="n">CoreConstant</span><span class="o">.</span><span class="na">DATAX_JOB_SETTING_SPEED_BYTE</span><span class="o">,</span> <span class="mi">0</span><span class="o">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">    <span class="k">if</span> <span class="o">(</span><span class="n">isByteLimit</span><span class="o">)</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">        <span class="c1">// 总的限速字节数
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>        <span class="kt">long</span> <span class="n">globalLimitedByteSpeed</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="na">configuration</span><span class="o">.</span><span class="na">getInt</span><span class="o">(</span>
+</span></span><span class="line"><span class="cl">                <span class="n">CoreConstant</span><span class="o">.</span><span class="na">DATAX_JOB_SETTING_SPEED_BYTE</span><span class="o">,</span> <span class="mi">10</span> <span class="o">*</span> <span class="mi">1024</span> <span class="o">*</span> <span class="mi">1024</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">        <span class="c1">// 单个Channel的字节数
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>        <span class="n">Long</span> <span class="n">channelLimitedByteSpeed</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="na">configuration</span>
+</span></span><span class="line"><span class="cl">                <span class="o">.</span><span class="na">getLong</span><span class="o">(</span><span class="n">CoreConstant</span><span class="o">.</span><span class="na">DATAX_CORE_TRANSPORT_CHANNEL_SPEED_BYTE</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">        <span class="k">if</span> <span class="o">(</span><span class="n">channelLimitedByteSpeed</span> <span class="o">==</span> <span class="kc">null</span> <span class="o">||</span> <span class="n">channelLimitedByteSpeed</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="o">)</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">            <span class="n">DataXException</span><span class="o">.</span><span class="na">asDataXException</span><span class="o">(</span>
+</span></span><span class="line"><span class="cl">                    <span class="n">FrameworkErrorCode</span><span class="o">.</span><span class="na">CONFIG_ERROR</span><span class="o">,</span>
+</span></span><span class="line"><span class="cl">                    <span class="s">&#34;在有总bps限速条件下，单个channel的bps值不能为空，也不能为非正数&#34;</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">        <span class="o">}</span>
+</span></span><span class="line"><span class="cl">        <span class="c1">// 计算所需要的channel数目
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>        <span class="n">needChannelNumberByByte</span> <span class="o">=</span>
+</span></span><span class="line"><span class="cl">                <span class="o">(</span><span class="kt">int</span><span class="o">)</span> <span class="o">(</span><span class="n">globalLimitedByteSpeed</span> <span class="o">/</span> <span class="n">channelLimitedByteSpeed</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">        <span class="n">needChannelNumberByByte</span> <span class="o">=</span>
+</span></span><span class="line"><span class="cl">                <span class="n">needChannelNumberByByte</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="o">?</span> <span class="n">needChannelNumberByByte</span> <span class="o">:</span> <span class="mi">1</span><span class="o">;</span>
+</span></span><span class="line"><span class="cl">    <span class="o">}</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// 是否指定记录数限速
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="kt">boolean</span> <span class="n">isRecordLimit</span> <span class="o">=</span> <span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="na">configuration</span><span class="o">.</span><span class="na">getInt</span><span class="o">(</span>
+</span></span><span class="line"><span class="cl">            <span class="n">CoreConstant</span><span class="o">.</span><span class="na">DATAX_JOB_SETTING_SPEED_RECORD</span><span class="o">,</span> <span class="mi">0</span><span class="o">))</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="o">;</span>
+</span></span><span class="line"><span class="cl">    <span class="k">if</span> <span class="o">(</span><span class="n">isRecordLimit</span><span class="o">)</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">        <span class="c1">// 总的限速记录数
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>        <span class="kt">long</span> <span class="n">globalLimitedRecordSpeed</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="na">configuration</span><span class="o">.</span><span class="na">getInt</span><span class="o">(</span>
+</span></span><span class="line"><span class="cl">                <span class="n">CoreConstant</span><span class="o">.</span><span class="na">DATAX_JOB_SETTING_SPEED_RECORD</span><span class="o">,</span> <span class="mi">100000</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">        <span class="c1">// 获取单个channel的限定的记录数
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>        <span class="n">Long</span> <span class="n">channelLimitedRecordSpeed</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="na">configuration</span><span class="o">.</span><span class="na">getLong</span><span class="o">(</span>
+</span></span><span class="line"><span class="cl">                <span class="n">CoreConstant</span><span class="o">.</span><span class="na">DATAX_CORE_TRANSPORT_CHANNEL_SPEED_RECORD</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">        <span class="k">if</span> <span class="o">(</span><span class="n">channelLimitedRecordSpeed</span> <span class="o">==</span> <span class="kc">null</span> <span class="o">||</span> <span class="n">channelLimitedRecordSpeed</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="o">)</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">            <span class="n">DataXException</span><span class="o">.</span><span class="na">asDataXException</span><span class="o">(</span><span class="n">FrameworkErrorCode</span><span class="o">.</span><span class="na">CONFIG_ERROR</span><span class="o">,</span>
+</span></span><span class="line"><span class="cl">                    <span class="s">&#34;在有总tps限速条件下，单个channel的tps值不能为空，也不能为非正数&#34;</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">        <span class="o">}</span>
+</span></span><span class="line"><span class="cl">        <span class="c1">// 计算所需要的channel数目
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>        <span class="n">needChannelNumberByRecord</span> <span class="o">=</span>
+</span></span><span class="line"><span class="cl">                <span class="o">(</span><span class="kt">int</span><span class="o">)</span> <span class="o">(</span><span class="n">globalLimitedRecordSpeed</span> <span class="o">/</span> <span class="n">channelLimitedRecordSpeed</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">        <span class="n">needChannelNumberByRecord</span> <span class="o">=</span>
+</span></span><span class="line"><span class="cl">                <span class="n">needChannelNumberByRecord</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="o">?</span> <span class="n">needChannelNumberByRecord</span> <span class="o">:</span> <span class="mi">1</span><span class="o">;</span>
+</span></span><span class="line"><span class="cl">        <span class="n">LOG</span><span class="o">.</span><span class="na">info</span><span class="o">(</span><span class="s">&#34;Job set Max-Record-Speed to &#34;</span> <span class="o">+</span> <span class="n">globalLimitedRecordSpeed</span> <span class="o">+</span> <span class="s">&#34; records.&#34;</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">    <span class="o">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="c1">// 取较小值
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="k">this</span><span class="o">.</span><span class="na">needChannelNumber</span> <span class="o">=</span> <span class="n">needChannelNumberByByte</span> <span class="o">&lt;</span> <span class="n">needChannelNumberByRecord</span> <span class="o">?</span>
+</span></span><span class="line"><span class="cl">            <span class="n">needChannelNumberByByte</span> <span class="o">:</span> <span class="n">needChannelNumberByRecord</span><span class="o">;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="c1">// 返回最小值
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="k">if</span> <span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="na">needChannelNumber</span> <span class="o">&lt;</span> <span class="n">Integer</span><span class="o">.</span><span class="na">MAX_VALUE</span><span class="o">)</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">        <span class="k">return</span><span class="o">;</span>
+</span></span><span class="line"><span class="cl">    <span class="o">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="c1">// 是否指定了channel数目
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="kt">boolean</span> <span class="n">isChannelLimit</span> <span class="o">=</span> <span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="na">configuration</span><span class="o">.</span><span class="na">getInt</span><span class="o">(</span>
+</span></span><span class="line"><span class="cl">            <span class="n">CoreConstant</span><span class="o">.</span><span class="na">DATAX_JOB_SETTING_SPEED_CHANNEL</span><span class="o">,</span> <span class="mi">0</span><span class="o">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">    <span class="k">if</span> <span class="o">(</span><span class="n">isChannelLimit</span><span class="o">)</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">        <span class="k">this</span><span class="o">.</span><span class="na">needChannelNumber</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="na">configuration</span><span class="o">.</span><span class="na">getInt</span><span class="o">(</span>
+</span></span><span class="line"><span class="cl">                <span class="n">CoreConstant</span><span class="o">.</span><span class="na">DATAX_JOB_SETTING_SPEED_CHANNEL</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">        <span class="n">LOG</span><span class="o">.</span><span class="na">info</span><span class="o">(</span><span class="s">&#34;Job set Channel-Number to &#34;</span> <span class="o">+</span> <span class="k">this</span><span class="o">.</span><span class="na">needChannelNumber</span>
+</span></span><span class="line"><span class="cl">                <span class="o">+</span> <span class="s">&#34; channels.&#34;</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">        <span class="k">return</span><span class="o">;</span>
+</span></span><span class="line"><span class="cl">    <span class="o">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="k">throw</span> <span class="n">DataXException</span><span class="o">.</span><span class="na">asDataXException</span><span class="o">(</span>
+</span></span><span class="line"><span class="cl">            <span class="n">FrameworkErrorCode</span><span class="o">.</span><span class="na">CONFIG_ERROR</span><span class="o">,</span>
+</span></span><span class="line"><span class="cl">            <span class="s">&#34;Job运行速度必须设置&#34;</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl"><span class="o">}</span>
+</span></span></code></pre></td></tr></table></div>
 </div>
 </div><h2 id="切分任务"><a href="#切分任务" class="anchor-link"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon anchor-icon"><path d="M326.612 185.391c59.747 59.809 58.927 155.698.36 214.59-.11.12-.24.25-.36.37l-67.2 67.2c-59.27 59.27-155.699 59.262-214.96 0-59.27-59.26-59.27-155.7 0-214.96l37.106-37.106c9.84-9.84 26.786-3.3 27.294 10.606.648 17.722 3.826 35.527 9.69 52.721 1.986 5.822.567 12.262-3.783 16.612l-13.087 13.087c-28.026 28.026-28.905 73.66-1.155 101.96 28.024 28.579 74.086 28.749 102.325.51l67.2-67.19c28.191-28.191 28.073-73.757 0-101.83-3.701-3.694-7.429-6.564-10.341-8.569a16.037 16.037 0 0 1-6.947-12.606c-.396-10.567 3.348-21.456 11.698-29.806l21.054-21.055c5.521-5.521 14.182-6.199 20.584-1.731a152.482 152.482 0 0 1 20.522 17.197zM467.547 44.449c-59.261-59.262-155.69-59.27-214.96 0l-67.2 67.2c-.12.12-.25.25-.36.37-58.566 58.892-59.387 154.781.36 214.59a152.454 152.454 0 0 0 20.521 17.196c6.402 4.468 15.064 3.789 20.584-1.731l21.054-21.055c8.35-8.35 12.094-19.239 11.698-29.806a16.037 16.037 0 0 0-6.947-12.606c-2.912-2.005-6.64-4.875-10.341-8.569-28.073-28.073-28.191-73.639 0-101.83l67.2-67.19c28.239-28.239 74.3-28.069 102.325.51 27.75 28.3 26.872 73.934-1.155 101.96l-13.087 13.087c-4.35 4.35-5.769 10.79-3.783 16.612 5.864 17.194 9.042 34.999 9.69 52.721.509 13.906 17.454 20.446 27.294 10.606l37.106-37.106c59.271-59.259 59.271-155.699.001-214.959z"/></svg></a>切分任务</h2>
 <p>JobContainer 的split负责将整个job切分成多个task，生成task配置的列表</p>
@@ -483,37 +483,37 @@
 </span><span class="lnt">30
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java">    <span class="kd">private</span> <span class="kt">int</span> <span class="nf">split</span><span class="o">()</span> <span class="o">{</span>
-        <span class="c1">// 计算所需的channel数目
-</span><span class="c1"></span>        <span class="k">this</span><span class="o">.</span><span class="na">adjustChannelNumber</span><span class="o">();</span>
-
-        <span class="k">if</span> <span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="na">needChannelNumber</span> <span class="o">&lt;=</span> <span class="n">0</span><span class="o">)</span> <span class="o">{</span>
-            <span class="k">this</span><span class="o">.</span><span class="na">needChannelNumber</span> <span class="o">=</span> <span class="n">1</span><span class="o">;</span>
-        <span class="o">}</span>
-        <span class="c1">// 生成任务的reader配置
-</span><span class="c1"></span>        <span class="n">List</span><span class="o">&lt;</span><span class="n">Configuration</span><span class="o">&gt;</span> <span class="n">readerTaskConfigs</span> <span class="o">=</span> <span class="k">this</span>
-                <span class="o">.</span><span class="na">doReaderSplit</span><span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="na">needChannelNumber</span><span class="o">);</span>
-        <span class="kt">int</span> <span class="n">taskNumber</span> <span class="o">=</span> <span class="n">readerTaskConfigs</span><span class="o">.</span><span class="na">size</span><span class="o">();</span>
-        <span class="c1">// 生成任务的writer配置
-</span><span class="c1"></span>        <span class="n">List</span><span class="o">&lt;</span><span class="n">Configuration</span><span class="o">&gt;</span> <span class="n">writerTaskConfigs</span> <span class="o">=</span> <span class="k">this</span>
-                <span class="o">.</span><span class="na">doWriterSplit</span><span class="o">(</span><span class="n">taskNumber</span><span class="o">);</span>
-
-        <span class="c1">// 生成任务的transformer配置
-</span><span class="c1"></span>        <span class="n">List</span><span class="o">&lt;</span><span class="n">Configuration</span><span class="o">&gt;</span> <span class="n">transformerList</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="na">configuration</span><span class="o">.</span><span class="na">getListConfiguration</span><span class="o">(</span><span class="n">CoreConstant</span><span class="o">.</span><span class="na">DATAX_JOB_CONTENT_TRANSFORMER</span><span class="o">);</span>
-
-        <span class="n">LOG</span><span class="o">.</span><span class="na">debug</span><span class="o">(</span><span class="s">&#34;transformer configuration: &#34;</span><span class="o">+</span> <span class="n">JSON</span><span class="o">.</span><span class="na">toJSONString</span><span class="o">(</span><span class="n">transformerList</span><span class="o">));</span>
-        
-        <span class="c1">// 合并任务的reader，writer，transformer配置
-</span><span class="c1"></span>        <span class="n">List</span><span class="o">&lt;</span><span class="n">Configuration</span><span class="o">&gt;</span> <span class="n">contentConfig</span> <span class="o">=</span> <span class="n">mergeReaderAndWriterTaskConfigs</span><span class="o">(</span>
-                <span class="n">readerTaskConfigs</span><span class="o">,</span> <span class="n">writerTaskConfigs</span><span class="o">,</span> <span class="n">transformerList</span><span class="o">);</span>
-        <span class="n">LOG</span><span class="o">.</span><span class="na">debug</span><span class="o">(</span><span class="s">&#34;contentConfig configuration: &#34;</span><span class="o">+</span> <span class="n">JSON</span><span class="o">.</span><span class="na">toJSONString</span><span class="o">(</span><span class="n">contentConfig</span><span class="o">));</span>
-        
-        <span class="c1">// 将配置结果保存在job.content路径下
-</span><span class="c1"></span>        <span class="k">this</span><span class="o">.</span><span class="na">configuration</span><span class="o">.</span><span class="na">set</span><span class="o">(</span><span class="n">CoreConstant</span><span class="o">.</span><span class="na">DATAX_JOB_CONTENT</span><span class="o">,</span> <span class="n">contentConfig</span><span class="o">);</span>
-
-        <span class="k">return</span> <span class="n">contentConfig</span><span class="o">.</span><span class="na">size</span><span class="o">();</span>
-    <span class="o">}</span>
-</code></pre></td></tr></table></div>
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl">    <span class="kd">private</span> <span class="kt">int</span> <span class="nf">split</span><span class="o">()</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">        <span class="c1">// 计算所需的channel数目
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>        <span class="k">this</span><span class="o">.</span><span class="na">adjustChannelNumber</span><span class="o">();</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">        <span class="k">if</span> <span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="na">needChannelNumber</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="o">)</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">            <span class="k">this</span><span class="o">.</span><span class="na">needChannelNumber</span> <span class="o">=</span> <span class="mi">1</span><span class="o">;</span>
+</span></span><span class="line"><span class="cl">        <span class="o">}</span>
+</span></span><span class="line"><span class="cl">        <span class="c1">// 生成任务的reader配置
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>        <span class="n">List</span><span class="o">&lt;</span><span class="n">Configuration</span><span class="o">&gt;</span> <span class="n">readerTaskConfigs</span> <span class="o">=</span> <span class="k">this</span>
+</span></span><span class="line"><span class="cl">                <span class="o">.</span><span class="na">doReaderSplit</span><span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="na">needChannelNumber</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">        <span class="kt">int</span> <span class="n">taskNumber</span> <span class="o">=</span> <span class="n">readerTaskConfigs</span><span class="o">.</span><span class="na">size</span><span class="o">();</span>
+</span></span><span class="line"><span class="cl">        <span class="c1">// 生成任务的writer配置
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>        <span class="n">List</span><span class="o">&lt;</span><span class="n">Configuration</span><span class="o">&gt;</span> <span class="n">writerTaskConfigs</span> <span class="o">=</span> <span class="k">this</span>
+</span></span><span class="line"><span class="cl">                <span class="o">.</span><span class="na">doWriterSplit</span><span class="o">(</span><span class="n">taskNumber</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">        <span class="c1">// 生成任务的transformer配置
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>        <span class="n">List</span><span class="o">&lt;</span><span class="n">Configuration</span><span class="o">&gt;</span> <span class="n">transformerList</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="na">configuration</span><span class="o">.</span><span class="na">getListConfiguration</span><span class="o">(</span><span class="n">CoreConstant</span><span class="o">.</span><span class="na">DATAX_JOB_CONTENT_TRANSFORMER</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">        <span class="n">LOG</span><span class="o">.</span><span class="na">debug</span><span class="o">(</span><span class="s">&#34;transformer configuration: &#34;</span><span class="o">+</span> <span class="n">JSON</span><span class="o">.</span><span class="na">toJSONString</span><span class="o">(</span><span class="n">transformerList</span><span class="o">));</span>
+</span></span><span class="line"><span class="cl">        
+</span></span><span class="line"><span class="cl">        <span class="c1">// 合并任务的reader，writer，transformer配置
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>        <span class="n">List</span><span class="o">&lt;</span><span class="n">Configuration</span><span class="o">&gt;</span> <span class="n">contentConfig</span> <span class="o">=</span> <span class="n">mergeReaderAndWriterTaskConfigs</span><span class="o">(</span>
+</span></span><span class="line"><span class="cl">                <span class="n">readerTaskConfigs</span><span class="o">,</span> <span class="n">writerTaskConfigs</span><span class="o">,</span> <span class="n">transformerList</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">        <span class="n">LOG</span><span class="o">.</span><span class="na">debug</span><span class="o">(</span><span class="s">&#34;contentConfig configuration: &#34;</span><span class="o">+</span> <span class="n">JSON</span><span class="o">.</span><span class="na">toJSONString</span><span class="o">(</span><span class="n">contentConfig</span><span class="o">));</span>
+</span></span><span class="line"><span class="cl">        
+</span></span><span class="line"><span class="cl">        <span class="c1">// 将配置结果保存在job.content路径下
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>        <span class="k">this</span><span class="o">.</span><span class="na">configuration</span><span class="o">.</span><span class="na">set</span><span class="o">(</span><span class="n">CoreConstant</span><span class="o">.</span><span class="na">DATAX_JOB_CONTENT</span><span class="o">,</span> <span class="n">contentConfig</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">        <span class="k">return</span> <span class="n">contentConfig</span><span class="o">.</span><span class="na">size</span><span class="o">();</span>
+</span></span><span class="line"><span class="cl">    <span class="o">}</span>
+</span></span></code></pre></td></tr></table></div>
 </div>
 </div><h3 id="reader"><a href="#reader" class="anchor-link"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon anchor-icon"><path d="M326.612 185.391c59.747 59.809 58.927 155.698.36 214.59-.11.12-.24.25-.36.37l-67.2 67.2c-59.27 59.27-155.699 59.262-214.96 0-59.27-59.26-59.27-155.7 0-214.96l37.106-37.106c9.84-9.84 26.786-3.3 27.294 10.606.648 17.722 3.826 35.527 9.69 52.721 1.986 5.822.567 12.262-3.783 16.612l-13.087 13.087c-28.026 28.026-28.905 73.66-1.155 101.96 28.024 28.579 74.086 28.749 102.325.51l67.2-67.19c28.191-28.191 28.073-73.757 0-101.83-3.701-3.694-7.429-6.564-10.341-8.569a16.037 16.037 0 0 1-6.947-12.606c-.396-10.567 3.348-21.456 11.698-29.806l21.054-21.055c5.521-5.521 14.182-6.199 20.584-1.731a152.482 152.482 0 0 1 20.522 17.197zM467.547 44.449c-59.261-59.262-155.69-59.27-214.96 0l-67.2 67.2c-.12.12-.25.25-.36.37-58.566 58.892-59.387 154.781.36 214.59a152.454 152.454 0 0 0 20.521 17.196c6.402 4.468 15.064 3.789 20.584-1.731l21.054-21.055c8.35-8.35 12.094-19.239 11.698-29.806a16.037 16.037 0 0 0-6.947-12.606c-2.912-2.005-6.64-4.875-10.341-8.569-28.073-28.073-28.191-73.639 0-101.83l67.2-67.19c28.239-28.239 74.3-28.069 102.325.51 27.75 28.3 26.872 73.934-1.155 101.96l-13.087 13.087c-4.35 4.35-5.769 10.79-3.783 16.612 5.864 17.194 9.042 34.999 9.69 52.721.509 13.906 17.454 20.446 27.294 10.606l37.106-37.106c59.271-59.259 59.271-155.699.001-214.959z"/></svg></a>Reader</h3>
 <p>doReaderSplit方法， 调用Reader.Job的split方法，返回Reader.Task的Configuration列表</p>
@@ -541,27 +541,27 @@
 </span><span class="lnt">20
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java">    <span class="cm">/**
-</span><span class="cm">    * adviceNumber, 建议的数目
-</span><span class="cm">    */</span>
-    <span class="kd">private</span> <span class="n">List</span><span class="o">&lt;</span><span class="n">Configuration</span><span class="o">&gt;</span> <span class="nf">doReaderSplit</span><span class="o">(</span><span class="kt">int</span> <span class="n">adviceNumber</span><span class="o">)</span> <span class="o">{</span>
-        <span class="c1">// 切换ClassLoader
-</span><span class="c1"></span>        <span class="n">classLoaderSwapper</span><span class="o">.</span><span class="na">setCurrentThreadClassLoader</span><span class="o">(</span><span class="n">LoadUtil</span><span class="o">.</span><span class="na">getJarLoader</span><span class="o">(</span>
-                <span class="n">PluginType</span><span class="o">.</span><span class="na">READER</span><span class="o">,</span> <span class="k">this</span><span class="o">.</span><span class="na">readerPluginName</span><span class="o">));</span>
-        <span class="c1">// 调用Job.Reader的split切分
-</span><span class="c1"></span>        <span class="n">List</span><span class="o">&lt;</span><span class="n">Configuration</span><span class="o">&gt;</span> <span class="n">readerSlicesConfigs</span> <span class="o">=</span>
-                <span class="k">this</span><span class="o">.</span><span class="na">jobReader</span><span class="o">.</span><span class="na">split</span><span class="o">(</span><span class="n">adviceNumber</span><span class="o">);</span>
-        <span class="k">if</span> <span class="o">(</span><span class="n">readerSlicesConfigs</span> <span class="o">==</span> <span class="kc">null</span> <span class="o">||</span> <span class="n">readerSlicesConfigs</span><span class="o">.</span><span class="na">size</span><span class="o">()</span> <span class="o">&lt;=</span> <span class="n">0</span><span class="o">)</span> <span class="o">{</span>
-            <span class="k">throw</span> <span class="n">DataXException</span><span class="o">.</span><span class="na">asDataXException</span><span class="o">(</span>
-                    <span class="n">FrameworkErrorCode</span><span class="o">.</span><span class="na">PLUGIN_SPLIT_ERROR</span><span class="o">,</span>
-                    <span class="s">&#34;reader切分的task数目不能小于等于0&#34;</span><span class="o">);</span>
-        <span class="o">}</span>
-        <span class="n">LOG</span><span class="o">.</span><span class="na">info</span><span class="o">(</span><span class="s">&#34;DataX Reader.Job [{}] splits to [{}] tasks.&#34;</span><span class="o">,</span>
-                <span class="k">this</span><span class="o">.</span><span class="na">readerPluginName</span><span class="o">,</span> <span class="n">readerSlicesConfigs</span><span class="o">.</span><span class="na">size</span><span class="o">());</span>
-        <span class="n">classLoaderSwapper</span><span class="o">.</span><span class="na">restoreCurrentThreadClassLoader</span><span class="o">();</span>
-        <span class="k">return</span> <span class="n">readerSlicesConfigs</span><span class="o">;</span>
-    <span class="o">}</span>
-</code></pre></td></tr></table></div>
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl">    <span class="cm">/**
+</span></span></span><span class="line"><span class="cl"><span class="cm">    * adviceNumber, 建议的数目
+</span></span></span><span class="line"><span class="cl"><span class="cm">    */</span>
+</span></span><span class="line"><span class="cl">    <span class="kd">private</span> <span class="n">List</span><span class="o">&lt;</span><span class="n">Configuration</span><span class="o">&gt;</span> <span class="nf">doReaderSplit</span><span class="o">(</span><span class="kt">int</span> <span class="n">adviceNumber</span><span class="o">)</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">        <span class="c1">// 切换ClassLoader
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>        <span class="n">classLoaderSwapper</span><span class="o">.</span><span class="na">setCurrentThreadClassLoader</span><span class="o">(</span><span class="n">LoadUtil</span><span class="o">.</span><span class="na">getJarLoader</span><span class="o">(</span>
+</span></span><span class="line"><span class="cl">                <span class="n">PluginType</span><span class="o">.</span><span class="na">READER</span><span class="o">,</span> <span class="k">this</span><span class="o">.</span><span class="na">readerPluginName</span><span class="o">));</span>
+</span></span><span class="line"><span class="cl">        <span class="c1">// 调用Job.Reader的split切分
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>        <span class="n">List</span><span class="o">&lt;</span><span class="n">Configuration</span><span class="o">&gt;</span> <span class="n">readerSlicesConfigs</span> <span class="o">=</span>
+</span></span><span class="line"><span class="cl">                <span class="k">this</span><span class="o">.</span><span class="na">jobReader</span><span class="o">.</span><span class="na">split</span><span class="o">(</span><span class="n">adviceNumber</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">        <span class="k">if</span> <span class="o">(</span><span class="n">readerSlicesConfigs</span> <span class="o">==</span> <span class="kc">null</span> <span class="o">||</span> <span class="n">readerSlicesConfigs</span><span class="o">.</span><span class="na">size</span><span class="o">()</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="o">)</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">            <span class="k">throw</span> <span class="n">DataXException</span><span class="o">.</span><span class="na">asDataXException</span><span class="o">(</span>
+</span></span><span class="line"><span class="cl">                    <span class="n">FrameworkErrorCode</span><span class="o">.</span><span class="na">PLUGIN_SPLIT_ERROR</span><span class="o">,</span>
+</span></span><span class="line"><span class="cl">                    <span class="s">&#34;reader切分的task数目不能小于等于0&#34;</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">        <span class="o">}</span>
+</span></span><span class="line"><span class="cl">        <span class="n">LOG</span><span class="o">.</span><span class="na">info</span><span class="o">(</span><span class="s">&#34;DataX Reader.Job [{}] splits to [{}] tasks.&#34;</span><span class="o">,</span>
+</span></span><span class="line"><span class="cl">                <span class="k">this</span><span class="o">.</span><span class="na">readerPluginName</span><span class="o">,</span> <span class="n">readerSlicesConfigs</span><span class="o">.</span><span class="na">size</span><span class="o">());</span>
+</span></span><span class="line"><span class="cl">        <span class="n">classLoaderSwapper</span><span class="o">.</span><span class="na">restoreCurrentThreadClassLoader</span><span class="o">();</span>
+</span></span><span class="line"><span class="cl">        <span class="k">return</span> <span class="n">readerSlicesConfigs</span><span class="o">;</span>
+</span></span><span class="line"><span class="cl">    <span class="o">}</span>
+</span></span></code></pre></td></tr></table></div>
 </div>
 </div><h3 id="writer"><a href="#writer" class="anchor-link"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon anchor-icon"><path d="M326.612 185.391c59.747 59.809 58.927 155.698.36 214.59-.11.12-.24.25-.36.37l-67.2 67.2c-59.27 59.27-155.699 59.262-214.96 0-59.27-59.26-59.27-155.7 0-214.96l37.106-37.106c9.84-9.84 26.786-3.3 27.294 10.606.648 17.722 3.826 35.527 9.69 52.721 1.986 5.822.567 12.262-3.783 16.612l-13.087 13.087c-28.026 28.026-28.905 73.66-1.155 101.96 28.024 28.579 74.086 28.749 102.325.51l67.2-67.19c28.191-28.191 28.073-73.757 0-101.83-3.701-3.694-7.429-6.564-10.341-8.569a16.037 16.037 0 0 1-6.947-12.606c-.396-10.567 3.348-21.456 11.698-29.806l21.054-21.055c5.521-5.521 14.182-6.199 20.584-1.731a152.482 152.482 0 0 1 20.522 17.197zM467.547 44.449c-59.261-59.262-155.69-59.27-214.96 0l-67.2 67.2c-.12.12-.25.25-.36.37-58.566 58.892-59.387 154.781.36 214.59a152.454 152.454 0 0 0 20.521 17.196c6.402 4.468 15.064 3.789 20.584-1.731l21.054-21.055c8.35-8.35 12.094-19.239 11.698-29.806a16.037 16.037 0 0 0-6.947-12.606c-2.912-2.005-6.64-4.875-10.341-8.569-28.073-28.073-28.191-73.639 0-101.83l67.2-67.19c28.239-28.239 74.3-28.069 102.325.51 27.75 28.3 26.872 73.934-1.155 101.96l-13.087 13.087c-4.35 4.35-5.769 10.79-3.783 16.612 5.864 17.194 9.042 34.999 9.69 52.721.509 13.906 17.454 20.446 27.294 10.606l37.106-37.106c59.271-59.259 59.271-155.699.001-214.959z"/></svg></a>Writer</h3>
 <p>doWriterSplit方法， 调用Writer.JOb的split方法，返回Writer.Task的Configuration列表</p>
@@ -587,25 +587,25 @@
 </span><span class="lnt">18
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java">    <span class="kd">private</span> <span class="n">List</span><span class="o">&lt;</span><span class="n">Configuration</span><span class="o">&gt;</span> <span class="nf">doWriterSplit</span><span class="o">(</span><span class="kt">int</span> <span class="n">readerTaskNumber</span><span class="o">)</span> <span class="o">{</span>
-        <span class="c1">// 切换ClassLoader
-</span><span class="c1"></span>        <span class="n">classLoaderSwapper</span><span class="o">.</span><span class="na">setCurrentThreadClassLoader</span><span class="o">(</span><span class="n">LoadUtil</span><span class="o">.</span><span class="na">getJarLoader</span><span class="o">(</span>
-                <span class="n">PluginType</span><span class="o">.</span><span class="na">WRITER</span><span class="o">,</span> <span class="k">this</span><span class="o">.</span><span class="na">writerPluginName</span><span class="o">));</span>
-        <span class="c1">// 调用Job.Reader的split切分
-</span><span class="c1"></span>        <span class="n">List</span><span class="o">&lt;</span><span class="n">Configuration</span><span class="o">&gt;</span> <span class="n">writerSlicesConfigs</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="na">jobWriter</span>
-                <span class="o">.</span><span class="na">split</span><span class="o">(</span><span class="n">readerTaskNumber</span><span class="o">);</span>
-        <span class="k">if</span> <span class="o">(</span><span class="n">writerSlicesConfigs</span> <span class="o">==</span> <span class="kc">null</span> <span class="o">||</span> <span class="n">writerSlicesConfigs</span><span class="o">.</span><span class="na">size</span><span class="o">()</span> <span class="o">&lt;=</span> <span class="n">0</span><span class="o">)</span> <span class="o">{</span>
-            <span class="k">throw</span> <span class="n">DataXException</span><span class="o">.</span><span class="na">asDataXException</span><span class="o">(</span>
-                    <span class="n">FrameworkErrorCode</span><span class="o">.</span><span class="na">PLUGIN_SPLIT_ERROR</span><span class="o">,</span>
-                    <span class="s">&#34;writer切分的task不能小于等于0&#34;</span><span class="o">);</span>
-        <span class="o">}</span>
-        <span class="n">LOG</span><span class="o">.</span><span class="na">info</span><span class="o">(</span><span class="s">&#34;DataX Writer.Job [{}] splits to [{}] tasks.&#34;</span><span class="o">,</span>
-                <span class="k">this</span><span class="o">.</span><span class="na">writerPluginName</span><span class="o">,</span> <span class="n">writerSlicesConfigs</span><span class="o">.</span><span class="na">size</span><span class="o">());</span>
-        <span class="n">classLoaderSwapper</span><span class="o">.</span><span class="na">restoreCurrentThreadClassLoader</span><span class="o">();</span>
-
-        <span class="k">return</span> <span class="n">writerSlicesConfigs</span><span class="o">;</span>
-    <span class="o">}</span>
-</code></pre></td></tr></table></div>
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl">    <span class="kd">private</span> <span class="n">List</span><span class="o">&lt;</span><span class="n">Configuration</span><span class="o">&gt;</span> <span class="nf">doWriterSplit</span><span class="o">(</span><span class="kt">int</span> <span class="n">readerTaskNumber</span><span class="o">)</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">        <span class="c1">// 切换ClassLoader
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>        <span class="n">classLoaderSwapper</span><span class="o">.</span><span class="na">setCurrentThreadClassLoader</span><span class="o">(</span><span class="n">LoadUtil</span><span class="o">.</span><span class="na">getJarLoader</span><span class="o">(</span>
+</span></span><span class="line"><span class="cl">                <span class="n">PluginType</span><span class="o">.</span><span class="na">WRITER</span><span class="o">,</span> <span class="k">this</span><span class="o">.</span><span class="na">writerPluginName</span><span class="o">));</span>
+</span></span><span class="line"><span class="cl">        <span class="c1">// 调用Job.Reader的split切分
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>        <span class="n">List</span><span class="o">&lt;</span><span class="n">Configuration</span><span class="o">&gt;</span> <span class="n">writerSlicesConfigs</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="na">jobWriter</span>
+</span></span><span class="line"><span class="cl">                <span class="o">.</span><span class="na">split</span><span class="o">(</span><span class="n">readerTaskNumber</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">        <span class="k">if</span> <span class="o">(</span><span class="n">writerSlicesConfigs</span> <span class="o">==</span> <span class="kc">null</span> <span class="o">||</span> <span class="n">writerSlicesConfigs</span><span class="o">.</span><span class="na">size</span><span class="o">()</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="o">)</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">            <span class="k">throw</span> <span class="n">DataXException</span><span class="o">.</span><span class="na">asDataXException</span><span class="o">(</span>
+</span></span><span class="line"><span class="cl">                    <span class="n">FrameworkErrorCode</span><span class="o">.</span><span class="na">PLUGIN_SPLIT_ERROR</span><span class="o">,</span>
+</span></span><span class="line"><span class="cl">                    <span class="s">&#34;writer切分的task不能小于等于0&#34;</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">        <span class="o">}</span>
+</span></span><span class="line"><span class="cl">        <span class="n">LOG</span><span class="o">.</span><span class="na">info</span><span class="o">(</span><span class="s">&#34;DataX Writer.Job [{}] splits to [{}] tasks.&#34;</span><span class="o">,</span>
+</span></span><span class="line"><span class="cl">                <span class="k">this</span><span class="o">.</span><span class="na">writerPluginName</span><span class="o">,</span> <span class="n">writerSlicesConfigs</span><span class="o">.</span><span class="na">size</span><span class="o">());</span>
+</span></span><span class="line"><span class="cl">        <span class="n">classLoaderSwapper</span><span class="o">.</span><span class="na">restoreCurrentThreadClassLoader</span><span class="o">();</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">        <span class="k">return</span> <span class="n">writerSlicesConfigs</span><span class="o">;</span>
+</span></span><span class="line"><span class="cl">    <span class="o">}</span>
+</span></span></code></pre></td></tr></table></div>
 </div>
 </div><h3 id="合并配置"><a href="#合并配置" class="anchor-link"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon anchor-icon"><path d="M326.612 185.391c59.747 59.809 58.927 155.698.36 214.59-.11.12-.24.25-.36.37l-67.2 67.2c-59.27 59.27-155.699 59.262-214.96 0-59.27-59.26-59.27-155.7 0-214.96l37.106-37.106c9.84-9.84 26.786-3.3 27.294 10.606.648 17.722 3.826 35.527 9.69 52.721 1.986 5.822.567 12.262-3.783 16.612l-13.087 13.087c-28.026 28.026-28.905 73.66-1.155 101.96 28.024 28.579 74.086 28.749 102.325.51l67.2-67.19c28.191-28.191 28.073-73.757 0-101.83-3.701-3.694-7.429-6.564-10.341-8.569a16.037 16.037 0 0 1-6.947-12.606c-.396-10.567 3.348-21.456 11.698-29.806l21.054-21.055c5.521-5.521 14.182-6.199 20.584-1.731a152.482 152.482 0 0 1 20.522 17.197zM467.547 44.449c-59.261-59.262-155.69-59.27-214.96 0l-67.2 67.2c-.12.12-.25.25-.36.37-58.566 58.892-59.387 154.781.36 214.59a152.454 152.454 0 0 0 20.521 17.196c6.402 4.468 15.064 3.789 20.584-1.731l21.054-21.055c8.35-8.35 12.094-19.239 11.698-29.806a16.037 16.037 0 0 0-6.947-12.606c-2.912-2.005-6.64-4.875-10.341-8.569-28.073-28.073-28.191-73.639 0-101.83l67.2-67.19c28.239-28.239 74.3-28.069 102.325.51 27.75 28.3 26.872 73.934-1.155 101.96l-13.087 13.087c-4.35 4.35-5.769 10.79-3.783 16.612 5.864 17.194 9.042 34.999 9.69 52.721.509 13.906 17.454 20.446 27.294 10.606l37.106-37.106c59.271-59.259 59.271-155.699.001-214.959z"/></svg></a>合并配置</h3>
 <p>合并reader，writer，transformer配置列表。并将任务列表，保存在配置job.content的值里。</p>
@@ -650,44 +650,44 @@
 </span><span class="lnt">37
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java">    <span class="kd">private</span> <span class="n">List</span><span class="o">&lt;</span><span class="n">Configuration</span><span class="o">&gt;</span> <span class="nf">mergeReaderAndWriterTaskConfigs</span><span class="o">(</span>
-            <span class="n">List</span><span class="o">&lt;</span><span class="n">Configuration</span><span class="o">&gt;</span> <span class="n">readerTasksConfigs</span><span class="o">,</span>
-            <span class="n">List</span><span class="o">&lt;</span><span class="n">Configuration</span><span class="o">&gt;</span> <span class="n">writerTasksConfigs</span><span class="o">,</span>
-            <span class="n">List</span><span class="o">&lt;</span><span class="n">Configuration</span><span class="o">&gt;</span> <span class="n">transformerConfigs</span><span class="o">)</span> <span class="o">{</span>
-        <span class="c1">// reader切分的任务数目必须等于writer切分的任务数目
-</span><span class="c1"></span>        <span class="k">if</span> <span class="o">(</span><span class="n">readerTasksConfigs</span><span class="o">.</span><span class="na">size</span><span class="o">()</span> <span class="o">!=</span> <span class="n">writerTasksConfigs</span><span class="o">.</span><span class="na">size</span><span class="o">())</span> <span class="o">{</span>
-            <span class="k">throw</span> <span class="n">DataXException</span><span class="o">.</span><span class="na">asDataXException</span><span class="o">(</span>
-                    <span class="n">FrameworkErrorCode</span><span class="o">.</span><span class="na">PLUGIN_SPLIT_ERROR</span><span class="o">,</span>
-                    <span class="n">String</span><span class="o">.</span><span class="na">format</span><span class="o">(</span><span class="s">&#34;reader切分的task数目[%d]不等于writer切分的task数目[%d].&#34;</span><span class="o">,</span>
-                            <span class="n">readerTasksConfigs</span><span class="o">.</span><span class="na">size</span><span class="o">(),</span> <span class="n">writerTasksConfigs</span><span class="o">.</span><span class="na">size</span><span class="o">())</span>
-            <span class="o">);</span>
-        <span class="o">}</span>
-
-        <span class="n">List</span><span class="o">&lt;</span><span class="n">Configuration</span><span class="o">&gt;</span> <span class="n">contentConfigs</span> <span class="o">=</span> <span class="k">new</span> <span class="n">ArrayList</span><span class="o">&lt;</span><span class="n">Configuration</span><span class="o">&gt;();</span>
-        <span class="k">for</span> <span class="o">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="n">0</span><span class="o">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">readerTasksConfigs</span><span class="o">.</span><span class="na">size</span><span class="o">();</span> <span class="n">i</span><span class="o">++)</span> <span class="o">{</span>
-            <span class="n">Configuration</span> <span class="n">taskConfig</span> <span class="o">=</span> <span class="n">Configuration</span><span class="o">.</span><span class="na">newDefault</span><span class="o">();</span>
-            <span class="c1">// 保存reader相关配置
-</span><span class="c1"></span>            <span class="n">taskConfig</span><span class="o">.</span><span class="na">set</span><span class="o">(</span><span class="n">CoreConstant</span><span class="o">.</span><span class="na">JOB_READER_NAME</span><span class="o">,</span>
-                    <span class="k">this</span><span class="o">.</span><span class="na">readerPluginName</span><span class="o">);</span>
-            <span class="n">taskConfig</span><span class="o">.</span><span class="na">set</span><span class="o">(</span><span class="n">CoreConstant</span><span class="o">.</span><span class="na">JOB_READER_PARAMETER</span><span class="o">,</span>
-                    <span class="n">readerTasksConfigs</span><span class="o">.</span><span class="na">get</span><span class="o">(</span><span class="n">i</span><span class="o">));</span>
-            <span class="c1">// 保存writer相关配置
-</span><span class="c1"></span>            <span class="n">taskConfig</span><span class="o">.</span><span class="na">set</span><span class="o">(</span><span class="n">CoreConstant</span><span class="o">.</span><span class="na">JOB_WRITER_NAME</span><span class="o">,</span>
-                    <span class="k">this</span><span class="o">.</span><span class="na">writerPluginName</span><span class="o">);</span>
-            <span class="n">taskConfig</span><span class="o">.</span><span class="na">set</span><span class="o">(</span><span class="n">CoreConstant</span><span class="o">.</span><span class="na">JOB_WRITER_PARAMETER</span><span class="o">,</span>
-                    <span class="n">writerTasksConfigs</span><span class="o">.</span><span class="na">get</span><span class="o">(</span><span class="n">i</span><span class="o">));</span>
-            <span class="c1">// 保存transformer相关配置
-</span><span class="c1"></span>            <span class="k">if</span><span class="o">(</span><span class="n">transformerConfigs</span><span class="o">!=</span><span class="kc">null</span> <span class="o">&amp;&amp;</span> <span class="n">transformerConfigs</span><span class="o">.</span><span class="na">size</span><span class="o">()&gt;</span><span class="n">0</span><span class="o">){</span>
-                <span class="n">taskConfig</span><span class="o">.</span><span class="na">set</span><span class="o">(</span><span class="n">CoreConstant</span><span class="o">.</span><span class="na">JOB_TRANSFORMER</span><span class="o">,</span> <span class="n">transformerConfigs</span><span class="o">);</span>
-            <span class="o">}</span>
-
-            <span class="n">taskConfig</span><span class="o">.</span><span class="na">set</span><span class="o">(</span><span class="n">CoreConstant</span><span class="o">.</span><span class="na">TASK_ID</span><span class="o">,</span> <span class="n">i</span><span class="o">);</span>
-            <span class="n">contentConfigs</span><span class="o">.</span><span class="na">add</span><span class="o">(</span><span class="n">taskConfig</span><span class="o">);</span>
-        <span class="o">}</span>
-
-        <span class="k">return</span> <span class="n">contentConfigs</span><span class="o">;</span>
-    <span class="o">}</span>
-</code></pre></td></tr></table></div>
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl">    <span class="kd">private</span> <span class="n">List</span><span class="o">&lt;</span><span class="n">Configuration</span><span class="o">&gt;</span> <span class="nf">mergeReaderAndWriterTaskConfigs</span><span class="o">(</span>
+</span></span><span class="line"><span class="cl">            <span class="n">List</span><span class="o">&lt;</span><span class="n">Configuration</span><span class="o">&gt;</span> <span class="n">readerTasksConfigs</span><span class="o">,</span>
+</span></span><span class="line"><span class="cl">            <span class="n">List</span><span class="o">&lt;</span><span class="n">Configuration</span><span class="o">&gt;</span> <span class="n">writerTasksConfigs</span><span class="o">,</span>
+</span></span><span class="line"><span class="cl">            <span class="n">List</span><span class="o">&lt;</span><span class="n">Configuration</span><span class="o">&gt;</span> <span class="n">transformerConfigs</span><span class="o">)</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">        <span class="c1">// reader切分的任务数目必须等于writer切分的任务数目
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>        <span class="k">if</span> <span class="o">(</span><span class="n">readerTasksConfigs</span><span class="o">.</span><span class="na">size</span><span class="o">()</span> <span class="o">!=</span> <span class="n">writerTasksConfigs</span><span class="o">.</span><span class="na">size</span><span class="o">())</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">            <span class="k">throw</span> <span class="n">DataXException</span><span class="o">.</span><span class="na">asDataXException</span><span class="o">(</span>
+</span></span><span class="line"><span class="cl">                    <span class="n">FrameworkErrorCode</span><span class="o">.</span><span class="na">PLUGIN_SPLIT_ERROR</span><span class="o">,</span>
+</span></span><span class="line"><span class="cl">                    <span class="n">String</span><span class="o">.</span><span class="na">format</span><span class="o">(</span><span class="s">&#34;reader切分的task数目[%d]不等于writer切分的task数目[%d].&#34;</span><span class="o">,</span>
+</span></span><span class="line"><span class="cl">                            <span class="n">readerTasksConfigs</span><span class="o">.</span><span class="na">size</span><span class="o">(),</span> <span class="n">writerTasksConfigs</span><span class="o">.</span><span class="na">size</span><span class="o">())</span>
+</span></span><span class="line"><span class="cl">            <span class="o">);</span>
+</span></span><span class="line"><span class="cl">        <span class="o">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">        <span class="n">List</span><span class="o">&lt;</span><span class="n">Configuration</span><span class="o">&gt;</span> <span class="n">contentConfigs</span> <span class="o">=</span> <span class="k">new</span> <span class="n">ArrayList</span><span class="o">&lt;</span><span class="n">Configuration</span><span class="o">&gt;();</span>
+</span></span><span class="line"><span class="cl">        <span class="k">for</span> <span class="o">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="o">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">readerTasksConfigs</span><span class="o">.</span><span class="na">size</span><span class="o">();</span> <span class="n">i</span><span class="o">++)</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">            <span class="n">Configuration</span> <span class="n">taskConfig</span> <span class="o">=</span> <span class="n">Configuration</span><span class="o">.</span><span class="na">newDefault</span><span class="o">();</span>
+</span></span><span class="line"><span class="cl">            <span class="c1">// 保存reader相关配置
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>            <span class="n">taskConfig</span><span class="o">.</span><span class="na">set</span><span class="o">(</span><span class="n">CoreConstant</span><span class="o">.</span><span class="na">JOB_READER_NAME</span><span class="o">,</span>
+</span></span><span class="line"><span class="cl">                    <span class="k">this</span><span class="o">.</span><span class="na">readerPluginName</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">            <span class="n">taskConfig</span><span class="o">.</span><span class="na">set</span><span class="o">(</span><span class="n">CoreConstant</span><span class="o">.</span><span class="na">JOB_READER_PARAMETER</span><span class="o">,</span>
+</span></span><span class="line"><span class="cl">                    <span class="n">readerTasksConfigs</span><span class="o">.</span><span class="na">get</span><span class="o">(</span><span class="n">i</span><span class="o">));</span>
+</span></span><span class="line"><span class="cl">            <span class="c1">// 保存writer相关配置
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>            <span class="n">taskConfig</span><span class="o">.</span><span class="na">set</span><span class="o">(</span><span class="n">CoreConstant</span><span class="o">.</span><span class="na">JOB_WRITER_NAME</span><span class="o">,</span>
+</span></span><span class="line"><span class="cl">                    <span class="k">this</span><span class="o">.</span><span class="na">writerPluginName</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">            <span class="n">taskConfig</span><span class="o">.</span><span class="na">set</span><span class="o">(</span><span class="n">CoreConstant</span><span class="o">.</span><span class="na">JOB_WRITER_PARAMETER</span><span class="o">,</span>
+</span></span><span class="line"><span class="cl">                    <span class="n">writerTasksConfigs</span><span class="o">.</span><span class="na">get</span><span class="o">(</span><span class="n">i</span><span class="o">));</span>
+</span></span><span class="line"><span class="cl">            <span class="c1">// 保存transformer相关配置
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>            <span class="k">if</span><span class="o">(</span><span class="n">transformerConfigs</span><span class="o">!=</span><span class="kc">null</span> <span class="o">&amp;&amp;</span> <span class="n">transformerConfigs</span><span class="o">.</span><span class="na">size</span><span class="o">()&gt;</span><span class="mi">0</span><span class="o">){</span>
+</span></span><span class="line"><span class="cl">                <span class="n">taskConfig</span><span class="o">.</span><span class="na">set</span><span class="o">(</span><span class="n">CoreConstant</span><span class="o">.</span><span class="na">JOB_TRANSFORMER</span><span class="o">,</span> <span class="n">transformerConfigs</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">            <span class="o">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">            <span class="n">taskConfig</span><span class="o">.</span><span class="na">set</span><span class="o">(</span><span class="n">CoreConstant</span><span class="o">.</span><span class="na">TASK_ID</span><span class="o">,</span> <span class="n">i</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">            <span class="n">contentConfigs</span><span class="o">.</span><span class="na">add</span><span class="o">(</span><span class="n">taskConfig</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">        <span class="o">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">        <span class="k">return</span> <span class="n">contentConfigs</span><span class="o">;</span>
+</span></span><span class="line"><span class="cl">    <span class="o">}</span>
+</span></span></code></pre></td></tr></table></div>
 </div>
 </div><h2 id="分配任务"><a href="#分配任务" class="anchor-link"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon anchor-icon"><path d="M326.612 185.391c59.747 59.809 58.927 155.698.36 214.59-.11.12-.24.25-.36.37l-67.2 67.2c-59.27 59.27-155.699 59.262-214.96 0-59.27-59.26-59.27-155.7 0-214.96l37.106-37.106c9.84-9.84 26.786-3.3 27.294 10.606.648 17.722 3.826 35.527 9.69 52.721 1.986 5.822.567 12.262-3.783 16.612l-13.087 13.087c-28.026 28.026-28.905 73.66-1.155 101.96 28.024 28.579 74.086 28.749 102.325.51l67.2-67.19c28.191-28.191 28.073-73.757 0-101.83-3.701-3.694-7.429-6.564-10.341-8.569a16.037 16.037 0 0 1-6.947-12.606c-.396-10.567 3.348-21.456 11.698-29.806l21.054-21.055c5.521-5.521 14.182-6.199 20.584-1.731a152.482 152.482 0 0 1 20.522 17.197zM467.547 44.449c-59.261-59.262-155.69-59.27-214.96 0l-67.2 67.2c-.12.12-.25.25-.36.37-58.566 58.892-59.387 154.781.36 214.59a152.454 152.454 0 0 0 20.521 17.196c6.402 4.468 15.064 3.789 20.584-1.731l21.054-21.055c8.35-8.35 12.094-19.239 11.698-29.806a16.037 16.037 0 0 0-6.947-12.606c-2.912-2.005-6.64-4.875-10.341-8.569-28.073-28.073-28.191-73.639 0-101.83l67.2-67.19c28.239-28.239 74.3-28.069 102.325.51 27.75 28.3 26.872 73.934-1.155 101.96l-13.087 13.087c-4.35 4.35-5.769 10.79-3.783 16.612 5.864 17.194 9.042 34.999 9.69 52.721.509 13.906 17.454 20.446 27.294 10.606l37.106-37.106c59.271-59.259 59.271-155.699.001-214.959z"/></svg></a>分配任务</h2>
 <h3 id="分配算法"><a href="#分配算法" class="anchor-link"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon anchor-icon"><path d="M326.612 185.391c59.747 59.809 58.927 155.698.36 214.59-.11.12-.24.25-.36.37l-67.2 67.2c-59.27 59.27-155.699 59.262-214.96 0-59.27-59.26-59.27-155.7 0-214.96l37.106-37.106c9.84-9.84 26.786-3.3 27.294 10.606.648 17.722 3.826 35.527 9.69 52.721 1.986 5.822.567 12.262-3.783 16.612l-13.087 13.087c-28.026 28.026-28.905 73.66-1.155 101.96 28.024 28.579 74.086 28.749 102.325.51l67.2-67.19c28.191-28.191 28.073-73.757 0-101.83-3.701-3.694-7.429-6.564-10.341-8.569a16.037 16.037 0 0 1-6.947-12.606c-.396-10.567 3.348-21.456 11.698-29.806l21.054-21.055c5.521-5.521 14.182-6.199 20.584-1.731a152.482 152.482 0 0 1 20.522 17.197zM467.547 44.449c-59.261-59.262-155.69-59.27-214.96 0l-67.2 67.2c-.12.12-.25.25-.36.37-58.566 58.892-59.387 154.781.36 214.59a152.454 152.454 0 0 0 20.521 17.196c6.402 4.468 15.064 3.789 20.584-1.731l21.054-21.055c8.35-8.35 12.094-19.239 11.698-29.806a16.037 16.037 0 0 0-6.947-12.606c-2.912-2.005-6.64-4.875-10.341-8.569-28.073-28.073-28.191-73.639 0-101.83l67.2-67.19c28.239-28.239 74.3-28.069 102.325.51 27.75 28.3 26.872 73.934-1.155 101.96l-13.087 13.087c-4.35 4.35-5.769 10.79-3.783 16.612 5.864 17.194 9.042 34.999 9.69 52.721.509 13.906 17.454 20.446 27.294 10.606l37.106-37.106c59.271-59.259 59.271-155.699.001-214.959z"/></svg></a>分配算法</h3>
@@ -711,12 +711,12 @@
 </span><span class="lnt">5
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-json" data-lang="json"><span class="p">{</span>
-    <span class="nt">&#34;database_a&#34;</span> <span class="p">:</span> <span class="p">[</span><span class="err">task_id_</span><span class="mi">1</span><span class="p">,</span> <span class="err">task_id_</span><span class="mi">2</span><span class="p">],</span>
-    <span class="nt">&#34;database_b&#34;</span> <span class="p">:</span> <span class="p">[</span><span class="err">task_id_</span><span class="mi">3</span><span class="p">,</span> <span class="err">task_id_</span><span class="mi">4</span><span class="p">,</span> <span class="err">task_id_</span><span class="mi">5</span><span class="p">],</span>
-    <span class="nt">&#34;database_c&#34;</span> <span class="p">:</span> <span class="p">[</span><span class="err">task_id_</span><span class="mi">6</span><span class="p">,</span> <span class="err">task_id_</span><span class="mi">7</span><span class="p">]</span>
-<span class="p">}</span>
-</code></pre></td></tr></table></div>
+<pre tabindex="0" class="chroma"><code class="language-json" data-lang="json"><span class="line"><span class="cl"><span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="nt">&#34;database_a&#34;</span> <span class="p">:</span> <span class="p">[</span><span class="err">task_id_</span><span class="mi">1</span><span class="p">,</span> <span class="err">task_id_</span><span class="mi">2</span><span class="p">],</span>
+</span></span><span class="line"><span class="cl">    <span class="nt">&#34;database_b&#34;</span> <span class="p">:</span> <span class="p">[</span><span class="err">task_id_</span><span class="mi">3</span><span class="p">,</span> <span class="err">task_id_</span><span class="mi">4</span><span class="p">,</span> <span class="err">task_id_</span><span class="mi">5</span><span class="p">],</span>
+</span></span><span class="line"><span class="cl">    <span class="nt">&#34;database_c&#34;</span> <span class="p">:</span> <span class="p">[</span><span class="err">task_id_</span><span class="mi">6</span><span class="p">,</span> <span class="err">task_id_</span><span class="mi">7</span><span class="p">]</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table></div>
 </div>
 </div><p>根据writer.parameter.loadBalanceResourceMark，将任务分组如下：</p>
 <div class="highlight"><div class="chroma">
@@ -727,11 +727,11 @@
 </span><span class="lnt">4
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-json" data-lang="json"><span class="p">{</span>
-    <span class="nt">&#34;database_dst_d&#34;</span> <span class="p">:</span> <span class="p">[</span><span class="err">task_id_</span><span class="mi">1</span><span class="p">,</span> <span class="err">task_id_</span><span class="mi">2</span><span class="p">],</span>
-    <span class="nt">&#34;database_dst_e&#34;</span> <span class="p">:</span> <span class="p">[</span><span class="err">task_id_</span><span class="mi">3</span><span class="p">,</span> <span class="err">task_id_</span><span class="mi">4</span><span class="p">,</span> <span class="err">task_id_</span><span class="mi">5</span><span class="p">,</span> <span class="err">task_id_</span><span class="mi">6</span><span class="p">,</span> <span class="err">task_id_</span><span class="mi">7</span><span class="p">]</span>
-<span class="p">}</span>
-</code></pre></td></tr></table></div>
+<pre tabindex="0" class="chroma"><code class="language-json" data-lang="json"><span class="line"><span class="cl"><span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="nt">&#34;database_dst_d&#34;</span> <span class="p">:</span> <span class="p">[</span><span class="err">task_id_</span><span class="mi">1</span><span class="p">,</span> <span class="err">task_id_</span><span class="mi">2</span><span class="p">],</span>
+</span></span><span class="line"><span class="cl">    <span class="nt">&#34;database_dst_e&#34;</span> <span class="p">:</span> <span class="p">[</span><span class="err">task_id_</span><span class="mi">3</span><span class="p">,</span> <span class="err">task_id_</span><span class="mi">4</span><span class="p">,</span> <span class="err">task_id_</span><span class="mi">5</span><span class="p">,</span> <span class="err">task_id_</span><span class="mi">6</span><span class="p">,</span> <span class="err">task_id_</span><span class="mi">7</span><span class="p">]</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table></div>
 </div>
 </div><p>因为readerResourceMarkAndTaskIdMap有三个组，而writerResourceMarkAndTaskIdMap只有两个组。从中选出组数最多的，所以这里按照readerResourceMarkAndTaskIdMap将任务分配。</p>
 <p>执行过程是，轮询database_a, database_b, database_c，取出第一个。循环上一步</p>
@@ -754,13 +754,13 @@
 </span><span class="lnt">6
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-json" data-lang="json"><span class="p">{</span>
-    <span class="nt">&#34;taskGroup_1&#34;</span><span class="p">:</span> <span class="p">[</span><span class="err">task_id_</span><span class="mi">1</span><span class="p">,</span> <span class="err">task_id_</span><span class="mi">4</span><span class="p">],</span>
-    <span class="nt">&#34;taskGroup_2&#34;</span><span class="p">:</span> <span class="p">[</span><span class="err">task_id_</span><span class="mi">3</span><span class="p">,</span> <span class="err">task_id_</span><span class="mi">7</span><span class="p">],</span>
-    <span class="nt">&#34;taskGroup_3&#34;</span><span class="p">:</span> <span class="p">[</span><span class="err">task_id_</span><span class="mi">6</span><span class="p">,</span> <span class="err">task_id_</span><span class="mi">5</span><span class="p">],</span>
-    <span class="nt">&#34;taskGroup_4&#34;</span><span class="p">:</span> <span class="p">[</span><span class="err">task_id_</span><span class="mi">2</span><span class="p">]</span>
-<span class="p">}</span>
-</code></pre></td></tr></table></div>
+<pre tabindex="0" class="chroma"><code class="language-json" data-lang="json"><span class="line"><span class="cl"><span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="nt">&#34;taskGroup_1&#34;</span><span class="p">:</span> <span class="p">[</span><span class="err">task_id_</span><span class="mi">1</span><span class="p">,</span> <span class="err">task_id_</span><span class="mi">4</span><span class="p">],</span>
+</span></span><span class="line"><span class="cl">    <span class="nt">&#34;taskGroup_2&#34;</span><span class="p">:</span> <span class="p">[</span><span class="err">task_id_</span><span class="mi">3</span><span class="p">,</span> <span class="err">task_id_</span><span class="mi">7</span><span class="p">],</span>
+</span></span><span class="line"><span class="cl">    <span class="nt">&#34;taskGroup_3&#34;</span><span class="p">:</span> <span class="p">[</span><span class="err">task_id_</span><span class="mi">6</span><span class="p">,</span> <span class="err">task_id_</span><span class="mi">5</span><span class="p">],</span>
+</span></span><span class="line"><span class="cl">    <span class="nt">&#34;taskGroup_4&#34;</span><span class="p">:</span> <span class="p">[</span><span class="err">task_id_</span><span class="mi">2</span><span class="p">]</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table></div>
 </div>
 </div><h3 id="代码解释"><a href="#代码解释" class="anchor-link"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon anchor-icon"><path d="M326.612 185.391c59.747 59.809 58.927 155.698.36 214.59-.11.12-.24.25-.36.37l-67.2 67.2c-59.27 59.27-155.699 59.262-214.96 0-59.27-59.26-59.27-155.7 0-214.96l37.106-37.106c9.84-9.84 26.786-3.3 27.294 10.606.648 17.722 3.826 35.527 9.69 52.721 1.986 5.822.567 12.262-3.783 16.612l-13.087 13.087c-28.026 28.026-28.905 73.66-1.155 101.96 28.024 28.579 74.086 28.749 102.325.51l67.2-67.19c28.191-28.191 28.073-73.757 0-101.83-3.701-3.694-7.429-6.564-10.341-8.569a16.037 16.037 0 0 1-6.947-12.606c-.396-10.567 3.348-21.456 11.698-29.806l21.054-21.055c5.521-5.521 14.182-6.199 20.584-1.731a152.482 152.482 0 0 1 20.522 17.197zM467.547 44.449c-59.261-59.262-155.69-59.27-214.96 0l-67.2 67.2c-.12.12-.25.25-.36.37-58.566 58.892-59.387 154.781.36 214.59a152.454 152.454 0 0 0 20.521 17.196c6.402 4.468 15.064 3.789 20.584-1.731l21.054-21.055c8.35-8.35 12.094-19.239 11.698-29.806a16.037 16.037 0 0 0-6.947-12.606c-2.912-2.005-6.64-4.875-10.341-8.569-28.073-28.073-28.191-73.639 0-101.83l67.2-67.19c28.239-28.239 74.3-28.069 102.325.51 27.75 28.3 26.872 73.934-1.155 101.96l-13.087 13.087c-4.35 4.35-5.769 10.79-3.783 16.612 5.864 17.194 9.042 34.999 9.69 52.721.509 13.906 17.454 20.446 27.294 10.606l37.106-37.106c59.271-59.259 59.271-155.699.001-214.959z"/></svg></a>代码解释</h3>
 <p>任务的分配是由JobAssignUtil类负责。使用者调用assignFairly方法，传入参数，返回TaskGroup配置列表</p>
@@ -791,30 +791,30 @@
 </span><span class="lnt">23
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">final</span> <span class="kd">class</span> <span class="nc">JobAssignUtil</span> <span class="o">{</span>
-    <span class="cm">/**
-</span><span class="cm">    * configuration 配置
-</span><span class="cm">    * channelNumber， channel总数
-</span><span class="cm">    * channelsPerTaskGroup， 每个TaskGroup拥有的channel数目
-</span><span class="cm">    */</span>
-    <span class="kd">public</span> <span class="kd">static</span> <span class="n">List</span><span class="o">&lt;</span><span class="n">Configuration</span><span class="o">&gt;</span> <span class="nf">assignFairly</span><span class="o">(</span><span class="n">Configuration</span> <span class="n">configuration</span><span class="o">,</span> <span class="kt">int</span> <span class="n">channelNumber</span><span class="o">,</span> <span class="kt">int</span> <span class="n">channelsPerTaskGroup</span><span class="o">)</span> <span class="o">{</span>
-        
-        <span class="n">List</span><span class="o">&lt;</span><span class="n">Configuration</span><span class="o">&gt;</span> <span class="n">contentConfig</span> <span class="o">=</span> <span class="n">configuration</span><span class="o">.</span><span class="na">getListConfiguration</span><span class="o">(</span><span class="n">CoreConstant</span><span class="o">.</span><span class="na">DATAX_JOB_CONTENT</span><span class="o">);</span>
-        <span class="c1">// 计算TaskGroup的数目
-</span><span class="c1"></span>        <span class="kt">int</span> <span class="n">taskGroupNumber</span> <span class="o">=</span> <span class="o">(</span><span class="kt">int</span><span class="o">)</span> <span class="n">Math</span><span class="o">.</span><span class="na">ceil</span><span class="o">(</span><span class="n">1</span><span class="o">.</span><span class="na">0</span> <span class="o">*</span> <span class="n">channelNumber</span> <span class="o">/</span> <span class="n">channelsPerTaskGroup</span><span class="o">);</span>
-
-        <span class="o">......</span>
-        <span class="c1">// 任务分组
-</span><span class="c1"></span>        <span class="n">LinkedHashMap</span><span class="o">&lt;</span><span class="n">String</span><span class="o">,</span> <span class="n">List</span><span class="o">&lt;</span><span class="n">Integer</span><span class="o">&gt;&gt;</span> <span class="n">resourceMarkAndTaskIdMap</span> <span class="o">=</span> <span class="n">parseAndGetResourceMarkAndTaskIdMap</span><span class="o">(</span><span class="n">contentConfig</span><span class="o">);</span>
-        <span class="c1">// 调用doAssign方法，分配任务
-</span><span class="c1"></span>        <span class="n">List</span><span class="o">&lt;</span><span class="n">Configuration</span><span class="o">&gt;</span> <span class="n">taskGroupConfig</span> <span class="o">=</span> <span class="n">doAssign</span><span class="o">(</span><span class="n">resourceMarkAndTaskIdMap</span><span class="o">,</span> <span class="n">configuration</span><span class="o">,</span> <span class="n">taskGroupNumber</span><span class="o">);</span>
-
-        <span class="c1">// 调整 每个 taskGroup 对应的 Channel 个数（属于优化范畴）
-</span><span class="c1"></span>        <span class="n">adjustChannelNumPerTaskGroup</span><span class="o">(</span><span class="n">taskGroupConfig</span><span class="o">,</span> <span class="n">channelNumber</span><span class="o">);</span>
-        <span class="k">return</span> <span class="n">taskGroupConfig</span><span class="o">;</span>
-    <span class="o">}</span>
-<span class="o">}</span>
-</code></pre></td></tr></table></div>
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="kd">public</span> <span class="kd">final</span> <span class="kd">class</span> <span class="nc">JobAssignUtil</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">    <span class="cm">/**
+</span></span></span><span class="line"><span class="cl"><span class="cm">    * configuration 配置
+</span></span></span><span class="line"><span class="cl"><span class="cm">    * channelNumber， channel总数
+</span></span></span><span class="line"><span class="cl"><span class="cm">    * channelsPerTaskGroup， 每个TaskGroup拥有的channel数目
+</span></span></span><span class="line"><span class="cl"><span class="cm">    */</span>
+</span></span><span class="line"><span class="cl">    <span class="kd">public</span> <span class="kd">static</span> <span class="n">List</span><span class="o">&lt;</span><span class="n">Configuration</span><span class="o">&gt;</span> <span class="nf">assignFairly</span><span class="o">(</span><span class="n">Configuration</span> <span class="n">configuration</span><span class="o">,</span> <span class="kt">int</span> <span class="n">channelNumber</span><span class="o">,</span> <span class="kt">int</span> <span class="n">channelsPerTaskGroup</span><span class="o">)</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">        
+</span></span><span class="line"><span class="cl">        <span class="n">List</span><span class="o">&lt;</span><span class="n">Configuration</span><span class="o">&gt;</span> <span class="n">contentConfig</span> <span class="o">=</span> <span class="n">configuration</span><span class="o">.</span><span class="na">getListConfiguration</span><span class="o">(</span><span class="n">CoreConstant</span><span class="o">.</span><span class="na">DATAX_JOB_CONTENT</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">        <span class="c1">// 计算TaskGroup的数目
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>        <span class="kt">int</span> <span class="n">taskGroupNumber</span> <span class="o">=</span> <span class="o">(</span><span class="kt">int</span><span class="o">)</span> <span class="n">Math</span><span class="o">.</span><span class="na">ceil</span><span class="o">(</span><span class="mf">1.0</span> <span class="o">*</span> <span class="n">channelNumber</span> <span class="o">/</span> <span class="n">channelsPerTaskGroup</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">        <span class="o">......</span>
+</span></span><span class="line"><span class="cl">        <span class="c1">// 任务分组
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>        <span class="n">LinkedHashMap</span><span class="o">&lt;</span><span class="n">String</span><span class="o">,</span> <span class="n">List</span><span class="o">&lt;</span><span class="n">Integer</span><span class="o">&gt;&gt;</span> <span class="n">resourceMarkAndTaskIdMap</span> <span class="o">=</span> <span class="n">parseAndGetResourceMarkAndTaskIdMap</span><span class="o">(</span><span class="n">contentConfig</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">        <span class="c1">// 调用doAssign方法，分配任务
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>        <span class="n">List</span><span class="o">&lt;</span><span class="n">Configuration</span><span class="o">&gt;</span> <span class="n">taskGroupConfig</span> <span class="o">=</span> <span class="n">doAssign</span><span class="o">(</span><span class="n">resourceMarkAndTaskIdMap</span><span class="o">,</span> <span class="n">configuration</span><span class="o">,</span> <span class="n">taskGroupNumber</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">        <span class="c1">// 调整 每个 taskGroup 对应的 Channel 个数（属于优化范畴）
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>        <span class="n">adjustChannelNumPerTaskGroup</span><span class="o">(</span><span class="n">taskGroupConfig</span><span class="o">,</span> <span class="n">channelNumber</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">        <span class="k">return</span> <span class="n">taskGroupConfig</span><span class="o">;</span>
+</span></span><span class="line"><span class="cl">    <span class="o">}</span>
+</span></span><span class="line"><span class="cl"><span class="o">}</span>
+</span></span></code></pre></td></tr></table></div>
 </div>
 </div><h4 id="任务分组"><a href="#任务分组" class="anchor-link"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon anchor-icon"><path d="M326.612 185.391c59.747 59.809 58.927 155.698.36 214.59-.11.12-.24.25-.36.37l-67.2 67.2c-59.27 59.27-155.699 59.262-214.96 0-59.27-59.26-59.27-155.7 0-214.96l37.106-37.106c9.84-9.84 26.786-3.3 27.294 10.606.648 17.722 3.826 35.527 9.69 52.721 1.986 5.822.567 12.262-3.783 16.612l-13.087 13.087c-28.026 28.026-28.905 73.66-1.155 101.96 28.024 28.579 74.086 28.749 102.325.51l67.2-67.19c28.191-28.191 28.073-73.757 0-101.83-3.701-3.694-7.429-6.564-10.341-8.569a16.037 16.037 0 0 1-6.947-12.606c-.396-10.567 3.348-21.456 11.698-29.806l21.054-21.055c5.521-5.521 14.182-6.199 20.584-1.731a152.482 152.482 0 0 1 20.522 17.197zM467.547 44.449c-59.261-59.262-155.69-59.27-214.96 0l-67.2 67.2c-.12.12-.25.25-.36.37-58.566 58.892-59.387 154.781.36 214.59a152.454 152.454 0 0 0 20.521 17.196c6.402 4.468 15.064 3.789 20.584-1.731l21.054-21.055c8.35-8.35 12.094-19.239 11.698-29.806a16.037 16.037 0 0 0-6.947-12.606c-2.912-2.005-6.64-4.875-10.341-8.569-28.073-28.073-28.191-73.639 0-101.83l67.2-67.19c28.239-28.239 74.3-28.069 102.325.51 27.75 28.3 26.872 73.934-1.155 101.96l-13.087 13.087c-4.35 4.35-5.769 10.79-3.783 16.612 5.864 17.194 9.042 34.999 9.69 52.721.509 13.906 17.454 20.446 27.294 10.606l37.106-37.106c59.271-59.259 59.271-155.699.001-214.959z"/></svg></a>任务分组</h4>
 <p>按照task配置的reader.parameter.loadBalanceResourceMark和writer.parameter.loadBalanceResourceMark，分别对任务进行分组，选择分组数最高的那组，作为任务分组的源。</p>
@@ -861,46 +861,46 @@
 </span><span class="lnt">39
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java">    <span class="cm">/**
-</span><span class="cm">    * contentConfig参数，task的配置列表
-</span><span class="cm">    */</span>
-    <span class="kd">private</span> <span class="kd">static</span> <span class="n">LinkedHashMap</span><span class="o">&lt;</span><span class="n">String</span><span class="o">,</span> <span class="n">List</span><span class="o">&lt;</span><span class="n">Integer</span><span class="o">&gt;&gt;</span> <span class="nf">parseAndGetResourceMarkAndTaskIdMap</span><span class="o">(</span><span class="n">List</span><span class="o">&lt;</span><span class="n">Configuration</span><span class="o">&gt;</span> <span class="n">contentConfig</span><span class="o">)</span> <span class="o">{</span>
-        <span class="c1">// reader的任务分组，key为分组的名称，value是taskId的列表
-</span><span class="c1"></span>        <span class="n">LinkedHashMap</span><span class="o">&lt;</span><span class="n">String</span><span class="o">,</span> <span class="n">List</span><span class="o">&lt;</span><span class="n">Integer</span><span class="o">&gt;&gt;</span> <span class="n">readerResourceMarkAndTaskIdMap</span> <span class="o">=</span> <span class="k">new</span> <span class="n">LinkedHashMap</span><span class="o">&lt;</span><span class="n">String</span><span class="o">,</span> <span class="n">List</span><span class="o">&lt;</span><span class="n">Integer</span><span class="o">&gt;&gt;();</span>
-        <span class="c1">// writer的任务分组，key为分组的名称，value是taskId的列表
-</span><span class="c1"></span>        <span class="n">LinkedHashMap</span><span class="o">&lt;</span><span class="n">String</span><span class="o">,</span> <span class="n">List</span><span class="o">&lt;</span><span class="n">Integer</span><span class="o">&gt;&gt;</span> 
-        <span class="n">writerResourceMarkAndTaskIdMap</span> <span class="o">=</span> <span class="k">new</span> <span class="n">LinkedHashMap</span><span class="o">&lt;</span><span class="n">String</span><span class="o">,</span> <span class="n">List</span><span class="o">&lt;</span><span class="n">Integer</span><span class="o">&gt;&gt;();</span>
-
-        <span class="k">for</span> <span class="o">(</span><span class="n">Configuration</span> <span class="n">aTaskConfig</span> <span class="o">:</span> <span class="n">contentConfig</span><span class="o">)</span> <span class="o">{</span>
-            <span class="kt">int</span> <span class="n">taskId</span> <span class="o">=</span> <span class="n">aTaskConfig</span><span class="o">.</span><span class="na">getInt</span><span class="o">(</span><span class="n">CoreConstant</span><span class="o">.</span><span class="na">TASK_ID</span><span class="o">);</span>
-            
-            <span class="c1">// 取出reader.parameter.loadBalanceResourceMark的值，作为分组名
-</span><span class="c1"></span>            <span class="n">String</span> <span class="n">readerResourceMark</span> <span class="o">=</span> <span class="n">aTaskConfig</span><span class="o">.</span><span class="na">getString</span><span class="o">(</span><span class="n">CoreConstant</span><span class="o">.</span><span class="na">JOB_READER_PARAMETER</span> <span class="o">+</span> <span class="s">&#34;.&#34;</span> <span class="o">+</span> <span class="n">CommonConstant</span><span class="o">.</span><span class="na">LOAD_BALANCE_RESOURCE_MARK</span><span class="o">);</span>
-            <span class="k">if</span> <span class="o">(</span><span class="n">readerResourceMarkAndTaskIdMap</span><span class="o">.</span><span class="na">get</span><span class="o">(</span><span class="n">readerResourceMark</span><span class="o">)</span> <span class="o">==</span> <span class="kc">null</span><span class="o">)</span> <span class="o">{</span>
-                <span class="n">readerResourceMarkAndTaskIdMap</span><span class="o">.</span><span class="na">put</span><span class="o">(</span><span class="n">readerResourceMark</span><span class="o">,</span> <span class="k">new</span> <span class="n">LinkedList</span><span class="o">&lt;</span><span class="n">Integer</span><span class="o">&gt;());</span>
-            <span class="o">}</span>
-            <span class="c1">// 把 readerResourceMark 加到 readerResourceMarkAndTaskIdMap 中
-</span><span class="c1"></span>            <span class="n">readerResourceMarkAndTaskIdMap</span><span class="o">.</span><span class="na">get</span><span class="o">(</span><span class="n">readerResourceMark</span><span class="o">).</span><span class="na">add</span><span class="o">(</span><span class="n">taskId</span><span class="o">);</span>
-
-            <span class="c1">// 取出writer.parameter.loadBalanceResourceMark的值，作为分组名
-</span><span class="c1"></span>            <span class="n">String</span> <span class="n">writerResourceMark</span> <span class="o">=</span> <span class="n">aTaskConfig</span><span class="o">.</span><span class="na">getString</span><span class="o">(</span><span class="n">CoreConstant</span><span class="o">.</span><span class="na">JOB_WRITER_PARAMETER</span> <span class="o">+</span> <span class="s">&#34;.&#34;</span> <span class="o">+</span> <span class="n">CommonConstant</span><span class="o">.</span><span class="na">LOAD_BALANCE_RESOURCE_MARK</span><span class="o">);</span>
-            <span class="k">if</span> <span class="o">(</span><span class="n">writerResourceMarkAndTaskIdMap</span><span class="o">.</span><span class="na">get</span><span class="o">(</span><span class="n">writerResourceMark</span><span class="o">)</span> <span class="o">==</span> <span class="kc">null</span><span class="o">)</span> <span class="o">{</span>
-                <span class="n">writerResourceMarkAndTaskIdMap</span><span class="o">.</span><span class="na">put</span><span class="o">(</span><span class="n">writerResourceMark</span><span class="o">,</span> <span class="k">new</span> <span class="n">LinkedList</span><span class="o">&lt;</span><span class="n">Integer</span><span class="o">&gt;());</span>
-            <span class="o">}</span>
-            <span class="c1">// 把 writerResourceMark 加到 writerResourceMarkAndTaskIdMap 中
-</span><span class="c1"></span>            <span class="n">writerResourceMarkAndTaskIdMap</span><span class="o">.</span><span class="na">get</span><span class="o">(</span><span class="n">writerResourceMark</span><span class="o">).</span><span class="na">add</span><span class="o">(</span><span class="n">taskId</span><span class="o">);</span>
-        <span class="o">}</span>
-
-        <span class="c1">// 选出reader和writer其中最大的
-</span><span class="c1"></span>        <span class="k">if</span> <span class="o">(</span><span class="n">readerResourceMarkAndTaskIdMap</span><span class="o">.</span><span class="na">size</span><span class="o">()</span> <span class="o">&gt;=</span> <span class="n">writerResourceMarkAndTaskIdMap</span><span class="o">.</span><span class="na">size</span><span class="o">())</span> <span class="o">{</span>
-            <span class="c1">// 采用 reader 对资源做的标记进行 shuffle
-</span><span class="c1"></span>            <span class="k">return</span> <span class="n">readerResourceMarkAndTaskIdMap</span><span class="o">;</span>
-        <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
-            <span class="c1">// 采用 writer 对资源做的标记进行 shuffle
-</span><span class="c1"></span>            <span class="k">return</span> <span class="n">writerResourceMarkAndTaskIdMap</span><span class="o">;</span>
-        <span class="o">}</span>
-    <span class="o">}</span>
-</code></pre></td></tr></table></div>
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl">    <span class="cm">/**
+</span></span></span><span class="line"><span class="cl"><span class="cm">    * contentConfig参数，task的配置列表
+</span></span></span><span class="line"><span class="cl"><span class="cm">    */</span>
+</span></span><span class="line"><span class="cl">    <span class="kd">private</span> <span class="kd">static</span> <span class="n">LinkedHashMap</span><span class="o">&lt;</span><span class="n">String</span><span class="o">,</span> <span class="n">List</span><span class="o">&lt;</span><span class="n">Integer</span><span class="o">&gt;&gt;</span> <span class="nf">parseAndGetResourceMarkAndTaskIdMap</span><span class="o">(</span><span class="n">List</span><span class="o">&lt;</span><span class="n">Configuration</span><span class="o">&gt;</span> <span class="n">contentConfig</span><span class="o">)</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">        <span class="c1">// reader的任务分组，key为分组的名称，value是taskId的列表
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>        <span class="n">LinkedHashMap</span><span class="o">&lt;</span><span class="n">String</span><span class="o">,</span> <span class="n">List</span><span class="o">&lt;</span><span class="n">Integer</span><span class="o">&gt;&gt;</span> <span class="n">readerResourceMarkAndTaskIdMap</span> <span class="o">=</span> <span class="k">new</span> <span class="n">LinkedHashMap</span><span class="o">&lt;</span><span class="n">String</span><span class="o">,</span> <span class="n">List</span><span class="o">&lt;</span><span class="n">Integer</span><span class="o">&gt;&gt;();</span>
+</span></span><span class="line"><span class="cl">        <span class="c1">// writer的任务分组，key为分组的名称，value是taskId的列表
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>        <span class="n">LinkedHashMap</span><span class="o">&lt;</span><span class="n">String</span><span class="o">,</span> <span class="n">List</span><span class="o">&lt;</span><span class="n">Integer</span><span class="o">&gt;&gt;</span> 
+</span></span><span class="line"><span class="cl">        <span class="n">writerResourceMarkAndTaskIdMap</span> <span class="o">=</span> <span class="k">new</span> <span class="n">LinkedHashMap</span><span class="o">&lt;</span><span class="n">String</span><span class="o">,</span> <span class="n">List</span><span class="o">&lt;</span><span class="n">Integer</span><span class="o">&gt;&gt;();</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">        <span class="k">for</span> <span class="o">(</span><span class="n">Configuration</span> <span class="n">aTaskConfig</span> <span class="o">:</span> <span class="n">contentConfig</span><span class="o">)</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">            <span class="kt">int</span> <span class="n">taskId</span> <span class="o">=</span> <span class="n">aTaskConfig</span><span class="o">.</span><span class="na">getInt</span><span class="o">(</span><span class="n">CoreConstant</span><span class="o">.</span><span class="na">TASK_ID</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">            
+</span></span><span class="line"><span class="cl">            <span class="c1">// 取出reader.parameter.loadBalanceResourceMark的值，作为分组名
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>            <span class="n">String</span> <span class="n">readerResourceMark</span> <span class="o">=</span> <span class="n">aTaskConfig</span><span class="o">.</span><span class="na">getString</span><span class="o">(</span><span class="n">CoreConstant</span><span class="o">.</span><span class="na">JOB_READER_PARAMETER</span> <span class="o">+</span> <span class="s">&#34;.&#34;</span> <span class="o">+</span> <span class="n">CommonConstant</span><span class="o">.</span><span class="na">LOAD_BALANCE_RESOURCE_MARK</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">            <span class="k">if</span> <span class="o">(</span><span class="n">readerResourceMarkAndTaskIdMap</span><span class="o">.</span><span class="na">get</span><span class="o">(</span><span class="n">readerResourceMark</span><span class="o">)</span> <span class="o">==</span> <span class="kc">null</span><span class="o">)</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">                <span class="n">readerResourceMarkAndTaskIdMap</span><span class="o">.</span><span class="na">put</span><span class="o">(</span><span class="n">readerResourceMark</span><span class="o">,</span> <span class="k">new</span> <span class="n">LinkedList</span><span class="o">&lt;</span><span class="n">Integer</span><span class="o">&gt;());</span>
+</span></span><span class="line"><span class="cl">            <span class="o">}</span>
+</span></span><span class="line"><span class="cl">            <span class="c1">// 把 readerResourceMark 加到 readerResourceMarkAndTaskIdMap 中
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>            <span class="n">readerResourceMarkAndTaskIdMap</span><span class="o">.</span><span class="na">get</span><span class="o">(</span><span class="n">readerResourceMark</span><span class="o">).</span><span class="na">add</span><span class="o">(</span><span class="n">taskId</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">            <span class="c1">// 取出writer.parameter.loadBalanceResourceMark的值，作为分组名
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>            <span class="n">String</span> <span class="n">writerResourceMark</span> <span class="o">=</span> <span class="n">aTaskConfig</span><span class="o">.</span><span class="na">getString</span><span class="o">(</span><span class="n">CoreConstant</span><span class="o">.</span><span class="na">JOB_WRITER_PARAMETER</span> <span class="o">+</span> <span class="s">&#34;.&#34;</span> <span class="o">+</span> <span class="n">CommonConstant</span><span class="o">.</span><span class="na">LOAD_BALANCE_RESOURCE_MARK</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">            <span class="k">if</span> <span class="o">(</span><span class="n">writerResourceMarkAndTaskIdMap</span><span class="o">.</span><span class="na">get</span><span class="o">(</span><span class="n">writerResourceMark</span><span class="o">)</span> <span class="o">==</span> <span class="kc">null</span><span class="o">)</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">                <span class="n">writerResourceMarkAndTaskIdMap</span><span class="o">.</span><span class="na">put</span><span class="o">(</span><span class="n">writerResourceMark</span><span class="o">,</span> <span class="k">new</span> <span class="n">LinkedList</span><span class="o">&lt;</span><span class="n">Integer</span><span class="o">&gt;());</span>
+</span></span><span class="line"><span class="cl">            <span class="o">}</span>
+</span></span><span class="line"><span class="cl">            <span class="c1">// 把 writerResourceMark 加到 writerResourceMarkAndTaskIdMap 中
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>            <span class="n">writerResourceMarkAndTaskIdMap</span><span class="o">.</span><span class="na">get</span><span class="o">(</span><span class="n">writerResourceMark</span><span class="o">).</span><span class="na">add</span><span class="o">(</span><span class="n">taskId</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">        <span class="o">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">        <span class="c1">// 选出reader和writer其中最大的
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>        <span class="k">if</span> <span class="o">(</span><span class="n">readerResourceMarkAndTaskIdMap</span><span class="o">.</span><span class="na">size</span><span class="o">()</span> <span class="o">&gt;=</span> <span class="n">writerResourceMarkAndTaskIdMap</span><span class="o">.</span><span class="na">size</span><span class="o">())</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">            <span class="c1">// 采用 reader 对资源做的标记进行 shuffle
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>            <span class="k">return</span> <span class="n">readerResourceMarkAndTaskIdMap</span><span class="o">;</span>
+</span></span><span class="line"><span class="cl">        <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">            <span class="c1">// 采用 writer 对资源做的标记进行 shuffle
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>            <span class="k">return</span> <span class="n">writerResourceMarkAndTaskIdMap</span><span class="o">;</span>
+</span></span><span class="line"><span class="cl">        <span class="o">}</span>
+</span></span><span class="line"><span class="cl">    <span class="o">}</span>
+</span></span></code></pre></td></tr></table></div>
 </div>
 </div><h3 id="分配任务-1"><a href="#分配任务-1" class="anchor-link"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon anchor-icon"><path d="M326.612 185.391c59.747 59.809 58.927 155.698.36 214.59-.11.12-.24.25-.36.37l-67.2 67.2c-59.27 59.27-155.699 59.262-214.96 0-59.27-59.26-59.27-155.7 0-214.96l37.106-37.106c9.84-9.84 26.786-3.3 27.294 10.606.648 17.722 3.826 35.527 9.69 52.721 1.986 5.822.567 12.262-3.783 16.612l-13.087 13.087c-28.026 28.026-28.905 73.66-1.155 101.96 28.024 28.579 74.086 28.749 102.325.51l67.2-67.19c28.191-28.191 28.073-73.757 0-101.83-3.701-3.694-7.429-6.564-10.341-8.569a16.037 16.037 0 0 1-6.947-12.606c-.396-10.567 3.348-21.456 11.698-29.806l21.054-21.055c5.521-5.521 14.182-6.199 20.584-1.731a152.482 152.482 0 0 1 20.522 17.197zM467.547 44.449c-59.261-59.262-155.69-59.27-214.96 0l-67.2 67.2c-.12.12-.25.25-.36.37-58.566 58.892-59.387 154.781.36 214.59a152.454 152.454 0 0 0 20.521 17.196c6.402 4.468 15.064 3.789 20.584-1.731l21.054-21.055c8.35-8.35 12.094-19.239 11.698-29.806a16.037 16.037 0 0 0-6.947-12.606c-2.912-2.005-6.64-4.875-10.341-8.569-28.073-28.073-28.191-73.639 0-101.83l67.2-67.19c28.239-28.239 74.3-28.069 102.325.51 27.75 28.3 26.872 73.934-1.155 101.96l-13.087 13.087c-4.35 4.35-5.769 10.79-3.783 16.612 5.864 17.194 9.042 34.999 9.69 52.721.509 13.906 17.454 20.446 27.294 10.606l37.106-37.106c59.271-59.259 59.271-155.699.001-214.959z"/></svg></a>分配任务</h3>
 <p>将上一部任务的分组，划分到每个taskGroup里</p>
@@ -964,63 +964,63 @@
 </span><span class="lnt">56
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java">    <span class="kd">private</span> <span class="kd">static</span> <span class="n">List</span><span class="o">&lt;</span><span class="n">Configuration</span><span class="o">&gt;</span> <span class="nf">doAssign</span><span class="o">(</span><span class="n">LinkedHashMap</span><span class="o">&lt;</span><span class="n">String</span><span class="o">,</span> <span class="n">List</span><span class="o">&lt;</span><span class="n">Integer</span><span class="o">&gt;&gt;</span> <span class="n">resourceMarkAndTaskIdMap</span><span class="o">,</span> <span class="n">Configuration</span> <span class="n">jobConfiguration</span><span class="o">,</span> <span class="kt">int</span> <span class="n">taskGroupNumber</span><span class="o">)</span> <span class="o">{</span>
-        <span class="n">List</span><span class="o">&lt;</span><span class="n">Configuration</span><span class="o">&gt;</span> <span class="n">contentConfig</span> <span class="o">=</span> <span class="n">jobConfiguration</span><span class="o">.</span><span class="na">getListConfiguration</span><span class="o">(</span><span class="n">CoreConstant</span><span class="o">.</span><span class="na">DATAX_JOB_CONTENT</span><span class="o">);</span>
-
-        <span class="n">Configuration</span> <span class="n">taskGroupTemplate</span> <span class="o">=</span> <span class="n">jobConfiguration</span><span class="o">.</span><span class="na">clone</span><span class="o">();</span>
-        <span class="n">taskGroupTemplate</span><span class="o">.</span><span class="na">remove</span><span class="o">(</span><span class="n">CoreConstant</span><span class="o">.</span><span class="na">DATAX_JOB_CONTENT</span><span class="o">);</span>
-
-        <span class="n">List</span><span class="o">&lt;</span><span class="n">Configuration</span><span class="o">&gt;</span> <span class="n">result</span> <span class="o">=</span> <span class="k">new</span> <span class="n">LinkedList</span><span class="o">&lt;</span><span class="n">Configuration</span><span class="o">&gt;();</span>
-
-        <span class="c1">// 初始化taskGroupConfigList
-</span><span class="c1"></span>        <span class="n">List</span><span class="o">&lt;</span><span class="n">List</span><span class="o">&lt;</span><span class="n">Configuration</span><span class="o">&gt;&gt;</span> <span class="n">taskGroupConfigList</span> <span class="o">=</span> <span class="k">new</span> <span class="n">ArrayList</span><span class="o">&lt;</span><span class="n">List</span><span class="o">&lt;</span><span class="n">Configuration</span><span class="o">&gt;&gt;(</span><span class="n">taskGroupNumber</span><span class="o">);</span>
-        <span class="k">for</span> <span class="o">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="n">0</span><span class="o">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">taskGroupNumber</span><span class="o">;</span> <span class="n">i</span><span class="o">++)</span> <span class="o">{</span>
-            <span class="n">taskGroupConfigList</span><span class="o">.</span><span class="na">add</span><span class="o">(</span><span class="k">new</span> <span class="n">LinkedList</span><span class="o">&lt;</span><span class="n">Configuration</span><span class="o">&gt;());</span>
-        <span class="o">}</span>
-
-        <span class="c1">// 取得resourceMarkAndTaskIdMap的值的最大个数
-</span><span class="c1"></span>        <span class="kt">int</span> <span class="n">mapValueMaxLength</span> <span class="o">=</span> <span class="o">-</span><span class="n">1</span><span class="o">;</span>
-
-        <span class="n">List</span><span class="o">&lt;</span><span class="n">String</span><span class="o">&gt;</span> <span class="n">resourceMarks</span> <span class="o">=</span> <span class="k">new</span> <span class="n">ArrayList</span><span class="o">&lt;</span><span class="n">String</span><span class="o">&gt;();</span>
-        <span class="k">for</span> <span class="o">(</span><span class="n">Map</span><span class="o">.</span><span class="na">Entry</span><span class="o">&lt;</span><span class="n">String</span><span class="o">,</span> <span class="n">List</span><span class="o">&lt;</span><span class="n">Integer</span><span class="o">&gt;&gt;</span> <span class="n">entry</span> <span class="o">:</span> <span class="n">resourceMarkAndTaskIdMap</span><span class="o">.</span><span class="na">entrySet</span><span class="o">())</span> <span class="o">{</span>
-            <span class="n">resourceMarks</span><span class="o">.</span><span class="na">add</span><span class="o">(</span><span class="n">entry</span><span class="o">.</span><span class="na">getKey</span><span class="o">());</span>
-            <span class="k">if</span> <span class="o">(</span><span class="n">entry</span><span class="o">.</span><span class="na">getValue</span><span class="o">().</span><span class="na">size</span><span class="o">()</span> <span class="o">&gt;</span> <span class="n">mapValueMaxLength</span><span class="o">)</span> <span class="o">{</span>
-                <span class="n">mapValueMaxLength</span> <span class="o">=</span> <span class="n">entry</span><span class="o">.</span><span class="na">getValue</span><span class="o">().</span><span class="na">size</span><span class="o">();</span>
-            <span class="o">}</span>
-        <span class="o">}</span>
-
-        
-        <span class="kt">int</span> <span class="n">taskGroupIndex</span> <span class="o">=</span> <span class="n">0</span><span class="o">;</span>
-        <span class="c1">// 执行mapValueMaxLength次数，每一次轮询一遍resourceMarkAndTaskIdMap
-</span><span class="c1"></span>        <span class="k">for</span> <span class="o">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="n">0</span><span class="o">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">mapValueMaxLength</span><span class="o">;</span> <span class="n">i</span><span class="o">++)</span> <span class="o">{</span>
-            <span class="c1">// 轮询resourceMarkAndTaskIdMap
-</span><span class="c1"></span>            <span class="k">for</span> <span class="o">(</span><span class="n">String</span> <span class="n">resourceMark</span> <span class="o">:</span> <span class="n">resourceMarks</span><span class="o">)</span> <span class="o">{</span>
-                <span class="k">if</span> <span class="o">(</span><span class="n">resourceMarkAndTaskIdMap</span><span class="o">.</span><span class="na">get</span><span class="o">(</span><span class="n">resourceMark</span><span class="o">).</span><span class="na">size</span><span class="o">()</span> <span class="o">&gt;</span> <span class="n">0</span><span class="o">)</span> <span class="o">{</span>
-                    <span class="c1">// 取出第一个
-</span><span class="c1"></span>                    <span class="kt">int</span> <span class="n">taskId</span> <span class="o">=</span> <span class="n">resourceMarkAndTaskIdMap</span><span class="o">.</span><span class="na">get</span><span class="o">(</span><span class="n">resourceMark</span><span class="o">).</span><span class="na">get</span><span class="o">(</span><span class="n">0</span><span class="o">);</span>
-                    <span class="c1">// 轮询的向taskGroupConfigList插入值
-</span><span class="c1"></span>                    <span class="n">taskGroupConfigList</span><span class="o">.</span><span class="na">get</span><span class="o">(</span><span class="n">taskGroupIndex</span> <span class="o">%</span> <span class="n">taskGroupNumber</span><span class="o">).</span><span class="na">add</span><span class="o">(</span><span class="n">contentConfig</span><span class="o">.</span><span class="na">get</span><span class="o">(</span><span class="n">taskId</span><span class="o">));</span>
-                    <span class="c1">// taskGroupIndex自增
-</span><span class="c1"></span>                    <span class="n">taskGroupIndex</span><span class="o">++;</span>
-                    <span class="c1">// 删除第一个
-</span><span class="c1"></span>                    <span class="n">resourceMarkAndTaskIdMap</span><span class="o">.</span><span class="na">get</span><span class="o">(</span><span class="n">resourceMark</span><span class="o">).</span><span class="na">remove</span><span class="o">(</span><span class="n">0</span><span class="o">);</span>
-                <span class="o">}</span>
-            <span class="o">}</span>
-        <span class="o">}</span>
-
-        <span class="n">Configuration</span> <span class="n">tempTaskGroupConfig</span><span class="o">;</span>
-        <span class="k">for</span> <span class="o">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="n">0</span><span class="o">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">taskGroupNumber</span><span class="o">;</span> <span class="n">i</span><span class="o">++)</span> <span class="o">{</span>
-            <span class="n">tempTaskGroupConfig</span> <span class="o">=</span> <span class="n">taskGroupTemplate</span><span class="o">.</span><span class="na">clone</span><span class="o">();</span>
-            <span class="c1">// 设置TaskGroup的配置
-</span><span class="c1"></span>            <span class="n">tempTaskGroupConfig</span><span class="o">.</span><span class="na">set</span><span class="o">(</span><span class="n">CoreConstant</span><span class="o">.</span><span class="na">DATAX_JOB_CONTENT</span><span class="o">,</span> <span class="n">taskGroupConfigList</span><span class="o">.</span><span class="na">get</span><span class="o">(</span><span class="n">i</span><span class="o">));</span>
-            <span class="n">tempTaskGroupConfig</span><span class="o">.</span><span class="na">set</span><span class="o">(</span><span class="n">CoreConstant</span><span class="o">.</span><span class="na">DATAX_CORE_CONTAINER_TASKGROUP_ID</span><span class="o">,</span> <span class="n">i</span><span class="o">);</span>
-
-            <span class="n">result</span><span class="o">.</span><span class="na">add</span><span class="o">(</span><span class="n">tempTaskGroupConfig</span><span class="o">);</span>
-        <span class="o">}</span>
-        <span class="c1">// 返回结果
-</span><span class="c1"></span>        <span class="k">return</span> <span class="n">result</span><span class="o">;</span>
-    <span class="o">}</span>
-</code></pre></td></tr></table></div>
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl">    <span class="kd">private</span> <span class="kd">static</span> <span class="n">List</span><span class="o">&lt;</span><span class="n">Configuration</span><span class="o">&gt;</span> <span class="nf">doAssign</span><span class="o">(</span><span class="n">LinkedHashMap</span><span class="o">&lt;</span><span class="n">String</span><span class="o">,</span> <span class="n">List</span><span class="o">&lt;</span><span class="n">Integer</span><span class="o">&gt;&gt;</span> <span class="n">resourceMarkAndTaskIdMap</span><span class="o">,</span> <span class="n">Configuration</span> <span class="n">jobConfiguration</span><span class="o">,</span> <span class="kt">int</span> <span class="n">taskGroupNumber</span><span class="o">)</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">        <span class="n">List</span><span class="o">&lt;</span><span class="n">Configuration</span><span class="o">&gt;</span> <span class="n">contentConfig</span> <span class="o">=</span> <span class="n">jobConfiguration</span><span class="o">.</span><span class="na">getListConfiguration</span><span class="o">(</span><span class="n">CoreConstant</span><span class="o">.</span><span class="na">DATAX_JOB_CONTENT</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">        <span class="n">Configuration</span> <span class="n">taskGroupTemplate</span> <span class="o">=</span> <span class="n">jobConfiguration</span><span class="o">.</span><span class="na">clone</span><span class="o">();</span>
+</span></span><span class="line"><span class="cl">        <span class="n">taskGroupTemplate</span><span class="o">.</span><span class="na">remove</span><span class="o">(</span><span class="n">CoreConstant</span><span class="o">.</span><span class="na">DATAX_JOB_CONTENT</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">        <span class="n">List</span><span class="o">&lt;</span><span class="n">Configuration</span><span class="o">&gt;</span> <span class="n">result</span> <span class="o">=</span> <span class="k">new</span> <span class="n">LinkedList</span><span class="o">&lt;</span><span class="n">Configuration</span><span class="o">&gt;();</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">        <span class="c1">// 初始化taskGroupConfigList
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>        <span class="n">List</span><span class="o">&lt;</span><span class="n">List</span><span class="o">&lt;</span><span class="n">Configuration</span><span class="o">&gt;&gt;</span> <span class="n">taskGroupConfigList</span> <span class="o">=</span> <span class="k">new</span> <span class="n">ArrayList</span><span class="o">&lt;</span><span class="n">List</span><span class="o">&lt;</span><span class="n">Configuration</span><span class="o">&gt;&gt;(</span><span class="n">taskGroupNumber</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">        <span class="k">for</span> <span class="o">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="o">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">taskGroupNumber</span><span class="o">;</span> <span class="n">i</span><span class="o">++)</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">            <span class="n">taskGroupConfigList</span><span class="o">.</span><span class="na">add</span><span class="o">(</span><span class="k">new</span> <span class="n">LinkedList</span><span class="o">&lt;</span><span class="n">Configuration</span><span class="o">&gt;());</span>
+</span></span><span class="line"><span class="cl">        <span class="o">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">        <span class="c1">// 取得resourceMarkAndTaskIdMap的值的最大个数
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>        <span class="kt">int</span> <span class="n">mapValueMaxLength</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="o">;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">        <span class="n">List</span><span class="o">&lt;</span><span class="n">String</span><span class="o">&gt;</span> <span class="n">resourceMarks</span> <span class="o">=</span> <span class="k">new</span> <span class="n">ArrayList</span><span class="o">&lt;</span><span class="n">String</span><span class="o">&gt;();</span>
+</span></span><span class="line"><span class="cl">        <span class="k">for</span> <span class="o">(</span><span class="n">Map</span><span class="o">.</span><span class="na">Entry</span><span class="o">&lt;</span><span class="n">String</span><span class="o">,</span> <span class="n">List</span><span class="o">&lt;</span><span class="n">Integer</span><span class="o">&gt;&gt;</span> <span class="n">entry</span> <span class="o">:</span> <span class="n">resourceMarkAndTaskIdMap</span><span class="o">.</span><span class="na">entrySet</span><span class="o">())</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">            <span class="n">resourceMarks</span><span class="o">.</span><span class="na">add</span><span class="o">(</span><span class="n">entry</span><span class="o">.</span><span class="na">getKey</span><span class="o">());</span>
+</span></span><span class="line"><span class="cl">            <span class="k">if</span> <span class="o">(</span><span class="n">entry</span><span class="o">.</span><span class="na">getValue</span><span class="o">().</span><span class="na">size</span><span class="o">()</span> <span class="o">&gt;</span> <span class="n">mapValueMaxLength</span><span class="o">)</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">                <span class="n">mapValueMaxLength</span> <span class="o">=</span> <span class="n">entry</span><span class="o">.</span><span class="na">getValue</span><span class="o">().</span><span class="na">size</span><span class="o">();</span>
+</span></span><span class="line"><span class="cl">            <span class="o">}</span>
+</span></span><span class="line"><span class="cl">        <span class="o">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">        
+</span></span><span class="line"><span class="cl">        <span class="kt">int</span> <span class="n">taskGroupIndex</span> <span class="o">=</span> <span class="mi">0</span><span class="o">;</span>
+</span></span><span class="line"><span class="cl">        <span class="c1">// 执行mapValueMaxLength次数，每一次轮询一遍resourceMarkAndTaskIdMap
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>        <span class="k">for</span> <span class="o">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="o">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">mapValueMaxLength</span><span class="o">;</span> <span class="n">i</span><span class="o">++)</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">            <span class="c1">// 轮询resourceMarkAndTaskIdMap
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>            <span class="k">for</span> <span class="o">(</span><span class="n">String</span> <span class="n">resourceMark</span> <span class="o">:</span> <span class="n">resourceMarks</span><span class="o">)</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">                <span class="k">if</span> <span class="o">(</span><span class="n">resourceMarkAndTaskIdMap</span><span class="o">.</span><span class="na">get</span><span class="o">(</span><span class="n">resourceMark</span><span class="o">).</span><span class="na">size</span><span class="o">()</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="o">)</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">                    <span class="c1">// 取出第一个
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>                    <span class="kt">int</span> <span class="n">taskId</span> <span class="o">=</span> <span class="n">resourceMarkAndTaskIdMap</span><span class="o">.</span><span class="na">get</span><span class="o">(</span><span class="n">resourceMark</span><span class="o">).</span><span class="na">get</span><span class="o">(</span><span class="mi">0</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">                    <span class="c1">// 轮询的向taskGroupConfigList插入值
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>                    <span class="n">taskGroupConfigList</span><span class="o">.</span><span class="na">get</span><span class="o">(</span><span class="n">taskGroupIndex</span> <span class="o">%</span> <span class="n">taskGroupNumber</span><span class="o">).</span><span class="na">add</span><span class="o">(</span><span class="n">contentConfig</span><span class="o">.</span><span class="na">get</span><span class="o">(</span><span class="n">taskId</span><span class="o">));</span>
+</span></span><span class="line"><span class="cl">                    <span class="c1">// taskGroupIndex自增
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>                    <span class="n">taskGroupIndex</span><span class="o">++;</span>
+</span></span><span class="line"><span class="cl">                    <span class="c1">// 删除第一个
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>                    <span class="n">resourceMarkAndTaskIdMap</span><span class="o">.</span><span class="na">get</span><span class="o">(</span><span class="n">resourceMark</span><span class="o">).</span><span class="na">remove</span><span class="o">(</span><span class="mi">0</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">                <span class="o">}</span>
+</span></span><span class="line"><span class="cl">            <span class="o">}</span>
+</span></span><span class="line"><span class="cl">        <span class="o">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">        <span class="n">Configuration</span> <span class="n">tempTaskGroupConfig</span><span class="o">;</span>
+</span></span><span class="line"><span class="cl">        <span class="k">for</span> <span class="o">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="o">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">taskGroupNumber</span><span class="o">;</span> <span class="n">i</span><span class="o">++)</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">            <span class="n">tempTaskGroupConfig</span> <span class="o">=</span> <span class="n">taskGroupTemplate</span><span class="o">.</span><span class="na">clone</span><span class="o">();</span>
+</span></span><span class="line"><span class="cl">            <span class="c1">// 设置TaskGroup的配置
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>            <span class="n">tempTaskGroupConfig</span><span class="o">.</span><span class="na">set</span><span class="o">(</span><span class="n">CoreConstant</span><span class="o">.</span><span class="na">DATAX_JOB_CONTENT</span><span class="o">,</span> <span class="n">taskGroupConfigList</span><span class="o">.</span><span class="na">get</span><span class="o">(</span><span class="n">i</span><span class="o">));</span>
+</span></span><span class="line"><span class="cl">            <span class="n">tempTaskGroupConfig</span><span class="o">.</span><span class="na">set</span><span class="o">(</span><span class="n">CoreConstant</span><span class="o">.</span><span class="na">DATAX_CORE_CONTAINER_TASKGROUP_ID</span><span class="o">,</span> <span class="n">i</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">            <span class="n">result</span><span class="o">.</span><span class="na">add</span><span class="o">(</span><span class="n">tempTaskGroupConfig</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">        <span class="o">}</span>
+</span></span><span class="line"><span class="cl">        <span class="c1">// 返回结果
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>        <span class="k">return</span> <span class="n">result</span><span class="o">;</span>
+</span></span><span class="line"><span class="cl">    <span class="o">}</span>
+</span></span></code></pre></td></tr></table></div>
 </div>
 </div><h4 id="为组分配channel"><a href="#为组分配channel" class="anchor-link"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon anchor-icon"><path d="M326.612 185.391c59.747 59.809 58.927 155.698.36 214.59-.11.12-.24.25-.36.37l-67.2 67.2c-59.27 59.27-155.699 59.262-214.96 0-59.27-59.26-59.27-155.7 0-214.96l37.106-37.106c9.84-9.84 26.786-3.3 27.294 10.606.648 17.722 3.826 35.527 9.69 52.721 1.986 5.822.567 12.262-3.783 16.612l-13.087 13.087c-28.026 28.026-28.905 73.66-1.155 101.96 28.024 28.579 74.086 28.749 102.325.51l67.2-67.19c28.191-28.191 28.073-73.757 0-101.83-3.701-3.694-7.429-6.564-10.341-8.569a16.037 16.037 0 0 1-6.947-12.606c-.396-10.567 3.348-21.456 11.698-29.806l21.054-21.055c5.521-5.521 14.182-6.199 20.584-1.731a152.482 152.482 0 0 1 20.522 17.197zM467.547 44.449c-59.261-59.262-155.69-59.27-214.96 0l-67.2 67.2c-.12.12-.25.25-.36.37-58.566 58.892-59.387 154.781.36 214.59a152.454 152.454 0 0 0 20.521 17.196c6.402 4.468 15.064 3.789 20.584-1.731l21.054-21.055c8.35-8.35 12.094-19.239 11.698-29.806a16.037 16.037 0 0 0-6.947-12.606c-2.912-2.005-6.64-4.875-10.341-8.569-28.073-28.073-28.191-73.639 0-101.83l67.2-67.19c28.239-28.239 74.3-28.069 102.325.51 27.75 28.3 26.872 73.934-1.155 101.96l-13.087 13.087c-4.35 4.35-5.769 10.79-3.783 16.612 5.864 17.194 9.042 34.999 9.69 52.721.509 13.906 17.454 20.446 27.294 10.606l37.106-37.106c59.271-59.259 59.271-155.699.001-214.959z"/></svg></a>为组分配channel</h4>
 <p>上面已经把任务划分成多个组，为了每个组能够均匀的分配channel，还需要调整。算法原理是，当channel总的数目，不能整除TaskGroup的数目时。多的余数个channel，从中挑选出余数个TaskGroup，每个多分配一个。</p>
@@ -1045,23 +1045,23 @@
 </span><span class="lnt">16
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java">    <span class="kd">private</span> <span class="kd">static</span> <span class="kt">void</span> <span class="nf">adjustChannelNumPerTaskGroup</span><span class="o">(</span><span class="n">List</span><span class="o">&lt;</span><span class="n">Configuration</span><span class="o">&gt;</span> <span class="n">taskGroupConfig</span><span class="o">,</span> <span class="kt">int</span> <span class="n">channelNumber</span><span class="o">)</span> <span class="o">{</span>
-        <span class="kt">int</span> <span class="n">taskGroupNumber</span> <span class="o">=</span> <span class="n">taskGroupConfig</span><span class="o">.</span><span class="na">size</span><span class="o">();</span>
-        <span class="kt">int</span> <span class="n">avgChannelsPerTaskGroup</span> <span class="o">=</span> <span class="n">channelNumber</span> <span class="o">/</span> <span class="n">taskGroupNumber</span><span class="o">;</span>
-        <span class="kt">int</span> <span class="n">remainderChannelCount</span> <span class="o">=</span> <span class="n">channelNumber</span> <span class="o">%</span> <span class="n">taskGroupNumber</span><span class="o">;</span>
-        <span class="c1">// 表示有 remainderChannelCount 个 taskGroup,其对应 Channel 个数应该为：avgChannelsPerTaskGroup + 1；
-</span><span class="c1"></span>        <span class="c1">// （taskGroupNumber - remainderChannelCount）个 taskGroup,其对应 Channel 个数应该为：avgChannelsPerTaskGroup
-</span><span class="c1"></span>
-        <span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="n">0</span><span class="o">;</span>
-        <span class="k">for</span> <span class="o">(;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">remainderChannelCount</span><span class="o">;</span> <span class="n">i</span><span class="o">++)</span> <span class="o">{</span>
-            <span class="n">taskGroupConfig</span><span class="o">.</span><span class="na">get</span><span class="o">(</span><span class="n">i</span><span class="o">).</span><span class="na">set</span><span class="o">(</span><span class="n">CoreConstant</span><span class="o">.</span><span class="na">DATAX_CORE_CONTAINER_TASKGROUP_CHANNEL</span><span class="o">,</span> <span class="n">avgChannelsPerTaskGroup</span> <span class="o">+</span> <span class="n">1</span><span class="o">);</span>
-        <span class="o">}</span>
-
-        <span class="k">for</span> <span class="o">(</span><span class="kt">int</span> <span class="n">j</span> <span class="o">=</span> <span class="n">0</span><span class="o">;</span> <span class="n">j</span> <span class="o">&lt;</span> <span class="n">taskGroupNumber</span> <span class="o">-</span> <span class="n">remainderChannelCount</span><span class="o">;</span> <span class="n">j</span><span class="o">++)</span> <span class="o">{</span>
-            <span class="n">taskGroupConfig</span><span class="o">.</span><span class="na">get</span><span class="o">(</span><span class="n">i</span> <span class="o">+</span> <span class="n">j</span><span class="o">).</span><span class="na">set</span><span class="o">(</span><span class="n">CoreConstant</span><span class="o">.</span><span class="na">DATAX_CORE_CONTAINER_TASKGROUP_CHANNEL</span><span class="o">,</span> <span class="n">avgChannelsPerTaskGroup</span><span class="o">);</span>
-        <span class="o">}</span>
-    <span class="o">}</span>
-</code></pre></td></tr></table></div>
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl">    <span class="kd">private</span> <span class="kd">static</span> <span class="kt">void</span> <span class="nf">adjustChannelNumPerTaskGroup</span><span class="o">(</span><span class="n">List</span><span class="o">&lt;</span><span class="n">Configuration</span><span class="o">&gt;</span> <span class="n">taskGroupConfig</span><span class="o">,</span> <span class="kt">int</span> <span class="n">channelNumber</span><span class="o">)</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">        <span class="kt">int</span> <span class="n">taskGroupNumber</span> <span class="o">=</span> <span class="n">taskGroupConfig</span><span class="o">.</span><span class="na">size</span><span class="o">();</span>
+</span></span><span class="line"><span class="cl">        <span class="kt">int</span> <span class="n">avgChannelsPerTaskGroup</span> <span class="o">=</span> <span class="n">channelNumber</span> <span class="o">/</span> <span class="n">taskGroupNumber</span><span class="o">;</span>
+</span></span><span class="line"><span class="cl">        <span class="kt">int</span> <span class="n">remainderChannelCount</span> <span class="o">=</span> <span class="n">channelNumber</span> <span class="o">%</span> <span class="n">taskGroupNumber</span><span class="o">;</span>
+</span></span><span class="line"><span class="cl">        <span class="c1">// 表示有 remainderChannelCount 个 taskGroup,其对应 Channel 个数应该为：avgChannelsPerTaskGroup + 1；
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>        <span class="c1">// （taskGroupNumber - remainderChannelCount）个 taskGroup,其对应 Channel 个数应该为：avgChannelsPerTaskGroup
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>
+</span></span><span class="line"><span class="cl">        <span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="o">;</span>
+</span></span><span class="line"><span class="cl">        <span class="k">for</span> <span class="o">(;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">remainderChannelCount</span><span class="o">;</span> <span class="n">i</span><span class="o">++)</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">            <span class="n">taskGroupConfig</span><span class="o">.</span><span class="na">get</span><span class="o">(</span><span class="n">i</span><span class="o">).</span><span class="na">set</span><span class="o">(</span><span class="n">CoreConstant</span><span class="o">.</span><span class="na">DATAX_CORE_CONTAINER_TASKGROUP_CHANNEL</span><span class="o">,</span> <span class="n">avgChannelsPerTaskGroup</span> <span class="o">+</span> <span class="mi">1</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">        <span class="o">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">        <span class="k">for</span> <span class="o">(</span><span class="kt">int</span> <span class="n">j</span> <span class="o">=</span> <span class="mi">0</span><span class="o">;</span> <span class="n">j</span> <span class="o">&lt;</span> <span class="n">taskGroupNumber</span> <span class="o">-</span> <span class="n">remainderChannelCount</span><span class="o">;</span> <span class="n">j</span><span class="o">++)</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">            <span class="n">taskGroupConfig</span><span class="o">.</span><span class="na">get</span><span class="o">(</span><span class="n">i</span> <span class="o">+</span> <span class="n">j</span><span class="o">).</span><span class="na">set</span><span class="o">(</span><span class="n">CoreConstant</span><span class="o">.</span><span class="na">DATAX_CORE_CONTAINER_TASKGROUP_CHANNEL</span><span class="o">,</span> <span class="n">avgChannelsPerTaskGroup</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">        <span class="o">}</span>
+</span></span><span class="line"><span class="cl">    <span class="o">}</span>
+</span></span></code></pre></td></tr></table></div>
 </div>
 </div>
             </div>
@@ -1090,9 +1090,9 @@
 
         
     <div class="updated-badge-container">
-        <span title="Updated @ 2021-10-22 14:44:34 CST" style="cursor:help">
+        <span title="Updated @ 2023-07-02 16:59:09 CST" style="cursor:help">
 
-<svg xmlns="http://www.w3.org/2000/svg" width="130" height="20" class="updated-badge"><linearGradient id="b" x2="0" y2="100%"><stop offset="0" stop-color="#bbb" stop-opacity=".1"/><stop offset="1" stop-opacity=".1"/></linearGradient><clipPath id="a"><rect width="130" height="20" rx="3" fill="#fff"/></clipPath><g clip-path="url(#a)"><path class="updated-badge-left" d="M0 0h55v20H0z"/><path class="updated-badge-right" d="M55 0h75v20H55z"/><path fill="url(#b)" d="M0 0h130v20H0z"/></g><g fill="#fff" text-anchor="middle" font-size="110"><text x="285" y="150" fill="#010101" fill-opacity=".3" textLength="450" transform="scale(.1)">updated</text><text x="285" y="140" textLength="450" transform="scale(.1)">updated</text><text x="915" y="150" fill="#010101" fill-opacity=".3" textLength="650" transform="scale(.1)">2021-10-22</text><text x="915" y="140" textLength="650" transform="scale(.1)">2021-10-22</text></g></svg>
+<svg xmlns="http://www.w3.org/2000/svg" width="130" height="20" class="updated-badge"><linearGradient id="b" x2="0" y2="100%"><stop offset="0" stop-color="#bbb" stop-opacity=".1"/><stop offset="1" stop-opacity=".1"/></linearGradient><clipPath id="a"><rect width="130" height="20" rx="3" fill="#fff"/></clipPath><g clip-path="url(#a)"><path class="updated-badge-left" d="M0 0h55v20H0z"/><path class="updated-badge-right" d="M55 0h75v20H55z"/><path fill="url(#b)" d="M0 0h130v20H0z"/></g><g fill="#fff" text-anchor="middle" font-size="110"><text x="285" y="150" fill="#010101" fill-opacity=".3" textLength="450" transform="scale(.1)">updated</text><text x="285" y="140" textLength="450" transform="scale(.1)">updated</text><text x="915" y="150" fill="#010101" fill-opacity=".3" textLength="650" transform="scale(.1)">2023-07-02</text><text x="915" y="140" textLength="650" transform="scale(.1)">2023-07-02</text></g></svg>
         </span></div>
 
 

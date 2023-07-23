@@ -3,7 +3,7 @@
     <head prefix="og: http://ogp.me/ns# article: http://ogp.me/ns/article#">
     <meta charset="UTF-8" />
 
-    <meta name="generator" content="Hugo 0.88.1" /><meta name="theme-color" content="#fff" />
+    <meta name="generator" content="Hugo 0.115.0"><meta name="theme-color" content="#fff" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     
     <meta name="format-detection" content="telephone=no, date=no, address=no, email=no" />
@@ -14,11 +14,11 @@
 
     <title>Spark Sql 基础类 TreeNode | 学习笔记</title>
 
-    <link rel="stylesheet" href="/css/meme.min.2d3e1834af2bc8dda20c7d74aaa1d8134845094441b7a554a5206ccd4b472596.css"/>
+    <link rel="stylesheet" href="/css/meme.min.91e7f58f97e1c60563ef481c38d9684fa8099537801d6f17bbfc724121e7d8f1.css"/>
 
     
     
-        <script src="/js/meme.min.800f61672145711eb3e1f29fcfcc3dbe0139dd459259718b611a0390f74703d1.js"></script>
+        <script src="/js/meme.min.3210a00c2fdcf6f831170b681b8ee40f83f0224663661e986872616aec45407f.js"></script>
 
     
 
@@ -54,13 +54,13 @@
         "@context": "https://schema.org",
         "@type": "BlogPosting",
         "datePublished": "2019-06-16T21:03:50+00:00",
-        "dateModified": "2021-10-22T14:44:34+08:00",
+        "dateModified": "2023-07-02T16:59:09+08:00",
         "url": "https://zhmin.github.io/posts/spark-sql-treenode/",
         "headline": "Spark Sql 基础类 TreeNode",
         "description": "前言 Spark Sql 不仅支持 sql 语句，而且还会对 sql 进行自动优化。整体流程如下图所示： 接收 sql 语句，初步解析成 logical plan 分析上步生成的 logical plan，生成验证后的 logical plan 对分析过后的 logical plan，进行优化 对优化过后的 logical plan，生成 physical……",
         "inLanguage" : "zh-CN",
         "articleSection": "posts",
-        "wordCount":  3998 ,
+        "wordCount":  4080 ,
         "image": ["https://zhmin.github.io/Catalyst-Optimizer-diagram.png"],
         "author": {
             "@type": "Person",
@@ -98,7 +98,7 @@
 <meta property="og:locale" content="zh" /><meta property="og:image" content="https://zhmin.github.io/Catalyst-Optimizer-diagram.png" />
 <meta property="og:type" content="article" />
     <meta property="article:published_time" content="2019-06-16T21:03:50&#43;00:00" />
-    <meta property="article:modified_time" content="2021-10-22T14:44:34&#43;08:00" />
+    <meta property="article:modified_time" content="2023-07-02T16:59:09&#43;08:00" />
     
     <meta property="article:section" content="posts" />
 
@@ -223,11 +223,11 @@
     
     
         
-        <span class="post-meta-item wordcount"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon post-meta-icon"><path d="M497.9 142.1l-46.1 46.1c-4.7 4.7-12.3 4.7-17 0l-111-111c-4.7-4.7-4.7-12.3 0-17l46.1-46.1c18.7-18.7 49.1-18.7 67.9 0l60.1 60.1c18.8 18.7 18.8 49.1 0 67.9zM284.2 99.8L21.6 362.4.4 483.9c-2.9 16.4 11.4 30.6 27.8 27.8l121.5-21.3 262.6-262.6c4.7-4.7 4.7-12.3 0-17l-111-111c-4.8-4.7-12.4-4.7-17.1 0zM124.1 339.9c-5.5-5.5-5.5-14.3 0-19.8l154-154c5.5-5.5 14.3-5.5 19.8 0s5.5 14.3 0 19.8l-154 154c-5.5 5.5-14.3 5.5-19.8 0zM88 424h48v36.3l-64.5 11.3-31.1-31.1L51.7 376H88v48z"/></svg>&nbsp;3998</span>
+        <span class="post-meta-item wordcount"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon post-meta-icon"><path d="M497.9 142.1l-46.1 46.1c-4.7 4.7-12.3 4.7-17 0l-111-111c-4.7-4.7-4.7-12.3 0-17l46.1-46.1c18.7-18.7 49.1-18.7 67.9 0l60.1 60.1c18.8 18.7 18.8 49.1 0 67.9zM284.2 99.8L21.6 362.4.4 483.9c-2.9 16.4 11.4 30.6 27.8 27.8l121.5-21.3 262.6-262.6c4.7-4.7 4.7-12.3 0-17l-111-111c-4.8-4.7-12.4-4.7-17.1 0zM124.1 339.9c-5.5-5.5-5.5-14.3 0-19.8l154-154c5.5-5.5 14.3-5.5 19.8 0s5.5 14.3 0 19.8l-154 154c-5.5 5.5-14.3 5.5-19.8 0zM88 424h48v36.3l-64.5 11.3-31.1-31.1L51.7 376H88v48z"/></svg>&nbsp;4080</span>
     
     
         
-        <span class="post-meta-item reading-time"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon post-meta-icon"><path d="M256 8C119 8 8 119 8 256s111 248 248 248 248-111 248-248S393 8 256 8zm0 448c-110.5 0-200-89.5-200-200S145.5 56 256 56s200 89.5 200 200-89.5 200-200 200zm61.8-104.4l-84.9-61.7c-3.1-2.3-4.9-5.9-4.9-9.7V116c0-6.6 5.4-12 12-12h32c6.6 0 12 5.4 12 12v141.7l66.8 48.6c5.4 3.9 6.5 11.4 2.6 16.8L334.6 349c-3.9 5.3-11.4 6.5-16.8 2.6z"/></svg>&nbsp;8&nbsp;分钟</span>
+        <span class="post-meta-item reading-time"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon post-meta-icon"><path d="M256 8C119 8 8 119 8 256s111 248 248 248 248-111 248-248S393 8 256 8zm0 448c-110.5 0-200-89.5-200-200S145.5 56 256 56s200 89.5 200 200-89.5 200-200 200zm61.8-104.4l-84.9-61.7c-3.1-2.3-4.9-5.9-4.9-9.7V116c0-6.6 5.4-12 12-12h32c6.6 0 12 5.4 12 12v141.7l66.8 48.6c5.4 3.9 6.5 11.4 2.6 16.8L334.6 349c-3.9 5.3-11.4 6.5-16.8 2.6z"/></svg>&nbsp;9&nbsp;分钟</span>
     
     
     
@@ -277,31 +277,31 @@
 </span><span class="lnt">24
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-sql" data-lang="sql"><span class="w"> 
-</span><span class="w"> </span><span class="k">CREATE</span><span class="w"> </span><span class="k">TABLE</span><span class="w"> </span><span class="n">fruit</span><span class="w"> </span><span class="p">(</span><span class="w">
-</span><span class="w">     </span><span class="n">id</span><span class="w"> </span><span class="nb">INT</span><span class="p">,</span><span class="w"> 
-</span><span class="w">     </span><span class="n">name</span><span class="w"> </span><span class="n">STRING</span><span class="p">,</span><span class="w"> 
-</span><span class="w">     </span><span class="n">price</span><span class="w"> </span><span class="nb">FLOAT</span><span class="p">,</span><span class="w"> 
-</span><span class="w"> </span><span class="p">);</span><span class="w">
-</span><span class="w"> 
-</span><span class="w"> </span><span class="k">INSERT</span><span class="w"> </span><span class="k">INTO</span><span class="w"> </span><span class="n">fruit</span><span class="w"> </span><span class="k">VALUES</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="s2">&#34;apple&#34;</span><span class="p">,</span><span class="w"> </span><span class="mi">2</span><span class="p">.</span><span class="mi">5</span><span class="p">);</span><span class="w">
-</span><span class="w"> </span><span class="k">INSERT</span><span class="w"> </span><span class="k">INTO</span><span class="w"> </span><span class="n">fruit</span><span class="w"> </span><span class="k">VALUES</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span><span class="w"> </span><span class="s2">&#34;pear&#34;</span><span class="p">,</span><span class="w"> </span><span class="mi">3</span><span class="p">.</span><span class="mi">5</span><span class="p">);</span><span class="w">
-</span><span class="w"> </span><span class="k">INSERT</span><span class="w"> </span><span class="k">INTO</span><span class="w"> </span><span class="n">fruit</span><span class="w"> </span><span class="k">VALUES</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span><span class="w"> </span><span class="s2">&#34;banana&#34;</span><span class="p">,</span><span class="w"> </span><span class="mi">4</span><span class="p">.</span><span class="mi">5</span><span class="p">);</span><span class="w">
-</span><span class="w"> 
-</span><span class="w"> </span><span class="k">CREATE</span><span class="w"> </span><span class="k">TABLE</span><span class="w"> </span><span class="n">orders</span><span class="w"> </span><span class="p">(</span><span class="w">
-</span><span class="w"> 	</span><span class="n">id</span><span class="w"> </span><span class="nb">INT</span><span class="p">,</span><span class="w">
-</span><span class="w">    </span><span class="n">fruit_id</span><span class="w"> </span><span class="nb">INT</span><span class="p">,</span><span class="w">
-</span><span class="w">    </span><span class="n">create_time</span><span class="w"> </span><span class="k">TIMESTAMP</span><span class="p">,</span><span class="w">
-</span><span class="w">    </span><span class="n">consumer_name</span><span class="w"> </span><span class="n">STRING</span><span class="w">
-</span><span class="w"> </span><span class="p">);</span><span class="w">
-</span><span class="w"> 
-</span><span class="w"> </span><span class="k">INSERT</span><span class="w"> </span><span class="k">INTO</span><span class="w"> </span><span class="n">orders</span><span class="w"> </span><span class="k">VALUES</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="s2">&#34;2019-06-14 10:00:00&#34;</span><span class="p">,</span><span class="w"> </span><span class="s2">&#34;consumer_1&#34;</span><span class="p">);</span><span class="w">
-</span><span class="w"> </span><span class="k">INSERT</span><span class="w"> </span><span class="k">INTO</span><span class="w"> </span><span class="n">orders</span><span class="w"> </span><span class="k">VALUES</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="s2">&#34;2019-06-14 10:00:00&#34;</span><span class="p">,</span><span class="w"> </span><span class="s2">&#34;consumer_1&#34;</span><span class="p">);</span><span class="w">
-</span><span class="w"> </span><span class="k">INSERT</span><span class="w"> </span><span class="k">INTO</span><span class="w"> </span><span class="n">orders</span><span class="w"> </span><span class="k">VALUES</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span><span class="w"> </span><span class="mi">2</span><span class="p">,</span><span class="w"> </span><span class="s2">&#34;2019-06-14 14:00:00&#34;</span><span class="p">,</span><span class="w"> </span><span class="s2">&#34;consumer_2&#34;</span><span class="p">);</span><span class="w">
-</span><span class="w"> 
-</span><span class="w">  </span><span class="c1">-- 查找 每种水果的销量
-</span><span class="c1"></span><span class="w">  </span><span class="k">SELECT</span><span class="w"> </span><span class="n">fruit</span><span class="p">.</span><span class="n">name</span><span class="p">,</span><span class="w"> </span><span class="n">t1</span><span class="p">.</span><span class="n">num</span><span class="w"> </span><span class="k">FROM</span><span class="w"> </span><span class="n">fruit</span><span class="w"> </span><span class="k">INNER</span><span class="w"> </span><span class="k">JOIN</span><span class="w"> </span><span class="p">(</span><span class="k">SELECT</span><span class="w"> </span><span class="n">fruit_id</span><span class="p">,</span><span class="w"> </span><span class="k">COUNT</span><span class="p">(</span><span class="o">*</span><span class="p">)</span><span class="w"> </span><span class="n">num</span><span class="w"> </span><span class="k">FROM</span><span class="w"> </span><span class="n">orders</span><span class="w"> </span><span class="k">GROUP</span><span class="w"> </span><span class="k">BY</span><span class="w"> </span><span class="n">fruit_id</span><span class="p">)</span><span class="w"> </span><span class="n">t1</span><span class="w"> </span><span class="k">ON</span><span class="w"> </span><span class="n">fruit</span><span class="p">.</span><span class="n">id</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">t1</span><span class="p">.</span><span class="n">fruit_id</span><span class="p">;</span><span class="w">
-</span></code></pre></td></tr></table></div>
+<pre tabindex="0" class="chroma"><code class="language-sql" data-lang="sql"><span class="line"><span class="cl"><span class="w"> 
+</span></span></span><span class="line"><span class="cl"><span class="w"> </span><span class="k">CREATE</span><span class="w"> </span><span class="k">TABLE</span><span class="w"> </span><span class="n">fruit</span><span class="w"> </span><span class="p">(</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">     </span><span class="n">id</span><span class="w"> </span><span class="nb">INT</span><span class="p">,</span><span class="w"> 
+</span></span></span><span class="line"><span class="cl"><span class="w">     </span><span class="n">name</span><span class="w"> </span><span class="n">STRING</span><span class="p">,</span><span class="w"> 
+</span></span></span><span class="line"><span class="cl"><span class="w">     </span><span class="n">price</span><span class="w"> </span><span class="nb">FLOAT</span><span class="p">,</span><span class="w"> 
+</span></span></span><span class="line"><span class="cl"><span class="w"> </span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"> 
+</span></span></span><span class="line"><span class="cl"><span class="w"> </span><span class="k">INSERT</span><span class="w"> </span><span class="k">INTO</span><span class="w"> </span><span class="n">fruit</span><span class="w"> </span><span class="k">VALUES</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="s2">&#34;apple&#34;</span><span class="p">,</span><span class="w"> </span><span class="mi">2</span><span class="p">.</span><span class="mi">5</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"> </span><span class="k">INSERT</span><span class="w"> </span><span class="k">INTO</span><span class="w"> </span><span class="n">fruit</span><span class="w"> </span><span class="k">VALUES</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span><span class="w"> </span><span class="s2">&#34;pear&#34;</span><span class="p">,</span><span class="w"> </span><span class="mi">3</span><span class="p">.</span><span class="mi">5</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"> </span><span class="k">INSERT</span><span class="w"> </span><span class="k">INTO</span><span class="w"> </span><span class="n">fruit</span><span class="w"> </span><span class="k">VALUES</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span><span class="w"> </span><span class="s2">&#34;banana&#34;</span><span class="p">,</span><span class="w"> </span><span class="mi">4</span><span class="p">.</span><span class="mi">5</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"> 
+</span></span></span><span class="line"><span class="cl"><span class="w"> </span><span class="k">CREATE</span><span class="w"> </span><span class="k">TABLE</span><span class="w"> </span><span class="n">orders</span><span class="w"> </span><span class="p">(</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"> 	</span><span class="n">id</span><span class="w"> </span><span class="nb">INT</span><span class="p">,</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="n">fruit_id</span><span class="w"> </span><span class="nb">INT</span><span class="p">,</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="n">create_time</span><span class="w"> </span><span class="k">TIMESTAMP</span><span class="p">,</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="n">consumer_name</span><span class="w"> </span><span class="n">STRING</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"> </span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"> 
+</span></span></span><span class="line"><span class="cl"><span class="w"> </span><span class="k">INSERT</span><span class="w"> </span><span class="k">INTO</span><span class="w"> </span><span class="n">orders</span><span class="w"> </span><span class="k">VALUES</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="s2">&#34;2019-06-14 10:00:00&#34;</span><span class="p">,</span><span class="w"> </span><span class="s2">&#34;consumer_1&#34;</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"> </span><span class="k">INSERT</span><span class="w"> </span><span class="k">INTO</span><span class="w"> </span><span class="n">orders</span><span class="w"> </span><span class="k">VALUES</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="s2">&#34;2019-06-14 10:00:00&#34;</span><span class="p">,</span><span class="w"> </span><span class="s2">&#34;consumer_1&#34;</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"> </span><span class="k">INSERT</span><span class="w"> </span><span class="k">INTO</span><span class="w"> </span><span class="n">orders</span><span class="w"> </span><span class="k">VALUES</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span><span class="w"> </span><span class="mi">2</span><span class="p">,</span><span class="w"> </span><span class="s2">&#34;2019-06-14 14:00:00&#34;</span><span class="p">,</span><span class="w"> </span><span class="s2">&#34;consumer_2&#34;</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"> 
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="c1">-- 查找 每种水果的销量
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="w">  </span><span class="k">SELECT</span><span class="w"> </span><span class="n">fruit</span><span class="p">.</span><span class="n">name</span><span class="p">,</span><span class="w"> </span><span class="n">t1</span><span class="p">.</span><span class="n">num</span><span class="w"> </span><span class="k">FROM</span><span class="w"> </span><span class="n">fruit</span><span class="w"> </span><span class="k">INNER</span><span class="w"> </span><span class="k">JOIN</span><span class="w"> </span><span class="p">(</span><span class="k">SELECT</span><span class="w"> </span><span class="n">fruit_id</span><span class="p">,</span><span class="w"> </span><span class="k">COUNT</span><span class="p">(</span><span class="o">*</span><span class="p">)</span><span class="w"> </span><span class="n">num</span><span class="w"> </span><span class="k">FROM</span><span class="w"> </span><span class="n">orders</span><span class="w"> </span><span class="k">GROUP</span><span class="w"> </span><span class="k">BY</span><span class="w"> </span><span class="n">fruit_id</span><span class="p">)</span><span class="w"> </span><span class="n">t1</span><span class="w"> </span><span class="k">ON</span><span class="w"> </span><span class="n">fruit</span><span class="p">.</span><span class="n">id</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">t1</span><span class="p">.</span><span class="n">fruit_id</span><span class="p">;</span><span class="w">
+</span></span></span></code></pre></td></tr></table></div>
 </div>
 </div><p>通过 spark2-shell 命令启动，它会自动创建一个变量名为spark 的 SparkSession实例。</p>
 <div class="highlight"><div class="chroma">
@@ -351,56 +351,54 @@
 </span><span class="lnt">43
 </span><span class="lnt">44
 </span><span class="lnt">45
-</span><span class="lnt">46
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell">scala&gt; val <span class="nv">sql</span> <span class="o">=</span> <span class="s2">&#34;SELECT fruit.name, t1.num FROM fruit INNER JOIN (SELECT fruit_id, COUNT(*) num FROM orders GROUP BY fruit_id) t1 ON fruit.id = t1.fruit_id&#34;</span> <span class="c1"># 注意这里的sql语句不要接分号</span>
-scala&gt; val <span class="nv">logical</span> <span class="o">=</span> spark.sessionState.sqlParser.parsePlan<span class="o">(</span>sql<span class="o">)</span> <span class="c1"># 解析sql语句，生成LogicalPlan</span>
-scala&gt; val <span class="nv">queryExecution</span> <span class="o">=</span> spark.sessionState.executePlan<span class="o">(</span>logical<span class="o">)</span> <span class="c1"># 进行验证和优化，并生成物理计划</span>
-scala&gt; print<span class="o">(</span>queryExecution<span class="o">)</span>
-<span class="o">==</span> Parsed Logical <span class="nv">Plan</span> <span class="o">==</span>
-<span class="s1">&#39;Project [&#39;</span>fruit.name, <span class="s1">&#39;t1.num]
-</span><span class="s1">+- &#39;</span>Join Inner, <span class="o">(</span><span class="s1">&#39;fruit.id = &#39;</span>t1.fruit_id<span class="o">)</span>
-   :- <span class="s1">&#39;UnresolvedRelation `fruit`
-</span><span class="s1">   +- &#39;</span>SubqueryAlias <span class="sb">`</span>t1<span class="sb">`</span>
-      +- <span class="s1">&#39;Aggregate [&#39;</span>fruit_id<span class="o">]</span>, <span class="o">[</span><span class="s1">&#39;fruit_id, &#39;</span>COUNT<span class="o">(</span>1<span class="o">)</span> AS num#6<span class="o">]</span>
-         +- <span class="err">&#39;</span>UnresolvedRelation <span class="sb">`</span>orders<span class="sb">`</span>
-
-<span class="o">==</span> Analyzed Logical <span class="nv">Plan</span> <span class="o">==</span>
-name: string, num: bigint
-Project <span class="o">[</span>name#9, num#6L<span class="o">]</span>
-+- Join Inner, <span class="o">(</span>id#8 <span class="o">=</span> fruit_id#13<span class="o">)</span>
-   :- SubqueryAlias <span class="sb">`</span>default<span class="sb">`</span>.<span class="sb">`</span>fruit<span class="sb">`</span>
-   :  +- HiveTableRelation <span class="sb">`</span>default<span class="sb">`</span>.<span class="sb">`</span>fruit<span class="sb">`</span>, org.apache.hadoop.hive.serde2.lazy.LazySimpleSerDe, <span class="o">[</span>id#8, name#9, price#10, amount#11<span class="o">]</span>
-   +- SubqueryAlias <span class="sb">`</span>t1<span class="sb">`</span>
-      +- Aggregate <span class="o">[</span>fruit_id#13<span class="o">]</span>, <span class="o">[</span>fruit_id#13, count<span class="o">(</span>1<span class="o">)</span> AS num#6L<span class="o">]</span>
-         +- SubqueryAlias <span class="sb">`</span>default<span class="sb">`</span>.<span class="sb">`</span>orders<span class="sb">`</span>
-            +- HiveTableRelation <span class="sb">`</span>default<span class="sb">`</span>.<span class="sb">`</span>orders<span class="sb">`</span>, org.apache.hadoop.hive.serde2.lazy.LazySimpleSerDe, <span class="o">[</span>id#12, fruit_id#13, create_time#14, consumer_name#15<span class="o">]</span>
-
-<span class="o">==</span> Optimized Logical <span class="nv">Plan</span> <span class="o">==</span>
-Project <span class="o">[</span>name#9, num#6L<span class="o">]</span>
-+- Join Inner, <span class="o">(</span>id#8 <span class="o">=</span> fruit_id#13<span class="o">)</span>
-   :- Project <span class="o">[</span>id#8, name#9<span class="o">]</span>
-   :  +- Filter isnotnull<span class="o">(</span>id#8<span class="o">)</span>
-   :     +- HiveTableRelation <span class="sb">`</span>default<span class="sb">`</span>.<span class="sb">`</span>fruit<span class="sb">`</span>, org.apache.hadoop.hive.serde2.lazy.LazySimpleSerDe, <span class="o">[</span>id#8, name#9, price#10, amount#11<span class="o">]</span>
-   +- Aggregate <span class="o">[</span>fruit_id#13<span class="o">]</span>, <span class="o">[</span>fruit_id#13, count<span class="o">(</span>1<span class="o">)</span> AS num#6L<span class="o">]</span>
-      +- Project <span class="o">[</span>fruit_id#13<span class="o">]</span>
-         +- Filter isnotnull<span class="o">(</span>fruit_id#13<span class="o">)</span>
-            +- HiveTableRelation <span class="sb">`</span>default<span class="sb">`</span>.<span class="sb">`</span>orders<span class="sb">`</span>, org.apache.hadoop.hive.serde2.lazy.LazySimpleSerDe, <span class="o">[</span>id#12, fruit_id#13, create_time#14, consumer_name#15<span class="o">]</span>
-
-<span class="o">==</span> Physical <span class="nv">Plan</span> <span class="o">==</span>
-*<span class="o">(</span>3<span class="o">)</span> Project <span class="o">[</span>name#9, num#6L<span class="o">]</span>
-+- *<span class="o">(</span>3<span class="o">)</span> BroadcastHashJoin <span class="o">[</span>id#8<span class="o">]</span>, <span class="o">[</span>fruit_id#13<span class="o">]</span>, Inner, BuildLeft
-   :- BroadcastExchange HashedRelationBroadcastMode<span class="o">(</span>List<span class="o">(</span>cast<span class="o">(</span>input<span class="o">[</span>0, int, false<span class="o">]</span> as bigint<span class="o">)))</span>
-   :  +- *<span class="o">(</span>1<span class="o">)</span> Filter isnotnull<span class="o">(</span>id#8<span class="o">)</span>
-   :     +- Scan hive default.fruit <span class="o">[</span>id#8, name#9<span class="o">]</span>, HiveTableRelation <span class="sb">`</span>default<span class="sb">`</span>.<span class="sb">`</span>fruit<span class="sb">`</span>, org.apache.hadoop.hive.serde2.lazy.LazySimpleSerDe, <span class="o">[</span>id#8, name#9, price#10, amount#11<span class="o">]</span>
-   +- *<span class="o">(</span>3<span class="o">)</span> HashAggregate<span class="o">(</span><span class="nv">keys</span><span class="o">=[</span>fruit_id#13<span class="o">]</span>, <span class="nv">functions</span><span class="o">=[</span>count<span class="o">(</span>1<span class="o">)]</span>, <span class="nv">output</span><span class="o">=[</span>fruit_id#13, num#6L<span class="o">])</span>
-      +- Exchange hashpartitioning<span class="o">(</span>fruit_id#13, 200<span class="o">)</span>
-         +- *<span class="o">(</span>2<span class="o">)</span> HashAggregate<span class="o">(</span><span class="nv">keys</span><span class="o">=[</span>fruit_id#13<span class="o">]</span>, <span class="nv">functions</span><span class="o">=[</span>partial_count<span class="o">(</span>1<span class="o">)]</span>, <span class="nv">output</span><span class="o">=[</span>fruit_id#13, count#17L<span class="o">])</span>
-            +- *<span class="o">(</span>2<span class="o">)</span> Filter isnotnull<span class="o">(</span>fruit_id#13<span class="o">)</span>
-               +- Scan hive default.orders <span class="o">[</span>fruit_id#13<span class="o">]</span>, HiveTableRelation <span class="sb">`</span>default<span class="sb">`</span>.<span class="sb">`</span>orders<span class="sb">`</span>, org.apache.hadoop.hive.serde2.lazy.LazySimpleSerDe, <span class="o">[</span>id#12, fruit_id#13, create_time#14, consumer_name#15<span class="o">]</span>
-
-</code></pre></td></tr></table></div>
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">scala&gt; val <span class="nv">sql</span> <span class="o">=</span> <span class="s2">&#34;SELECT fruit.name, t1.num FROM fruit INNER JOIN (SELECT fruit_id, COUNT(*) num FROM orders GROUP BY fruit_id) t1 ON fruit.id = t1.fruit_id&#34;</span> <span class="c1"># 注意这里的sql语句不要接分号</span>
+</span></span><span class="line"><span class="cl">scala&gt; val <span class="nv">logical</span> <span class="o">=</span> spark.sessionState.sqlParser.parsePlan<span class="o">(</span>sql<span class="o">)</span> <span class="c1"># 解析sql语句，生成LogicalPlan</span>
+</span></span><span class="line"><span class="cl">scala&gt; val <span class="nv">queryExecution</span> <span class="o">=</span> spark.sessionState.executePlan<span class="o">(</span>logical<span class="o">)</span> <span class="c1"># 进行验证和优化，并生成物理计划</span>
+</span></span><span class="line"><span class="cl">scala&gt; print<span class="o">(</span>queryExecution<span class="o">)</span>
+</span></span><span class="line"><span class="cl"><span class="o">==</span> Parsed Logical <span class="nv">Plan</span> <span class="o">==</span>
+</span></span><span class="line"><span class="cl"><span class="s1">&#39;Project [&#39;</span>fruit.name, <span class="s1">&#39;t1.num]
+</span></span></span><span class="line"><span class="cl"><span class="s1">+- &#39;</span>Join Inner, <span class="o">(</span><span class="s1">&#39;fruit.id = &#39;</span>t1.fruit_id<span class="o">)</span>
+</span></span><span class="line"><span class="cl">   :- <span class="s1">&#39;UnresolvedRelation `fruit`
+</span></span></span><span class="line"><span class="cl"><span class="s1">   +- &#39;</span>SubqueryAlias <span class="sb">`</span>t1<span class="sb">`</span>
+</span></span><span class="line"><span class="cl">      +- <span class="s1">&#39;Aggregate [&#39;</span>fruit_id<span class="o">]</span>, <span class="o">[</span><span class="s1">&#39;fruit_id, &#39;</span>COUNT<span class="o">(</span>1<span class="o">)</span> AS num#6<span class="o">]</span>
+</span></span><span class="line"><span class="cl">         +- <span class="err">&#39;</span>UnresolvedRelation <span class="sb">`</span>orders<span class="sb">`</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="o">==</span> Analyzed Logical <span class="nv">Plan</span> <span class="o">==</span>
+</span></span><span class="line"><span class="cl">name: string, num: bigint
+</span></span><span class="line"><span class="cl">Project <span class="o">[</span>name#9, num#6L<span class="o">]</span>
+</span></span><span class="line"><span class="cl">+- Join Inner, <span class="o">(</span>id#8 <span class="o">=</span> fruit_id#13<span class="o">)</span>
+</span></span><span class="line"><span class="cl">   :- SubqueryAlias <span class="sb">`</span>default<span class="sb">`</span>.<span class="sb">`</span>fruit<span class="sb">`</span>
+</span></span><span class="line"><span class="cl">   :  +- HiveTableRelation <span class="sb">`</span>default<span class="sb">`</span>.<span class="sb">`</span>fruit<span class="sb">`</span>, org.apache.hadoop.hive.serde2.lazy.LazySimpleSerDe, <span class="o">[</span>id#8, name#9, price#10, amount#11<span class="o">]</span>
+</span></span><span class="line"><span class="cl">   +- SubqueryAlias <span class="sb">`</span>t1<span class="sb">`</span>
+</span></span><span class="line"><span class="cl">      +- Aggregate <span class="o">[</span>fruit_id#13<span class="o">]</span>, <span class="o">[</span>fruit_id#13, count<span class="o">(</span>1<span class="o">)</span> AS num#6L<span class="o">]</span>
+</span></span><span class="line"><span class="cl">         +- SubqueryAlias <span class="sb">`</span>default<span class="sb">`</span>.<span class="sb">`</span>orders<span class="sb">`</span>
+</span></span><span class="line"><span class="cl">            +- HiveTableRelation <span class="sb">`</span>default<span class="sb">`</span>.<span class="sb">`</span>orders<span class="sb">`</span>, org.apache.hadoop.hive.serde2.lazy.LazySimpleSerDe, <span class="o">[</span>id#12, fruit_id#13, create_time#14, consumer_name#15<span class="o">]</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="o">==</span> Optimized Logical <span class="nv">Plan</span> <span class="o">==</span>
+</span></span><span class="line"><span class="cl">Project <span class="o">[</span>name#9, num#6L<span class="o">]</span>
+</span></span><span class="line"><span class="cl">+- Join Inner, <span class="o">(</span>id#8 <span class="o">=</span> fruit_id#13<span class="o">)</span>
+</span></span><span class="line"><span class="cl">   :- Project <span class="o">[</span>id#8, name#9<span class="o">]</span>
+</span></span><span class="line"><span class="cl">   :  +- Filter isnotnull<span class="o">(</span>id#8<span class="o">)</span>
+</span></span><span class="line"><span class="cl">   :     +- HiveTableRelation <span class="sb">`</span>default<span class="sb">`</span>.<span class="sb">`</span>fruit<span class="sb">`</span>, org.apache.hadoop.hive.serde2.lazy.LazySimpleSerDe, <span class="o">[</span>id#8, name#9, price#10, amount#11<span class="o">]</span>
+</span></span><span class="line"><span class="cl">   +- Aggregate <span class="o">[</span>fruit_id#13<span class="o">]</span>, <span class="o">[</span>fruit_id#13, count<span class="o">(</span>1<span class="o">)</span> AS num#6L<span class="o">]</span>
+</span></span><span class="line"><span class="cl">      +- Project <span class="o">[</span>fruit_id#13<span class="o">]</span>
+</span></span><span class="line"><span class="cl">         +- Filter isnotnull<span class="o">(</span>fruit_id#13<span class="o">)</span>
+</span></span><span class="line"><span class="cl">            +- HiveTableRelation <span class="sb">`</span>default<span class="sb">`</span>.<span class="sb">`</span>orders<span class="sb">`</span>, org.apache.hadoop.hive.serde2.lazy.LazySimpleSerDe, <span class="o">[</span>id#12, fruit_id#13, create_time#14, consumer_name#15<span class="o">]</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="o">==</span> Physical <span class="nv">Plan</span> <span class="o">==</span>
+</span></span><span class="line"><span class="cl">*<span class="o">(</span>3<span class="o">)</span> Project <span class="o">[</span>name#9, num#6L<span class="o">]</span>
+</span></span><span class="line"><span class="cl">+- *<span class="o">(</span>3<span class="o">)</span> BroadcastHashJoin <span class="o">[</span>id#8<span class="o">]</span>, <span class="o">[</span>fruit_id#13<span class="o">]</span>, Inner, BuildLeft
+</span></span><span class="line"><span class="cl">   :- BroadcastExchange HashedRelationBroadcastMode<span class="o">(</span>List<span class="o">(</span>cast<span class="o">(</span>input<span class="o">[</span>0, int, false<span class="o">]</span> as bigint<span class="o">)))</span>
+</span></span><span class="line"><span class="cl">   :  +- *<span class="o">(</span>1<span class="o">)</span> Filter isnotnull<span class="o">(</span>id#8<span class="o">)</span>
+</span></span><span class="line"><span class="cl">   :     +- Scan hive default.fruit <span class="o">[</span>id#8, name#9<span class="o">]</span>, HiveTableRelation <span class="sb">`</span>default<span class="sb">`</span>.<span class="sb">`</span>fruit<span class="sb">`</span>, org.apache.hadoop.hive.serde2.lazy.LazySimpleSerDe, <span class="o">[</span>id#8, name#9, price#10, amount#11<span class="o">]</span>
+</span></span><span class="line"><span class="cl">   +- *<span class="o">(</span>3<span class="o">)</span> HashAggregate<span class="o">(</span><span class="nv">keys</span><span class="o">=[</span>fruit_id#13<span class="o">]</span>, <span class="nv">functions</span><span class="o">=[</span>count<span class="o">(</span>1<span class="o">)]</span>, <span class="nv">output</span><span class="o">=[</span>fruit_id#13, num#6L<span class="o">])</span>
+</span></span><span class="line"><span class="cl">      +- Exchange hashpartitioning<span class="o">(</span>fruit_id#13, 200<span class="o">)</span>
+</span></span><span class="line"><span class="cl">         +- *<span class="o">(</span>2<span class="o">)</span> HashAggregate<span class="o">(</span><span class="nv">keys</span><span class="o">=[</span>fruit_id#13<span class="o">]</span>, <span class="nv">functions</span><span class="o">=[</span>partial_count<span class="o">(</span>1<span class="o">)]</span>, <span class="nv">output</span><span class="o">=[</span>fruit_id#13, count#17L<span class="o">])</span>
+</span></span><span class="line"><span class="cl">            +- *<span class="o">(</span>2<span class="o">)</span> Filter isnotnull<span class="o">(</span>fruit_id#13<span class="o">)</span>
+</span></span><span class="line"><span class="cl">               +- Scan hive default.orders <span class="o">[</span>fruit_id#13<span class="o">]</span>, HiveTableRelation <span class="sb">`</span>default<span class="sb">`</span>.<span class="sb">`</span>orders<span class="sb">`</span>, org.apache.hadoop.hive.serde2.lazy.LazySimpleSerDe, <span class="o">[</span>id#12, fruit_id#13, create_time#14, consumer_name#15<span class="o">]</span>
+</span></span></code></pre></td></tr></table></div>
 </div>
 </div><p>从上面的输出可以看到，这条语句经过了三个阶段，一次生成了 Parsed Logical Plan， Analyzed Logical Plan， Optimized Logical Plan， Physical Plan。</p>
 <p>上面每一步的生成结果，无论是 LogicalPlan 还是 PhysicalPlan，都是通过树的形式表示。每一步都是对树进行操作，生成新的树。如果想要深入了解，就必须要了解这些数据结构的原理。spark sql 使用基础类TreeNode 来实现树，在介绍 TreeNode 之前，需要先了解一些基本的语法。</p>
@@ -428,10 +426,10 @@ TreeNode &lt;|-- Expression
 </span><span class="lnt">3
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-scala" data-lang="scala"><span class="k">abstract</span> <span class="k">class</span> <span class="nc">TreeNode</span><span class="o">[</span><span class="kt">BaseType</span> <span class="k">&lt;:</span> <span class="kt">TreeNode</span><span class="o">[</span><span class="kt">BaseType</span><span class="o">]]</span> <span class="nc">extends</span> <span class="nc">Product</span> <span class="o">{</span>
-    <span class="o">......</span>
-<span class="o">}</span>
-</code></pre></td></tr></table></div>
+<pre tabindex="0" class="chroma"><code class="language-scala" data-lang="scala"><span class="line"><span class="cl"><span class="k">abstract</span> <span class="k">class</span> <span class="nc">TreeNode</span><span class="o">[</span><span class="kt">BaseType</span> <span class="k">&lt;:</span> <span class="kt">TreeNode</span><span class="o">[</span><span class="kt">BaseType</span><span class="o">]]</span> <span class="nc">extends</span> <span class="nc">Product</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">    <span class="o">......</span>
+</span></span><span class="line"><span class="cl"><span class="o">}</span>
+</span></span></code></pre></td></tr></table></div>
 </div>
 </div><p>首先它是一个抽象类，其子类分为两种，逻辑计划 LogicalPlan，物理计划 SparkPlan。</p>
 <p>然后看看它的泛型声明，读者对于这种写法有可能比较陌生，我们可以分为两部分理解</p>
@@ -464,27 +462,27 @@ TreeNode &lt;|-- Expression
 </span><span class="lnt">20
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="kd">abstract</span> <span class="kd">class</span> <span class="nc">Fruit</span><span class="o">&lt;</span><span class="n">T</span> <span class="kd">extends</span> <span class="n">Fruit</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;&gt;</span> <span class="o">{</span>
-    <span class="c1">// 实例化
-</span><span class="c1"></span>    <span class="kd">abstract</span> <span class="kd">public</span> <span class="n">T</span> <span class="nf">make</span><span class="o">();</span>
-<span class="o">}</span>
-
-<span class="kd">class</span> <span class="nc">Apple</span> <span class="kd">extends</span> <span class="n">Fruit</span><span class="o">&lt;</span><span class="n">Apple</span><span class="o">&gt;</span> <span class="o">{</span>
-    
-    <span class="nd">@Override</span>
-    <span class="kd">public</span> <span class="n">Apple</span> <span class="nf">make</span><span class="o">()</span> <span class="o">{</span>
-        <span class="k">return</span> <span class="k">new</span> <span class="n">Apple</span><span class="o">();</span>
-    <span class="o">}</span>
-<span class="o">}</span>
-
-<span class="kd">class</span> <span class="nc">Banana</span> <span class="kd">extends</span> <span class="n">Fruit</span><span class="o">&lt;</span><span class="n">Banana</span><span class="o">&gt;</span> <span class="o">{</span>
-    
-    <span class="nd">@Override</span>
-    <span class="kd">public</span> <span class="n">Banana</span> <span class="nf">make</span><span class="o">()</span> <span class="o">{</span>
-        <span class="k">return</span> <span class="k">new</span> <span class="n">Banana</span><span class="o">();</span>
-    <span class="o">}</span>
-<span class="o">}</span>
-</code></pre></td></tr></table></div>
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="kd">abstract</span> <span class="kd">class</span> <span class="nc">Fruit</span><span class="o">&lt;</span><span class="n">T</span> <span class="kd">extends</span> <span class="n">Fruit</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;&gt;</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// 实例化
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="kd">abstract</span> <span class="kd">public</span> <span class="n">T</span> <span class="nf">make</span><span class="o">();</span>
+</span></span><span class="line"><span class="cl"><span class="o">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kd">class</span> <span class="nc">Apple</span> <span class="kd">extends</span> <span class="n">Fruit</span><span class="o">&lt;</span><span class="n">Apple</span><span class="o">&gt;</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">    
+</span></span><span class="line"><span class="cl">    <span class="nd">@Override</span>
+</span></span><span class="line"><span class="cl">    <span class="kd">public</span> <span class="n">Apple</span> <span class="nf">make</span><span class="o">()</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">        <span class="k">return</span> <span class="k">new</span> <span class="n">Apple</span><span class="o">();</span>
+</span></span><span class="line"><span class="cl">    <span class="o">}</span>
+</span></span><span class="line"><span class="cl"><span class="o">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kd">class</span> <span class="nc">Banana</span> <span class="kd">extends</span> <span class="n">Fruit</span><span class="o">&lt;</span><span class="n">Banana</span><span class="o">&gt;</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">    
+</span></span><span class="line"><span class="cl">    <span class="nd">@Override</span>
+</span></span><span class="line"><span class="cl">    <span class="kd">public</span> <span class="n">Banana</span> <span class="nf">make</span><span class="o">()</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">        <span class="k">return</span> <span class="k">new</span> <span class="n">Banana</span><span class="o">();</span>
+</span></span><span class="line"><span class="cl">    <span class="o">}</span>
+</span></span><span class="line"><span class="cl"><span class="o">}</span>
+</span></span></code></pre></td></tr></table></div>
 </div>
 </div><p>可以看到 Fruit 泛型类，定义了 make 抽象方法，子类必须实现这个抽象方法。在子类中 make 方法，它的返回类型都随着子类改变。这就是自限定泛型最常用的场景。</p>
 <h2 id="case-class-使用"><a href="#case-class-使用" class="anchor-link"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon anchor-icon"><path d="M326.612 185.391c59.747 59.809 58.927 155.698.36 214.59-.11.12-.24.25-.36.37l-67.2 67.2c-59.27 59.27-155.699 59.262-214.96 0-59.27-59.26-59.27-155.7 0-214.96l37.106-37.106c9.84-9.84 26.786-3.3 27.294 10.606.648 17.722 3.826 35.527 9.69 52.721 1.986 5.822.567 12.262-3.783 16.612l-13.087 13.087c-28.026 28.026-28.905 73.66-1.155 101.96 28.024 28.579 74.086 28.749 102.325.51l67.2-67.19c28.191-28.191 28.073-73.757 0-101.83-3.701-3.694-7.429-6.564-10.341-8.569a16.037 16.037 0 0 1-6.947-12.606c-.396-10.567 3.348-21.456 11.698-29.806l21.054-21.055c5.521-5.521 14.182-6.199 20.584-1.731a152.482 152.482 0 0 1 20.522 17.197zM467.547 44.449c-59.261-59.262-155.69-59.27-214.96 0l-67.2 67.2c-.12.12-.25.25-.36.37-58.566 58.892-59.387 154.781.36 214.59a152.454 152.454 0 0 0 20.521 17.196c6.402 4.468 15.064 3.789 20.584-1.731l21.054-21.055c8.35-8.35 12.094-19.239 11.698-29.806a16.037 16.037 0 0 0-6.947-12.606c-2.912-2.005-6.64-4.875-10.341-8.569-28.073-28.073-28.191-73.639 0-101.83l67.2-67.19c28.239-28.239 74.3-28.069 102.325.51 27.75 28.3 26.872 73.934-1.155 101.96l-13.087 13.087c-4.35 4.35-5.769 10.79-3.783 16.612 5.864 17.194 9.042 34.999 9.69 52.721.509 13.906 17.454 20.446 27.294 10.606l37.106-37.106c59.271-59.259 59.271-155.699.001-214.959z"/></svg></a>Case Class 使用</h2>
@@ -514,21 +512,21 @@ TreeNode &lt;|-- Expression
 </span><span class="lnt">14
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-scala" data-lang="scala"><span class="k">abstract</span> <span class="k">class</span> <span class="nc">TreeNode</span><span class="o">[</span><span class="kt">BaseType</span> <span class="k">&lt;:</span> <span class="kt">TreeNode</span><span class="o">[</span><span class="kt">BaseType</span><span class="o">]]</span> <span class="nc">extends</span> <span class="nc">Product</span> <span class="o">{</span>
-
-  <span class="k">protected</span> <span class="k">def</span> <span class="n">mapProductIterator</span><span class="o">[</span><span class="kt">B:</span> <span class="kt">ClassTag</span><span class="o">](</span><span class="n">f</span><span class="k">:</span> <span class="kt">Any</span> <span class="o">=&gt;</span> <span class="n">B</span><span class="o">)</span><span class="k">:</span> <span class="kt">Array</span><span class="o">[</span><span class="kt">B</span><span class="o">]</span> <span class="k">=</span> <span class="o">{</span>
-    <span class="c1">// productArity 是属于Product的方法，返回参数的个数
-</span><span class="c1"></span>    <span class="k">val</span> <span class="n">arr</span> <span class="k">=</span> <span class="nc">Array</span><span class="o">.</span><span class="n">ofDim</span><span class="o">[</span><span class="kt">B</span><span class="o">](</span><span class="n">productArity</span><span class="o">)</span>
-    <span class="k">var</span> <span class="n">i</span> <span class="k">=</span> <span class="mi">0</span>
-    <span class="k">while</span> <span class="o">(</span><span class="n">i</span> <span class="o">&lt;</span> <span class="n">arr</span><span class="o">.</span><span class="n">length</span><span class="o">)</span> <span class="o">{</span>
-      <span class="c1">// productElement 是属于Product的方法，返回返回指定位置的参数
-</span><span class="c1"></span>      <span class="n">arr</span><span class="o">(</span><span class="n">i</span><span class="o">)</span> <span class="k">=</span> <span class="n">f</span><span class="o">(</span><span class="n">productElement</span><span class="o">(</span><span class="n">i</span><span class="o">))</span>
-      <span class="n">i</span> <span class="o">+=</span> <span class="mi">1</span>
-    <span class="o">}</span>
-    <span class="n">arr</span>
-  <span class="o">}</span>
-<span class="o">}</span>
-</code></pre></td></tr></table></div>
+<pre tabindex="0" class="chroma"><code class="language-scala" data-lang="scala"><span class="line"><span class="cl"><span class="k">abstract</span> <span class="k">class</span> <span class="nc">TreeNode</span><span class="o">[</span><span class="kt">BaseType</span> <span class="k">&lt;:</span> <span class="kt">TreeNode</span><span class="o">[</span><span class="kt">BaseType</span><span class="o">]]</span> <span class="nc">extends</span> <span class="nc">Product</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="k">protected</span> <span class="k">def</span> <span class="n">mapProductIterator</span><span class="o">[</span><span class="kt">B:</span> <span class="kt">ClassTag</span><span class="o">](</span><span class="n">f</span><span class="k">:</span> <span class="kt">Any</span> <span class="o">=&gt;</span> <span class="n">B</span><span class="o">)</span><span class="k">:</span> <span class="kt">Array</span><span class="o">[</span><span class="kt">B</span><span class="o">]</span> <span class="k">=</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// productArity 是属于Product的方法，返回参数的个数
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="k">val</span> <span class="n">arr</span> <span class="k">=</span> <span class="nc">Array</span><span class="o">.</span><span class="n">ofDim</span><span class="o">[</span><span class="kt">B</span><span class="o">](</span><span class="n">productArity</span><span class="o">)</span>
+</span></span><span class="line"><span class="cl">    <span class="k">var</span> <span class="n">i</span> <span class="k">=</span> <span class="mi">0</span>
+</span></span><span class="line"><span class="cl">    <span class="k">while</span> <span class="o">(</span><span class="n">i</span> <span class="o">&lt;</span> <span class="n">arr</span><span class="o">.</span><span class="n">length</span><span class="o">)</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">      <span class="c1">// productElement 是属于Product的方法，返回返回指定位置的参数
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>      <span class="n">arr</span><span class="o">(</span><span class="n">i</span><span class="o">)</span> <span class="k">=</span> <span class="n">f</span><span class="o">(</span><span class="n">productElement</span><span class="o">(</span><span class="n">i</span><span class="o">))</span>
+</span></span><span class="line"><span class="cl">      <span class="n">i</span> <span class="o">+=</span> <span class="mi">1</span>
+</span></span><span class="line"><span class="cl">    <span class="o">}</span>
+</span></span><span class="line"><span class="cl">    <span class="n">arr</span>
+</span></span><span class="line"><span class="cl">  <span class="o">}</span>
+</span></span><span class="line"><span class="cl"><span class="o">}</span>
+</span></span></code></pre></td></tr></table></div>
 </div>
 </div><h2 id="treenode-判断相等"><a href="#treenode-判断相等" class="anchor-link"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon anchor-icon"><path d="M326.612 185.391c59.747 59.809 58.927 155.698.36 214.59-.11.12-.24.25-.36.37l-67.2 67.2c-59.27 59.27-155.699 59.262-214.96 0-59.27-59.26-59.27-155.7 0-214.96l37.106-37.106c9.84-9.84 26.786-3.3 27.294 10.606.648 17.722 3.826 35.527 9.69 52.721 1.986 5.822.567 12.262-3.783 16.612l-13.087 13.087c-28.026 28.026-28.905 73.66-1.155 101.96 28.024 28.579 74.086 28.749 102.325.51l67.2-67.19c28.191-28.191 28.073-73.757 0-101.83-3.701-3.694-7.429-6.564-10.341-8.569a16.037 16.037 0 0 1-6.947-12.606c-.396-10.567 3.348-21.456 11.698-29.806l21.054-21.055c5.521-5.521 14.182-6.199 20.584-1.731a152.482 152.482 0 0 1 20.522 17.197zM467.547 44.449c-59.261-59.262-155.69-59.27-214.96 0l-67.2 67.2c-.12.12-.25.25-.36.37-58.566 58.892-59.387 154.781.36 214.59a152.454 152.454 0 0 0 20.521 17.196c6.402 4.468 15.064 3.789 20.584-1.731l21.054-21.055c8.35-8.35 12.094-19.239 11.698-29.806a16.037 16.037 0 0 0-6.947-12.606c-2.912-2.005-6.64-4.875-10.341-8.569-28.073-28.073-28.191-73.639 0-101.83l67.2-67.19c28.239-28.239 74.3-28.069 102.325.51 27.75 28.3 26.872 73.934-1.155 101.96l-13.087 13.087c-4.35 4.35-5.769 10.79-3.783 16.612 5.864 17.194 9.042 34.999 9.69 52.721.509 13.906 17.454 20.446 27.294 10.606l37.106-37.106c59.271-59.259 59.271-155.699.001-214.959z"/></svg></a>TreeNode 判断相等</h2>
 <p>scala 判断相等的使用，涉及到三种 ==，eq，equals。</p>
@@ -548,13 +546,13 @@ TreeNode &lt;|-- Expression
 </span><span class="lnt">6
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-scala" data-lang="scala"><span class="k">abstract</span> <span class="k">class</span> <span class="nc">TreeNode</span><span class="o">[</span><span class="kt">BaseType</span> <span class="k">&lt;:</span> <span class="kt">TreeNode</span><span class="o">[</span><span class="kt">BaseType</span><span class="o">]]</span> <span class="nc">extends</span> <span class="nc">Product</span> <span class="o">{</span>
-  <span class="k">def</span> <span class="n">fastEquals</span><span class="o">(</span><span class="n">other</span><span class="k">:</span> <span class="kt">TreeNode</span><span class="o">[</span><span class="k">_</span><span class="o">])</span><span class="k">:</span> <span class="kt">Boolean</span> <span class="o">=</span> <span class="o">{</span>
-    <span class="c1">// 首先比较引用，然后调用Case Class实现的equals方法
-</span><span class="c1"></span>    <span class="k">this</span><span class="o">.</span><span class="n">eq</span><span class="o">(</span><span class="n">other</span><span class="o">)</span> <span class="o">||</span> <span class="k">this</span> <span class="o">==</span> <span class="n">other</span>
-  <span class="o">}</span>
-<span class="o">}</span>
-</code></pre></td></tr></table></div>
+<pre tabindex="0" class="chroma"><code class="language-scala" data-lang="scala"><span class="line"><span class="cl"><span class="k">abstract</span> <span class="k">class</span> <span class="nc">TreeNode</span><span class="o">[</span><span class="kt">BaseType</span> <span class="k">&lt;:</span> <span class="kt">TreeNode</span><span class="o">[</span><span class="kt">BaseType</span><span class="o">]]</span> <span class="nc">extends</span> <span class="nc">Product</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">  <span class="k">def</span> <span class="n">fastEquals</span><span class="o">(</span><span class="n">other</span><span class="k">:</span> <span class="kt">TreeNode</span><span class="o">[</span><span class="k">_</span><span class="o">])</span><span class="k">:</span> <span class="kt">Boolean</span> <span class="o">=</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// 首先比较引用，然后调用Case Class实现的equals方法
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="k">this</span><span class="o">.</span><span class="n">eq</span><span class="o">(</span><span class="n">other</span><span class="o">)</span> <span class="o">||</span> <span class="k">this</span> <span class="o">==</span> <span class="n">other</span>
+</span></span><span class="line"><span class="cl">  <span class="o">}</span>
+</span></span><span class="line"><span class="cl"><span class="o">}</span>
+</span></span></code></pre></td></tr></table></div>
 </div>
 </div><h2 id="偏函数"><a href="#偏函数" class="anchor-link"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon anchor-icon"><path d="M326.612 185.391c59.747 59.809 58.927 155.698.36 214.59-.11.12-.24.25-.36.37l-67.2 67.2c-59.27 59.27-155.699 59.262-214.96 0-59.27-59.26-59.27-155.7 0-214.96l37.106-37.106c9.84-9.84 26.786-3.3 27.294 10.606.648 17.722 3.826 35.527 9.69 52.721 1.986 5.822.567 12.262-3.783 16.612l-13.087 13.087c-28.026 28.026-28.905 73.66-1.155 101.96 28.024 28.579 74.086 28.749 102.325.51l67.2-67.19c28.191-28.191 28.073-73.757 0-101.83-3.701-3.694-7.429-6.564-10.341-8.569a16.037 16.037 0 0 1-6.947-12.606c-.396-10.567 3.348-21.456 11.698-29.806l21.054-21.055c5.521-5.521 14.182-6.199 20.584-1.731a152.482 152.482 0 0 1 20.522 17.197zM467.547 44.449c-59.261-59.262-155.69-59.27-214.96 0l-67.2 67.2c-.12.12-.25.25-.36.37-58.566 58.892-59.387 154.781.36 214.59a152.454 152.454 0 0 0 20.521 17.196c6.402 4.468 15.064 3.789 20.584-1.731l21.054-21.055c8.35-8.35 12.094-19.239 11.698-29.806a16.037 16.037 0 0 0-6.947-12.606c-2.912-2.005-6.64-4.875-10.341-8.569-28.073-28.073-28.191-73.639 0-101.83l67.2-67.19c28.239-28.239 74.3-28.069 102.325.51 27.75 28.3 26.872 73.934-1.155 101.96l-13.087 13.087c-4.35 4.35-5.769 10.79-3.783 16.612 5.864 17.194 9.042 34.999 9.69 52.721.509 13.906 17.454 20.446 27.294 10.606l37.106-37.106c59.271-59.259 59.271-155.699.001-214.959z"/></svg></a>偏函数</h2>
 <p>偏函数是 scala 的一个特殊函数，可以看作是一个残缺的函数，它只能处理一部分的参数。例如：</p>
@@ -569,14 +567,14 @@ TreeNode &lt;|-- Expression
 </span><span class="lnt">7
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-scala" data-lang="scala"><span class="k">def</span> <span class="n">partital</span><span class="k">:</span><span class="kt">PartialFunction</span><span class="o">[</span><span class="kt">Int</span>, <span class="kt">String</span><span class="o">]</span> <span class="k">=</span> <span class="o">{</span>
-    <span class="k">case</span> <span class="mi">0</span> <span class="k">=&gt;</span> <span class="s">&#34;hello&#34;</span>
-<span class="o">}</span>
-
-<span class="n">partital</span><span class="o">(</span><span class="mi">0</span><span class="o">)</span> <span class="c1">// &#34;hello&#34;
-</span><span class="c1"></span><span class="n">partital</span><span class="o">(</span><span class="mi">1</span><span class="o">)</span> <span class="c1">// 报错 MatchError
-</span><span class="c1"></span><span class="n">partital</span><span class="o">.</span><span class="n">applyOrElse</span><span class="o">(</span><span class="mi">2</span><span class="o">,</span> <span class="o">{</span> <span class="n">num</span><span class="k">:</span><span class="kt">Int</span> <span class="o">=&gt;</span> <span class="s">&#34;world&#34;</span> <span class="o">})</span> <span class="c1">// &#34;world&#34;
-</span></code></pre></td></tr></table></div>
+<pre tabindex="0" class="chroma"><code class="language-scala" data-lang="scala"><span class="line"><span class="cl"><span class="k">def</span> <span class="n">partital</span><span class="k">:</span><span class="kt">PartialFunction</span><span class="o">[</span><span class="kt">Int</span>, <span class="kt">String</span><span class="o">]</span> <span class="k">=</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">    <span class="k">case</span> <span class="mi">0</span> <span class="k">=&gt;</span> <span class="s">&#34;hello&#34;</span>
+</span></span><span class="line"><span class="cl"><span class="o">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">partital</span><span class="o">(</span><span class="mi">0</span><span class="o">)</span> <span class="c1">// &#34;hello&#34;
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="n">partital</span><span class="o">(</span><span class="mi">1</span><span class="o">)</span> <span class="c1">// 报错 MatchError
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="n">partital</span><span class="o">.</span><span class="n">applyOrElse</span><span class="o">(</span><span class="mi">2</span><span class="o">,</span> <span class="o">{</span> <span class="n">num</span><span class="k">:</span><span class="kt">Int</span> <span class="o">=&gt;</span> <span class="s">&#34;world&#34;</span> <span class="o">})</span> <span class="c1">// &#34;world&#34;
+</span></span></span></code></pre></td></tr></table></div>
 </div>
 </div><p>上图定义了一个偏函数，它接收 Int 类型的参数，返回 String 类型的结果。不过它只接收参数值为 0 的情况。</p>
 <p>另外偏函数还有个 applyOrElse 方法，它额外接收了一个函数。如果偏函数不处理当前参数，那么就会调用这个函数。</p>
@@ -649,67 +647,67 @@ TreeNode &lt;|-- Expression
 </span><span class="lnt">60
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-scala" data-lang="scala"><span class="k">abstract</span> <span class="k">class</span> <span class="nc">TreeNode</span><span class="o">[</span><span class="kt">BaseType</span> <span class="k">&lt;:</span> <span class="kt">TreeNode</span><span class="o">[</span><span class="kt">BaseType</span><span class="o">]]</span> <span class="nc">extends</span> <span class="nc">Product</span> <span class="o">{</span>
-    
-  <span class="c1">// 返回子节点
-</span><span class="c1"></span>  <span class="k">def</span> <span class="n">children</span><span class="k">:</span> <span class="kt">Seq</span><span class="o">[</span><span class="kt">BaseType</span><span class="o">]</span>
- 
-  <span class="c1">// 返回子节点的set集合
-</span><span class="c1"></span>  <span class="k">lazy</span> <span class="k">val</span> <span class="n">containsChild</span><span class="k">:</span> <span class="kt">Set</span><span class="o">[</span><span class="kt">TreeNode</span><span class="o">[</span><span class="k">_</span><span class="o">]]</span> <span class="k">=</span> <span class="n">children</span><span class="o">.</span><span class="n">toSet</span>    
-    
-  <span class="c1">// 遍历子节点 
-</span><span class="c1"></span>  <span class="k">def</span> <span class="n">mapChildren</span><span class="o">(</span><span class="n">f</span><span class="k">:</span> <span class="kt">BaseType</span> <span class="o">=&gt;</span> <span class="nc">BaseType</span><span class="o">)</span><span class="k">:</span> <span class="kt">BaseType</span> <span class="o">=</span> <span class="o">{</span>
-    <span class="c1">// 如果是叶子节点，则返回自身节点
-</span><span class="c1"></span>    <span class="c1">// 如果是非叶子节点，那么会遍历构造函数的参数。如果参数是子节点，那么递归遍历
-</span><span class="c1"></span>    <span class="k">if</span> <span class="o">(</span><span class="n">children</span><span class="o">.</span><span class="n">nonEmpty</span><span class="o">)</span> <span class="o">{</span>
-      <span class="k">var</span> <span class="n">changed</span> <span class="k">=</span> <span class="kc">false</span>
-      <span class="c1">// 调用了mapProductIterator方法，遍历构造函数的参数，返回新的构造参数
-</span><span class="c1"></span>      <span class="c1">// 这里只会遍历LogicalPlan的实例，并且还必须是子节点
-</span><span class="c1"></span>      <span class="k">val</span> <span class="n">newArgs</span> <span class="k">=</span> <span class="n">mapProductIterator</span> <span class="o">{</span>
-        <span class="c1">// 如果参数是TreeNode子类，并且是该节点的子节点
-</span><span class="c1"></span>        <span class="k">case</span> <span class="n">arg</span><span class="k">:</span> <span class="kt">TreeNode</span><span class="o">[</span><span class="k">_</span><span class="o">]</span> <span class="k">if</span> <span class="n">containsChild</span><span class="o">(</span><span class="n">arg</span><span class="o">)</span> <span class="k">=&gt;</span>
-          <span class="c1">// 递归调用函数遍历
-</span><span class="c1"></span>          <span class="k">val</span> <span class="n">newChild</span> <span class="k">=</span> <span class="n">f</span><span class="o">(</span><span class="n">arg</span><span class="o">.</span><span class="n">asInstanceOf</span><span class="o">[</span><span class="kt">BaseType</span><span class="o">])</span>
-          <span class="c1">// 如果子节点发生变化了，则更改changed标识
-</span><span class="c1"></span>          <span class="k">if</span> <span class="o">(!(</span><span class="n">newChild</span> <span class="n">fastEquals</span> <span class="n">arg</span><span class="o">))</span> <span class="o">{</span>
-            <span class="n">changed</span> <span class="k">=</span> <span class="kc">true</span>
-            <span class="n">newChild</span>
-          <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
-            <span class="n">arg</span>
-          <span class="o">}</span>
-          
-        <span class="k">case</span> <span class="nc">Some</span><span class="o">(</span><span class="n">arg</span><span class="k">:</span> <span class="kt">TreeNode</span><span class="o">[</span><span class="k">_</span><span class="o">])</span> <span class="k">if</span> <span class="n">containsChild</span><span class="o">(</span><span class="n">arg</span><span class="o">)</span> <span class="k">=&gt;</span>
-          <span class="o">......</span> <span class="c1">// 遍历子节点
-</span><span class="c1"></span>          
-        <span class="c1">// 如果参数是Map类型，则从它的values找到
-</span><span class="c1"></span>        <span class="k">case</span> <span class="n">m</span><span class="k">:</span> <span class="kt">Map</span><span class="o">[</span><span class="k">_</span>, <span class="k">_</span><span class="o">]</span> <span class="k">=&gt;</span> <span class="n">m</span><span class="o">.</span><span class="n">mapValues</span> <span class="o">{</span>
-          <span class="k">case</span> <span class="n">arg</span><span class="k">:</span> <span class="kt">TreeNode</span><span class="o">[</span><span class="k">_</span><span class="o">]</span> <span class="k">if</span> <span class="n">containsChild</span><span class="o">(</span><span class="n">arg</span><span class="o">)</span> <span class="k">=&gt;</span>
-           <span class="o">......</span> <span class="c1">// 遍历子节点
-</span><span class="c1"></span>        <span class="o">}.</span><span class="n">view</span><span class="o">.</span><span class="n">force</span> <span class="c1">// `mapValues` is lazy and we need to force it to materialize
-</span><span class="c1"></span>        <span class="k">case</span> <span class="n">d</span><span class="k">:</span> <span class="kt">DataType</span> <span class="o">=&gt;</span> <span class="n">d</span> <span class="c1">// Avoid unpacking Structs
-</span><span class="c1"></span>        
-        <span class="c1">// 如果参数是容器，则遍历容器的元素
-</span><span class="c1"></span>        <span class="k">case</span> <span class="n">args</span><span class="k">:</span> <span class="kt">Traversable</span><span class="o">[</span><span class="k">_</span><span class="o">]</span> <span class="k">=&gt;</span> <span class="n">args</span><span class="o">.</span><span class="n">map</span> <span class="o">{</span>
-          <span class="k">case</span> <span class="n">arg</span><span class="k">:</span> <span class="kt">TreeNode</span><span class="o">[</span><span class="k">_</span><span class="o">]</span> <span class="k">if</span> <span class="n">containsChild</span><span class="o">(</span><span class="n">arg</span><span class="o">)</span> <span class="k">=&gt;</span>
-            <span class="o">......</span> <span class="c1">// 遍历子节点
-</span><span class="c1"></span>          <span class="k">case</span> <span class="n">tuple</span><span class="o">@(</span><span class="n">arg1</span><span class="k">:</span> <span class="kt">TreeNode</span><span class="o">[</span><span class="k">_</span><span class="o">],</span> <span class="n">arg2</span><span class="k">:</span> <span class="kt">TreeNode</span><span class="o">[</span><span class="k">_</span><span class="o">])</span> <span class="k">=&gt;</span>
-            <span class="c1">// 检查两个节点是否为子节点，如果是节点，则递归遍历
-</span><span class="c1"></span>            <span class="o">......</span> <span class="c1">// 遍历子节点
-</span><span class="c1"></span>          <span class="k">case</span> <span class="n">other</span> <span class="k">=&gt;</span> <span class="n">other</span>
-        <span class="o">}</span>
-          
-        <span class="k">case</span> <span class="n">nonChild</span><span class="k">:</span> <span class="kt">AnyRef</span> <span class="o">=&gt;</span> <span class="n">nonChild</span>
-        <span class="k">case</span> <span class="kc">null</span> <span class="k">=&gt;</span> <span class="kc">null</span>
-      <span class="o">}</span>
-      <span class="c1">// 如果子节点发生变化，则利用新的构造参数，实例化新的节点
-</span><span class="c1"></span>      <span class="k">if</span> <span class="o">(</span><span class="n">changed</span><span class="o">)</span> <span class="n">makeCopy</span><span class="o">(</span><span class="n">newArgs</span><span class="o">)</span> <span class="k">else</span> <span class="k">this</span>
-    <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
-      <span class="c1">// 递归结束条件
-</span><span class="c1"></span>      <span class="k">this</span>
-    <span class="o">}</span>
-  <span class="o">}</span>
-<span class="o">}</span>
-</code></pre></td></tr></table></div>
+<pre tabindex="0" class="chroma"><code class="language-scala" data-lang="scala"><span class="line"><span class="cl"><span class="k">abstract</span> <span class="k">class</span> <span class="nc">TreeNode</span><span class="o">[</span><span class="kt">BaseType</span> <span class="k">&lt;:</span> <span class="kt">TreeNode</span><span class="o">[</span><span class="kt">BaseType</span><span class="o">]]</span> <span class="nc">extends</span> <span class="nc">Product</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">    
+</span></span><span class="line"><span class="cl">  <span class="c1">// 返回子节点
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="k">def</span> <span class="n">children</span><span class="k">:</span> <span class="kt">Seq</span><span class="o">[</span><span class="kt">BaseType</span><span class="o">]</span>
+</span></span><span class="line"><span class="cl"> 
+</span></span><span class="line"><span class="cl">  <span class="c1">// 返回子节点的set集合
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="k">lazy</span> <span class="k">val</span> <span class="n">containsChild</span><span class="k">:</span> <span class="kt">Set</span><span class="o">[</span><span class="kt">TreeNode</span><span class="o">[</span><span class="k">_</span><span class="o">]]</span> <span class="k">=</span> <span class="n">children</span><span class="o">.</span><span class="n">toSet</span>    
+</span></span><span class="line"><span class="cl">    
+</span></span><span class="line"><span class="cl">  <span class="c1">// 遍历子节点 
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="k">def</span> <span class="n">mapChildren</span><span class="o">(</span><span class="n">f</span><span class="k">:</span> <span class="kt">BaseType</span> <span class="o">=&gt;</span> <span class="nc">BaseType</span><span class="o">)</span><span class="k">:</span> <span class="kt">BaseType</span> <span class="o">=</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// 如果是叶子节点，则返回自身节点
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="c1">// 如果是非叶子节点，那么会遍历构造函数的参数。如果参数是子节点，那么递归遍历
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="k">if</span> <span class="o">(</span><span class="n">children</span><span class="o">.</span><span class="n">nonEmpty</span><span class="o">)</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">      <span class="k">var</span> <span class="n">changed</span> <span class="k">=</span> <span class="kc">false</span>
+</span></span><span class="line"><span class="cl">      <span class="c1">// 调用了mapProductIterator方法，遍历构造函数的参数，返回新的构造参数
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>      <span class="c1">// 这里只会遍历LogicalPlan的实例，并且还必须是子节点
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>      <span class="k">val</span> <span class="n">newArgs</span> <span class="k">=</span> <span class="n">mapProductIterator</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">        <span class="c1">// 如果参数是TreeNode子类，并且是该节点的子节点
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>        <span class="k">case</span> <span class="n">arg</span><span class="k">:</span> <span class="kt">TreeNode</span><span class="o">[</span><span class="k">_</span><span class="o">]</span> <span class="k">if</span> <span class="n">containsChild</span><span class="o">(</span><span class="n">arg</span><span class="o">)</span> <span class="k">=&gt;</span>
+</span></span><span class="line"><span class="cl">          <span class="c1">// 递归调用函数遍历
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>          <span class="k">val</span> <span class="n">newChild</span> <span class="k">=</span> <span class="n">f</span><span class="o">(</span><span class="n">arg</span><span class="o">.</span><span class="n">asInstanceOf</span><span class="o">[</span><span class="kt">BaseType</span><span class="o">])</span>
+</span></span><span class="line"><span class="cl">          <span class="c1">// 如果子节点发生变化了，则更改changed标识
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>          <span class="k">if</span> <span class="o">(!(</span><span class="n">newChild</span> <span class="n">fastEquals</span> <span class="n">arg</span><span class="o">))</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">            <span class="n">changed</span> <span class="k">=</span> <span class="kc">true</span>
+</span></span><span class="line"><span class="cl">            <span class="n">newChild</span>
+</span></span><span class="line"><span class="cl">          <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">            <span class="n">arg</span>
+</span></span><span class="line"><span class="cl">          <span class="o">}</span>
+</span></span><span class="line"><span class="cl">          
+</span></span><span class="line"><span class="cl">        <span class="k">case</span> <span class="nc">Some</span><span class="o">(</span><span class="n">arg</span><span class="k">:</span> <span class="kt">TreeNode</span><span class="o">[</span><span class="k">_</span><span class="o">])</span> <span class="k">if</span> <span class="n">containsChild</span><span class="o">(</span><span class="n">arg</span><span class="o">)</span> <span class="k">=&gt;</span>
+</span></span><span class="line"><span class="cl">          <span class="o">......</span> <span class="c1">// 遍历子节点
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>          
+</span></span><span class="line"><span class="cl">        <span class="c1">// 如果参数是Map类型，则从它的values找到
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>        <span class="k">case</span> <span class="n">m</span><span class="k">:</span> <span class="kt">Map</span><span class="o">[</span><span class="k">_</span>, <span class="k">_</span><span class="o">]</span> <span class="k">=&gt;</span> <span class="n">m</span><span class="o">.</span><span class="n">mapValues</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">          <span class="k">case</span> <span class="n">arg</span><span class="k">:</span> <span class="kt">TreeNode</span><span class="o">[</span><span class="k">_</span><span class="o">]</span> <span class="k">if</span> <span class="n">containsChild</span><span class="o">(</span><span class="n">arg</span><span class="o">)</span> <span class="k">=&gt;</span>
+</span></span><span class="line"><span class="cl">           <span class="o">......</span> <span class="c1">// 遍历子节点
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>        <span class="o">}.</span><span class="n">view</span><span class="o">.</span><span class="n">force</span> <span class="c1">// `mapValues` is lazy and we need to force it to materialize
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>        <span class="k">case</span> <span class="n">d</span><span class="k">:</span> <span class="kt">DataType</span> <span class="o">=&gt;</span> <span class="n">d</span> <span class="c1">// Avoid unpacking Structs
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>        
+</span></span><span class="line"><span class="cl">        <span class="c1">// 如果参数是容器，则遍历容器的元素
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>        <span class="k">case</span> <span class="n">args</span><span class="k">:</span> <span class="kt">Traversable</span><span class="o">[</span><span class="k">_</span><span class="o">]</span> <span class="k">=&gt;</span> <span class="n">args</span><span class="o">.</span><span class="n">map</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">          <span class="k">case</span> <span class="n">arg</span><span class="k">:</span> <span class="kt">TreeNode</span><span class="o">[</span><span class="k">_</span><span class="o">]</span> <span class="k">if</span> <span class="n">containsChild</span><span class="o">(</span><span class="n">arg</span><span class="o">)</span> <span class="k">=&gt;</span>
+</span></span><span class="line"><span class="cl">            <span class="o">......</span> <span class="c1">// 遍历子节点
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>          <span class="k">case</span> <span class="n">tuple</span><span class="o">@(</span><span class="n">arg1</span><span class="k">:</span> <span class="kt">TreeNode</span><span class="o">[</span><span class="k">_</span><span class="o">],</span> <span class="n">arg2</span><span class="k">:</span> <span class="kt">TreeNode</span><span class="o">[</span><span class="k">_</span><span class="o">])</span> <span class="k">=&gt;</span>
+</span></span><span class="line"><span class="cl">            <span class="c1">// 检查两个节点是否为子节点，如果是节点，则递归遍历
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>            <span class="o">......</span> <span class="c1">// 遍历子节点
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>          <span class="k">case</span> <span class="n">other</span> <span class="k">=&gt;</span> <span class="n">other</span>
+</span></span><span class="line"><span class="cl">        <span class="o">}</span>
+</span></span><span class="line"><span class="cl">          
+</span></span><span class="line"><span class="cl">        <span class="k">case</span> <span class="n">nonChild</span><span class="k">:</span> <span class="kt">AnyRef</span> <span class="o">=&gt;</span> <span class="n">nonChild</span>
+</span></span><span class="line"><span class="cl">        <span class="k">case</span> <span class="kc">null</span> <span class="k">=&gt;</span> <span class="kc">null</span>
+</span></span><span class="line"><span class="cl">      <span class="o">}</span>
+</span></span><span class="line"><span class="cl">      <span class="c1">// 如果子节点发生变化，则利用新的构造参数，实例化新的节点
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>      <span class="k">if</span> <span class="o">(</span><span class="n">changed</span><span class="o">)</span> <span class="n">makeCopy</span><span class="o">(</span><span class="n">newArgs</span><span class="o">)</span> <span class="k">else</span> <span class="k">this</span>
+</span></span><span class="line"><span class="cl">    <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">      <span class="c1">// 递归结束条件
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>      <span class="k">this</span>
+</span></span><span class="line"><span class="cl">    <span class="o">}</span>
+</span></span><span class="line"><span class="cl">  <span class="o">}</span>
+</span></span><span class="line"><span class="cl"><span class="o">}</span>
+</span></span></code></pre></td></tr></table></div>
 </div>
 </div><h3 id="transformdown-操作"><a href="#transformdown-操作" class="anchor-link"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon anchor-icon"><path d="M326.612 185.391c59.747 59.809 58.927 155.698.36 214.59-.11.12-.24.25-.36.37l-67.2 67.2c-59.27 59.27-155.699 59.262-214.96 0-59.27-59.26-59.27-155.7 0-214.96l37.106-37.106c9.84-9.84 26.786-3.3 27.294 10.606.648 17.722 3.826 35.527 9.69 52.721 1.986 5.822.567 12.262-3.783 16.612l-13.087 13.087c-28.026 28.026-28.905 73.66-1.155 101.96 28.024 28.579 74.086 28.749 102.325.51l67.2-67.19c28.191-28.191 28.073-73.757 0-101.83-3.701-3.694-7.429-6.564-10.341-8.569a16.037 16.037 0 0 1-6.947-12.606c-.396-10.567 3.348-21.456 11.698-29.806l21.054-21.055c5.521-5.521 14.182-6.199 20.584-1.731a152.482 152.482 0 0 1 20.522 17.197zM467.547 44.449c-59.261-59.262-155.69-59.27-214.96 0l-67.2 67.2c-.12.12-.25.25-.36.37-58.566 58.892-59.387 154.781.36 214.59a152.454 152.454 0 0 0 20.521 17.196c6.402 4.468 15.064 3.789 20.584-1.731l21.054-21.055c8.35-8.35 12.094-19.239 11.698-29.806a16.037 16.037 0 0 0-6.947-12.606c-2.912-2.005-6.64-4.875-10.341-8.569-28.073-28.073-28.191-73.639 0-101.83l67.2-67.19c28.239-28.239 74.3-28.069 102.325.51 27.75 28.3 26.872 73.934-1.155 101.96l-13.087 13.087c-4.35 4.35-5.769 10.79-3.783 16.612 5.864 17.194 9.042 34.999 9.69 52.721.509 13.906 17.454 20.446 27.294 10.606l37.106-37.106c59.271-59.259 59.271-155.699.001-214.959z"/></svg></a>TransformDown 操作</h3>
 <p>我们定义 transformDown 函数，它接收一个函数参数，这里称为规则，负责对节点进行操作。它返回执行过规则后的新节点。</p>
@@ -745,30 +743,30 @@ TreeNode &lt;|-- Expression
 </span><span class="lnt">23
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-scala" data-lang="scala"><span class="k">abstract</span> <span class="k">class</span> <span class="nc">TreeNode</span><span class="o">[</span><span class="kt">BaseType</span> <span class="k">&lt;:</span> <span class="kt">TreeNode</span><span class="o">[</span><span class="kt">BaseType</span><span class="o">]]</span> <span class="nc">extends</span> <span class="nc">Product</span> <span class="o">{</span>
-    
-  <span class="c1">// 对该节点的所有子节点调用 rule 方法，如果中间节点发生了改变，那么就 copy 节点
-</span><span class="c1"></span>  <span class="k">def</span> <span class="n">transform</span><span class="o">(</span><span class="n">rule</span><span class="k">:</span> <span class="kt">PartialFunction</span><span class="o">[</span><span class="kt">BaseType</span>, <span class="kt">BaseType</span><span class="o">])</span><span class="k">:</span> <span class="kt">BaseType</span> <span class="o">=</span> <span class="o">{</span>
-    <span class="n">transformDown</span><span class="o">(</span><span class="n">rule</span><span class="o">)</span>
-  <span class="o">}</span>
-    
-  <span class="k">def</span> <span class="n">transformDown</span><span class="o">(</span><span class="n">rule</span><span class="k">:</span> <span class="kt">PartialFunction</span><span class="o">[</span><span class="kt">BaseType</span>, <span class="kt">BaseType</span><span class="o">])</span><span class="k">:</span> <span class="kt">BaseType</span> <span class="o">=</span> <span class="o">{</span>
-    <span class="k">val</span> <span class="n">afterRule</span> <span class="k">=</span> <span class="nc">CurrentOrigin</span><span class="o">.</span><span class="n">withOrigin</span><span class="o">(</span><span class="n">origin</span><span class="o">)</span> <span class="o">{</span>
-      <span class="c1">// 对当前节点，调用rule函数。
-</span><span class="c1"></span>      <span class="c1">// 这里rule函数有可能会生成新的节点，新节点的子节点可能不一样
-</span><span class="c1"></span>      <span class="n">rule</span><span class="o">.</span><span class="n">applyOrElse</span><span class="o">(</span><span class="k">this</span><span class="o">,</span> <span class="n">identity</span><span class="o">[</span><span class="kt">BaseType</span><span class="o">])</span>
-    <span class="o">}</span>
-
-    <span class="k">if</span> <span class="o">(</span><span class="k">this</span> <span class="n">fastEquals</span> <span class="n">afterRule</span><span class="o">)</span> <span class="o">{</span>
-      <span class="c1">// 如果当前节点没有变化，则继续遍历它的子节点
-</span><span class="c1"></span>      <span class="n">mapChildren</span><span class="o">(</span><span class="k">_</span><span class="o">.</span><span class="n">transformDown</span><span class="o">(</span><span class="n">rule</span><span class="o">))</span>
-    <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
-      <span class="c1">// 如果当前节点发生改变，需要对改变后的节点进行遍历
-</span><span class="c1"></span>      <span class="n">afterRule</span><span class="o">.</span><span class="n">mapChildren</span><span class="o">(</span><span class="k">_</span><span class="o">.</span><span class="n">transformDown</span><span class="o">(</span><span class="n">rule</span><span class="o">))</span>
-    <span class="o">}</span>
-  <span class="o">}</span>
-<span class="o">}</span>
-</code></pre></td></tr></table></div>
+<pre tabindex="0" class="chroma"><code class="language-scala" data-lang="scala"><span class="line"><span class="cl"><span class="k">abstract</span> <span class="k">class</span> <span class="nc">TreeNode</span><span class="o">[</span><span class="kt">BaseType</span> <span class="k">&lt;:</span> <span class="kt">TreeNode</span><span class="o">[</span><span class="kt">BaseType</span><span class="o">]]</span> <span class="nc">extends</span> <span class="nc">Product</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">    
+</span></span><span class="line"><span class="cl">  <span class="c1">// 对该节点的所有子节点调用 rule 方法，如果中间节点发生了改变，那么就 copy 节点
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="k">def</span> <span class="n">transform</span><span class="o">(</span><span class="n">rule</span><span class="k">:</span> <span class="kt">PartialFunction</span><span class="o">[</span><span class="kt">BaseType</span>, <span class="kt">BaseType</span><span class="o">])</span><span class="k">:</span> <span class="kt">BaseType</span> <span class="o">=</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">    <span class="n">transformDown</span><span class="o">(</span><span class="n">rule</span><span class="o">)</span>
+</span></span><span class="line"><span class="cl">  <span class="o">}</span>
+</span></span><span class="line"><span class="cl">    
+</span></span><span class="line"><span class="cl">  <span class="k">def</span> <span class="n">transformDown</span><span class="o">(</span><span class="n">rule</span><span class="k">:</span> <span class="kt">PartialFunction</span><span class="o">[</span><span class="kt">BaseType</span>, <span class="kt">BaseType</span><span class="o">])</span><span class="k">:</span> <span class="kt">BaseType</span> <span class="o">=</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">    <span class="k">val</span> <span class="n">afterRule</span> <span class="k">=</span> <span class="nc">CurrentOrigin</span><span class="o">.</span><span class="n">withOrigin</span><span class="o">(</span><span class="n">origin</span><span class="o">)</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">      <span class="c1">// 对当前节点，调用rule函数。
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>      <span class="c1">// 这里rule函数有可能会生成新的节点，新节点的子节点可能不一样
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>      <span class="n">rule</span><span class="o">.</span><span class="n">applyOrElse</span><span class="o">(</span><span class="k">this</span><span class="o">,</span> <span class="n">identity</span><span class="o">[</span><span class="kt">BaseType</span><span class="o">])</span>
+</span></span><span class="line"><span class="cl">    <span class="o">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="k">if</span> <span class="o">(</span><span class="k">this</span> <span class="n">fastEquals</span> <span class="n">afterRule</span><span class="o">)</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">      <span class="c1">// 如果当前节点没有变化，则继续遍历它的子节点
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>      <span class="n">mapChildren</span><span class="o">(</span><span class="k">_</span><span class="o">.</span><span class="n">transformDown</span><span class="o">(</span><span class="n">rule</span><span class="o">))</span>
+</span></span><span class="line"><span class="cl">    <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">      <span class="c1">// 如果当前节点发生改变，需要对改变后的节点进行遍历
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>      <span class="n">afterRule</span><span class="o">.</span><span class="n">mapChildren</span><span class="o">(</span><span class="k">_</span><span class="o">.</span><span class="n">transformDown</span><span class="o">(</span><span class="n">rule</span><span class="o">))</span>
+</span></span><span class="line"><span class="cl">    <span class="o">}</span>
+</span></span><span class="line"><span class="cl">  <span class="o">}</span>
+</span></span><span class="line"><span class="cl"><span class="o">}</span>
+</span></span></code></pre></td></tr></table></div>
 </div>
 </div><p>上面的 mapChildren 就是递归的遍历子节点，执行函数。如果某个节点的子节点发生改变，那么就返回改变后的新节点。</p>
 <h3 id="transformup-操作"><a href="#transformup-操作" class="anchor-link"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon anchor-icon"><path d="M326.612 185.391c59.747 59.809 58.927 155.698.36 214.59-.11.12-.24.25-.36.37l-67.2 67.2c-59.27 59.27-155.699 59.262-214.96 0-59.27-59.26-59.27-155.7 0-214.96l37.106-37.106c9.84-9.84 26.786-3.3 27.294 10.606.648 17.722 3.826 35.527 9.69 52.721 1.986 5.822.567 12.262-3.783 16.612l-13.087 13.087c-28.026 28.026-28.905 73.66-1.155 101.96 28.024 28.579 74.086 28.749 102.325.51l67.2-67.19c28.191-28.191 28.073-73.757 0-101.83-3.701-3.694-7.429-6.564-10.341-8.569a16.037 16.037 0 0 1-6.947-12.606c-.396-10.567 3.348-21.456 11.698-29.806l21.054-21.055c5.521-5.521 14.182-6.199 20.584-1.731a152.482 152.482 0 0 1 20.522 17.197zM467.547 44.449c-59.261-59.262-155.69-59.27-214.96 0l-67.2 67.2c-.12.12-.25.25-.36.37-58.566 58.892-59.387 154.781.36 214.59a152.454 152.454 0 0 0 20.521 17.196c6.402 4.468 15.064 3.789 20.584-1.731l21.054-21.055c8.35-8.35 12.094-19.239 11.698-29.806a16.037 16.037 0 0 0-6.947-12.606c-2.912-2.005-6.64-4.875-10.341-8.569-28.073-28.073-28.191-73.639 0-101.83l67.2-67.19c28.239-28.239 74.3-28.069 102.325.51 27.75 28.3 26.872 73.934-1.155 101.96l-13.087 13.087c-4.35 4.35-5.769 10.79-3.783 16.612 5.864 17.194 9.042 34.999 9.69 52.721.509 13.906 17.454 20.446 27.294 10.606l37.106-37.106c59.271-59.259 59.271-155.699.001-214.959z"/></svg></a>TransformUp 操作</h3>
@@ -799,24 +797,24 @@ TreeNode &lt;|-- Expression
 </span><span class="lnt">17
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-scala" data-lang="scala"><span class="k">abstract</span> <span class="k">class</span> <span class="nc">TreeNode</span><span class="o">[</span><span class="kt">BaseType</span> <span class="k">&lt;:</span> <span class="kt">TreeNode</span><span class="o">[</span><span class="kt">BaseType</span><span class="o">]]</span> <span class="nc">extends</span> <span class="nc">Product</span> <span class="o">{</span>
-
-  <span class="k">def</span> <span class="n">transformUp</span><span class="o">(</span><span class="n">rule</span><span class="k">:</span> <span class="kt">PartialFunction</span><span class="o">[</span><span class="kt">BaseType</span>, <span class="kt">BaseType</span><span class="o">])</span><span class="k">:</span> <span class="kt">BaseType</span> <span class="o">=</span> <span class="o">{</span>
-    <span class="c1">// 先遍历子节点
-</span><span class="c1"></span>    <span class="k">val</span> <span class="n">afterRuleOnChildren</span> <span class="k">=</span> <span class="n">mapChildren</span><span class="o">(</span><span class="k">_</span><span class="o">.</span><span class="n">transformUp</span><span class="o">(</span><span class="n">rule</span><span class="o">))</span>
-    <span class="c1">// 然后遍历当前节点
-</span><span class="c1"></span>    <span class="k">if</span> <span class="o">(</span><span class="k">this</span> <span class="n">fastEquals</span> <span class="n">afterRuleOnChildren</span><span class="o">)</span> <span class="o">{</span>
-      <span class="nc">CurrentOrigin</span><span class="o">.</span><span class="n">withOrigin</span><span class="o">(</span><span class="n">origin</span><span class="o">)</span> <span class="o">{</span>
-        <span class="n">rule</span><span class="o">.</span><span class="n">applyOrElse</span><span class="o">(</span><span class="k">this</span><span class="o">,</span> <span class="n">identity</span><span class="o">[</span><span class="kt">BaseType</span><span class="o">])</span>
-      <span class="o">}</span>
-    <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
-      <span class="nc">CurrentOrigin</span><span class="o">.</span><span class="n">withOrigin</span><span class="o">(</span><span class="n">origin</span><span class="o">)</span> <span class="o">{</span>
-        <span class="n">rule</span><span class="o">.</span><span class="n">applyOrElse</span><span class="o">(</span><span class="n">afterRuleOnChildren</span><span class="o">,</span> <span class="n">identity</span><span class="o">[</span><span class="kt">BaseType</span><span class="o">])</span>
-      <span class="o">}</span>
-    <span class="o">}</span>
-  <span class="o">}</span>
-<span class="o">}</span>
-</code></pre></td></tr></table></div>
+<pre tabindex="0" class="chroma"><code class="language-scala" data-lang="scala"><span class="line"><span class="cl"><span class="k">abstract</span> <span class="k">class</span> <span class="nc">TreeNode</span><span class="o">[</span><span class="kt">BaseType</span> <span class="k">&lt;:</span> <span class="kt">TreeNode</span><span class="o">[</span><span class="kt">BaseType</span><span class="o">]]</span> <span class="nc">extends</span> <span class="nc">Product</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="k">def</span> <span class="n">transformUp</span><span class="o">(</span><span class="n">rule</span><span class="k">:</span> <span class="kt">PartialFunction</span><span class="o">[</span><span class="kt">BaseType</span>, <span class="kt">BaseType</span><span class="o">])</span><span class="k">:</span> <span class="kt">BaseType</span> <span class="o">=</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// 先遍历子节点
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="k">val</span> <span class="n">afterRuleOnChildren</span> <span class="k">=</span> <span class="n">mapChildren</span><span class="o">(</span><span class="k">_</span><span class="o">.</span><span class="n">transformUp</span><span class="o">(</span><span class="n">rule</span><span class="o">))</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// 然后遍历当前节点
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="k">if</span> <span class="o">(</span><span class="k">this</span> <span class="n">fastEquals</span> <span class="n">afterRuleOnChildren</span><span class="o">)</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">      <span class="nc">CurrentOrigin</span><span class="o">.</span><span class="n">withOrigin</span><span class="o">(</span><span class="n">origin</span><span class="o">)</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">        <span class="n">rule</span><span class="o">.</span><span class="n">applyOrElse</span><span class="o">(</span><span class="k">this</span><span class="o">,</span> <span class="n">identity</span><span class="o">[</span><span class="kt">BaseType</span><span class="o">])</span>
+</span></span><span class="line"><span class="cl">      <span class="o">}</span>
+</span></span><span class="line"><span class="cl">    <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">      <span class="nc">CurrentOrigin</span><span class="o">.</span><span class="n">withOrigin</span><span class="o">(</span><span class="n">origin</span><span class="o">)</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">        <span class="n">rule</span><span class="o">.</span><span class="n">applyOrElse</span><span class="o">(</span><span class="n">afterRuleOnChildren</span><span class="o">,</span> <span class="n">identity</span><span class="o">[</span><span class="kt">BaseType</span><span class="o">])</span>
+</span></span><span class="line"><span class="cl">      <span class="o">}</span>
+</span></span><span class="line"><span class="cl">    <span class="o">}</span>
+</span></span><span class="line"><span class="cl">  <span class="o">}</span>
+</span></span><span class="line"><span class="cl"><span class="o">}</span>
+</span></span></code></pre></td></tr></table></div>
 </div>
 </div><h2 id="queryplan-遍历表达式"><a href="#queryplan-遍历表达式" class="anchor-link"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon anchor-icon"><path d="M326.612 185.391c59.747 59.809 58.927 155.698.36 214.59-.11.12-.24.25-.36.37l-67.2 67.2c-59.27 59.27-155.699 59.262-214.96 0-59.27-59.26-59.27-155.7 0-214.96l37.106-37.106c9.84-9.84 26.786-3.3 27.294 10.606.648 17.722 3.826 35.527 9.69 52.721 1.986 5.822.567 12.262-3.783 16.612l-13.087 13.087c-28.026 28.026-28.905 73.66-1.155 101.96 28.024 28.579 74.086 28.749 102.325.51l67.2-67.19c28.191-28.191 28.073-73.757 0-101.83-3.701-3.694-7.429-6.564-10.341-8.569a16.037 16.037 0 0 1-6.947-12.606c-.396-10.567 3.348-21.456 11.698-29.806l21.054-21.055c5.521-5.521 14.182-6.199 20.584-1.731a152.482 152.482 0 0 1 20.522 17.197zM467.547 44.449c-59.261-59.262-155.69-59.27-214.96 0l-67.2 67.2c-.12.12-.25.25-.36.37-58.566 58.892-59.387 154.781.36 214.59a152.454 152.454 0 0 0 20.521 17.196c6.402 4.468 15.064 3.789 20.584-1.731l21.054-21.055c8.35-8.35 12.094-19.239 11.698-29.806a16.037 16.037 0 0 0-6.947-12.606c-2.912-2.005-6.64-4.875-10.341-8.569-28.073-28.073-28.191-73.639 0-101.83l67.2-67.19c28.239-28.239 74.3-28.069 102.325.51 27.75 28.3 26.872 73.934-1.155 101.96l-13.087 13.087c-4.35 4.35-5.769 10.79-3.783 16.612 5.864 17.194 9.042 34.999 9.69 52.721.509 13.906 17.454 20.446 27.294 10.606l37.106-37.106c59.271-59.259 59.271-155.699.001-214.959z"/></svg></a>QueryPlan 遍历表达式</h2>
 <p>QueryPlan 在 TreeNode 的基础上，添加了对 Expression 的处理。每个 QueryPlan 包含了零个或多个表达式，这些表达式都是通过树结构组织在一起的。QueryPlan 支持递归遍历这些表达式。</p>
@@ -859,40 +857,40 @@ TreeNode &lt;|-- Expression
 </span><span class="lnt">33
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-scala" data-lang="scala"><span class="k">abstract</span> <span class="k">class</span> <span class="nc">QueryPlan</span><span class="o">[</span><span class="kt">PlanType</span> <span class="k">&lt;:</span> <span class="kt">QueryPlan</span><span class="o">[</span><span class="kt">PlanType</span><span class="o">]]</span> <span class="nc">extends</span> <span class="nc">TreeNode</span><span class="o">[</span><span class="kt">PlanType</span><span class="o">]</span> <span class="o">{</span>
-    
-  <span class="k">def</span> <span class="n">mapExpressions</span><span class="o">(</span><span class="n">f</span><span class="k">:</span> <span class="kt">Expression</span> <span class="o">=&gt;</span> <span class="nc">Expression</span><span class="o">)</span><span class="k">:</span> <span class="kt">this.</span><span class="k">type</span> <span class="o">=</span> <span class="o">{</span>
-    <span class="k">var</span> <span class="n">changed</span> <span class="k">=</span> <span class="kc">false</span>
-
-    <span class="c1">// 对expression 执行函数
-</span><span class="c1"></span>    <span class="nd">@inline</span> <span class="k">def</span> <span class="n">transformExpression</span><span class="o">(</span><span class="n">e</span><span class="k">:</span> <span class="kt">Expression</span><span class="o">)</span><span class="k">:</span> <span class="kt">Expression</span> <span class="o">=</span> <span class="o">{</span>
-      <span class="k">val</span> <span class="n">newE</span> <span class="k">=</span> <span class="n">f</span><span class="o">(</span><span class="n">e</span><span class="o">)</span>
-      <span class="k">if</span> <span class="o">(</span><span class="n">newE</span><span class="o">.</span><span class="n">fastEquals</span><span class="o">(</span><span class="n">e</span><span class="o">))</span> <span class="o">{</span>
-        <span class="n">e</span>
-      <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
-        <span class="n">changed</span> <span class="k">=</span> <span class="kc">true</span>
-        <span class="n">newE</span>
-      <span class="o">}</span>
-    <span class="o">}</span>
-   
-    <span class="c1">// 定义递归函数，用来遍历子表达式
-</span><span class="c1"></span>    <span class="k">def</span> <span class="n">recursiveTransform</span><span class="o">(</span><span class="n">arg</span><span class="k">:</span> <span class="kt">Any</span><span class="o">)</span><span class="k">:</span> <span class="kt">AnyRef</span> <span class="o">=</span> <span class="n">arg</span> <span class="k">match</span> <span class="o">{</span>
-      <span class="k">case</span> <span class="n">e</span><span class="k">:</span> <span class="kt">Expression</span> <span class="o">=&gt;</span> <span class="n">transformExpression</span><span class="o">(</span><span class="n">e</span><span class="o">)</span>      <span class="c1">// 如果参数是Expression子类，那么继续遍历
-</span><span class="c1"></span>      <span class="k">case</span> <span class="nc">Some</span><span class="o">(</span><span class="n">value</span><span class="o">)</span> <span class="k">=&gt;</span> <span class="nc">Some</span><span class="o">(</span><span class="n">recursiveTransform</span><span class="o">(</span><span class="n">value</span><span class="o">))</span>
-      <span class="k">case</span> <span class="n">m</span><span class="k">:</span> <span class="kt">Map</span><span class="o">[</span><span class="k">_</span>, <span class="k">_</span><span class="o">]</span> <span class="k">=&gt;</span> <span class="n">m</span>
-      <span class="k">case</span> <span class="n">d</span><span class="k">:</span> <span class="kt">DataType</span> <span class="o">=&gt;</span> <span class="n">d</span> <span class="c1">// Avoid unpacking Structs
-</span><span class="c1"></span>      <span class="k">case</span> <span class="n">seq</span><span class="k">:</span> <span class="kt">Traversable</span><span class="o">[</span><span class="k">_</span><span class="o">]</span> <span class="k">=&gt;</span> <span class="n">seq</span><span class="o">.</span><span class="n">map</span><span class="o">(</span><span class="n">recursiveTransform</span><span class="o">)</span>  <span class="c1">// 如果参数是列表，继续遍历
-</span><span class="c1"></span>      <span class="k">case</span> <span class="n">other</span><span class="k">:</span> <span class="kt">AnyRef</span> <span class="o">=&gt;</span> <span class="n">other</span>
-      <span class="k">case</span> <span class="kc">null</span> <span class="k">=&gt;</span> <span class="kc">null</span>
-    <span class="o">}</span>
-      
-    <span class="c1">// 遍历构造参数，执行recursiveTransform函数
-</span><span class="c1"></span>    <span class="k">val</span> <span class="n">newArgs</span> <span class="k">=</span> <span class="n">mapProductIterator</span><span class="o">(</span><span class="n">recursiveTransform</span><span class="o">)</span>
-
-    <span class="k">if</span> <span class="o">(</span><span class="n">changed</span><span class="o">)</span> <span class="n">makeCopy</span><span class="o">(</span><span class="n">newArgs</span><span class="o">).</span><span class="n">asInstanceOf</span><span class="o">[</span><span class="kt">this.</span><span class="k">type</span><span class="o">]</span> <span class="k">else</span> <span class="k">this</span>
-  <span class="o">}</span>
-    
-</code></pre></td></tr></table></div>
+<pre tabindex="0" class="chroma"><code class="language-scala" data-lang="scala"><span class="line"><span class="cl"><span class="k">abstract</span> <span class="k">class</span> <span class="nc">QueryPlan</span><span class="o">[</span><span class="kt">PlanType</span> <span class="k">&lt;:</span> <span class="kt">QueryPlan</span><span class="o">[</span><span class="kt">PlanType</span><span class="o">]]</span> <span class="nc">extends</span> <span class="nc">TreeNode</span><span class="o">[</span><span class="kt">PlanType</span><span class="o">]</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">    
+</span></span><span class="line"><span class="cl">  <span class="k">def</span> <span class="n">mapExpressions</span><span class="o">(</span><span class="n">f</span><span class="k">:</span> <span class="kt">Expression</span> <span class="o">=&gt;</span> <span class="nc">Expression</span><span class="o">)</span><span class="k">:</span> <span class="kt">this.</span><span class="k">type</span> <span class="o">=</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">    <span class="k">var</span> <span class="n">changed</span> <span class="k">=</span> <span class="kc">false</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="c1">// 对expression 执行函数
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="nd">@inline</span> <span class="k">def</span> <span class="n">transformExpression</span><span class="o">(</span><span class="n">e</span><span class="k">:</span> <span class="kt">Expression</span><span class="o">)</span><span class="k">:</span> <span class="kt">Expression</span> <span class="o">=</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">      <span class="k">val</span> <span class="n">newE</span> <span class="k">=</span> <span class="n">f</span><span class="o">(</span><span class="n">e</span><span class="o">)</span>
+</span></span><span class="line"><span class="cl">      <span class="k">if</span> <span class="o">(</span><span class="n">newE</span><span class="o">.</span><span class="n">fastEquals</span><span class="o">(</span><span class="n">e</span><span class="o">))</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">        <span class="n">e</span>
+</span></span><span class="line"><span class="cl">      <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">        <span class="n">changed</span> <span class="k">=</span> <span class="kc">true</span>
+</span></span><span class="line"><span class="cl">        <span class="n">newE</span>
+</span></span><span class="line"><span class="cl">      <span class="o">}</span>
+</span></span><span class="line"><span class="cl">    <span class="o">}</span>
+</span></span><span class="line"><span class="cl">   
+</span></span><span class="line"><span class="cl">    <span class="c1">// 定义递归函数，用来遍历子表达式
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="k">def</span> <span class="n">recursiveTransform</span><span class="o">(</span><span class="n">arg</span><span class="k">:</span> <span class="kt">Any</span><span class="o">)</span><span class="k">:</span> <span class="kt">AnyRef</span> <span class="o">=</span> <span class="n">arg</span> <span class="k">match</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">      <span class="k">case</span> <span class="n">e</span><span class="k">:</span> <span class="kt">Expression</span> <span class="o">=&gt;</span> <span class="n">transformExpression</span><span class="o">(</span><span class="n">e</span><span class="o">)</span>      <span class="c1">// 如果参数是Expression子类，那么继续遍历
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>      <span class="k">case</span> <span class="nc">Some</span><span class="o">(</span><span class="n">value</span><span class="o">)</span> <span class="k">=&gt;</span> <span class="nc">Some</span><span class="o">(</span><span class="n">recursiveTransform</span><span class="o">(</span><span class="n">value</span><span class="o">))</span>
+</span></span><span class="line"><span class="cl">      <span class="k">case</span> <span class="n">m</span><span class="k">:</span> <span class="kt">Map</span><span class="o">[</span><span class="k">_</span>, <span class="k">_</span><span class="o">]</span> <span class="k">=&gt;</span> <span class="n">m</span>
+</span></span><span class="line"><span class="cl">      <span class="k">case</span> <span class="n">d</span><span class="k">:</span> <span class="kt">DataType</span> <span class="o">=&gt;</span> <span class="n">d</span> <span class="c1">// Avoid unpacking Structs
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>      <span class="k">case</span> <span class="n">seq</span><span class="k">:</span> <span class="kt">Traversable</span><span class="o">[</span><span class="k">_</span><span class="o">]</span> <span class="k">=&gt;</span> <span class="n">seq</span><span class="o">.</span><span class="n">map</span><span class="o">(</span><span class="n">recursiveTransform</span><span class="o">)</span>  <span class="c1">// 如果参数是列表，继续遍历
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>      <span class="k">case</span> <span class="n">other</span><span class="k">:</span> <span class="kt">AnyRef</span> <span class="o">=&gt;</span> <span class="n">other</span>
+</span></span><span class="line"><span class="cl">      <span class="k">case</span> <span class="kc">null</span> <span class="k">=&gt;</span> <span class="kc">null</span>
+</span></span><span class="line"><span class="cl">    <span class="o">}</span>
+</span></span><span class="line"><span class="cl">      
+</span></span><span class="line"><span class="cl">    <span class="c1">// 遍历构造参数，执行recursiveTransform函数
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="k">val</span> <span class="n">newArgs</span> <span class="k">=</span> <span class="n">mapProductIterator</span><span class="o">(</span><span class="n">recursiveTransform</span><span class="o">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="k">if</span> <span class="o">(</span><span class="n">changed</span><span class="o">)</span> <span class="n">makeCopy</span><span class="o">(</span><span class="n">newArgs</span><span class="o">).</span><span class="n">asInstanceOf</span><span class="o">[</span><span class="kt">this.</span><span class="k">type</span><span class="o">]</span> <span class="k">else</span> <span class="k">this</span>
+</span></span><span class="line"><span class="cl">  <span class="o">}</span>
+</span></span><span class="line"><span class="cl">    
+</span></span></code></pre></td></tr></table></div>
 </div>
 </div><h3 id="先序遍历"><a href="#先序遍历" class="anchor-link"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon anchor-icon"><path d="M326.612 185.391c59.747 59.809 58.927 155.698.36 214.59-.11.12-.24.25-.36.37l-67.2 67.2c-59.27 59.27-155.699 59.262-214.96 0-59.27-59.26-59.27-155.7 0-214.96l37.106-37.106c9.84-9.84 26.786-3.3 27.294 10.606.648 17.722 3.826 35.527 9.69 52.721 1.986 5.822.567 12.262-3.783 16.612l-13.087 13.087c-28.026 28.026-28.905 73.66-1.155 101.96 28.024 28.579 74.086 28.749 102.325.51l67.2-67.19c28.191-28.191 28.073-73.757 0-101.83-3.701-3.694-7.429-6.564-10.341-8.569a16.037 16.037 0 0 1-6.947-12.606c-.396-10.567 3.348-21.456 11.698-29.806l21.054-21.055c5.521-5.521 14.182-6.199 20.584-1.731a152.482 152.482 0 0 1 20.522 17.197zM467.547 44.449c-59.261-59.262-155.69-59.27-214.96 0l-67.2 67.2c-.12.12-.25.25-.36.37-58.566 58.892-59.387 154.781.36 214.59a152.454 152.454 0 0 0 20.521 17.196c6.402 4.468 15.064 3.789 20.584-1.731l21.054-21.055c8.35-8.35 12.094-19.239 11.698-29.806a16.037 16.037 0 0 0-6.947-12.606c-2.912-2.005-6.64-4.875-10.341-8.569-28.073-28.073-28.191-73.639 0-101.83l67.2-67.19c28.239-28.239 74.3-28.069 102.325.51 27.75 28.3 26.872 73.934-1.155 101.96l-13.087 13.087c-4.35 4.35-5.769 10.79-3.783 16.612 5.864 17.194 9.042 34.999 9.69 52.721.509 13.906 17.454 20.446 27.294 10.606l37.106-37.106c59.271-59.259 59.271-155.699.001-214.959z"/></svg></a>先序遍历</h3>
 <p>遍历原理同 transformDown</p>
@@ -911,18 +909,18 @@ TreeNode &lt;|-- Expression
 </span><span class="lnt">11
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-scala" data-lang="scala"><span class="k">abstract</span> <span class="k">class</span> <span class="nc">QueryPlan</span><span class="o">[</span><span class="kt">PlanType</span> <span class="k">&lt;:</span> <span class="kt">QueryPlan</span><span class="o">[</span><span class="kt">PlanType</span><span class="o">]]</span> <span class="nc">extends</span> <span class="nc">TreeNode</span><span class="o">[</span><span class="kt">PlanType</span><span class="o">]</span> <span class="o">{</span>
-    
-  <span class="k">def</span> <span class="n">transformExpressions</span><span class="o">(</span><span class="n">rule</span><span class="k">:</span> <span class="kt">PartialFunction</span><span class="o">[</span><span class="kt">Expression</span>, <span class="kt">Expression</span><span class="o">])</span><span class="k">:</span> <span class="kt">this.</span><span class="k">type</span> <span class="o">=</span> <span class="o">{</span>
-    <span class="n">transformExpressionsDown</span><span class="o">(</span><span class="n">rule</span><span class="o">)</span>
-  <span class="o">}</span>
-
-  <span class="k">def</span> <span class="n">transformExpressionsDown</span><span class="o">(</span><span class="n">rule</span><span class="k">:</span> <span class="kt">PartialFunction</span><span class="o">[</span><span class="kt">Expression</span>, <span class="kt">Expression</span><span class="o">])</span><span class="k">:</span> <span class="kt">this.</span><span class="k">type</span> <span class="o">=</span> <span class="o">{</span>
-    <span class="c1">// 调用mapExpressions 遍历expression子节点
-</span><span class="c1"></span>    <span class="n">mapExpressions</span><span class="o">(</span><span class="k">_</span><span class="o">.</span><span class="n">transformDown</span><span class="o">(</span><span class="n">rule</span><span class="o">))</span>
-  <span class="o">}</span>
-    
-</code></pre></td></tr></table></div>
+<pre tabindex="0" class="chroma"><code class="language-scala" data-lang="scala"><span class="line"><span class="cl"><span class="k">abstract</span> <span class="k">class</span> <span class="nc">QueryPlan</span><span class="o">[</span><span class="kt">PlanType</span> <span class="k">&lt;:</span> <span class="kt">QueryPlan</span><span class="o">[</span><span class="kt">PlanType</span><span class="o">]]</span> <span class="nc">extends</span> <span class="nc">TreeNode</span><span class="o">[</span><span class="kt">PlanType</span><span class="o">]</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">    
+</span></span><span class="line"><span class="cl">  <span class="k">def</span> <span class="n">transformExpressions</span><span class="o">(</span><span class="n">rule</span><span class="k">:</span> <span class="kt">PartialFunction</span><span class="o">[</span><span class="kt">Expression</span>, <span class="kt">Expression</span><span class="o">])</span><span class="k">:</span> <span class="kt">this.</span><span class="k">type</span> <span class="o">=</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">    <span class="n">transformExpressionsDown</span><span class="o">(</span><span class="n">rule</span><span class="o">)</span>
+</span></span><span class="line"><span class="cl">  <span class="o">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="k">def</span> <span class="n">transformExpressionsDown</span><span class="o">(</span><span class="n">rule</span><span class="k">:</span> <span class="kt">PartialFunction</span><span class="o">[</span><span class="kt">Expression</span>, <span class="kt">Expression</span><span class="o">])</span><span class="k">:</span> <span class="kt">this.</span><span class="k">type</span> <span class="o">=</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// 调用mapExpressions 遍历expression子节点
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="n">mapExpressions</span><span class="o">(</span><span class="k">_</span><span class="o">.</span><span class="n">transformDown</span><span class="o">(</span><span class="n">rule</span><span class="o">))</span>
+</span></span><span class="line"><span class="cl">  <span class="o">}</span>
+</span></span><span class="line"><span class="cl">    
+</span></span></code></pre></td></tr></table></div>
 </div>
 </div><h3 id="后续遍历"><a href="#后续遍历" class="anchor-link"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon anchor-icon"><path d="M326.612 185.391c59.747 59.809 58.927 155.698.36 214.59-.11.12-.24.25-.36.37l-67.2 67.2c-59.27 59.27-155.699 59.262-214.96 0-59.27-59.26-59.27-155.7 0-214.96l37.106-37.106c9.84-9.84 26.786-3.3 27.294 10.606.648 17.722 3.826 35.527 9.69 52.721 1.986 5.822.567 12.262-3.783 16.612l-13.087 13.087c-28.026 28.026-28.905 73.66-1.155 101.96 28.024 28.579 74.086 28.749 102.325.51l67.2-67.19c28.191-28.191 28.073-73.757 0-101.83-3.701-3.694-7.429-6.564-10.341-8.569a16.037 16.037 0 0 1-6.947-12.606c-.396-10.567 3.348-21.456 11.698-29.806l21.054-21.055c5.521-5.521 14.182-6.199 20.584-1.731a152.482 152.482 0 0 1 20.522 17.197zM467.547 44.449c-59.261-59.262-155.69-59.27-214.96 0l-67.2 67.2c-.12.12-.25.25-.36.37-58.566 58.892-59.387 154.781.36 214.59a152.454 152.454 0 0 0 20.521 17.196c6.402 4.468 15.064 3.789 20.584-1.731l21.054-21.055c8.35-8.35 12.094-19.239 11.698-29.806a16.037 16.037 0 0 0-6.947-12.606c-2.912-2.005-6.64-4.875-10.341-8.569-28.073-28.073-28.191-73.639 0-101.83l67.2-67.19c28.239-28.239 74.3-28.069 102.325.51 27.75 28.3 26.872 73.934-1.155 101.96l-13.087 13.087c-4.35 4.35-5.769 10.79-3.783 16.612 5.864 17.194 9.042 34.999 9.69 52.721.509 13.906 17.454 20.446 27.294 10.606l37.106-37.106c59.271-59.259 59.271-155.699.001-214.959z"/></svg></a>后续遍历</h3>
 <p>遍历原理同 transformUp</p>
@@ -935,12 +933,12 @@ TreeNode &lt;|-- Expression
 </span><span class="lnt">5
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-scala" data-lang="scala"><span class="k">abstract</span> <span class="k">class</span> <span class="nc">QueryPlan</span><span class="o">[</span><span class="kt">PlanType</span> <span class="k">&lt;:</span> <span class="kt">QueryPlan</span><span class="o">[</span><span class="kt">PlanType</span><span class="o">]]</span> <span class="nc">extends</span> <span class="nc">TreeNode</span><span class="o">[</span><span class="kt">PlanType</span><span class="o">]</span> <span class="o">{</span>
-  <span class="k">def</span> <span class="n">transformExpressionsUp</span><span class="o">(</span><span class="n">rule</span><span class="k">:</span> <span class="kt">PartialFunction</span><span class="o">[</span><span class="kt">Expression</span>, <span class="kt">Expression</span><span class="o">])</span><span class="k">:</span> <span class="kt">this.</span><span class="k">type</span> <span class="o">=</span> <span class="o">{</span>
-    <span class="n">mapExpressions</span><span class="o">(</span><span class="k">_</span><span class="o">.</span><span class="n">transformUp</span><span class="o">(</span><span class="n">rule</span><span class="o">))</span>
-  <span class="o">}</span>
-<span class="o">}</span>
-</code></pre></td></tr></table></div>
+<pre tabindex="0" class="chroma"><code class="language-scala" data-lang="scala"><span class="line"><span class="cl"><span class="k">abstract</span> <span class="k">class</span> <span class="nc">QueryPlan</span><span class="o">[</span><span class="kt">PlanType</span> <span class="k">&lt;:</span> <span class="kt">QueryPlan</span><span class="o">[</span><span class="kt">PlanType</span><span class="o">]]</span> <span class="nc">extends</span> <span class="nc">TreeNode</span><span class="o">[</span><span class="kt">PlanType</span><span class="o">]</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">  <span class="k">def</span> <span class="n">transformExpressionsUp</span><span class="o">(</span><span class="n">rule</span><span class="k">:</span> <span class="kt">PartialFunction</span><span class="o">[</span><span class="kt">Expression</span>, <span class="kt">Expression</span><span class="o">])</span><span class="k">:</span> <span class="kt">this.</span><span class="k">type</span> <span class="o">=</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">    <span class="n">mapExpressions</span><span class="o">(</span><span class="k">_</span><span class="o">.</span><span class="n">transformUp</span><span class="o">(</span><span class="n">rule</span><span class="o">))</span>
+</span></span><span class="line"><span class="cl">  <span class="o">}</span>
+</span></span><span class="line"><span class="cl"><span class="o">}</span>
+</span></span></code></pre></td></tr></table></div>
 </div>
 </div>
             </div>
@@ -969,9 +967,9 @@ TreeNode &lt;|-- Expression
 
         
     <div class="updated-badge-container">
-        <span title="Updated @ 2021-10-22 14:44:34 CST" style="cursor:help">
+        <span title="Updated @ 2023-07-02 16:59:09 CST" style="cursor:help">
 
-<svg xmlns="http://www.w3.org/2000/svg" width="130" height="20" class="updated-badge"><linearGradient id="b" x2="0" y2="100%"><stop offset="0" stop-color="#bbb" stop-opacity=".1"/><stop offset="1" stop-opacity=".1"/></linearGradient><clipPath id="a"><rect width="130" height="20" rx="3" fill="#fff"/></clipPath><g clip-path="url(#a)"><path class="updated-badge-left" d="M0 0h55v20H0z"/><path class="updated-badge-right" d="M55 0h75v20H55z"/><path fill="url(#b)" d="M0 0h130v20H0z"/></g><g fill="#fff" text-anchor="middle" font-size="110"><text x="285" y="150" fill="#010101" fill-opacity=".3" textLength="450" transform="scale(.1)">updated</text><text x="285" y="140" textLength="450" transform="scale(.1)">updated</text><text x="915" y="150" fill="#010101" fill-opacity=".3" textLength="650" transform="scale(.1)">2021-10-22</text><text x="915" y="140" textLength="650" transform="scale(.1)">2021-10-22</text></g></svg>
+<svg xmlns="http://www.w3.org/2000/svg" width="130" height="20" class="updated-badge"><linearGradient id="b" x2="0" y2="100%"><stop offset="0" stop-color="#bbb" stop-opacity=".1"/><stop offset="1" stop-opacity=".1"/></linearGradient><clipPath id="a"><rect width="130" height="20" rx="3" fill="#fff"/></clipPath><g clip-path="url(#a)"><path class="updated-badge-left" d="M0 0h55v20H0z"/><path class="updated-badge-right" d="M55 0h75v20H55z"/><path fill="url(#b)" d="M0 0h130v20H0z"/></g><g fill="#fff" text-anchor="middle" font-size="110"><text x="285" y="150" fill="#010101" fill-opacity=".3" textLength="450" transform="scale(.1)">updated</text><text x="285" y="140" textLength="450" transform="scale(.1)">updated</text><text x="915" y="150" fill="#010101" fill-opacity=".3" textLength="650" transform="scale(.1)">2023-07-02</text><text x="915" y="140" textLength="650" transform="scale(.1)">2023-07-02</text></g></svg>
         </span></div>
 
 

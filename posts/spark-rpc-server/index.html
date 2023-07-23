@@ -3,7 +3,7 @@
     <head prefix="og: http://ogp.me/ns# article: http://ogp.me/ns/article#">
     <meta charset="UTF-8" />
 
-    <meta name="generator" content="Hugo 0.88.1" /><meta name="theme-color" content="#fff" />
+    <meta name="generator" content="Hugo 0.115.0"><meta name="theme-color" content="#fff" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     
     <meta name="format-detection" content="telephone=no, date=no, address=no, email=no" />
@@ -14,11 +14,11 @@
 
     <title>Spark Rpc 服务端原理 | 学习笔记</title>
 
-    <link rel="stylesheet" href="/css/meme.min.2d3e1834af2bc8dda20c7d74aaa1d8134845094441b7a554a5206ccd4b472596.css"/>
+    <link rel="stylesheet" href="/css/meme.min.91e7f58f97e1c60563ef481c38d9684fa8099537801d6f17bbfc724121e7d8f1.css"/>
 
     
     
-        <script src="/js/meme.min.800f61672145711eb3e1f29fcfcc3dbe0139dd459259718b611a0390f74703d1.js"></script>
+        <script src="/js/meme.min.3210a00c2fdcf6f831170b681b8ee40f83f0224663661e986872616aec45407f.js"></script>
 
     
 
@@ -54,13 +54,13 @@
         "@context": "https://schema.org",
         "@type": "BlogPosting",
         "datePublished": "2019-02-25T21:23:38+00:00",
-        "dateModified": "2021-10-22T14:44:34+08:00",
+        "dateModified": "2023-07-02T16:59:09+08:00",
         "url": "https://zhmin.github.io/posts/spark-rpc-server/",
         "headline": "Spark Rpc 服务端原理",
         "description": "Spark Rpc 服务端原理 Spark Rpc 服务端涉及到多个组件，根据发送消息和接收消息的流程，逐一介绍这些组件。可以参见流程图 {% post_link spark-rpc-flow %} Rpc Server 启动 Spark Rpc的服务端需要运行在NettyRpcEnv环境下，NettyRpcEnv提供……",
         "inLanguage" : "zh-CN",
         "articleSection": "posts",
-        "wordCount":  4017 ,
+        "wordCount":  4020 ,
         "image": "https://zhmin.github.io/icons/apple-touch-icon.png",
         "author": {
             "@type": "Person",
@@ -98,7 +98,7 @@
 <meta property="og:locale" content="zh" /><meta property="og:image" content="https://zhmin.github.io/icons/apple-touch-icon.png" />
     <meta property="og:type" content="article" />
     <meta property="article:published_time" content="2019-02-25T21:23:38&#43;00:00" />
-    <meta property="article:modified_time" content="2021-10-22T14:44:34&#43;08:00" />
+    <meta property="article:modified_time" content="2023-07-02T16:59:09&#43;08:00" />
     
     <meta property="article:section" content="posts" />
 
@@ -223,7 +223,7 @@
     
     
         
-        <span class="post-meta-item wordcount"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon post-meta-icon"><path d="M497.9 142.1l-46.1 46.1c-4.7 4.7-12.3 4.7-17 0l-111-111c-4.7-4.7-4.7-12.3 0-17l46.1-46.1c18.7-18.7 49.1-18.7 67.9 0l60.1 60.1c18.8 18.7 18.8 49.1 0 67.9zM284.2 99.8L21.6 362.4.4 483.9c-2.9 16.4 11.4 30.6 27.8 27.8l121.5-21.3 262.6-262.6c4.7-4.7 4.7-12.3 0-17l-111-111c-4.8-4.7-12.4-4.7-17.1 0zM124.1 339.9c-5.5-5.5-5.5-14.3 0-19.8l154-154c5.5-5.5 14.3-5.5 19.8 0s5.5 14.3 0 19.8l-154 154c-5.5 5.5-14.3 5.5-19.8 0zM88 424h48v36.3l-64.5 11.3-31.1-31.1L51.7 376H88v48z"/></svg>&nbsp;4017</span>
+        <span class="post-meta-item wordcount"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon post-meta-icon"><path d="M497.9 142.1l-46.1 46.1c-4.7 4.7-12.3 4.7-17 0l-111-111c-4.7-4.7-4.7-12.3 0-17l46.1-46.1c18.7-18.7 49.1-18.7 67.9 0l60.1 60.1c18.8 18.7 18.8 49.1 0 67.9zM284.2 99.8L21.6 362.4.4 483.9c-2.9 16.4 11.4 30.6 27.8 27.8l121.5-21.3 262.6-262.6c4.7-4.7 4.7-12.3 0-17l-111-111c-4.8-4.7-12.4-4.7-17.1 0zM124.1 339.9c-5.5-5.5-5.5-14.3 0-19.8l154-154c5.5-5.5 14.3-5.5 19.8 0s5.5 14.3 0 19.8l-154 154c-5.5 5.5-14.3 5.5-19.8 0zM88 424h48v36.3l-64.5 11.3-31.1-31.1L51.7 376H88v48z"/></svg>&nbsp;4020</span>
     
     
         
@@ -268,31 +268,31 @@
 </span><span class="lnt">24
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-scala" data-lang="scala"><span class="k">private</span><span class="o">[</span><span class="kt">netty</span><span class="o">]</span> <span class="k">class</span> <span class="nc">NettyRpcEnv</span><span class="o">(</span>
-    <span class="k">val</span> <span class="n">conf</span><span class="k">:</span> <span class="kt">SparkConf</span><span class="o">,</span>
-    <span class="n">javaSerializerInstance</span><span class="k">:</span> <span class="kt">JavaSerializerInstance</span><span class="o">,</span>
-    <span class="n">host</span><span class="k">:</span> <span class="kt">String</span><span class="o">,</span>
-    <span class="n">securityManager</span><span class="k">:</span> <span class="kt">SecurityManager</span><span class="o">)</span> <span class="k">extends</span> <span class="nc">RpcEnv</span><span class="o">(</span><span class="n">conf</span><span class="o">)</span> <span class="k">with</span> <span class="nc">Logging</span> <span class="o">{</span>
-  <span class="c1">// 消息分发器，负责将消息发送给对应的Rpc Server（因为一个NettyRpcEnv可以运行多个Rpc Server）
-</span><span class="c1"></span>  <span class="k">private</span> <span class="k">val</span> <span class="n">dispatcher</span><span class="k">:</span> <span class="kt">Dispatcher</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">Dispatcher</span><span class="o">(</span><span class="k">this</span><span class="o">)</span>
-  <span class="c1">// 初始化TransportContext，传递了NettyRpcHandler，作为netty server的回调
-</span><span class="c1"></span>  <span class="k">private</span> <span class="k">val</span> <span class="n">transportContext</span> <span class="k">=</span> <span class="k">new</span> <span class="nc">TransportContext</span><span class="o">(</span><span class="n">transportConf</span><span class="o">,</span>
-    <span class="k">new</span> <span class="nc">NettyRpcHandler</span><span class="o">(</span><span class="n">dispatcher</span><span class="o">,</span> <span class="k">this</span><span class="o">,</span> <span class="n">streamManager</span><span class="o">))</span>
-      
-  <span class="k">def</span> <span class="n">startServer</span><span class="o">(</span><span class="n">bindAddress</span><span class="k">:</span> <span class="kt">String</span><span class="o">,</span> <span class="n">port</span><span class="k">:</span> <span class="kt">Int</span><span class="o">)</span><span class="k">:</span> <span class="kt">Unit</span> <span class="o">=</span> <span class="o">{</span>
-    <span class="k">val</span> <span class="n">bootstraps</span><span class="k">:</span> <span class="kt">java.util.List</span><span class="o">[</span><span class="kt">TransportServerBootstrap</span><span class="o">]</span> <span class="k">=</span>
-      <span class="k">if</span> <span class="o">(</span><span class="n">securityManager</span><span class="o">.</span><span class="n">isAuthenticationEnabled</span><span class="o">())</span> <span class="o">{</span>
-        <span class="n">java</span><span class="o">.</span><span class="n">util</span><span class="o">.</span><span class="nc">Arrays</span><span class="o">.</span><span class="n">asList</span><span class="o">(</span><span class="k">new</span> <span class="nc">AuthServerBootstrap</span><span class="o">(</span><span class="n">transportConf</span><span class="o">,</span> <span class="n">securityManager</span><span class="o">))</span>
-      <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
-        <span class="n">java</span><span class="o">.</span><span class="n">util</span><span class="o">.</span><span class="nc">Collections</span><span class="o">.</span><span class="n">emptyList</span><span class="o">()</span>
-      <span class="o">}</span>
-    <span class="c1">// 调用transportContext实例TransportServer
-</span><span class="c1"></span>    <span class="n">server</span> <span class="k">=</span> <span class="n">transportContext</span><span class="o">.</span><span class="n">createServer</span><span class="o">(</span><span class="n">bindAddress</span><span class="o">,</span> <span class="n">port</span><span class="o">,</span> <span class="n">bootstraps</span><span class="o">)</span>
-    <span class="c1">// 向分发器注册自身服务，这样分发器才能根据名称找到服务
-</span><span class="c1"></span>    <span class="n">dispatcher</span><span class="o">.</span><span class="n">registerRpcEndpoint</span><span class="o">(</span>
-      <span class="nc">RpcEndpointVerifier</span><span class="o">.</span><span class="nc">NAME</span><span class="o">,</span> <span class="k">new</span> <span class="nc">RpcEndpointVerifier</span><span class="o">(</span><span class="k">this</span><span class="o">,</span> <span class="n">dispatcher</span><span class="o">))</span>
-  <span class="o">}</span>
-</code></pre></td></tr></table></div>
+<pre tabindex="0" class="chroma"><code class="language-scala" data-lang="scala"><span class="line"><span class="cl"><span class="k">private</span><span class="o">[</span><span class="kt">netty</span><span class="o">]</span> <span class="k">class</span> <span class="nc">NettyRpcEnv</span><span class="o">(</span>
+</span></span><span class="line"><span class="cl">    <span class="k">val</span> <span class="n">conf</span><span class="k">:</span> <span class="kt">SparkConf</span><span class="o">,</span>
+</span></span><span class="line"><span class="cl">    <span class="n">javaSerializerInstance</span><span class="k">:</span> <span class="kt">JavaSerializerInstance</span><span class="o">,</span>
+</span></span><span class="line"><span class="cl">    <span class="n">host</span><span class="k">:</span> <span class="kt">String</span><span class="o">,</span>
+</span></span><span class="line"><span class="cl">    <span class="n">securityManager</span><span class="k">:</span> <span class="kt">SecurityManager</span><span class="o">)</span> <span class="k">extends</span> <span class="nc">RpcEnv</span><span class="o">(</span><span class="n">conf</span><span class="o">)</span> <span class="k">with</span> <span class="nc">Logging</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">  <span class="c1">// 消息分发器，负责将消息发送给对应的Rpc Server（因为一个NettyRpcEnv可以运行多个Rpc Server）
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="k">private</span> <span class="k">val</span> <span class="n">dispatcher</span><span class="k">:</span> <span class="kt">Dispatcher</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">Dispatcher</span><span class="o">(</span><span class="k">this</span><span class="o">)</span>
+</span></span><span class="line"><span class="cl">  <span class="c1">// 初始化TransportContext，传递了NettyRpcHandler，作为netty server的回调
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="k">private</span> <span class="k">val</span> <span class="n">transportContext</span> <span class="k">=</span> <span class="k">new</span> <span class="nc">TransportContext</span><span class="o">(</span><span class="n">transportConf</span><span class="o">,</span>
+</span></span><span class="line"><span class="cl">    <span class="k">new</span> <span class="nc">NettyRpcHandler</span><span class="o">(</span><span class="n">dispatcher</span><span class="o">,</span> <span class="k">this</span><span class="o">,</span> <span class="n">streamManager</span><span class="o">))</span>
+</span></span><span class="line"><span class="cl">      
+</span></span><span class="line"><span class="cl">  <span class="k">def</span> <span class="n">startServer</span><span class="o">(</span><span class="n">bindAddress</span><span class="k">:</span> <span class="kt">String</span><span class="o">,</span> <span class="n">port</span><span class="k">:</span> <span class="kt">Int</span><span class="o">)</span><span class="k">:</span> <span class="kt">Unit</span> <span class="o">=</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">    <span class="k">val</span> <span class="n">bootstraps</span><span class="k">:</span> <span class="kt">java.util.List</span><span class="o">[</span><span class="kt">TransportServerBootstrap</span><span class="o">]</span> <span class="k">=</span>
+</span></span><span class="line"><span class="cl">      <span class="k">if</span> <span class="o">(</span><span class="n">securityManager</span><span class="o">.</span><span class="n">isAuthenticationEnabled</span><span class="o">())</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">        <span class="n">java</span><span class="o">.</span><span class="n">util</span><span class="o">.</span><span class="nc">Arrays</span><span class="o">.</span><span class="n">asList</span><span class="o">(</span><span class="k">new</span> <span class="nc">AuthServerBootstrap</span><span class="o">(</span><span class="n">transportConf</span><span class="o">,</span> <span class="n">securityManager</span><span class="o">))</span>
+</span></span><span class="line"><span class="cl">      <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">        <span class="n">java</span><span class="o">.</span><span class="n">util</span><span class="o">.</span><span class="nc">Collections</span><span class="o">.</span><span class="n">emptyList</span><span class="o">()</span>
+</span></span><span class="line"><span class="cl">      <span class="o">}</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// 调用transportContext实例TransportServer
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="n">server</span> <span class="k">=</span> <span class="n">transportContext</span><span class="o">.</span><span class="n">createServer</span><span class="o">(</span><span class="n">bindAddress</span><span class="o">,</span> <span class="n">port</span><span class="o">,</span> <span class="n">bootstraps</span><span class="o">)</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// 向分发器注册自身服务，这样分发器才能根据名称找到服务
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="n">dispatcher</span><span class="o">.</span><span class="n">registerRpcEndpoint</span><span class="o">(</span>
+</span></span><span class="line"><span class="cl">      <span class="nc">RpcEndpointVerifier</span><span class="o">.</span><span class="nc">NAME</span><span class="o">,</span> <span class="k">new</span> <span class="nc">RpcEndpointVerifier</span><span class="o">(</span><span class="k">this</span><span class="o">,</span> <span class="n">dispatcher</span><span class="o">))</span>
+</span></span><span class="line"><span class="cl">  <span class="o">}</span>
+</span></span></code></pre></td></tr></table></div>
 </div>
 </div><p>TransportContext的createServer方法，只是简单的实例化TransportServer，并传递了RpcHandler参数，这里RpcHandler负责处理rpc消息。接下来看看TransportServer的初始化，里面包含了Netty服务端的初始化</p>
 <div class="highlight"><div class="chroma">
@@ -344,52 +344,52 @@
 </span><span class="lnt">45
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">TransportServer</span> <span class="kd">implements</span> <span class="n">Closeable</span> <span class="o">{</span>
-
-  <span class="kd">private</span> <span class="kd">final</span> <span class="n">RpcHandler</span> <span class="n">appRpcHandler</span><span class="o">;</span>
-  
-  <span class="kd">private</span> <span class="kt">void</span> <span class="nf">init</span><span class="o">(</span><span class="n">String</span> <span class="n">hostToBind</span><span class="o">,</span> <span class="kt">int</span> <span class="n">portToBind</span><span class="o">)</span> <span class="o">{</span>
-
-    <span class="n">IOMode</span> <span class="n">ioMode</span> <span class="o">=</span> <span class="n">IOMode</span><span class="o">.</span><span class="na">valueOf</span><span class="o">(</span><span class="n">conf</span><span class="o">.</span><span class="na">ioMode</span><span class="o">());</span>
-    <span class="c1">// 根据io的配置，选择NioEventLoopGroup或者EpollEventLoopGroup
-</span><span class="c1"></span>    <span class="n">EventLoopGroup</span> <span class="n">bossGroup</span> <span class="o">=</span>
-      <span class="n">NettyUtils</span><span class="o">.</span><span class="na">createEventLoop</span><span class="o">(</span><span class="n">ioMode</span><span class="o">,</span> <span class="n">conf</span><span class="o">.</span><span class="na">serverThreads</span><span class="o">(),</span> <span class="n">conf</span><span class="o">.</span><span class="na">getModuleName</span><span class="o">()</span> <span class="o">+</span> <span class="s">&#34;-server&#34;</span><span class="o">);</span>
-    <span class="c1">// bossGroup和workerGroup是同一个线程池
-</span><span class="c1"></span>    <span class="n">EventLoopGroup</span> <span class="n">workerGroup</span> <span class="o">=</span> <span class="n">bossGroup</span><span class="o">;</span>
-    <span class="c1">// 使用缓存池分配空间
-</span><span class="c1"></span>    <span class="n">PooledByteBufAllocator</span> <span class="n">allocator</span> <span class="o">=</span> <span class="n">NettyUtils</span><span class="o">.</span><span class="na">createPooledByteBufAllocator</span><span class="o">(</span>
-      <span class="n">conf</span><span class="o">.</span><span class="na">preferDirectBufs</span><span class="o">(),</span> <span class="kc">true</span> <span class="cm">/* allowCache */</span><span class="o">,</span> <span class="n">conf</span><span class="o">.</span><span class="na">serverThreads</span><span class="o">());</span>
-
-    <span class="c1">// Netty初始化
-</span><span class="c1"></span>    <span class="n">bootstrap</span> <span class="o">=</span> <span class="k">new</span> <span class="n">ServerBootstrap</span><span class="o">()</span>
-      <span class="o">.</span><span class="na">group</span><span class="o">(</span><span class="n">bossGroup</span><span class="o">,</span> <span class="n">workerGroup</span><span class="o">)</span>
-      <span class="o">.</span><span class="na">channel</span><span class="o">(</span><span class="n">NettyUtils</span><span class="o">.</span><span class="na">getServerChannelClass</span><span class="o">(</span><span class="n">ioMode</span><span class="o">))</span>
-      <span class="o">.</span><span class="na">option</span><span class="o">(</span><span class="n">ChannelOption</span><span class="o">.</span><span class="na">ALLOCATOR</span><span class="o">,</span> <span class="n">allocator</span><span class="o">)</span>
-      <span class="o">.</span><span class="na">childOption</span><span class="o">(</span><span class="n">ChannelOption</span><span class="o">.</span><span class="na">ALLOCATOR</span><span class="o">,</span> <span class="n">allocator</span><span class="o">);</span>
-    <span class="c1">// 初始化Netty的时间处理回调
-</span><span class="c1"></span>    <span class="n">bootstrap</span><span class="o">.</span><span class="na">childHandler</span><span class="o">(</span><span class="k">new</span> <span class="n">ChannelInitializer</span><span class="o">&lt;</span><span class="n">SocketChannel</span><span class="o">&gt;()</span> <span class="o">{</span>
-      <span class="nd">@Override</span>
-      <span class="kd">protected</span> <span class="kt">void</span> <span class="nf">initChannel</span><span class="o">(</span><span class="n">SocketChannel</span> <span class="n">ch</span><span class="o">)</span> <span class="kd">throws</span> <span class="n">Exception</span> <span class="o">{</span>
-        <span class="n">RpcHandler</span> <span class="n">rpcHandler</span> <span class="o">=</span> <span class="n">appRpcHandler</span><span class="o">;</span>
-        <span class="k">for</span> <span class="o">(</span><span class="n">TransportServerBootstrap</span> <span class="n">bootstrap</span> <span class="o">:</span> <span class="n">bootstraps</span><span class="o">)</span> <span class="o">{</span>
-          <span class="n">rpcHandler</span> <span class="o">=</span> <span class="n">bootstrap</span><span class="o">.</span><span class="na">doBootstrap</span><span class="o">(</span><span class="n">ch</span><span class="o">,</span> <span class="n">rpcHandler</span><span class="o">);</span>
-        <span class="o">}</span>
-        <span class="c1">// 这里调用了TransportContext的方法，添加channel的处理器
-</span><span class="c1"></span>        <span class="n">context</span><span class="o">.</span><span class="na">initializePipeline</span><span class="o">(</span><span class="n">ch</span><span class="o">,</span> <span class="n">rpcHandler</span><span class="o">);</span>
-      <span class="o">}</span>
-    <span class="o">});</span>
-
-    <span class="n">InetSocketAddress</span> <span class="n">address</span> <span class="o">=</span> <span class="n">hostToBind</span> <span class="o">==</span> <span class="kc">null</span> <span class="o">?</span>
-        <span class="k">new</span> <span class="n">InetSocketAddress</span><span class="o">(</span><span class="n">portToBind</span><span class="o">):</span> <span class="k">new</span> <span class="n">InetSocketAddress</span><span class="o">(</span><span class="n">hostToBind</span><span class="o">,</span> <span class="n">portToBind</span><span class="o">);</span>
-    <span class="c1">// 绑定监听地址
-</span><span class="c1"></span>    <span class="n">channelFuture</span> <span class="o">=</span> <span class="n">bootstrap</span><span class="o">.</span><span class="na">bind</span><span class="o">(</span><span class="n">address</span><span class="o">);</span>
-    <span class="n">channelFuture</span><span class="o">.</span><span class="na">syncUninterruptibly</span><span class="o">();</span>
-
-    <span class="n">port</span> <span class="o">=</span> <span class="o">((</span><span class="n">InetSocketAddress</span><span class="o">)</span> <span class="n">channelFuture</span><span class="o">.</span><span class="na">channel</span><span class="o">().</span><span class="na">localAddress</span><span class="o">()).</span><span class="na">getPort</span><span class="o">();</span>
-    <span class="n">logger</span><span class="o">.</span><span class="na">debug</span><span class="o">(</span><span class="s">&#34;Shuffle server started on port: {}&#34;</span><span class="o">,</span> <span class="n">port</span><span class="o">);</span>
-  <span class="o">}</span>
-<span class="o">}</span>  
-</code></pre></td></tr></table></div>
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">TransportServer</span> <span class="kd">implements</span> <span class="n">Closeable</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="kd">private</span> <span class="kd">final</span> <span class="n">RpcHandler</span> <span class="n">appRpcHandler</span><span class="o">;</span>
+</span></span><span class="line"><span class="cl">  
+</span></span><span class="line"><span class="cl">  <span class="kd">private</span> <span class="kt">void</span> <span class="nf">init</span><span class="o">(</span><span class="n">String</span> <span class="n">hostToBind</span><span class="o">,</span> <span class="kt">int</span> <span class="n">portToBind</span><span class="o">)</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="n">IOMode</span> <span class="n">ioMode</span> <span class="o">=</span> <span class="n">IOMode</span><span class="o">.</span><span class="na">valueOf</span><span class="o">(</span><span class="n">conf</span><span class="o">.</span><span class="na">ioMode</span><span class="o">());</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// 根据io的配置，选择NioEventLoopGroup或者EpollEventLoopGroup
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="n">EventLoopGroup</span> <span class="n">bossGroup</span> <span class="o">=</span>
+</span></span><span class="line"><span class="cl">      <span class="n">NettyUtils</span><span class="o">.</span><span class="na">createEventLoop</span><span class="o">(</span><span class="n">ioMode</span><span class="o">,</span> <span class="n">conf</span><span class="o">.</span><span class="na">serverThreads</span><span class="o">(),</span> <span class="n">conf</span><span class="o">.</span><span class="na">getModuleName</span><span class="o">()</span> <span class="o">+</span> <span class="s">&#34;-server&#34;</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// bossGroup和workerGroup是同一个线程池
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="n">EventLoopGroup</span> <span class="n">workerGroup</span> <span class="o">=</span> <span class="n">bossGroup</span><span class="o">;</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// 使用缓存池分配空间
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="n">PooledByteBufAllocator</span> <span class="n">allocator</span> <span class="o">=</span> <span class="n">NettyUtils</span><span class="o">.</span><span class="na">createPooledByteBufAllocator</span><span class="o">(</span>
+</span></span><span class="line"><span class="cl">      <span class="n">conf</span><span class="o">.</span><span class="na">preferDirectBufs</span><span class="o">(),</span> <span class="kc">true</span> <span class="cm">/* allowCache */</span><span class="o">,</span> <span class="n">conf</span><span class="o">.</span><span class="na">serverThreads</span><span class="o">());</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="c1">// Netty初始化
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="n">bootstrap</span> <span class="o">=</span> <span class="k">new</span> <span class="n">ServerBootstrap</span><span class="o">()</span>
+</span></span><span class="line"><span class="cl">      <span class="o">.</span><span class="na">group</span><span class="o">(</span><span class="n">bossGroup</span><span class="o">,</span> <span class="n">workerGroup</span><span class="o">)</span>
+</span></span><span class="line"><span class="cl">      <span class="o">.</span><span class="na">channel</span><span class="o">(</span><span class="n">NettyUtils</span><span class="o">.</span><span class="na">getServerChannelClass</span><span class="o">(</span><span class="n">ioMode</span><span class="o">))</span>
+</span></span><span class="line"><span class="cl">      <span class="o">.</span><span class="na">option</span><span class="o">(</span><span class="n">ChannelOption</span><span class="o">.</span><span class="na">ALLOCATOR</span><span class="o">,</span> <span class="n">allocator</span><span class="o">)</span>
+</span></span><span class="line"><span class="cl">      <span class="o">.</span><span class="na">childOption</span><span class="o">(</span><span class="n">ChannelOption</span><span class="o">.</span><span class="na">ALLOCATOR</span><span class="o">,</span> <span class="n">allocator</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// 初始化Netty的时间处理回调
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="n">bootstrap</span><span class="o">.</span><span class="na">childHandler</span><span class="o">(</span><span class="k">new</span> <span class="n">ChannelInitializer</span><span class="o">&lt;</span><span class="n">SocketChannel</span><span class="o">&gt;()</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">      <span class="nd">@Override</span>
+</span></span><span class="line"><span class="cl">      <span class="kd">protected</span> <span class="kt">void</span> <span class="nf">initChannel</span><span class="o">(</span><span class="n">SocketChannel</span> <span class="n">ch</span><span class="o">)</span> <span class="kd">throws</span> <span class="n">Exception</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">        <span class="n">RpcHandler</span> <span class="n">rpcHandler</span> <span class="o">=</span> <span class="n">appRpcHandler</span><span class="o">;</span>
+</span></span><span class="line"><span class="cl">        <span class="k">for</span> <span class="o">(</span><span class="n">TransportServerBootstrap</span> <span class="n">bootstrap</span> <span class="o">:</span> <span class="n">bootstraps</span><span class="o">)</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">          <span class="n">rpcHandler</span> <span class="o">=</span> <span class="n">bootstrap</span><span class="o">.</span><span class="na">doBootstrap</span><span class="o">(</span><span class="n">ch</span><span class="o">,</span> <span class="n">rpcHandler</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">        <span class="o">}</span>
+</span></span><span class="line"><span class="cl">        <span class="c1">// 这里调用了TransportContext的方法，添加channel的处理器
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>        <span class="n">context</span><span class="o">.</span><span class="na">initializePipeline</span><span class="o">(</span><span class="n">ch</span><span class="o">,</span> <span class="n">rpcHandler</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">      <span class="o">}</span>
+</span></span><span class="line"><span class="cl">    <span class="o">});</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="n">InetSocketAddress</span> <span class="n">address</span> <span class="o">=</span> <span class="n">hostToBind</span> <span class="o">==</span> <span class="kc">null</span> <span class="o">?</span>
+</span></span><span class="line"><span class="cl">        <span class="k">new</span> <span class="n">InetSocketAddress</span><span class="o">(</span><span class="n">portToBind</span><span class="o">):</span> <span class="k">new</span> <span class="n">InetSocketAddress</span><span class="o">(</span><span class="n">hostToBind</span><span class="o">,</span> <span class="n">portToBind</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// 绑定监听地址
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="n">channelFuture</span> <span class="o">=</span> <span class="n">bootstrap</span><span class="o">.</span><span class="na">bind</span><span class="o">(</span><span class="n">address</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">    <span class="n">channelFuture</span><span class="o">.</span><span class="na">syncUninterruptibly</span><span class="o">();</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="n">port</span> <span class="o">=</span> <span class="o">((</span><span class="n">InetSocketAddress</span><span class="o">)</span> <span class="n">channelFuture</span><span class="o">.</span><span class="na">channel</span><span class="o">().</span><span class="na">localAddress</span><span class="o">()).</span><span class="na">getPort</span><span class="o">();</span>
+</span></span><span class="line"><span class="cl">    <span class="n">logger</span><span class="o">.</span><span class="na">debug</span><span class="o">(</span><span class="s">&#34;Shuffle server started on port: {}&#34;</span><span class="o">,</span> <span class="n">port</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">  <span class="o">}</span>
+</span></span><span class="line"><span class="cl"><span class="o">}</span>  
+</span></span></code></pre></td></tr></table></div>
 </div>
 </div><p>上面调用了TransportContext的initializePipeline方法，给Channel添加了TransportChannelHandler。TransportChannelHandler继承ChannelInboundHandlerAdapter，实现了channelRead方法来处理请求。</p>
 <div class="highlight"><div class="chroma">
@@ -410,21 +410,21 @@
 </span><span class="lnt">14
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">TransportChannelHandler</span> <span class="kd">extends</span> <span class="n">ChannelInboundHandlerAdapter</span> <span class="o">{</span>
-    
-  <span class="nd">@Override</span>
-  <span class="kd">public</span> <span class="kt">void</span> <span class="nf">channelRead</span><span class="o">(</span><span class="n">ChannelHandlerContext</span> <span class="n">ctx</span><span class="o">,</span> <span class="n">Object</span> <span class="n">request</span><span class="o">)</span> <span class="kd">throws</span> <span class="n">Exception</span> <span class="o">{</span>
-    <span class="k">if</span> <span class="o">(</span><span class="n">request</span> <span class="k">instanceof</span> <span class="n">RequestMessage</span><span class="o">)</span> <span class="o">{</span>
-      <span class="c1">// 调用了TransportRequestHandler处理请求
-</span><span class="c1"></span>      <span class="n">requestHandler</span><span class="o">.</span><span class="na">handle</span><span class="o">((</span><span class="n">RequestMessage</span><span class="o">)</span> <span class="n">request</span><span class="o">);</span>
-    <span class="o">}</span> <span class="k">else</span> <span class="k">if</span> <span class="o">(</span><span class="n">request</span> <span class="k">instanceof</span> <span class="n">ResponseMessage</span><span class="o">)</span> <span class="o">{</span>
-      <span class="n">responseHandler</span><span class="o">.</span><span class="na">handle</span><span class="o">((</span><span class="n">ResponseMessage</span><span class="o">)</span> <span class="n">request</span><span class="o">);</span>
-    <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
-      <span class="n">ctx</span><span class="o">.</span><span class="na">fireChannelRead</span><span class="o">(</span><span class="n">request</span><span class="o">);</span>
-    <span class="o">}</span>
-  <span class="o">}</span>
-<span class="o">}</span>  
-</code></pre></td></tr></table></div>
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">TransportChannelHandler</span> <span class="kd">extends</span> <span class="n">ChannelInboundHandlerAdapter</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">    
+</span></span><span class="line"><span class="cl">  <span class="nd">@Override</span>
+</span></span><span class="line"><span class="cl">  <span class="kd">public</span> <span class="kt">void</span> <span class="nf">channelRead</span><span class="o">(</span><span class="n">ChannelHandlerContext</span> <span class="n">ctx</span><span class="o">,</span> <span class="n">Object</span> <span class="n">request</span><span class="o">)</span> <span class="kd">throws</span> <span class="n">Exception</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">    <span class="k">if</span> <span class="o">(</span><span class="n">request</span> <span class="k">instanceof</span> <span class="n">RequestMessage</span><span class="o">)</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">      <span class="c1">// 调用了TransportRequestHandler处理请求
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>      <span class="n">requestHandler</span><span class="o">.</span><span class="na">handle</span><span class="o">((</span><span class="n">RequestMessage</span><span class="o">)</span> <span class="n">request</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">    <span class="o">}</span> <span class="k">else</span> <span class="k">if</span> <span class="o">(</span><span class="n">request</span> <span class="k">instanceof</span> <span class="n">ResponseMessage</span><span class="o">)</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">      <span class="n">responseHandler</span><span class="o">.</span><span class="na">handle</span><span class="o">((</span><span class="n">ResponseMessage</span><span class="o">)</span> <span class="n">request</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">    <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">      <span class="n">ctx</span><span class="o">.</span><span class="na">fireChannelRead</span><span class="o">(</span><span class="n">request</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">    <span class="o">}</span>
+</span></span><span class="line"><span class="cl">  <span class="o">}</span>
+</span></span><span class="line"><span class="cl"><span class="o">}</span>  
+</span></span></code></pre></td></tr></table></div>
 </div>
 </div><h2 id="transportrequesthandler"><a href="#transportrequesthandler" class="anchor-link"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon anchor-icon"><path d="M326.612 185.391c59.747 59.809 58.927 155.698.36 214.59-.11.12-.24.25-.36.37l-67.2 67.2c-59.27 59.27-155.699 59.262-214.96 0-59.27-59.26-59.27-155.7 0-214.96l37.106-37.106c9.84-9.84 26.786-3.3 27.294 10.606.648 17.722 3.826 35.527 9.69 52.721 1.986 5.822.567 12.262-3.783 16.612l-13.087 13.087c-28.026 28.026-28.905 73.66-1.155 101.96 28.024 28.579 74.086 28.749 102.325.51l67.2-67.19c28.191-28.191 28.073-73.757 0-101.83-3.701-3.694-7.429-6.564-10.341-8.569a16.037 16.037 0 0 1-6.947-12.606c-.396-10.567 3.348-21.456 11.698-29.806l21.054-21.055c5.521-5.521 14.182-6.199 20.584-1.731a152.482 152.482 0 0 1 20.522 17.197zM467.547 44.449c-59.261-59.262-155.69-59.27-214.96 0l-67.2 67.2c-.12.12-.25.25-.36.37-58.566 58.892-59.387 154.781.36 214.59a152.454 152.454 0 0 0 20.521 17.196c6.402 4.468 15.064 3.789 20.584-1.731l21.054-21.055c8.35-8.35 12.094-19.239 11.698-29.806a16.037 16.037 0 0 0-6.947-12.606c-2.912-2.005-6.64-4.875-10.341-8.569-28.073-28.073-28.191-73.639 0-101.83l67.2-67.19c28.239-28.239 74.3-28.069 102.325.51 27.75 28.3 26.872 73.934-1.155 101.96l-13.087 13.087c-4.35 4.35-5.769 10.79-3.783 16.612 5.864 17.194 9.042 34.999 9.69 52.721.509 13.906 17.454 20.446 27.294 10.606l37.106-37.106c59.271-59.259 59.271-155.699.001-214.959z"/></svg></a>TransportRequestHandler</h2>
 <p>TransportRequestHandler可以处理多种请求，这里只将Rpc请求。它接收到Rpc请求后，会调用processRpcRequest方法处理。这里的RpcHandler就是Netty创建Server的时候，生成的NettyRpcHandler。</p>
@@ -472,47 +472,47 @@
 </span><span class="lnt">40
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">TransportRequestHandler</span> <span class="kd">extends</span> <span class="n">MessageHandler</span><span class="o">&lt;</span><span class="n">RequestMessage</span><span class="o">&gt;</span> <span class="o">{</span>
-    
-  <span class="kd">private</span> <span class="kd">final</span> <span class="n">RpcHandler</span> <span class="n">rpcHandler</span><span class="o">;</span>
-
-  <span class="nd">@Override</span>
-  <span class="kd">public</span> <span class="kt">void</span> <span class="nf">handle</span><span class="o">(</span><span class="n">RequestMessage</span> <span class="n">request</span><span class="o">)</span> <span class="o">{</span>
-    <span class="k">if</span> <span class="o">(</span><span class="n">request</span> <span class="k">instanceof</span> <span class="n">ChunkFetchRequest</span><span class="o">)</span> <span class="o">{</span>
-      <span class="n">processFetchRequest</span><span class="o">((</span><span class="n">ChunkFetchRequest</span><span class="o">)</span> <span class="n">request</span><span class="o">);</span>
-    <span class="o">}</span> <span class="k">else</span> <span class="k">if</span> <span class="o">(</span><span class="n">request</span> <span class="k">instanceof</span> <span class="n">RpcRequest</span><span class="o">)</span> <span class="o">{</span>
-      <span class="n">processRpcRequest</span><span class="o">((</span><span class="n">RpcRequest</span><span class="o">)</span> <span class="n">request</span><span class="o">);</span>
-    <span class="o">}</span> <span class="k">else</span> <span class="k">if</span> <span class="o">(</span><span class="n">request</span> <span class="k">instanceof</span> <span class="n">OneWayMessage</span><span class="o">)</span> <span class="o">{</span>
-      <span class="n">processOneWayMessage</span><span class="o">((</span><span class="n">OneWayMessage</span><span class="o">)</span> <span class="n">request</span><span class="o">);</span>
-    <span class="o">}</span> <span class="k">else</span> <span class="k">if</span> <span class="o">(</span><span class="n">request</span> <span class="k">instanceof</span> <span class="n">StreamRequest</span><span class="o">)</span> <span class="o">{</span>
-      <span class="n">processStreamRequest</span><span class="o">((</span><span class="n">StreamRequest</span><span class="o">)</span> <span class="n">request</span><span class="o">);</span>
-    <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
-      <span class="k">throw</span> <span class="k">new</span> <span class="n">IllegalArgumentException</span><span class="o">(</span><span class="s">&#34;Unknown request type: &#34;</span> <span class="o">+</span> <span class="n">request</span><span class="o">);</span>
-    <span class="o">}</span>
-  <span class="o">}</span>
-
-  <span class="kd">private</span> <span class="kt">void</span> <span class="nf">processRpcRequest</span><span class="o">(</span><span class="kd">final</span> <span class="n">RpcRequest</span> <span class="n">req</span><span class="o">)</span> <span class="o">{</span>
-    <span class="k">try</span> <span class="o">{</span>
-      <span class="n">rpcHandler</span><span class="o">.</span><span class="na">receive</span><span class="o">(</span><span class="n">reverseClient</span><span class="o">,</span> <span class="n">req</span><span class="o">.</span><span class="na">body</span><span class="o">().</span><span class="na">nioByteBuffer</span><span class="o">(),</span> <span class="k">new</span> <span class="n">RpcResponseCallback</span><span class="o">()</span> <span class="o">{</span>
-        <span class="nd">@Override</span>
-        <span class="kd">public</span> <span class="kt">void</span> <span class="nf">onSuccess</span><span class="o">(</span><span class="n">ByteBuffer</span> <span class="n">response</span><span class="o">)</span> <span class="o">{</span>
-          <span class="n">respond</span><span class="o">(</span><span class="k">new</span> <span class="n">RpcResponse</span><span class="o">(</span><span class="n">req</span><span class="o">.</span><span class="na">requestId</span><span class="o">,</span> <span class="k">new</span> <span class="n">NioManagedBuffer</span><span class="o">(</span><span class="n">response</span><span class="o">)));</span>
-        <span class="o">}</span>
-
-        <span class="nd">@Override</span>
-        <span class="kd">public</span> <span class="kt">void</span> <span class="nf">onFailure</span><span class="o">(</span><span class="n">Throwable</span> <span class="n">e</span><span class="o">)</span> <span class="o">{</span>
-          <span class="n">respond</span><span class="o">(</span><span class="k">new</span> <span class="n">RpcFailure</span><span class="o">(</span><span class="n">req</span><span class="o">.</span><span class="na">requestId</span><span class="o">,</span> <span class="n">Throwables</span><span class="o">.</span><span class="na">getStackTraceAsString</span><span class="o">(</span><span class="n">e</span><span class="o">)));</span>
-        <span class="o">}</span>
-      <span class="o">});</span>
-    <span class="o">}</span> <span class="k">catch</span> <span class="o">(</span><span class="n">Exception</span> <span class="n">e</span><span class="o">)</span> <span class="o">{</span>
-      <span class="n">logger</span><span class="o">.</span><span class="na">error</span><span class="o">(</span><span class="s">&#34;Error while invoking RpcHandler#receive() on RPC id &#34;</span> <span class="o">+</span> <span class="n">req</span><span class="o">.</span><span class="na">requestId</span><span class="o">,</span> <span class="n">e</span><span class="o">);</span>
-      <span class="n">respond</span><span class="o">(</span><span class="k">new</span> <span class="n">RpcFailure</span><span class="o">(</span><span class="n">req</span><span class="o">.</span><span class="na">requestId</span><span class="o">,</span> <span class="n">Throwables</span><span class="o">.</span><span class="na">getStackTraceAsString</span><span class="o">(</span><span class="n">e</span><span class="o">)));</span>
-    <span class="o">}</span> <span class="k">finally</span> <span class="o">{</span>
-      <span class="n">req</span><span class="o">.</span><span class="na">body</span><span class="o">().</span><span class="na">release</span><span class="o">();</span>
-    <span class="o">}</span>
-  <span class="o">}</span>
-<span class="o">}</span>    
-</code></pre></td></tr></table></div>
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">TransportRequestHandler</span> <span class="kd">extends</span> <span class="n">MessageHandler</span><span class="o">&lt;</span><span class="n">RequestMessage</span><span class="o">&gt;</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">    
+</span></span><span class="line"><span class="cl">  <span class="kd">private</span> <span class="kd">final</span> <span class="n">RpcHandler</span> <span class="n">rpcHandler</span><span class="o">;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="nd">@Override</span>
+</span></span><span class="line"><span class="cl">  <span class="kd">public</span> <span class="kt">void</span> <span class="nf">handle</span><span class="o">(</span><span class="n">RequestMessage</span> <span class="n">request</span><span class="o">)</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">    <span class="k">if</span> <span class="o">(</span><span class="n">request</span> <span class="k">instanceof</span> <span class="n">ChunkFetchRequest</span><span class="o">)</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">      <span class="n">processFetchRequest</span><span class="o">((</span><span class="n">ChunkFetchRequest</span><span class="o">)</span> <span class="n">request</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">    <span class="o">}</span> <span class="k">else</span> <span class="k">if</span> <span class="o">(</span><span class="n">request</span> <span class="k">instanceof</span> <span class="n">RpcRequest</span><span class="o">)</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">      <span class="n">processRpcRequest</span><span class="o">((</span><span class="n">RpcRequest</span><span class="o">)</span> <span class="n">request</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">    <span class="o">}</span> <span class="k">else</span> <span class="k">if</span> <span class="o">(</span><span class="n">request</span> <span class="k">instanceof</span> <span class="n">OneWayMessage</span><span class="o">)</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">      <span class="n">processOneWayMessage</span><span class="o">((</span><span class="n">OneWayMessage</span><span class="o">)</span> <span class="n">request</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">    <span class="o">}</span> <span class="k">else</span> <span class="k">if</span> <span class="o">(</span><span class="n">request</span> <span class="k">instanceof</span> <span class="n">StreamRequest</span><span class="o">)</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">      <span class="n">processStreamRequest</span><span class="o">((</span><span class="n">StreamRequest</span><span class="o">)</span> <span class="n">request</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">    <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">      <span class="k">throw</span> <span class="k">new</span> <span class="n">IllegalArgumentException</span><span class="o">(</span><span class="s">&#34;Unknown request type: &#34;</span> <span class="o">+</span> <span class="n">request</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">    <span class="o">}</span>
+</span></span><span class="line"><span class="cl">  <span class="o">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="kd">private</span> <span class="kt">void</span> <span class="nf">processRpcRequest</span><span class="o">(</span><span class="kd">final</span> <span class="n">RpcRequest</span> <span class="n">req</span><span class="o">)</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">    <span class="k">try</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">      <span class="n">rpcHandler</span><span class="o">.</span><span class="na">receive</span><span class="o">(</span><span class="n">reverseClient</span><span class="o">,</span> <span class="n">req</span><span class="o">.</span><span class="na">body</span><span class="o">().</span><span class="na">nioByteBuffer</span><span class="o">(),</span> <span class="k">new</span> <span class="n">RpcResponseCallback</span><span class="o">()</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">        <span class="nd">@Override</span>
+</span></span><span class="line"><span class="cl">        <span class="kd">public</span> <span class="kt">void</span> <span class="nf">onSuccess</span><span class="o">(</span><span class="n">ByteBuffer</span> <span class="n">response</span><span class="o">)</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">          <span class="n">respond</span><span class="o">(</span><span class="k">new</span> <span class="n">RpcResponse</span><span class="o">(</span><span class="n">req</span><span class="o">.</span><span class="na">requestId</span><span class="o">,</span> <span class="k">new</span> <span class="n">NioManagedBuffer</span><span class="o">(</span><span class="n">response</span><span class="o">)));</span>
+</span></span><span class="line"><span class="cl">        <span class="o">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">        <span class="nd">@Override</span>
+</span></span><span class="line"><span class="cl">        <span class="kd">public</span> <span class="kt">void</span> <span class="nf">onFailure</span><span class="o">(</span><span class="n">Throwable</span> <span class="n">e</span><span class="o">)</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">          <span class="n">respond</span><span class="o">(</span><span class="k">new</span> <span class="n">RpcFailure</span><span class="o">(</span><span class="n">req</span><span class="o">.</span><span class="na">requestId</span><span class="o">,</span> <span class="n">Throwables</span><span class="o">.</span><span class="na">getStackTraceAsString</span><span class="o">(</span><span class="n">e</span><span class="o">)));</span>
+</span></span><span class="line"><span class="cl">        <span class="o">}</span>
+</span></span><span class="line"><span class="cl">      <span class="o">});</span>
+</span></span><span class="line"><span class="cl">    <span class="o">}</span> <span class="k">catch</span> <span class="o">(</span><span class="n">Exception</span> <span class="n">e</span><span class="o">)</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">      <span class="n">logger</span><span class="o">.</span><span class="na">error</span><span class="o">(</span><span class="s">&#34;Error while invoking RpcHandler#receive() on RPC id &#34;</span> <span class="o">+</span> <span class="n">req</span><span class="o">.</span><span class="na">requestId</span><span class="o">,</span> <span class="n">e</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">      <span class="n">respond</span><span class="o">(</span><span class="k">new</span> <span class="n">RpcFailure</span><span class="o">(</span><span class="n">req</span><span class="o">.</span><span class="na">requestId</span><span class="o">,</span> <span class="n">Throwables</span><span class="o">.</span><span class="na">getStackTraceAsString</span><span class="o">(</span><span class="n">e</span><span class="o">)));</span>
+</span></span><span class="line"><span class="cl">    <span class="o">}</span> <span class="k">finally</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">      <span class="n">req</span><span class="o">.</span><span class="na">body</span><span class="o">().</span><span class="na">release</span><span class="o">();</span>
+</span></span><span class="line"><span class="cl">    <span class="o">}</span>
+</span></span><span class="line"><span class="cl">  <span class="o">}</span>
+</span></span><span class="line"><span class="cl"><span class="o">}</span>    
+</span></span></code></pre></td></tr></table></div>
 </div>
 </div><h2 id="nettyrpchandler"><a href="#nettyrpchandler" class="anchor-link"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon anchor-icon"><path d="M326.612 185.391c59.747 59.809 58.927 155.698.36 214.59-.11.12-.24.25-.36.37l-67.2 67.2c-59.27 59.27-155.699 59.262-214.96 0-59.27-59.26-59.27-155.7 0-214.96l37.106-37.106c9.84-9.84 26.786-3.3 27.294 10.606.648 17.722 3.826 35.527 9.69 52.721 1.986 5.822.567 12.262-3.783 16.612l-13.087 13.087c-28.026 28.026-28.905 73.66-1.155 101.96 28.024 28.579 74.086 28.749 102.325.51l67.2-67.19c28.191-28.191 28.073-73.757 0-101.83-3.701-3.694-7.429-6.564-10.341-8.569a16.037 16.037 0 0 1-6.947-12.606c-.396-10.567 3.348-21.456 11.698-29.806l21.054-21.055c5.521-5.521 14.182-6.199 20.584-1.731a152.482 152.482 0 0 1 20.522 17.197zM467.547 44.449c-59.261-59.262-155.69-59.27-214.96 0l-67.2 67.2c-.12.12-.25.25-.36.37-58.566 58.892-59.387 154.781.36 214.59a152.454 152.454 0 0 0 20.521 17.196c6.402 4.468 15.064 3.789 20.584-1.731l21.054-21.055c8.35-8.35 12.094-19.239 11.698-29.806a16.037 16.037 0 0 0-6.947-12.606c-2.912-2.005-6.64-4.875-10.341-8.569-28.073-28.073-28.191-73.639 0-101.83l67.2-67.19c28.239-28.239 74.3-28.069 102.325.51 27.75 28.3 26.872 73.934-1.155 101.96l-13.087 13.087c-4.35 4.35-5.769 10.79-3.783 16.612 5.864 17.194 9.042 34.999 9.69 52.721.509 13.906 17.454 20.446 27.294 10.606l37.106-37.106c59.271-59.259 59.271-155.699.001-214.959z"/></svg></a>NettyRpcHandler</h2>
 <p>NettyRpcHandler的receive方法，首先调用了internalReceive生成RequestMessage，然后转发给dispatcher。</p>
@@ -549,35 +549,35 @@
 </span><span class="lnt">28
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-scala" data-lang="scala"><span class="k">private</span><span class="o">[</span><span class="kt">netty</span><span class="o">]</span> <span class="k">class</span> <span class="nc">NettyRpcHandler</span> <span class="o">{</span>
-    
-  <span class="k">override</span> <span class="k">def</span> <span class="n">receive</span><span class="o">(</span>
-      <span class="n">client</span><span class="k">:</span> <span class="kt">TransportClient</span><span class="o">,</span>
-      <span class="n">message</span><span class="k">:</span> <span class="kt">ByteBuffer</span><span class="o">,</span>
-      <span class="n">callback</span><span class="k">:</span> <span class="kt">RpcResponseCallback</span><span class="o">)</span><span class="k">:</span> <span class="kt">Unit</span> <span class="o">=</span> <span class="o">{</span>
-    <span class="k">val</span> <span class="n">messageToDispatch</span> <span class="k">=</span> <span class="n">internalReceive</span><span class="o">(</span><span class="n">client</span><span class="o">,</span> <span class="n">message</span><span class="o">)</span>
-    <span class="n">dispatcher</span><span class="o">.</span><span class="n">postRemoteMessage</span><span class="o">(</span><span class="n">messageToDispatch</span><span class="o">,</span> <span class="n">callback</span><span class="o">)</span>
-  <span class="o">}</span>
-
-  <span class="k">private</span> <span class="k">def</span> <span class="n">internalReceive</span><span class="o">(</span><span class="n">client</span><span class="k">:</span> <span class="kt">TransportClient</span><span class="o">,</span> <span class="n">message</span><span class="k">:</span> <span class="kt">ByteBuffer</span><span class="o">)</span><span class="k">:</span> <span class="kt">RequestMessage</span> <span class="o">=</span> <span class="o">{</span>
-    <span class="k">val</span> <span class="n">addr</span> <span class="k">=</span> <span class="n">client</span><span class="o">.</span><span class="n">getChannel</span><span class="o">().</span><span class="n">remoteAddress</span><span class="o">().</span><span class="n">asInstanceOf</span><span class="o">[</span><span class="kt">InetSocketAddress</span><span class="o">]</span>
-    <span class="n">assert</span><span class="o">(</span><span class="n">addr</span> <span class="o">!=</span> <span class="kc">null</span><span class="o">)</span>
-    <span class="k">val</span> <span class="n">clientAddr</span> <span class="k">=</span> <span class="nc">RpcAddress</span><span class="o">(</span><span class="n">addr</span><span class="o">.</span><span class="n">getHostString</span><span class="o">,</span> <span class="n">addr</span><span class="o">.</span><span class="n">getPort</span><span class="o">)</span>
-    <span class="k">val</span> <span class="n">requestMessage</span> <span class="k">=</span> <span class="nc">RequestMessage</span><span class="o">(</span><span class="n">nettyEnv</span><span class="o">,</span> <span class="n">client</span><span class="o">,</span> <span class="n">message</span><span class="o">)</span>
-    <span class="k">if</span> <span class="o">(</span><span class="n">requestMessage</span><span class="o">.</span><span class="n">senderAddress</span> <span class="o">==</span> <span class="kc">null</span><span class="o">)</span> <span class="o">{</span>
-      <span class="c1">// client和server在同一个进程
-</span><span class="c1"></span>      <span class="k">new</span> <span class="nc">RequestMessage</span><span class="o">(</span><span class="n">clientAddr</span><span class="o">,</span> <span class="n">requestMessage</span><span class="o">.</span><span class="n">receiver</span><span class="o">,</span> <span class="n">requestMessage</span><span class="o">.</span><span class="n">content</span><span class="o">)</span>
-    <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
-      <span class="k">val</span> <span class="n">remoteEnvAddress</span> <span class="k">=</span> <span class="n">requestMessage</span><span class="o">.</span><span class="n">senderAddress</span>
-      <span class="k">if</span> <span class="o">(</span><span class="n">remoteAddresses</span><span class="o">.</span><span class="n">putIfAbsent</span><span class="o">(</span><span class="n">clientAddr</span><span class="o">,</span> <span class="n">remoteEnvAddress</span><span class="o">)</span> <span class="o">==</span> <span class="kc">null</span><span class="o">)</span> <span class="o">{</span>
-        <span class="c1">//  如果是新连接的client，给所有的endpoint发送消息
-</span><span class="c1"></span>        <span class="n">dispatcher</span><span class="o">.</span><span class="n">postToAll</span><span class="o">(</span><span class="nc">RemoteProcessConnected</span><span class="o">(</span><span class="n">remoteEnvAddress</span><span class="o">))</span>
-      <span class="o">}</span>
-      <span class="n">requestMessage</span>
-    <span class="o">}</span>
-  <span class="o">}</span>
-<span class="o">}</span>
-</code></pre></td></tr></table></div>
+<pre tabindex="0" class="chroma"><code class="language-scala" data-lang="scala"><span class="line"><span class="cl"><span class="k">private</span><span class="o">[</span><span class="kt">netty</span><span class="o">]</span> <span class="k">class</span> <span class="nc">NettyRpcHandler</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">    
+</span></span><span class="line"><span class="cl">  <span class="k">override</span> <span class="k">def</span> <span class="n">receive</span><span class="o">(</span>
+</span></span><span class="line"><span class="cl">      <span class="n">client</span><span class="k">:</span> <span class="kt">TransportClient</span><span class="o">,</span>
+</span></span><span class="line"><span class="cl">      <span class="n">message</span><span class="k">:</span> <span class="kt">ByteBuffer</span><span class="o">,</span>
+</span></span><span class="line"><span class="cl">      <span class="n">callback</span><span class="k">:</span> <span class="kt">RpcResponseCallback</span><span class="o">)</span><span class="k">:</span> <span class="kt">Unit</span> <span class="o">=</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">    <span class="k">val</span> <span class="n">messageToDispatch</span> <span class="k">=</span> <span class="n">internalReceive</span><span class="o">(</span><span class="n">client</span><span class="o">,</span> <span class="n">message</span><span class="o">)</span>
+</span></span><span class="line"><span class="cl">    <span class="n">dispatcher</span><span class="o">.</span><span class="n">postRemoteMessage</span><span class="o">(</span><span class="n">messageToDispatch</span><span class="o">,</span> <span class="n">callback</span><span class="o">)</span>
+</span></span><span class="line"><span class="cl">  <span class="o">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="k">private</span> <span class="k">def</span> <span class="n">internalReceive</span><span class="o">(</span><span class="n">client</span><span class="k">:</span> <span class="kt">TransportClient</span><span class="o">,</span> <span class="n">message</span><span class="k">:</span> <span class="kt">ByteBuffer</span><span class="o">)</span><span class="k">:</span> <span class="kt">RequestMessage</span> <span class="o">=</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">    <span class="k">val</span> <span class="n">addr</span> <span class="k">=</span> <span class="n">client</span><span class="o">.</span><span class="n">getChannel</span><span class="o">().</span><span class="n">remoteAddress</span><span class="o">().</span><span class="n">asInstanceOf</span><span class="o">[</span><span class="kt">InetSocketAddress</span><span class="o">]</span>
+</span></span><span class="line"><span class="cl">    <span class="n">assert</span><span class="o">(</span><span class="n">addr</span> <span class="o">!=</span> <span class="kc">null</span><span class="o">)</span>
+</span></span><span class="line"><span class="cl">    <span class="k">val</span> <span class="n">clientAddr</span> <span class="k">=</span> <span class="nc">RpcAddress</span><span class="o">(</span><span class="n">addr</span><span class="o">.</span><span class="n">getHostString</span><span class="o">,</span> <span class="n">addr</span><span class="o">.</span><span class="n">getPort</span><span class="o">)</span>
+</span></span><span class="line"><span class="cl">    <span class="k">val</span> <span class="n">requestMessage</span> <span class="k">=</span> <span class="nc">RequestMessage</span><span class="o">(</span><span class="n">nettyEnv</span><span class="o">,</span> <span class="n">client</span><span class="o">,</span> <span class="n">message</span><span class="o">)</span>
+</span></span><span class="line"><span class="cl">    <span class="k">if</span> <span class="o">(</span><span class="n">requestMessage</span><span class="o">.</span><span class="n">senderAddress</span> <span class="o">==</span> <span class="kc">null</span><span class="o">)</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">      <span class="c1">// client和server在同一个进程
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>      <span class="k">new</span> <span class="nc">RequestMessage</span><span class="o">(</span><span class="n">clientAddr</span><span class="o">,</span> <span class="n">requestMessage</span><span class="o">.</span><span class="n">receiver</span><span class="o">,</span> <span class="n">requestMessage</span><span class="o">.</span><span class="n">content</span><span class="o">)</span>
+</span></span><span class="line"><span class="cl">    <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">      <span class="k">val</span> <span class="n">remoteEnvAddress</span> <span class="k">=</span> <span class="n">requestMessage</span><span class="o">.</span><span class="n">senderAddress</span>
+</span></span><span class="line"><span class="cl">      <span class="k">if</span> <span class="o">(</span><span class="n">remoteAddresses</span><span class="o">.</span><span class="n">putIfAbsent</span><span class="o">(</span><span class="n">clientAddr</span><span class="o">,</span> <span class="n">remoteEnvAddress</span><span class="o">)</span> <span class="o">==</span> <span class="kc">null</span><span class="o">)</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">        <span class="c1">//  如果是新连接的client，给所有的endpoint发送消息
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>        <span class="n">dispatcher</span><span class="o">.</span><span class="n">postToAll</span><span class="o">(</span><span class="nc">RemoteProcessConnected</span><span class="o">(</span><span class="n">remoteEnvAddress</span><span class="o">))</span>
+</span></span><span class="line"><span class="cl">      <span class="o">}</span>
+</span></span><span class="line"><span class="cl">      <span class="n">requestMessage</span>
+</span></span><span class="line"><span class="cl">    <span class="o">}</span>
+</span></span><span class="line"><span class="cl">  <span class="o">}</span>
+</span></span><span class="line"><span class="cl"><span class="o">}</span>
+</span></span></code></pre></td></tr></table></div>
 </div>
 </div><h2 id="dispatcher"><a href="#dispatcher" class="anchor-link"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon anchor-icon"><path d="M326.612 185.391c59.747 59.809 58.927 155.698.36 214.59-.11.12-.24.25-.36.37l-67.2 67.2c-59.27 59.27-155.699 59.262-214.96 0-59.27-59.26-59.27-155.7 0-214.96l37.106-37.106c9.84-9.84 26.786-3.3 27.294 10.606.648 17.722 3.826 35.527 9.69 52.721 1.986 5.822.567 12.262-3.783 16.612l-13.087 13.087c-28.026 28.026-28.905 73.66-1.155 101.96 28.024 28.579 74.086 28.749 102.325.51l67.2-67.19c28.191-28.191 28.073-73.757 0-101.83-3.701-3.694-7.429-6.564-10.341-8.569a16.037 16.037 0 0 1-6.947-12.606c-.396-10.567 3.348-21.456 11.698-29.806l21.054-21.055c5.521-5.521 14.182-6.199 20.584-1.731a152.482 152.482 0 0 1 20.522 17.197zM467.547 44.449c-59.261-59.262-155.69-59.27-214.96 0l-67.2 67.2c-.12.12-.25.25-.36.37-58.566 58.892-59.387 154.781.36 214.59a152.454 152.454 0 0 0 20.521 17.196c6.402 4.468 15.064 3.789 20.584-1.731l21.054-21.055c8.35-8.35 12.094-19.239 11.698-29.806a16.037 16.037 0 0 0-6.947-12.606c-2.912-2.005-6.64-4.875-10.341-8.569-28.073-28.073-28.191-73.639 0-101.83l67.2-67.19c28.239-28.239 74.3-28.069 102.325.51 27.75 28.3 26.872 73.934-1.155 101.96l-13.087 13.087c-4.35 4.35-5.769 10.79-3.783 16.612 5.864 17.194 9.042 34.999 9.69 52.721.509 13.906 17.454 20.446 27.294 10.606l37.106-37.106c59.271-59.259 59.271-155.699.001-214.959z"/></svg></a>Dispatcher</h2>
 <p>Dispatcher负责管理消息的分发，它包含多个服务。当Dispatcher接收到消息后，会根据消息中的名称，发送到对应的服务。服务RpcEndpoint的信息都会保存在endpoints哈希表里。key值为RpcEndpoint的名称，value为EndpointData。EndpointData包含了服务对应的消息收件箱。</p>
@@ -598,20 +598,20 @@
 </span><span class="lnt">13
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="kd">private</span><span class="o">[</span><span class="n">netty</span><span class="o">]</span> <span class="kd">class</span> <span class="nf">Dispatcher</span><span class="o">(</span><span class="n">nettyEnv</span><span class="o">:</span> <span class="n">NettyRpcEnv</span><span class="o">)</span> <span class="kd">extends</span> <span class="n">Logging</span> <span class="o">{</span>
-
-  <span class="kd">private</span> <span class="kd">class</span> <span class="nf">EndpointData</span><span class="o">(</span>
-      <span class="n">val</span> <span class="n">name</span><span class="o">:</span> <span class="n">String</span><span class="o">,</span>
-      <span class="n">val</span> <span class="n">endpoint</span><span class="o">:</span> <span class="n">RpcEndpoint</span><span class="o">,</span>
-      <span class="n">val</span> <span class="n">ref</span><span class="o">:</span> <span class="n">NettyRpcEndpointRef</span><span class="o">)</span> <span class="o">{</span>
-    <span class="n">val</span> <span class="n">inbox</span> <span class="o">=</span> <span class="k">new</span> <span class="n">Inbox</span><span class="o">(</span><span class="n">ref</span><span class="o">,</span> <span class="n">endpoint</span><span class="o">)</span>
-  <span class="o">}</span>
-
-  <span class="kd">private</span> <span class="n">val</span> <span class="n">endpoints</span><span class="o">:</span> <span class="n">ConcurrentMap</span><span class="o">[</span><span class="n">String</span><span class="o">,</span> <span class="n">EndpointData</span><span class="o">]</span> <span class="o">=</span>
-    <span class="k">new</span> <span class="n">ConcurrentHashMap</span><span class="o">[</span><span class="n">String</span><span class="o">,</span> <span class="n">EndpointData</span><span class="o">]</span>
-    
-<span class="o">}</span>
-</code></pre></td></tr></table></div>
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="kd">private</span><span class="o">[</span><span class="n">netty</span><span class="o">]</span> <span class="kd">class</span> <span class="nf">Dispatcher</span><span class="o">(</span><span class="n">nettyEnv</span><span class="o">:</span> <span class="n">NettyRpcEnv</span><span class="o">)</span> <span class="kd">extends</span> <span class="n">Logging</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="kd">private</span> <span class="kd">class</span> <span class="nf">EndpointData</span><span class="o">(</span>
+</span></span><span class="line"><span class="cl">      <span class="n">val</span> <span class="n">name</span><span class="o">:</span> <span class="n">String</span><span class="o">,</span>
+</span></span><span class="line"><span class="cl">      <span class="n">val</span> <span class="n">endpoint</span><span class="o">:</span> <span class="n">RpcEndpoint</span><span class="o">,</span>
+</span></span><span class="line"><span class="cl">      <span class="n">val</span> <span class="n">ref</span><span class="o">:</span> <span class="n">NettyRpcEndpointRef</span><span class="o">)</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">    <span class="n">val</span> <span class="n">inbox</span> <span class="o">=</span> <span class="k">new</span> <span class="n">Inbox</span><span class="o">(</span><span class="n">ref</span><span class="o">,</span> <span class="n">endpoint</span><span class="o">)</span>
+</span></span><span class="line"><span class="cl">  <span class="o">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="kd">private</span> <span class="n">val</span> <span class="n">endpoints</span><span class="o">:</span> <span class="n">ConcurrentMap</span><span class="o">[</span><span class="n">String</span><span class="o">,</span> <span class="n">EndpointData</span><span class="o">]</span> <span class="o">=</span>
+</span></span><span class="line"><span class="cl">    <span class="k">new</span> <span class="n">ConcurrentHashMap</span><span class="o">[</span><span class="n">String</span><span class="o">,</span> <span class="n">EndpointData</span><span class="o">]</span>
+</span></span><span class="line"><span class="cl">    
+</span></span><span class="line"><span class="cl"><span class="o">}</span>
+</span></span></code></pre></td></tr></table></div>
 </div>
 </div><p>上面NettyRpcHandler调用了Dispatcher的postRemoteMessage方法，来将消息分发给对应的服务。</p>
 <div class="highlight"><div class="chroma">
@@ -654,43 +654,43 @@
 </span><span class="lnt">36
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-scala" data-lang="scala"><span class="k">private</span><span class="o">[</span><span class="kt">netty</span><span class="o">]</span> <span class="k">class</span> <span class="nc">Dispatcher</span><span class="o">(</span><span class="n">nettyEnv</span><span class="k">:</span> <span class="kt">NettyRpcEnv</span><span class="o">)</span> <span class="k">extends</span> <span class="nc">Logging</span> <span class="o">{</span>
-  <span class="c1">// RpcEndpoint集合
-</span><span class="c1"></span>  <span class="k">private</span> <span class="k">val</span> <span class="n">endpoints</span><span class="k">:</span> <span class="kt">ConcurrentMap</span><span class="o">[</span><span class="kt">String</span>, <span class="kt">EndpointData</span><span class="o">]</span> <span class="k">=</span>
-    <span class="k">new</span> <span class="nc">ConcurrentHashMap</span><span class="o">[</span><span class="kt">String</span>, <span class="kt">EndpointData</span><span class="o">]</span>
-    
-  <span class="k">def</span> <span class="n">postRemoteMessage</span><span class="o">(</span><span class="n">message</span><span class="k">:</span> <span class="kt">RequestMessage</span><span class="o">,</span> <span class="n">callback</span><span class="k">:</span> <span class="kt">RpcResponseCallback</span><span class="o">)</span><span class="k">:</span> <span class="kt">Unit</span> <span class="o">=</span> <span class="o">{</span>
-    <span class="k">val</span> <span class="n">rpcCallContext</span> <span class="k">=</span>
-      <span class="k">new</span> <span class="nc">RemoteNettyRpcCallContext</span><span class="o">(</span><span class="n">nettyEnv</span><span class="o">,</span> <span class="n">callback</span><span class="o">,</span> <span class="n">message</span><span class="o">.</span><span class="n">senderAddress</span><span class="o">)</span>
-    <span class="c1">// 创建RpcMessage消息，调用postMessage方法发送
-</span><span class="c1"></span>    <span class="k">val</span> <span class="n">rpcMessage</span> <span class="k">=</span> <span class="nc">RpcMessage</span><span class="o">(</span><span class="n">message</span><span class="o">.</span><span class="n">senderAddress</span><span class="o">,</span> <span class="n">message</span><span class="o">.</span><span class="n">content</span><span class="o">,</span> <span class="n">rpcCallContext</span><span class="o">)</span>
-    <span class="c1">// 请求消息message，包含了要请求服务的名称
-</span><span class="c1"></span>    <span class="n">postMessage</span><span class="o">(</span><span class="n">message</span><span class="o">.</span><span class="n">receiver</span><span class="o">.</span><span class="n">name</span><span class="o">,</span> <span class="n">rpcMessage</span><span class="o">,</span> <span class="o">(</span><span class="n">e</span><span class="o">)</span> <span class="k">=&gt;</span> <span class="n">callback</span><span class="o">.</span><span class="n">onFailure</span><span class="o">(</span><span class="n">e</span><span class="o">))</span>
-  <span class="o">}</span>
-    
-  <span class="k">private</span> <span class="k">def</span> <span class="n">postMessage</span><span class="o">(</span>
-      <span class="n">endpointName</span><span class="k">:</span> <span class="kt">String</span><span class="o">,</span>
-      <span class="n">message</span><span class="k">:</span> <span class="kt">InboxMessage</span><span class="o">,</span>
-      <span class="n">callbackIfStopped</span><span class="k">:</span> <span class="o">(</span><span class="kt">Exception</span><span class="o">)</span> <span class="o">=&gt;</span> <span class="nc">Unit</span><span class="o">)</span><span class="k">:</span> <span class="kt">Unit</span> <span class="o">=</span> <span class="o">{</span>
-    <span class="k">val</span> <span class="n">error</span> <span class="k">=</span> <span class="n">synchronized</span> <span class="o">{</span>
-      <span class="c1">// 获取对应的EndpointData
-</span><span class="c1"></span>      <span class="k">val</span> <span class="n">data</span> <span class="k">=</span> <span class="n">endpoints</span><span class="o">.</span><span class="n">get</span><span class="o">(</span><span class="n">endpointName</span><span class="o">)</span>
-      <span class="k">if</span> <span class="o">(</span><span class="n">stopped</span><span class="o">)</span> <span class="o">{</span>
-        <span class="nc">Some</span><span class="o">(</span><span class="k">new</span> <span class="nc">RpcEnvStoppedException</span><span class="o">())</span>
-      <span class="o">}</span> <span class="k">else</span> <span class="k">if</span> <span class="o">(</span><span class="n">data</span> <span class="o">==</span> <span class="kc">null</span><span class="o">)</span> <span class="o">{</span>
-        <span class="nc">Some</span><span class="o">(</span><span class="k">new</span> <span class="nc">SparkException</span><span class="o">(</span><span class="s">s&#34;Could not find </span><span class="si">$endpointName</span><span class="s">.&#34;</span><span class="o">))</span>
-      <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
-        <span class="c1">// 发送给对应的inbox
-</span><span class="c1"></span>        <span class="n">data</span><span class="o">.</span><span class="n">inbox</span><span class="o">.</span><span class="n">post</span><span class="o">(</span><span class="n">message</span><span class="o">)</span>
-        <span class="n">receivers</span><span class="o">.</span><span class="n">offer</span><span class="o">(</span><span class="n">data</span><span class="o">)</span>
-        <span class="nc">None</span>
-      <span class="o">}</span>
-    <span class="o">}</span>
-    <span class="c1">// We don&#39;t need to call `onStop` in the `synchronized` block
-</span><span class="c1"></span>    <span class="n">error</span><span class="o">.</span><span class="n">foreach</span><span class="o">(</span><span class="n">callbackIfStopped</span><span class="o">)</span>
-  <span class="o">}</span>
-<span class="o">}</span>
-</code></pre></td></tr></table></div>
+<pre tabindex="0" class="chroma"><code class="language-scala" data-lang="scala"><span class="line"><span class="cl"><span class="k">private</span><span class="o">[</span><span class="kt">netty</span><span class="o">]</span> <span class="k">class</span> <span class="nc">Dispatcher</span><span class="o">(</span><span class="n">nettyEnv</span><span class="k">:</span> <span class="kt">NettyRpcEnv</span><span class="o">)</span> <span class="k">extends</span> <span class="nc">Logging</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">  <span class="c1">// RpcEndpoint集合
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="k">private</span> <span class="k">val</span> <span class="n">endpoints</span><span class="k">:</span> <span class="kt">ConcurrentMap</span><span class="o">[</span><span class="kt">String</span>, <span class="kt">EndpointData</span><span class="o">]</span> <span class="k">=</span>
+</span></span><span class="line"><span class="cl">    <span class="k">new</span> <span class="nc">ConcurrentHashMap</span><span class="o">[</span><span class="kt">String</span>, <span class="kt">EndpointData</span><span class="o">]</span>
+</span></span><span class="line"><span class="cl">    
+</span></span><span class="line"><span class="cl">  <span class="k">def</span> <span class="n">postRemoteMessage</span><span class="o">(</span><span class="n">message</span><span class="k">:</span> <span class="kt">RequestMessage</span><span class="o">,</span> <span class="n">callback</span><span class="k">:</span> <span class="kt">RpcResponseCallback</span><span class="o">)</span><span class="k">:</span> <span class="kt">Unit</span> <span class="o">=</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">    <span class="k">val</span> <span class="n">rpcCallContext</span> <span class="k">=</span>
+</span></span><span class="line"><span class="cl">      <span class="k">new</span> <span class="nc">RemoteNettyRpcCallContext</span><span class="o">(</span><span class="n">nettyEnv</span><span class="o">,</span> <span class="n">callback</span><span class="o">,</span> <span class="n">message</span><span class="o">.</span><span class="n">senderAddress</span><span class="o">)</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// 创建RpcMessage消息，调用postMessage方法发送
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="k">val</span> <span class="n">rpcMessage</span> <span class="k">=</span> <span class="nc">RpcMessage</span><span class="o">(</span><span class="n">message</span><span class="o">.</span><span class="n">senderAddress</span><span class="o">,</span> <span class="n">message</span><span class="o">.</span><span class="n">content</span><span class="o">,</span> <span class="n">rpcCallContext</span><span class="o">)</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// 请求消息message，包含了要请求服务的名称
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="n">postMessage</span><span class="o">(</span><span class="n">message</span><span class="o">.</span><span class="n">receiver</span><span class="o">.</span><span class="n">name</span><span class="o">,</span> <span class="n">rpcMessage</span><span class="o">,</span> <span class="o">(</span><span class="n">e</span><span class="o">)</span> <span class="k">=&gt;</span> <span class="n">callback</span><span class="o">.</span><span class="n">onFailure</span><span class="o">(</span><span class="n">e</span><span class="o">))</span>
+</span></span><span class="line"><span class="cl">  <span class="o">}</span>
+</span></span><span class="line"><span class="cl">    
+</span></span><span class="line"><span class="cl">  <span class="k">private</span> <span class="k">def</span> <span class="n">postMessage</span><span class="o">(</span>
+</span></span><span class="line"><span class="cl">      <span class="n">endpointName</span><span class="k">:</span> <span class="kt">String</span><span class="o">,</span>
+</span></span><span class="line"><span class="cl">      <span class="n">message</span><span class="k">:</span> <span class="kt">InboxMessage</span><span class="o">,</span>
+</span></span><span class="line"><span class="cl">      <span class="n">callbackIfStopped</span><span class="k">:</span> <span class="o">(</span><span class="kt">Exception</span><span class="o">)</span> <span class="o">=&gt;</span> <span class="nc">Unit</span><span class="o">)</span><span class="k">:</span> <span class="kt">Unit</span> <span class="o">=</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">    <span class="k">val</span> <span class="n">error</span> <span class="k">=</span> <span class="n">synchronized</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">      <span class="c1">// 获取对应的EndpointData
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>      <span class="k">val</span> <span class="n">data</span> <span class="k">=</span> <span class="n">endpoints</span><span class="o">.</span><span class="n">get</span><span class="o">(</span><span class="n">endpointName</span><span class="o">)</span>
+</span></span><span class="line"><span class="cl">      <span class="k">if</span> <span class="o">(</span><span class="n">stopped</span><span class="o">)</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">        <span class="nc">Some</span><span class="o">(</span><span class="k">new</span> <span class="nc">RpcEnvStoppedException</span><span class="o">())</span>
+</span></span><span class="line"><span class="cl">      <span class="o">}</span> <span class="k">else</span> <span class="k">if</span> <span class="o">(</span><span class="n">data</span> <span class="o">==</span> <span class="kc">null</span><span class="o">)</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">        <span class="nc">Some</span><span class="o">(</span><span class="k">new</span> <span class="nc">SparkException</span><span class="o">(</span><span class="s">s&#34;Could not find </span><span class="si">$endpointName</span><span class="s">.&#34;</span><span class="o">))</span>
+</span></span><span class="line"><span class="cl">      <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">        <span class="c1">// 发送给对应的inbox
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>        <span class="n">data</span><span class="o">.</span><span class="n">inbox</span><span class="o">.</span><span class="n">post</span><span class="o">(</span><span class="n">message</span><span class="o">)</span>
+</span></span><span class="line"><span class="cl">        <span class="n">receivers</span><span class="o">.</span><span class="n">offer</span><span class="o">(</span><span class="n">data</span><span class="o">)</span>
+</span></span><span class="line"><span class="cl">        <span class="nc">None</span>
+</span></span><span class="line"><span class="cl">      <span class="o">}</span>
+</span></span><span class="line"><span class="cl">    <span class="o">}</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// We don&#39;t need to call `onStop` in the `synchronized` block
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="n">error</span><span class="o">.</span><span class="n">foreach</span><span class="o">(</span><span class="n">callbackIfStopped</span><span class="o">)</span>
+</span></span><span class="line"><span class="cl">  <span class="o">}</span>
+</span></span><span class="line"><span class="cl"><span class="o">}</span>
+</span></span></code></pre></td></tr></table></div>
 </div>
 </div><h2 id="inbox"><a href="#inbox" class="anchor-link"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon anchor-icon"><path d="M326.612 185.391c59.747 59.809 58.927 155.698.36 214.59-.11.12-.24.25-.36.37l-67.2 67.2c-59.27 59.27-155.699 59.262-214.96 0-59.27-59.26-59.27-155.7 0-214.96l37.106-37.106c9.84-9.84 26.786-3.3 27.294 10.606.648 17.722 3.826 35.527 9.69 52.721 1.986 5.822.567 12.262-3.783 16.612l-13.087 13.087c-28.026 28.026-28.905 73.66-1.155 101.96 28.024 28.579 74.086 28.749 102.325.51l67.2-67.19c28.191-28.191 28.073-73.757 0-101.83-3.701-3.694-7.429-6.564-10.341-8.569a16.037 16.037 0 0 1-6.947-12.606c-.396-10.567 3.348-21.456 11.698-29.806l21.054-21.055c5.521-5.521 14.182-6.199 20.584-1.731a152.482 152.482 0 0 1 20.522 17.197zM467.547 44.449c-59.261-59.262-155.69-59.27-214.96 0l-67.2 67.2c-.12.12-.25.25-.36.37-58.566 58.892-59.387 154.781.36 214.59a152.454 152.454 0 0 0 20.521 17.196c6.402 4.468 15.064 3.789 20.584-1.731l21.054-21.055c8.35-8.35 12.094-19.239 11.698-29.806a16.037 16.037 0 0 0-6.947-12.606c-2.912-2.005-6.64-4.875-10.341-8.569-28.073-28.073-28.191-73.639 0-101.83l67.2-67.19c28.239-28.239 74.3-28.069 102.325.51 27.75 28.3 26.872 73.934-1.155 101.96l-13.087 13.087c-4.35 4.35-5.769 10.79-3.783 16.612 5.864 17.194 9.042 34.999 9.69 52.721.509 13.906 17.454 20.446 27.294 10.606l37.106-37.106c59.271-59.259 59.271-155.699.001-214.959z"/></svg></a>Inbox</h2>
 <p>Inbox 代表着收件箱，一个Inbox对应着一个服务。请求该服务的消息，都由Inbox接收，然后转发给RpcEndpoint处理。</p>
@@ -704,7 +704,6 @@
 	Inbox -&gt;&gt;+ RpcEndpoint : receiveAndReply(context)
 	RpcEndpoint --&gt;&gt;- Inbox : #
 	Inbox --&gt;&gt;- Dispatcher : #
-
 </code></pre><p>Inbox提供了post方法接收消息，它会将消息都会存储到队列里面。</p>
 <p>Dispatcher的后台线程会调用Inbox的process方法，从队列取出和处理消息。</p>
 <h3 id="处理消息"><a href="#处理消息" class="anchor-link"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon anchor-icon"><path d="M326.612 185.391c59.747 59.809 58.927 155.698.36 214.59-.11.12-.24.25-.36.37l-67.2 67.2c-59.27 59.27-155.699 59.262-214.96 0-59.27-59.26-59.27-155.7 0-214.96l37.106-37.106c9.84-9.84 26.786-3.3 27.294 10.606.648 17.722 3.826 35.527 9.69 52.721 1.986 5.822.567 12.262-3.783 16.612l-13.087 13.087c-28.026 28.026-28.905 73.66-1.155 101.96 28.024 28.579 74.086 28.749 102.325.51l67.2-67.19c28.191-28.191 28.073-73.757 0-101.83-3.701-3.694-7.429-6.564-10.341-8.569a16.037 16.037 0 0 1-6.947-12.606c-.396-10.567 3.348-21.456 11.698-29.806l21.054-21.055c5.521-5.521 14.182-6.199 20.584-1.731a152.482 152.482 0 0 1 20.522 17.197zM467.547 44.449c-59.261-59.262-155.69-59.27-214.96 0l-67.2 67.2c-.12.12-.25.25-.36.37-58.566 58.892-59.387 154.781.36 214.59a152.454 152.454 0 0 0 20.521 17.196c6.402 4.468 15.064 3.789 20.584-1.731l21.054-21.055c8.35-8.35 12.094-19.239 11.698-29.806a16.037 16.037 0 0 0-6.947-12.606c-2.912-2.005-6.64-4.875-10.341-8.569-28.073-28.073-28.191-73.639 0-101.83l67.2-67.19c28.239-28.239 74.3-28.069 102.325.51 27.75 28.3 26.872 73.934-1.155 101.96l-13.087 13.087c-4.35 4.35-5.769 10.79-3.783 16.612 5.864 17.194 9.042 34.999 9.69 52.721.509 13.906 17.454 20.446 27.294 10.606l37.106-37.106c59.271-59.259 59.271-155.699.001-214.959z"/></svg></a>处理消息</h3>
@@ -774,68 +773,68 @@
 </span><span class="lnt">61
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-scala" data-lang="scala"><span class="k">private</span><span class="o">[</span><span class="kt">netty</span><span class="o">]</span> <span class="k">class</span> <span class="nc">Inbox</span><span class="o">(</span>
-    <span class="k">val</span> <span class="n">endpointRef</span><span class="k">:</span> <span class="kt">NettyRpcEndpointRef</span><span class="o">,</span>
-    <span class="k">val</span> <span class="n">endpoint</span><span class="k">:</span> <span class="kt">RpcEndpoint</span><span class="o">)</span>
-  <span class="k">extends</span> <span class="nc">Logging</span> <span class="o">{</span>
-      
-  <span class="k">def</span> <span class="n">process</span><span class="o">(</span><span class="n">dispatcher</span><span class="k">:</span> <span class="kt">Dispatcher</span><span class="o">)</span><span class="k">:</span> <span class="kt">Unit</span> <span class="o">=</span> <span class="o">{</span>
-    <span class="k">var</span> <span class="n">message</span><span class="k">:</span> <span class="kt">InboxMessage</span> <span class="o">=</span> <span class="kc">null</span>
-    <span class="n">inbox</span><span class="o">.</span><span class="n">synchronized</span> <span class="o">{</span>
-      <span class="c1">// 如果该服务不支持多线程，那么只允许一个线程处理消息
-</span><span class="c1"></span>      <span class="k">if</span> <span class="o">(!</span><span class="n">enableConcurrent</span> <span class="o">&amp;&amp;</span> <span class="n">numActiveThreads</span> <span class="o">!=</span> <span class="mi">0</span><span class="o">)</span> <span class="o">{</span>
-        <span class="k">return</span>
-      <span class="o">}</span>
-      <span class="c1">// 从队列中获取消息
-</span><span class="c1"></span>      <span class="n">message</span> <span class="k">=</span> <span class="n">messages</span><span class="o">.</span><span class="n">poll</span><span class="o">()</span>
-      <span class="k">if</span> <span class="o">(</span><span class="n">message</span> <span class="o">!=</span> <span class="kc">null</span><span class="o">)</span> <span class="o">{</span>
-        <span class="n">numActiveThreads</span> <span class="o">+=</span> <span class="mi">1</span>
-      <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
-        <span class="k">return</span>
-      <span class="o">}</span>
-    <span class="o">}</span>
-    <span class="k">while</span> <span class="o">(</span><span class="kc">true</span><span class="o">)</span> <span class="o">{</span>
-      <span class="n">safelyCall</span><span class="o">(</span><span class="n">endpoint</span><span class="o">)</span> <span class="o">{</span>
-        <span class="n">message</span> <span class="k">match</span> <span class="o">{</span>
-          <span class="c1">// Rpc消息，需要返回响应
-</span><span class="c1"></span>          <span class="k">case</span> <span class="nc">RpcMessage</span><span class="o">(</span><span class="nc">_sender</span><span class="o">,</span> <span class="n">content</span><span class="o">,</span> <span class="n">context</span><span class="o">)</span> <span class="k">=&gt;</span>
-            <span class="k">try</span> <span class="o">{</span>
-              <span class="c1">// 这里调用了endpoint的receiveAndReply方法处理消息
-</span><span class="c1"></span>              <span class="n">endpoint</span><span class="o">.</span><span class="n">receiveAndReply</span><span class="o">(</span><span class="n">context</span><span class="o">).</span><span class="n">applyOrElse</span><span class="o">[</span><span class="kt">Any</span>, <span class="kt">Unit</span><span class="o">](</span><span class="n">content</span><span class="o">,</span> <span class="o">{</span> <span class="n">msg</span> <span class="k">=&gt;</span>
-                <span class="k">throw</span> <span class="k">new</span> <span class="nc">SparkException</span><span class="o">(</span><span class="s">s&#34;Unsupported message </span><span class="si">$message</span><span class="s"> from </span><span class="si">${</span><span class="nc">_sender</span><span class="si">}</span><span class="s">&#34;</span><span class="o">)</span>
-              <span class="o">})</span>
-            <span class="o">}</span> <span class="k">catch</span> <span class="o">{</span>
-              <span class="k">case</span> <span class="nc">NonFatal</span><span class="o">(</span><span class="n">e</span><span class="o">)</span> <span class="k">=&gt;</span>
-                <span class="n">context</span><span class="o">.</span><span class="n">sendFailure</span><span class="o">(</span><span class="n">e</span><span class="o">)</span>
-                <span class="c1">// Throw the exception -- this exception will be caught by the safelyCall function.
-</span><span class="c1"></span>                <span class="c1">// The endpoint&#39;s onError function will be called.
-</span><span class="c1"></span>                <span class="k">throw</span> <span class="n">e</span>
-            <span class="o">}</span>
-          <span class="c1">// 不需要响应的Rpc消息
-</span><span class="c1"></span>          <span class="k">case</span> <span class="nc">OneWayMessage</span><span class="o">(</span><span class="nc">_sender</span><span class="o">,</span> <span class="n">content</span><span class="o">)</span> <span class="k">=&gt;</span>
-            <span class="c1">// 这里调用了endpoint的receive方法处理消息
-</span><span class="c1"></span>            <span class="n">endpoint</span><span class="o">.</span><span class="n">receive</span><span class="o">.</span><span class="n">applyOrElse</span><span class="o">[</span><span class="kt">Any</span>, <span class="kt">Unit</span><span class="o">](</span><span class="n">content</span><span class="o">,</span> <span class="o">{</span> <span class="n">msg</span> <span class="k">=&gt;</span>
-              <span class="k">throw</span> <span class="k">new</span> <span class="nc">SparkException</span><span class="o">(</span><span class="s">s&#34;Unsupported message </span><span class="si">$message</span><span class="s"> from </span><span class="si">${</span><span class="nc">_sender</span><span class="si">}</span><span class="s">&#34;</span><span class="o">)</span>
-            <span class="o">})</span>
-          <span class="c1">// 启动消息，在Inbox初始化时会发送
-</span><span class="c1"></span>          <span class="k">case</span> <span class="nc">OnStart</span> <span class="k">=&gt;</span>
-            <span class="c1">// 调用endpoint的OnStart回调函数
-</span><span class="c1"></span>            <span class="n">endpoint</span><span class="o">.</span><span class="n">onStart</span><span class="o">()</span>
-            <span class="o">}</span>
-          <span class="c1">// 退出消息
-</span><span class="c1"></span>          <span class="k">case</span> <span class="nc">OnStop</span> <span class="k">=&gt;</span>
-            <span class="k">val</span> <span class="n">activeThreads</span> <span class="k">=</span> <span class="n">inbox</span><span class="o">.</span><span class="n">synchronized</span> <span class="o">{</span> <span class="n">inbox</span><span class="o">.</span><span class="n">numActiveThreads</span> <span class="o">}</span>
-            <span class="n">assert</span><span class="o">(</span><span class="n">activeThreads</span> <span class="o">==</span> <span class="mi">1</span><span class="o">,</span>
-              <span class="s">s&#34;There should be only a single active thread but found </span><span class="si">$activeThreads</span><span class="s"> threads.&#34;</span><span class="o">)</span>
-            <span class="c1">// 从dispatcher注销该服务
-</span><span class="c1"></span>            <span class="n">dispatcher</span><span class="o">.</span><span class="n">removeRpcEndpointRef</span><span class="o">(</span><span class="n">endpoint</span><span class="o">)</span>
-            <span class="c1">// 调用endpoint的OnStop回调函数
-</span><span class="c1"></span>            <span class="n">endpoint</span><span class="o">.</span><span class="n">onStop</span><span class="o">()</span>
-      <span class="o">}</span>
-    <span class="o">}</span>
-  <span class="o">}</span>
-<span class="o">}</span>
-</code></pre></td></tr></table></div>
+<pre tabindex="0" class="chroma"><code class="language-scala" data-lang="scala"><span class="line"><span class="cl"><span class="k">private</span><span class="o">[</span><span class="kt">netty</span><span class="o">]</span> <span class="k">class</span> <span class="nc">Inbox</span><span class="o">(</span>
+</span></span><span class="line"><span class="cl">    <span class="k">val</span> <span class="n">endpointRef</span><span class="k">:</span> <span class="kt">NettyRpcEndpointRef</span><span class="o">,</span>
+</span></span><span class="line"><span class="cl">    <span class="k">val</span> <span class="n">endpoint</span><span class="k">:</span> <span class="kt">RpcEndpoint</span><span class="o">)</span>
+</span></span><span class="line"><span class="cl">  <span class="k">extends</span> <span class="nc">Logging</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">      
+</span></span><span class="line"><span class="cl">  <span class="k">def</span> <span class="n">process</span><span class="o">(</span><span class="n">dispatcher</span><span class="k">:</span> <span class="kt">Dispatcher</span><span class="o">)</span><span class="k">:</span> <span class="kt">Unit</span> <span class="o">=</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">    <span class="k">var</span> <span class="n">message</span><span class="k">:</span> <span class="kt">InboxMessage</span> <span class="o">=</span> <span class="kc">null</span>
+</span></span><span class="line"><span class="cl">    <span class="n">inbox</span><span class="o">.</span><span class="n">synchronized</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">      <span class="c1">// 如果该服务不支持多线程，那么只允许一个线程处理消息
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>      <span class="k">if</span> <span class="o">(!</span><span class="n">enableConcurrent</span> <span class="o">&amp;&amp;</span> <span class="n">numActiveThreads</span> <span class="o">!=</span> <span class="mi">0</span><span class="o">)</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">        <span class="k">return</span>
+</span></span><span class="line"><span class="cl">      <span class="o">}</span>
+</span></span><span class="line"><span class="cl">      <span class="c1">// 从队列中获取消息
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>      <span class="n">message</span> <span class="k">=</span> <span class="n">messages</span><span class="o">.</span><span class="n">poll</span><span class="o">()</span>
+</span></span><span class="line"><span class="cl">      <span class="k">if</span> <span class="o">(</span><span class="n">message</span> <span class="o">!=</span> <span class="kc">null</span><span class="o">)</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">        <span class="n">numActiveThreads</span> <span class="o">+=</span> <span class="mi">1</span>
+</span></span><span class="line"><span class="cl">      <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">        <span class="k">return</span>
+</span></span><span class="line"><span class="cl">      <span class="o">}</span>
+</span></span><span class="line"><span class="cl">    <span class="o">}</span>
+</span></span><span class="line"><span class="cl">    <span class="k">while</span> <span class="o">(</span><span class="kc">true</span><span class="o">)</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">      <span class="n">safelyCall</span><span class="o">(</span><span class="n">endpoint</span><span class="o">)</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">        <span class="n">message</span> <span class="k">match</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">          <span class="c1">// Rpc消息，需要返回响应
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>          <span class="k">case</span> <span class="nc">RpcMessage</span><span class="o">(</span><span class="nc">_sender</span><span class="o">,</span> <span class="n">content</span><span class="o">,</span> <span class="n">context</span><span class="o">)</span> <span class="k">=&gt;</span>
+</span></span><span class="line"><span class="cl">            <span class="k">try</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">              <span class="c1">// 这里调用了endpoint的receiveAndReply方法处理消息
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>              <span class="n">endpoint</span><span class="o">.</span><span class="n">receiveAndReply</span><span class="o">(</span><span class="n">context</span><span class="o">).</span><span class="n">applyOrElse</span><span class="o">[</span><span class="kt">Any</span>, <span class="kt">Unit</span><span class="o">](</span><span class="n">content</span><span class="o">,</span> <span class="o">{</span> <span class="n">msg</span> <span class="k">=&gt;</span>
+</span></span><span class="line"><span class="cl">                <span class="k">throw</span> <span class="k">new</span> <span class="nc">SparkException</span><span class="o">(</span><span class="s">s&#34;Unsupported message </span><span class="si">$message</span><span class="s"> from </span><span class="si">${</span><span class="nc">_sender</span><span class="si">}</span><span class="s">&#34;</span><span class="o">)</span>
+</span></span><span class="line"><span class="cl">              <span class="o">})</span>
+</span></span><span class="line"><span class="cl">            <span class="o">}</span> <span class="k">catch</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">              <span class="k">case</span> <span class="nc">NonFatal</span><span class="o">(</span><span class="n">e</span><span class="o">)</span> <span class="k">=&gt;</span>
+</span></span><span class="line"><span class="cl">                <span class="n">context</span><span class="o">.</span><span class="n">sendFailure</span><span class="o">(</span><span class="n">e</span><span class="o">)</span>
+</span></span><span class="line"><span class="cl">                <span class="c1">// Throw the exception -- this exception will be caught by the safelyCall function.
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>                <span class="c1">// The endpoint&#39;s onError function will be called.
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>                <span class="k">throw</span> <span class="n">e</span>
+</span></span><span class="line"><span class="cl">            <span class="o">}</span>
+</span></span><span class="line"><span class="cl">          <span class="c1">// 不需要响应的Rpc消息
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>          <span class="k">case</span> <span class="nc">OneWayMessage</span><span class="o">(</span><span class="nc">_sender</span><span class="o">,</span> <span class="n">content</span><span class="o">)</span> <span class="k">=&gt;</span>
+</span></span><span class="line"><span class="cl">            <span class="c1">// 这里调用了endpoint的receive方法处理消息
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>            <span class="n">endpoint</span><span class="o">.</span><span class="n">receive</span><span class="o">.</span><span class="n">applyOrElse</span><span class="o">[</span><span class="kt">Any</span>, <span class="kt">Unit</span><span class="o">](</span><span class="n">content</span><span class="o">,</span> <span class="o">{</span> <span class="n">msg</span> <span class="k">=&gt;</span>
+</span></span><span class="line"><span class="cl">              <span class="k">throw</span> <span class="k">new</span> <span class="nc">SparkException</span><span class="o">(</span><span class="s">s&#34;Unsupported message </span><span class="si">$message</span><span class="s"> from </span><span class="si">${</span><span class="nc">_sender</span><span class="si">}</span><span class="s">&#34;</span><span class="o">)</span>
+</span></span><span class="line"><span class="cl">            <span class="o">})</span>
+</span></span><span class="line"><span class="cl">          <span class="c1">// 启动消息，在Inbox初始化时会发送
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>          <span class="k">case</span> <span class="nc">OnStart</span> <span class="k">=&gt;</span>
+</span></span><span class="line"><span class="cl">            <span class="c1">// 调用endpoint的OnStart回调函数
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>            <span class="n">endpoint</span><span class="o">.</span><span class="n">onStart</span><span class="o">()</span>
+</span></span><span class="line"><span class="cl">            <span class="o">}</span>
+</span></span><span class="line"><span class="cl">          <span class="c1">// 退出消息
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>          <span class="k">case</span> <span class="nc">OnStop</span> <span class="k">=&gt;</span>
+</span></span><span class="line"><span class="cl">            <span class="k">val</span> <span class="n">activeThreads</span> <span class="k">=</span> <span class="n">inbox</span><span class="o">.</span><span class="n">synchronized</span> <span class="o">{</span> <span class="n">inbox</span><span class="o">.</span><span class="n">numActiveThreads</span> <span class="o">}</span>
+</span></span><span class="line"><span class="cl">            <span class="n">assert</span><span class="o">(</span><span class="n">activeThreads</span> <span class="o">==</span> <span class="mi">1</span><span class="o">,</span>
+</span></span><span class="line"><span class="cl">              <span class="s">s&#34;There should be only a single active thread but found </span><span class="si">$activeThreads</span><span class="s"> threads.&#34;</span><span class="o">)</span>
+</span></span><span class="line"><span class="cl">            <span class="c1">// 从dispatcher注销该服务
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>            <span class="n">dispatcher</span><span class="o">.</span><span class="n">removeRpcEndpointRef</span><span class="o">(</span><span class="n">endpoint</span><span class="o">)</span>
+</span></span><span class="line"><span class="cl">            <span class="c1">// 调用endpoint的OnStop回调函数
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>            <span class="n">endpoint</span><span class="o">.</span><span class="n">onStop</span><span class="o">()</span>
+</span></span><span class="line"><span class="cl">      <span class="o">}</span>
+</span></span><span class="line"><span class="cl">    <span class="o">}</span>
+</span></span><span class="line"><span class="cl">  <span class="o">}</span>
+</span></span><span class="line"><span class="cl"><span class="o">}</span>
+</span></span></code></pre></td></tr></table></div>
 </div>
 </div><p>上面在处理RpcMessage消息时， 调用了RpcEndpoint的方法。</p>
 <div class="highlight"><div class="chroma">
@@ -847,12 +846,12 @@
 </span><span class="lnt">5
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-scala" data-lang="scala"><span class="k">private</span><span class="o">[</span><span class="kt">spark</span><span class="o">]</span> <span class="k">trait</span> <span class="nc">RpcEndpoint</span> <span class="o">{</span>
-  <span class="k">def</span> <span class="n">receiveAndReply</span><span class="o">(</span><span class="n">context</span><span class="k">:</span> <span class="kt">RpcCallContext</span><span class="o">)</span><span class="k">:</span> <span class="kt">PartialFunction</span><span class="o">[</span><span class="kt">Any</span>, <span class="kt">Unit</span><span class="o">]</span> <span class="k">=</span> <span class="o">{</span>
-    <span class="k">case</span> <span class="k">_</span> <span class="k">=&gt;</span> <span class="n">context</span><span class="o">.</span><span class="n">sendFailure</span><span class="o">(</span><span class="k">new</span> <span class="nc">SparkException</span><span class="o">(</span><span class="n">self</span> <span class="o">+</span> <span class="s">&#34; won&#39;t reply anything&#34;</span><span class="o">))</span>
-  <span class="o">}</span>
-<span class="o">}</span>
-</code></pre></td></tr></table></div>
+<pre tabindex="0" class="chroma"><code class="language-scala" data-lang="scala"><span class="line"><span class="cl"><span class="k">private</span><span class="o">[</span><span class="kt">spark</span><span class="o">]</span> <span class="k">trait</span> <span class="nc">RpcEndpoint</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">  <span class="k">def</span> <span class="n">receiveAndReply</span><span class="o">(</span><span class="n">context</span><span class="k">:</span> <span class="kt">RpcCallContext</span><span class="o">)</span><span class="k">:</span> <span class="kt">PartialFunction</span><span class="o">[</span><span class="kt">Any</span>, <span class="kt">Unit</span><span class="o">]</span> <span class="k">=</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">    <span class="k">case</span> <span class="k">_</span> <span class="k">=&gt;</span> <span class="n">context</span><span class="o">.</span><span class="n">sendFailure</span><span class="o">(</span><span class="k">new</span> <span class="nc">SparkException</span><span class="o">(</span><span class="n">self</span> <span class="o">+</span> <span class="s">&#34; won&#39;t reply anything&#34;</span><span class="o">))</span>
+</span></span><span class="line"><span class="cl">  <span class="o">}</span>
+</span></span><span class="line"><span class="cl"><span class="o">}</span>
+</span></span></code></pre></td></tr></table></div>
 </div>
 </div><p>可以看出消息最后转发给RpcEndpoint的receiveAndReply方法。receiveAndReply返回了偏函数，PartialFunction[Any, Unit]， 然后调用偏函数。如果自定义RpcEndpoint，必须实现receiveAndReply方法，使用case语句生成偏函数。可以参见这篇博客 {% post_link  spark-rpc-flow %}  的HelloEndpoint服务。</p>
 <h3 id="消息处理线程"><a href="#消息处理线程" class="anchor-link"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon anchor-icon"><path d="M326.612 185.391c59.747 59.809 58.927 155.698.36 214.59-.11.12-.24.25-.36.37l-67.2 67.2c-59.27 59.27-155.699 59.262-214.96 0-59.27-59.26-59.27-155.7 0-214.96l37.106-37.106c9.84-9.84 26.786-3.3 27.294 10.606.648 17.722 3.826 35.527 9.69 52.721 1.986 5.822.567 12.262-3.783 16.612l-13.087 13.087c-28.026 28.026-28.905 73.66-1.155 101.96 28.024 28.579 74.086 28.749 102.325.51l67.2-67.19c28.191-28.191 28.073-73.757 0-101.83-3.701-3.694-7.429-6.564-10.341-8.569a16.037 16.037 0 0 1-6.947-12.606c-.396-10.567 3.348-21.456 11.698-29.806l21.054-21.055c5.521-5.521 14.182-6.199 20.584-1.731a152.482 152.482 0 0 1 20.522 17.197zM467.547 44.449c-59.261-59.262-155.69-59.27-214.96 0l-67.2 67.2c-.12.12-.25.25-.36.37-58.566 58.892-59.387 154.781.36 214.59a152.454 152.454 0 0 0 20.521 17.196c6.402 4.468 15.064 3.789 20.584-1.731l21.054-21.055c8.35-8.35 12.094-19.239 11.698-29.806a16.037 16.037 0 0 0-6.947-12.606c-2.912-2.005-6.64-4.875-10.341-8.569-28.073-28.073-28.191-73.639 0-101.83l67.2-67.19c28.239-28.239 74.3-28.069 102.325.51 27.75 28.3 26.872 73.934-1.155 101.96l-13.087 13.087c-4.35 4.35-5.769 10.79-3.783 16.612 5.864 17.194 9.042 34.999 9.69 52.721.509 13.906 17.454 20.446 27.294 10.606l37.106-37.106c59.271-59.259 59.271-155.699.001-214.959z"/></svg></a>消息处理线程</h3>
@@ -870,16 +869,16 @@
 </span><span class="lnt">9
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-scala" data-lang="scala"><span class="k">private</span> <span class="k">val</span> <span class="n">threadpool</span><span class="k">:</span> <span class="kt">ThreadPoolExecutor</span> <span class="o">=</span> <span class="o">{</span>
-    <span class="k">val</span> <span class="n">numThreads</span> <span class="k">=</span> <span class="n">nettyEnv</span><span class="o">.</span><span class="n">conf</span><span class="o">.</span><span class="n">getInt</span><span class="o">(</span><span class="s">&#34;spark.rpc.netty.dispatcher.numThreads&#34;</span><span class="o">,</span>
-      <span class="n">math</span><span class="o">.</span><span class="n">max</span><span class="o">(</span><span class="mi">2</span><span class="o">,</span> <span class="nc">Runtime</span><span class="o">.</span><span class="n">getRuntime</span><span class="o">.</span><span class="n">availableProcessors</span><span class="o">()))</span>
-    <span class="k">val</span> <span class="n">pool</span> <span class="k">=</span> <span class="nc">ThreadUtils</span><span class="o">.</span><span class="n">newDaemonFixedThreadPool</span><span class="o">(</span><span class="n">numThreads</span><span class="o">,</span> <span class="s">&#34;dispatcher-event-loop&#34;</span><span class="o">)</span>
-    <span class="k">for</span> <span class="o">(</span><span class="n">i</span> <span class="k">&lt;-</span> <span class="mi">0</span> <span class="n">until</span> <span class="n">numThreads</span><span class="o">)</span> <span class="o">{</span>
-      <span class="n">pool</span><span class="o">.</span><span class="n">execute</span><span class="o">(</span><span class="k">new</span> <span class="nc">MessageLoop</span><span class="o">)</span>
-    <span class="o">}</span>
-    <span class="n">pool</span>
-  <span class="o">}</span>
-</code></pre></td></tr></table></div>
+<pre tabindex="0" class="chroma"><code class="language-scala" data-lang="scala"><span class="line"><span class="cl"><span class="k">private</span> <span class="k">val</span> <span class="n">threadpool</span><span class="k">:</span> <span class="kt">ThreadPoolExecutor</span> <span class="o">=</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">    <span class="k">val</span> <span class="n">numThreads</span> <span class="k">=</span> <span class="n">nettyEnv</span><span class="o">.</span><span class="n">conf</span><span class="o">.</span><span class="n">getInt</span><span class="o">(</span><span class="s">&#34;spark.rpc.netty.dispatcher.numThreads&#34;</span><span class="o">,</span>
+</span></span><span class="line"><span class="cl">      <span class="n">math</span><span class="o">.</span><span class="n">max</span><span class="o">(</span><span class="mi">2</span><span class="o">,</span> <span class="nc">Runtime</span><span class="o">.</span><span class="n">getRuntime</span><span class="o">.</span><span class="n">availableProcessors</span><span class="o">()))</span>
+</span></span><span class="line"><span class="cl">    <span class="k">val</span> <span class="n">pool</span> <span class="k">=</span> <span class="nc">ThreadUtils</span><span class="o">.</span><span class="n">newDaemonFixedThreadPool</span><span class="o">(</span><span class="n">numThreads</span><span class="o">,</span> <span class="s">&#34;dispatcher-event-loop&#34;</span><span class="o">)</span>
+</span></span><span class="line"><span class="cl">    <span class="k">for</span> <span class="o">(</span><span class="n">i</span> <span class="k">&lt;-</span> <span class="mi">0</span> <span class="n">until</span> <span class="n">numThreads</span><span class="o">)</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">      <span class="n">pool</span><span class="o">.</span><span class="n">execute</span><span class="o">(</span><span class="k">new</span> <span class="nc">MessageLoop</span><span class="o">)</span>
+</span></span><span class="line"><span class="cl">    <span class="o">}</span>
+</span></span><span class="line"><span class="cl">    <span class="n">pool</span>
+</span></span><span class="line"><span class="cl">  <span class="o">}</span>
+</span></span></code></pre></td></tr></table></div>
 </div>
 </div><p>Dispatcher的线程池会运行MessageLoop任务。MessageLoop会调用Inbox的process方法处理消息。</p>
 <p>当有消息通过Dispatcher分发时，Dispatcher会将服务的信息添加到 receivers队列里，所以这个队列会保存着有消息的服务。MessageLoop会循环从receivers中获取EndpointData，然后调用Inbox的process方法处理消息。</p>
@@ -909,29 +908,29 @@
 </span><span class="lnt">22
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-scala" data-lang="scala">  <span class="k">private</span> <span class="k">class</span> <span class="nc">MessageLoop</span> <span class="k">extends</span> <span class="nc">Runnable</span> <span class="o">{</span>
-    <span class="k">override</span> <span class="k">def</span> <span class="n">run</span><span class="o">()</span><span class="k">:</span> <span class="kt">Unit</span> <span class="o">=</span> <span class="o">{</span>
-      <span class="k">try</span> <span class="o">{</span>
-        <span class="k">while</span> <span class="o">(</span><span class="kc">true</span><span class="o">)</span> <span class="o">{</span>
-          <span class="k">try</span> <span class="o">{</span>
-            <span class="c1">// 从receivers队列获取EndpointData
-</span><span class="c1"></span>            <span class="k">val</span> <span class="n">data</span> <span class="k">=</span> <span class="n">receivers</span><span class="o">.</span><span class="n">take</span><span class="o">()</span>
-            <span class="k">if</span> <span class="o">(</span><span class="n">data</span> <span class="o">==</span> <span class="nc">PoisonPill</span><span class="o">)</span> <span class="o">{</span>
-              <span class="c1">// Put PoisonPill back so that other MessageLoops can see it.
-</span><span class="c1"></span>              <span class="n">receivers</span><span class="o">.</span><span class="n">offer</span><span class="o">(</span><span class="nc">PoisonPill</span><span class="o">)</span>
-              <span class="k">return</span>
-            <span class="o">}</span>
-            <span class="n">data</span><span class="o">.</span><span class="n">inbox</span><span class="o">.</span><span class="n">process</span><span class="o">(</span><span class="nc">Dispatcher</span><span class="o">.</span><span class="k">this</span><span class="o">)</span>
-          <span class="o">}</span> <span class="k">catch</span> <span class="o">{</span>
-            <span class="k">case</span> <span class="nc">NonFatal</span><span class="o">(</span><span class="n">e</span><span class="o">)</span> <span class="k">=&gt;</span> <span class="n">logError</span><span class="o">(</span><span class="n">e</span><span class="o">.</span><span class="n">getMessage</span><span class="o">,</span> <span class="n">e</span><span class="o">)</span>
-          <span class="o">}</span>
-        <span class="o">}</span>
-      <span class="o">}</span> <span class="k">catch</span> <span class="o">{</span>
-        <span class="k">case</span> <span class="n">ie</span><span class="k">:</span> <span class="kt">InterruptedException</span> <span class="o">=&gt;</span> <span class="c1">// exit
-</span><span class="c1"></span>      <span class="o">}</span>
-    <span class="o">}</span>
-  <span class="o">}</span>
-</code></pre></td></tr></table></div>
+<pre tabindex="0" class="chroma"><code class="language-scala" data-lang="scala"><span class="line"><span class="cl">  <span class="k">private</span> <span class="k">class</span> <span class="nc">MessageLoop</span> <span class="k">extends</span> <span class="nc">Runnable</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">    <span class="k">override</span> <span class="k">def</span> <span class="n">run</span><span class="o">()</span><span class="k">:</span> <span class="kt">Unit</span> <span class="o">=</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">      <span class="k">try</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">        <span class="k">while</span> <span class="o">(</span><span class="kc">true</span><span class="o">)</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">          <span class="k">try</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">            <span class="c1">// 从receivers队列获取EndpointData
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>            <span class="k">val</span> <span class="n">data</span> <span class="k">=</span> <span class="n">receivers</span><span class="o">.</span><span class="n">take</span><span class="o">()</span>
+</span></span><span class="line"><span class="cl">            <span class="k">if</span> <span class="o">(</span><span class="n">data</span> <span class="o">==</span> <span class="nc">PoisonPill</span><span class="o">)</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">              <span class="c1">// Put PoisonPill back so that other MessageLoops can see it.
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>              <span class="n">receivers</span><span class="o">.</span><span class="n">offer</span><span class="o">(</span><span class="nc">PoisonPill</span><span class="o">)</span>
+</span></span><span class="line"><span class="cl">              <span class="k">return</span>
+</span></span><span class="line"><span class="cl">            <span class="o">}</span>
+</span></span><span class="line"><span class="cl">            <span class="n">data</span><span class="o">.</span><span class="n">inbox</span><span class="o">.</span><span class="n">process</span><span class="o">(</span><span class="nc">Dispatcher</span><span class="o">.</span><span class="k">this</span><span class="o">)</span>
+</span></span><span class="line"><span class="cl">          <span class="o">}</span> <span class="k">catch</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">            <span class="k">case</span> <span class="nc">NonFatal</span><span class="o">(</span><span class="n">e</span><span class="o">)</span> <span class="k">=&gt;</span> <span class="n">logError</span><span class="o">(</span><span class="n">e</span><span class="o">.</span><span class="n">getMessage</span><span class="o">,</span> <span class="n">e</span><span class="o">)</span>
+</span></span><span class="line"><span class="cl">          <span class="o">}</span>
+</span></span><span class="line"><span class="cl">        <span class="o">}</span>
+</span></span><span class="line"><span class="cl">      <span class="o">}</span> <span class="k">catch</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">        <span class="k">case</span> <span class="n">ie</span><span class="k">:</span> <span class="kt">InterruptedException</span> <span class="o">=&gt;</span> <span class="c1">// exit
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>      <span class="o">}</span>
+</span></span><span class="line"><span class="cl">    <span class="o">}</span>
+</span></span><span class="line"><span class="cl">  <span class="o">}</span>
+</span></span></code></pre></td></tr></table></div>
 </div>
 </div><h2 id="发送响应"><a href="#发送响应" class="anchor-link"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon anchor-icon"><path d="M326.612 185.391c59.747 59.809 58.927 155.698.36 214.59-.11.12-.24.25-.36.37l-67.2 67.2c-59.27 59.27-155.699 59.262-214.96 0-59.27-59.26-59.27-155.7 0-214.96l37.106-37.106c9.84-9.84 26.786-3.3 27.294 10.606.648 17.722 3.826 35.527 9.69 52.721 1.986 5.822.567 12.262-3.783 16.612l-13.087 13.087c-28.026 28.026-28.905 73.66-1.155 101.96 28.024 28.579 74.086 28.749 102.325.51l67.2-67.19c28.191-28.191 28.073-73.757 0-101.83-3.701-3.694-7.429-6.564-10.341-8.569a16.037 16.037 0 0 1-6.947-12.606c-.396-10.567 3.348-21.456 11.698-29.806l21.054-21.055c5.521-5.521 14.182-6.199 20.584-1.731a152.482 152.482 0 0 1 20.522 17.197zM467.547 44.449c-59.261-59.262-155.69-59.27-214.96 0l-67.2 67.2c-.12.12-.25.25-.36.37-58.566 58.892-59.387 154.781.36 214.59a152.454 152.454 0 0 0 20.521 17.196c6.402 4.468 15.064 3.789 20.584-1.731l21.054-21.055c8.35-8.35 12.094-19.239 11.698-29.806a16.037 16.037 0 0 0-6.947-12.606c-2.912-2.005-6.64-4.875-10.341-8.569-28.073-28.073-28.191-73.639 0-101.83l67.2-67.19c28.239-28.239 74.3-28.069 102.325.51 27.75 28.3 26.872 73.934-1.155 101.96l-13.087 13.087c-4.35 4.35-5.769 10.79-3.783 16.612 5.864 17.194 9.042 34.999 9.69 52.721.509 13.906 17.454 20.446 27.294 10.606l37.106-37.106c59.271-59.259 59.271-155.699.001-214.959z"/></svg></a>发送响应</h2>
 <p>这里注意到Dispatcher分发消息的时候，实例化了RemoteNettyRpcCallContext， 它提供了send或reply方法，返回数据。</p>
@@ -952,20 +951,20 @@
 </span><span class="lnt">13
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-scala" data-lang="scala"><span class="k">private</span><span class="o">[</span><span class="kt">netty</span><span class="o">]</span> <span class="k">class</span> <span class="nc">RemoteNettyRpcCallContext</span><span class="o">(</span>
-    <span class="n">nettyEnv</span><span class="k">:</span> <span class="kt">NettyRpcEnv</span><span class="o">,</span>
-    <span class="n">callback</span><span class="k">:</span> <span class="kt">RpcResponseCallback</span><span class="o">,</span>
-    <span class="n">senderAddress</span><span class="k">:</span> <span class="kt">RpcAddress</span><span class="o">)</span>
-  <span class="k">extends</span> <span class="nc">NettyRpcCallContext</span><span class="o">(</span><span class="n">senderAddress</span><span class="o">)</span> <span class="o">{</span>
-
-  <span class="k">override</span> <span class="k">protected</span> <span class="k">def</span> <span class="n">send</span><span class="o">(</span><span class="n">message</span><span class="k">:</span> <span class="kt">Any</span><span class="o">)</span><span class="k">:</span> <span class="kt">Unit</span> <span class="o">=</span> <span class="o">{</span>
-    <span class="c1">// 序列化结果
-</span><span class="c1"></span>    <span class="k">val</span> <span class="n">reply</span> <span class="k">=</span> <span class="n">nettyEnv</span><span class="o">.</span><span class="n">serialize</span><span class="o">(</span><span class="n">message</span><span class="o">)</span>
-    <span class="c1">// 调用回调函数
-</span><span class="c1"></span>    <span class="n">callback</span><span class="o">.</span><span class="n">onSuccess</span><span class="o">(</span><span class="n">reply</span><span class="o">)</span>
-  <span class="o">}</span>
-<span class="o">}</span>
-</code></pre></td></tr></table></div>
+<pre tabindex="0" class="chroma"><code class="language-scala" data-lang="scala"><span class="line"><span class="cl"><span class="k">private</span><span class="o">[</span><span class="kt">netty</span><span class="o">]</span> <span class="k">class</span> <span class="nc">RemoteNettyRpcCallContext</span><span class="o">(</span>
+</span></span><span class="line"><span class="cl">    <span class="n">nettyEnv</span><span class="k">:</span> <span class="kt">NettyRpcEnv</span><span class="o">,</span>
+</span></span><span class="line"><span class="cl">    <span class="n">callback</span><span class="k">:</span> <span class="kt">RpcResponseCallback</span><span class="o">,</span>
+</span></span><span class="line"><span class="cl">    <span class="n">senderAddress</span><span class="k">:</span> <span class="kt">RpcAddress</span><span class="o">)</span>
+</span></span><span class="line"><span class="cl">  <span class="k">extends</span> <span class="nc">NettyRpcCallContext</span><span class="o">(</span><span class="n">senderAddress</span><span class="o">)</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="k">override</span> <span class="k">protected</span> <span class="k">def</span> <span class="n">send</span><span class="o">(</span><span class="n">message</span><span class="k">:</span> <span class="kt">Any</span><span class="o">)</span><span class="k">:</span> <span class="kt">Unit</span> <span class="o">=</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// 序列化结果
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="k">val</span> <span class="n">reply</span> <span class="k">=</span> <span class="n">nettyEnv</span><span class="o">.</span><span class="n">serialize</span><span class="o">(</span><span class="n">message</span><span class="o">)</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// 调用回调函数
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="n">callback</span><span class="o">.</span><span class="n">onSuccess</span><span class="o">(</span><span class="n">reply</span><span class="o">)</span>
+</span></span><span class="line"><span class="cl">  <span class="o">}</span>
+</span></span><span class="line"><span class="cl"><span class="o">}</span>
+</span></span></code></pre></td></tr></table></div>
 </div>
 </div><p>这里send方法，是调用了RpcResponseCallback回调函数。callback的定义，在TransportRequestHandler的processRpcRequest方法里。这里调用了TransportRequestHandler的respond方法。</p>
 <div class="highlight"><div class="chroma">
@@ -976,11 +975,11 @@
 </span><span class="lnt">4
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="nd">@Override</span>
-<span class="kd">public</span> <span class="kt">void</span> <span class="nf">onSuccess</span><span class="o">(</span><span class="n">ByteBuffer</span> <span class="n">response</span><span class="o">)</span> <span class="o">{</span>
-    <span class="n">respond</span><span class="o">(</span><span class="k">new</span> <span class="n">RpcResponse</span><span class="o">(</span><span class="n">req</span><span class="o">.</span><span class="na">requestId</span><span class="o">,</span> <span class="k">new</span> <span class="n">NioManagedBuffer</span><span class="o">(</span><span class="n">response</span><span class="o">)));</span>
-<span class="o">}</span>
-</code></pre></td></tr></table></div>
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="nd">@Override</span>
+</span></span><span class="line"><span class="cl"><span class="kd">public</span> <span class="kt">void</span> <span class="nf">onSuccess</span><span class="o">(</span><span class="n">ByteBuffer</span> <span class="n">response</span><span class="o">)</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">    <span class="n">respond</span><span class="o">(</span><span class="k">new</span> <span class="n">RpcResponse</span><span class="o">(</span><span class="n">req</span><span class="o">.</span><span class="na">requestId</span><span class="o">,</span> <span class="k">new</span> <span class="n">NioManagedBuffer</span><span class="o">(</span><span class="n">response</span><span class="o">)));</span>
+</span></span><span class="line"><span class="cl"><span class="o">}</span>
+</span></span></code></pre></td></tr></table></div>
 </div>
 </div><p>继续看respond方法，调用Channel的writeAndFlush将数据发送出去。</p>
 <div class="highlight"><div class="chroma">
@@ -999,19 +998,19 @@
 </span><span class="lnt">12
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java">  <span class="kd">private</span> <span class="kt">void</span> <span class="nf">respond</span><span class="o">(</span><span class="n">Encodable</span> <span class="n">result</span><span class="o">)</span> <span class="o">{</span>
-    <span class="n">SocketAddress</span> <span class="n">remoteAddress</span> <span class="o">=</span> <span class="n">channel</span><span class="o">.</span><span class="na">remoteAddress</span><span class="o">();</span>
-    <span class="n">channel</span><span class="o">.</span><span class="na">writeAndFlush</span><span class="o">(</span><span class="n">result</span><span class="o">).</span><span class="na">addListener</span><span class="o">(</span><span class="n">future</span> <span class="o">-&gt;</span> <span class="o">{</span>
-      <span class="k">if</span> <span class="o">(</span><span class="n">future</span><span class="o">.</span><span class="na">isSuccess</span><span class="o">())</span> <span class="o">{</span>
-        <span class="n">logger</span><span class="o">.</span><span class="na">trace</span><span class="o">(</span><span class="s">&#34;Sent result {} to client {}&#34;</span><span class="o">,</span> <span class="n">result</span><span class="o">,</span> <span class="n">remoteAddress</span><span class="o">);</span>
-      <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
-        <span class="n">logger</span><span class="o">.</span><span class="na">error</span><span class="o">(</span><span class="n">String</span><span class="o">.</span><span class="na">format</span><span class="o">(</span><span class="s">&#34;Error sending result %s to %s; closing connection&#34;</span><span class="o">,</span>
-          <span class="n">result</span><span class="o">,</span> <span class="n">remoteAddress</span><span class="o">),</span> <span class="n">future</span><span class="o">.</span><span class="na">cause</span><span class="o">());</span>
-        <span class="n">channel</span><span class="o">.</span><span class="na">close</span><span class="o">();</span>
-      <span class="o">}</span>
-    <span class="o">});</span>
-  <span class="o">}</span>
-</code></pre></td></tr></table></div>
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl">  <span class="kd">private</span> <span class="kt">void</span> <span class="nf">respond</span><span class="o">(</span><span class="n">Encodable</span> <span class="n">result</span><span class="o">)</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">    <span class="n">SocketAddress</span> <span class="n">remoteAddress</span> <span class="o">=</span> <span class="n">channel</span><span class="o">.</span><span class="na">remoteAddress</span><span class="o">();</span>
+</span></span><span class="line"><span class="cl">    <span class="n">channel</span><span class="o">.</span><span class="na">writeAndFlush</span><span class="o">(</span><span class="n">result</span><span class="o">).</span><span class="na">addListener</span><span class="o">(</span><span class="n">future</span> <span class="o">-&gt;</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">      <span class="k">if</span> <span class="o">(</span><span class="n">future</span><span class="o">.</span><span class="na">isSuccess</span><span class="o">())</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">        <span class="n">logger</span><span class="o">.</span><span class="na">trace</span><span class="o">(</span><span class="s">&#34;Sent result {} to client {}&#34;</span><span class="o">,</span> <span class="n">result</span><span class="o">,</span> <span class="n">remoteAddress</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">      <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">        <span class="n">logger</span><span class="o">.</span><span class="na">error</span><span class="o">(</span><span class="n">String</span><span class="o">.</span><span class="na">format</span><span class="o">(</span><span class="s">&#34;Error sending result %s to %s; closing connection&#34;</span><span class="o">,</span>
+</span></span><span class="line"><span class="cl">          <span class="n">result</span><span class="o">,</span> <span class="n">remoteAddress</span><span class="o">),</span> <span class="n">future</span><span class="o">.</span><span class="na">cause</span><span class="o">());</span>
+</span></span><span class="line"><span class="cl">        <span class="n">channel</span><span class="o">.</span><span class="na">close</span><span class="o">();</span>
+</span></span><span class="line"><span class="cl">      <span class="o">}</span>
+</span></span><span class="line"><span class="cl">    <span class="o">});</span>
+</span></span><span class="line"><span class="cl">  <span class="o">}</span>
+</span></span></code></pre></td></tr></table></div>
 </div>
 </div>
             </div>
@@ -1040,9 +1039,9 @@
 
         
     <div class="updated-badge-container">
-        <span title="Updated @ 2021-10-22 14:44:34 CST" style="cursor:help">
+        <span title="Updated @ 2023-07-02 16:59:09 CST" style="cursor:help">
 
-<svg xmlns="http://www.w3.org/2000/svg" width="130" height="20" class="updated-badge"><linearGradient id="b" x2="0" y2="100%"><stop offset="0" stop-color="#bbb" stop-opacity=".1"/><stop offset="1" stop-opacity=".1"/></linearGradient><clipPath id="a"><rect width="130" height="20" rx="3" fill="#fff"/></clipPath><g clip-path="url(#a)"><path class="updated-badge-left" d="M0 0h55v20H0z"/><path class="updated-badge-right" d="M55 0h75v20H55z"/><path fill="url(#b)" d="M0 0h130v20H0z"/></g><g fill="#fff" text-anchor="middle" font-size="110"><text x="285" y="150" fill="#010101" fill-opacity=".3" textLength="450" transform="scale(.1)">updated</text><text x="285" y="140" textLength="450" transform="scale(.1)">updated</text><text x="915" y="150" fill="#010101" fill-opacity=".3" textLength="650" transform="scale(.1)">2021-10-22</text><text x="915" y="140" textLength="650" transform="scale(.1)">2021-10-22</text></g></svg>
+<svg xmlns="http://www.w3.org/2000/svg" width="130" height="20" class="updated-badge"><linearGradient id="b" x2="0" y2="100%"><stop offset="0" stop-color="#bbb" stop-opacity=".1"/><stop offset="1" stop-opacity=".1"/></linearGradient><clipPath id="a"><rect width="130" height="20" rx="3" fill="#fff"/></clipPath><g clip-path="url(#a)"><path class="updated-badge-left" d="M0 0h55v20H0z"/><path class="updated-badge-right" d="M55 0h75v20H55z"/><path fill="url(#b)" d="M0 0h130v20H0z"/></g><g fill="#fff" text-anchor="middle" font-size="110"><text x="285" y="150" fill="#010101" fill-opacity=".3" textLength="450" transform="scale(.1)">updated</text><text x="285" y="140" textLength="450" transform="scale(.1)">updated</text><text x="915" y="150" fill="#010101" fill-opacity=".3" textLength="650" transform="scale(.1)">2023-07-02</text><text x="915" y="140" textLength="650" transform="scale(.1)">2023-07-02</text></g></svg>
         </span></div>
 
 

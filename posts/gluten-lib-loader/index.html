@@ -3,7 +3,7 @@
     <head prefix="og: http://ogp.me/ns# article: http://ogp.me/ns/article#">
     <meta charset="UTF-8" />
 
-    <meta name="generator" content="Hugo 0.88.1" /><meta name="theme-color" content="#fff" />
+    <meta name="generator" content="Hugo 0.115.0"><meta name="theme-color" content="#fff" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     
     <meta name="format-detection" content="telephone=no, date=no, address=no, email=no" />
@@ -14,11 +14,11 @@
 
     <title>Gluten 本地库加载原理 | 学习笔记</title>
 
-    <link rel="stylesheet" href="/css/meme.min.2d3e1834af2bc8dda20c7d74aaa1d8134845094441b7a554a5206ccd4b472596.css"/>
+    <link rel="stylesheet" href="/css/meme.min.91e7f58f97e1c60563ef481c38d9684fa8099537801d6f17bbfc724121e7d8f1.css"/>
 
     
     
-        <script src="/js/meme.min.800f61672145711eb3e1f29fcfcc3dbe0139dd459259718b611a0390f74703d1.js"></script>
+        <script src="/js/meme.min.3210a00c2fdcf6f831170b681b8ee40f83f0224663661e986872616aec45407f.js"></script>
 
     
 
@@ -54,7 +54,7 @@
         "@context": "https://schema.org",
         "@type": "BlogPosting",
         "datePublished": "2023-07-02T21:53:20+00:00",
-        "dateModified": "2023-07-10T16:51:27+08:00",
+        "dateModified": "2023-07-12T22:11:20+08:00",
         "url": "https://zhmin.github.io/posts/gluten-lib-loader/",
         "headline": "Gluten 本地库加载原理",
         "description": "简介 gluten以来底层的向量化计算引擎，向量化计算需要依赖操作系统的底层指令，所以这些引擎都是c++开发的。gluten通过jni方法加载和调用c++程序，这些c++都是封装成library格式的，……",
@@ -98,7 +98,7 @@
 <meta property="og:locale" content="zh" /><meta property="og:image" content="https://zhmin.github.io/icons/apple-touch-icon.png" />
     <meta property="og:type" content="article" />
     <meta property="article:published_time" content="2023-07-02T21:53:20&#43;00:00" />
-    <meta property="article:modified_time" content="2023-07-10T16:51:27&#43;08:00" />
+    <meta property="article:modified_time" content="2023-07-12T22:11:20&#43;08:00" />
     
     <meta property="article:section" content="posts" />
 
@@ -249,7 +249,6 @@ so --打包 --&gt; jar[jar包]
 jar --getResource --&gt; classloader
 classloader --write --&gt; temp_file[临时 so 文件]
 temp_file -- System.load --&gt; jvm
-
 </code></pre><p><code>so</code>文件都被打包为<code>jar</code>，然后被当作<code>resource file</code>被读取，并且写入到临时目录中.
 后面再通过<code>System.load</code>方法，加载临时目录的<code>so</code>文件。</p>
 <h2 id="运行错误"><a href="#运行错误" class="anchor-link"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon anchor-icon"><path d="M326.612 185.391c59.747 59.809 58.927 155.698.36 214.59-.11.12-.24.25-.36.37l-67.2 67.2c-59.27 59.27-155.699 59.262-214.96 0-59.27-59.26-59.27-155.7 0-214.96l37.106-37.106c9.84-9.84 26.786-3.3 27.294 10.606.648 17.722 3.826 35.527 9.69 52.721 1.986 5.822.567 12.262-3.783 16.612l-13.087 13.087c-28.026 28.026-28.905 73.66-1.155 101.96 28.024 28.579 74.086 28.749 102.325.51l67.2-67.19c28.191-28.191 28.073-73.757 0-101.83-3.701-3.694-7.429-6.564-10.341-8.569a16.037 16.037 0 0 1-6.947-12.606c-.396-10.567 3.348-21.456 11.698-29.806l21.054-21.055c5.521-5.521 14.182-6.199 20.584-1.731a152.482 152.482 0 0 1 20.522 17.197zM467.547 44.449c-59.261-59.262-155.69-59.27-214.96 0l-67.2 67.2c-.12.12-.25.25-.36.37-58.566 58.892-59.387 154.781.36 214.59a152.454 152.454 0 0 0 20.521 17.196c6.402 4.468 15.064 3.789 20.584-1.731l21.054-21.055c8.35-8.35 12.094-19.239 11.698-29.806a16.037 16.037 0 0 0-6.947-12.606c-2.912-2.005-6.64-4.875-10.341-8.569-28.073-28.073-28.191-73.639 0-101.83l67.2-67.19c28.239-28.239 74.3-28.069 102.325.51 27.75 28.3 26.872 73.934-1.155 101.96l-13.087 13.087c-4.35 4.35-5.769 10.79-3.783 16.612 5.864 17.194 9.042 34.999 9.69 52.721.509 13.906 17.454 20.446 27.294 10.606l37.106-37.106c59.271-59.259 59.271-155.699.001-214.959z"/></svg></a>运行错误</h2>
@@ -261,9 +260,9 @@ temp_file -- System.load --&gt; jvm
 </span><span class="lnt">2
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="nb">cd</span> gluten-library/  
-jar cvf gluten-thirdparty-lib-<span class="nv">$LINUX_OS</span>-<span class="nv">$VERSION</span>.jar ./
-</code></pre></td></tr></table></div>
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl"><span class="nb">cd</span> gluten-library/  
+</span></span><span class="line"><span class="cl">jar cvf gluten-thirdparty-lib-<span class="nv">$LINUX_OS</span>-<span class="nv">$VERSION</span>.jar ./
+</span></span></code></pre></td></tr></table></div>
 </div>
 </div><h2 id="源码实现"><a href="#源码实现" class="anchor-link"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon anchor-icon"><path d="M326.612 185.391c59.747 59.809 58.927 155.698.36 214.59-.11.12-.24.25-.36.37l-67.2 67.2c-59.27 59.27-155.699 59.262-214.96 0-59.27-59.26-59.27-155.7 0-214.96l37.106-37.106c9.84-9.84 26.786-3.3 27.294 10.606.648 17.722 3.826 35.527 9.69 52.721 1.986 5.822.567 12.262-3.783 16.612l-13.087 13.087c-28.026 28.026-28.905 73.66-1.155 101.96 28.024 28.579 74.086 28.749 102.325.51l67.2-67.19c28.191-28.191 28.073-73.757 0-101.83-3.701-3.694-7.429-6.564-10.341-8.569a16.037 16.037 0 0 1-6.947-12.606c-.396-10.567 3.348-21.456 11.698-29.806l21.054-21.055c5.521-5.521 14.182-6.199 20.584-1.731a152.482 152.482 0 0 1 20.522 17.197zM467.547 44.449c-59.261-59.262-155.69-59.27-214.96 0l-67.2 67.2c-.12.12-.25.25-.36.37-58.566 58.892-59.387 154.781.36 214.59a152.454 152.454 0 0 0 20.521 17.196c6.402 4.468 15.064 3.789 20.584-1.731l21.054-21.055c8.35-8.35 12.094-19.239 11.698-29.806a16.037 16.037 0 0 0-6.947-12.606c-2.912-2.005-6.64-4.875-10.341-8.569-28.073-28.073-28.191-73.639 0-101.83l67.2-67.19c28.239-28.239 74.3-28.069 102.325.51 27.75 28.3 26.872 73.934-1.155 101.96l-13.087 13.087c-4.35 4.35-5.769 10.79-3.783 16.612 5.864 17.194 9.042 34.999 9.69 52.721.509 13.906 17.454 20.446 27.294 10.606l37.106-37.106c59.271-59.259 59.271-155.699.001-214.959z"/></svg></a>源码实现</h2>
 <p>以<code>velox</code>向量化引擎为例，<code>VeloxSharedlibraryLoader</code>定义了需要加载哪些<code>so</code>文件的接口。它支持多种操作系统，不同操作系统需要的<code>so</code>文件会有差异。<code>VeloxSharedlibraryLoader</code>的每个子类对应着一个操作系统，以<code>VeloxSharedlibraryLoaderUbuntu2204</code>为例，它对应<code>ubuntu 22.04</code>版本的系统。</p>
@@ -281,7 +280,6 @@ VeloxSharedlibraryLoader &lt;|-- VeloxSharedlibraryLoaderCentos7
 VeloxSharedlibraryLoader &lt;|-- VeloxSharedlibraryLoaderCentos8
 VeloxSharedlibraryLoader &lt;|-- VeloxSharedlibraryLoaderUbuntu2004
 VeloxSharedlibraryLoader &lt;|-- VeloxSharedlibraryLoaderUbuntu2204
-
 </code></pre><p>上述接口只是定义了要加载哪些类，负责加载的逻辑由<code>JniLibLoader</code>负责。使用方法如下</p>
 <div class="highlight"><div class="chroma">
 <div class="table-container"><table class="lntable"><tr><td class="lntd">
@@ -291,11 +289,11 @@ VeloxSharedlibraryLoader &lt;|-- VeloxSharedlibraryLoaderUbuntu2204
 </span><span class="lnt">4
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-scala" data-lang="scala"><span class="n">jniLibLoader</span><span class="o">.</span><span class="n">newTransaction</span><span class="o">()</span>
-  <span class="o">.</span><span class="n">loadAndCreateLink</span><span class="o">(</span><span class="s">&#34;libthrift-0.16.0.so&#34;</span><span class="o">,</span> <span class="s">&#34;libthrift.so&#34;</span><span class="o">,</span> <span class="kc">false</span><span class="o">)</span>
-  <span class="o">.</span><span class="n">loadAndCreateLink</span><span class="o">(</span><span class="s">&#34;libsnappy.so.1&#34;</span><span class="o">,</span> <span class="s">&#34;libsnappy.so&#34;</span><span class="o">,</span> <span class="kc">false</span><span class="o">)</span>
-  <span class="o">.</span><span class="n">commit</span><span class="o">()</span>
-</code></pre></td></tr></table></div>
+<pre tabindex="0" class="chroma"><code class="language-scala" data-lang="scala"><span class="line"><span class="cl"><span class="n">jniLibLoader</span><span class="o">.</span><span class="n">newTransaction</span><span class="o">()</span>
+</span></span><span class="line"><span class="cl">  <span class="o">.</span><span class="n">loadAndCreateLink</span><span class="o">(</span><span class="s">&#34;libthrift-0.16.0.so&#34;</span><span class="o">,</span> <span class="s">&#34;libthrift.so&#34;</span><span class="o">,</span> <span class="kc">false</span><span class="o">)</span>
+</span></span><span class="line"><span class="cl">  <span class="o">.</span><span class="n">loadAndCreateLink</span><span class="o">(</span><span class="s">&#34;libsnappy.so.1&#34;</span><span class="o">,</span> <span class="s">&#34;libsnappy.so&#34;</span><span class="o">,</span> <span class="kc">false</span><span class="o">)</span>
+</span></span><span class="line"><span class="cl">  <span class="o">.</span><span class="n">commit</span><span class="o">()</span>
+</span></span></code></pre></td></tr></table></div>
 </div>
 </div><p><code>newTransacation</code>创建了<code>JniLoadTransaction</code>事务，它记录了需要加载的<code>so</code>文件集合。<code>LoadRequest</code>表示单个<code>so</code>文件。</p>
 <div class="highlight"><div class="chroma">
@@ -314,19 +312,19 @@ VeloxSharedlibraryLoader &lt;|-- VeloxSharedlibraryLoaderUbuntu2204
 </span><span class="lnt">12
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-scala" data-lang="scala"><span class="n">public</span> <span class="k">class</span> <span class="nc">JniLoadTransaction</span> <span class="o">{</span>
-	
-	<span class="k">private</span> <span class="k">final</span> <span class="nc">Map</span><span class="o">&lt;</span><span class="nc">String</span><span class="o">,</span> <span class="nc">LoadRequest</span><span class="o">&gt;</span> <span class="n">toLoad</span> <span class="k">=</span> <span class="k">new</span> <span class="nc">LinkedHashMap</span><span class="o">&lt;&gt;();</span> <span class="c1">// ordered
-</span><span class="c1"></span>	
-<span class="o">}</span>
-
-<span class="k">private</span> <span class="n">static</span> <span class="k">final</span> <span class="k">class</span> <span class="nc">LoadAction</span> <span class="o">{</span>  
-	<span class="k">final</span> <span class="nc">String</span> <span class="n">libName</span><span class="o">;</span>  
-	<span class="k">final</span> <span class="nc">String</span> <span class="n">linkName</span><span class="o">;</span>  
-	<span class="k">final</span> <span class="n">boolean</span> <span class="n">requireUnload</span><span class="o">;</span>  
-	<span class="k">final</span> <span class="nc">File</span> <span class="n">file</span><span class="o">;</span>
-<span class="o">}</span>
-</code></pre></td></tr></table></div>
+<pre tabindex="0" class="chroma"><code class="language-scala" data-lang="scala"><span class="line"><span class="cl"><span class="n">public</span> <span class="k">class</span> <span class="nc">JniLoadTransaction</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">	
+</span></span><span class="line"><span class="cl">	<span class="k">private</span> <span class="k">final</span> <span class="nc">Map</span><span class="o">&lt;</span><span class="nc">String</span><span class="o">,</span> <span class="nc">LoadRequest</span><span class="o">&gt;</span> <span class="n">toLoad</span> <span class="k">=</span> <span class="k">new</span> <span class="nc">LinkedHashMap</span><span class="o">&lt;&gt;();</span> <span class="c1">// ordered
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	
+</span></span><span class="line"><span class="cl"><span class="o">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="k">private</span> <span class="n">static</span> <span class="k">final</span> <span class="k">class</span> <span class="nc">LoadAction</span> <span class="o">{</span>  
+</span></span><span class="line"><span class="cl">	<span class="k">final</span> <span class="nc">String</span> <span class="n">libName</span><span class="o">;</span>  
+</span></span><span class="line"><span class="cl">	<span class="k">final</span> <span class="nc">String</span> <span class="n">linkName</span><span class="o">;</span>  
+</span></span><span class="line"><span class="cl">	<span class="k">final</span> <span class="n">boolean</span> <span class="n">requireUnload</span><span class="o">;</span>  
+</span></span><span class="line"><span class="cl">	<span class="k">final</span> <span class="nc">File</span> <span class="n">file</span><span class="o">;</span>
+</span></span><span class="line"><span class="cl"><span class="o">}</span>
+</span></span></code></pre></td></tr></table></div>
 </div>
 </div><p><code>JniLoadTransaction.commit</code>方法实现很简单，它会遍历<code>toLoad</code>集合，然后调用<code>getResourceAsStream</code>方法读取文件内容，并且复制到指定的临时目录作。最后调用<code>System.load</code>方法加载临时目录的文件。</p>
 <div class="highlight"><div class="chroma">
@@ -339,13 +337,13 @@ VeloxSharedlibraryLoader &lt;|-- VeloxSharedlibraryLoaderUbuntu2204
 </span><span class="lnt">6
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-scala" data-lang="scala"><span class="k">final</span> <span class="nc">Path</span> <span class="n">libPath</span> <span class="k">=</span> <span class="nc">Paths</span><span class="o">.</span><span class="n">get</span><span class="o">(</span><span class="n">workDir</span> <span class="o">+</span> <span class="s">&#34;/&#34;</span> <span class="o">+</span> <span class="n">libraryToLoad</span><span class="o">)</span>
-<span class="k">final</span> <span class="nc">File</span> <span class="n">temp</span> <span class="k">=</span> <span class="k">new</span> <span class="nc">File</span><span class="o">(</span><span class="n">workDir</span> <span class="o">+</span> <span class="s">&#34;/&#34;</span> <span class="o">+</span> <span class="n">libraryToLoad</span><span class="o">);</span>
-<span class="nc">InputStream</span> <span class="n">is</span> <span class="k">=</span> <span class="nc">JniLibLoader</span><span class="o">.</span><span class="n">class</span><span class="o">.</span><span class="n">getClassLoader</span><span class="o">()</span>  
-<span class="o">.</span><span class="n">getResourceAsStream</span><span class="o">(</span><span class="n">libraryToLoad</span><span class="o">)</span>
-<span class="nc">Files</span><span class="o">.</span><span class="n">copy</span><span class="o">(</span><span class="n">is</span><span class="o">,</span> <span class="n">temp</span><span class="o">.</span><span class="n">toPath</span><span class="o">());</span>
-<span class="nc">System</span><span class="o">.</span><span class="n">load</span><span class="o">(</span><span class="n">temp</span><span class="o">)</span>
-</code></pre></td></tr></table></div>
+<pre tabindex="0" class="chroma"><code class="language-scala" data-lang="scala"><span class="line"><span class="cl"><span class="k">final</span> <span class="nc">Path</span> <span class="n">libPath</span> <span class="k">=</span> <span class="nc">Paths</span><span class="o">.</span><span class="n">get</span><span class="o">(</span><span class="n">workDir</span> <span class="o">+</span> <span class="s">&#34;/&#34;</span> <span class="o">+</span> <span class="n">libraryToLoad</span><span class="o">)</span>
+</span></span><span class="line"><span class="cl"><span class="k">final</span> <span class="nc">File</span> <span class="n">temp</span> <span class="k">=</span> <span class="k">new</span> <span class="nc">File</span><span class="o">(</span><span class="n">workDir</span> <span class="o">+</span> <span class="s">&#34;/&#34;</span> <span class="o">+</span> <span class="n">libraryToLoad</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl"><span class="nc">InputStream</span> <span class="n">is</span> <span class="k">=</span> <span class="nc">JniLibLoader</span><span class="o">.</span><span class="n">class</span><span class="o">.</span><span class="n">getClassLoader</span><span class="o">()</span>  
+</span></span><span class="line"><span class="cl"><span class="o">.</span><span class="n">getResourceAsStream</span><span class="o">(</span><span class="n">libraryToLoad</span><span class="o">)</span>
+</span></span><span class="line"><span class="cl"><span class="nc">Files</span><span class="o">.</span><span class="n">copy</span><span class="o">(</span><span class="n">is</span><span class="o">,</span> <span class="n">temp</span><span class="o">.</span><span class="n">toPath</span><span class="o">());</span>
+</span></span><span class="line"><span class="cl"><span class="nc">System</span><span class="o">.</span><span class="n">load</span><span class="o">(</span><span class="n">temp</span><span class="o">)</span>
+</span></span></code></pre></td></tr></table></div>
 </div>
 </div>
             </div>
@@ -374,9 +372,9 @@ VeloxSharedlibraryLoader &lt;|-- VeloxSharedlibraryLoaderUbuntu2204
 
         
     <div class="updated-badge-container">
-        <span title="Updated @ 2023-07-10 16:51:27 CST" style="cursor:help">
+        <span title="Updated @ 2023-07-12 22:11:20 CST" style="cursor:help">
 
-<svg xmlns="http://www.w3.org/2000/svg" width="130" height="20" class="updated-badge"><linearGradient id="b" x2="0" y2="100%"><stop offset="0" stop-color="#bbb" stop-opacity=".1"/><stop offset="1" stop-opacity=".1"/></linearGradient><clipPath id="a"><rect width="130" height="20" rx="3" fill="#fff"/></clipPath><g clip-path="url(#a)"><path class="updated-badge-left" d="M0 0h55v20H0z"/><path class="updated-badge-right" d="M55 0h75v20H55z"/><path fill="url(#b)" d="M0 0h130v20H0z"/></g><g fill="#fff" text-anchor="middle" font-size="110"><text x="285" y="150" fill="#010101" fill-opacity=".3" textLength="450" transform="scale(.1)">updated</text><text x="285" y="140" textLength="450" transform="scale(.1)">updated</text><text x="915" y="150" fill="#010101" fill-opacity=".3" textLength="650" transform="scale(.1)">2023-07-10</text><text x="915" y="140" textLength="650" transform="scale(.1)">2023-07-10</text></g></svg>
+<svg xmlns="http://www.w3.org/2000/svg" width="130" height="20" class="updated-badge"><linearGradient id="b" x2="0" y2="100%"><stop offset="0" stop-color="#bbb" stop-opacity=".1"/><stop offset="1" stop-opacity=".1"/></linearGradient><clipPath id="a"><rect width="130" height="20" rx="3" fill="#fff"/></clipPath><g clip-path="url(#a)"><path class="updated-badge-left" d="M0 0h55v20H0z"/><path class="updated-badge-right" d="M55 0h75v20H55z"/><path fill="url(#b)" d="M0 0h130v20H0z"/></g><g fill="#fff" text-anchor="middle" font-size="110"><text x="285" y="150" fill="#010101" fill-opacity=".3" textLength="450" transform="scale(.1)">updated</text><text x="285" y="140" textLength="450" transform="scale(.1)">updated</text><text x="915" y="150" fill="#010101" fill-opacity=".3" textLength="650" transform="scale(.1)">2023-07-12</text><text x="915" y="140" textLength="650" transform="scale(.1)">2023-07-12</text></g></svg>
         </span></div>
 
 

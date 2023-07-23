@@ -3,7 +3,7 @@
     <head prefix="og: http://ogp.me/ns# article: http://ogp.me/ns/article#">
     <meta charset="UTF-8" />
 
-    <meta name="generator" content="Hugo 0.88.1" /><meta name="theme-color" content="#fff" />
+    <meta name="generator" content="Hugo 0.115.0"><meta name="theme-color" content="#fff" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     
     <meta name="format-detection" content="telephone=no, date=no, address=no, email=no" />
@@ -14,11 +14,11 @@
 
     <title>Spark SortShuffleWriter 原理 | 学习笔记</title>
 
-    <link rel="stylesheet" href="/css/meme.min.2d3e1834af2bc8dda20c7d74aaa1d8134845094441b7a554a5206ccd4b472596.css"/>
+    <link rel="stylesheet" href="/css/meme.min.91e7f58f97e1c60563ef481c38d9684fa8099537801d6f17bbfc724121e7d8f1.css"/>
 
     
     
-        <script src="/js/meme.min.800f61672145711eb3e1f29fcfcc3dbe0139dd459259718b611a0390f74703d1.js"></script>
+        <script src="/js/meme.min.3210a00c2fdcf6f831170b681b8ee40f83f0224663661e986872616aec45407f.js"></script>
 
     
 
@@ -54,7 +54,7 @@
         "@context": "https://schema.org",
         "@type": "BlogPosting",
         "datePublished": "2019-01-29T22:06:39+00:00",
-        "dateModified": "2021-10-22T14:44:34+08:00",
+        "dateModified": "2023-07-02T16:59:09+08:00",
         "url": "https://zhmin.github.io/posts/spark-shuffle-sort-writer-2/",
         "headline": "Spark SortShuffleWriter 原理",
         "description": "Spark SortShuffleWriter 原理 前言 在数据量大的情况，需要聚合或者排序的情形下，Spark 采用SortShuffleWriter完成 map 端的 shuffle 操作。SortShuffleWriter 根据是否需要聚合操作，分为两种不同的实现。 对……",
@@ -98,7 +98,7 @@
 <meta property="og:locale" content="zh" /><meta property="og:image" content="https://zhmin.github.io/spark-sort-shuffle-writer.svg" />
 <meta property="og:type" content="article" />
     <meta property="article:published_time" content="2019-01-29T22:06:39&#43;00:00" />
-    <meta property="article:modified_time" content="2021-10-22T14:44:34&#43;08:00" />
+    <meta property="article:modified_time" content="2023-07-02T16:59:09&#43;08:00" />
     
     <meta property="article:section" content="posts" />
 
@@ -256,14 +256,14 @@
 </span><span class="lnt">7
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-scala" data-lang="scala"><span class="k">class</span> <span class="nc">PartitionedPairBuffer</span> <span class="o">{</span>
-    <span class="c1">// 使用AnyRef数组，保存数据
-</span><span class="c1"></span>    <span class="k">private</span> <span class="k">var</span> <span class="n">data</span> <span class="k">=</span> <span class="k">new</span> <span class="nc">Array</span><span class="o">[</span><span class="kt">AnyRef</span><span class="o">](</span><span class="mi">2</span> <span class="o">*</span> <span class="n">initialCapacity</span><span class="o">)</span>
-
-    <span class="c1">// 数组的容量
-</span><span class="c1"></span>    <span class="k">private</span> <span class="k">var</span> <span class="n">capacity</span> <span class="k">=</span> <span class="n">initialCapacity</span>
-<span class="o">}</span>
-</code></pre></td></tr></table></div>
+<pre tabindex="0" class="chroma"><code class="language-scala" data-lang="scala"><span class="line"><span class="cl"><span class="k">class</span> <span class="nc">PartitionedPairBuffer</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// 使用AnyRef数组，保存数据
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="k">private</span> <span class="k">var</span> <span class="n">data</span> <span class="k">=</span> <span class="k">new</span> <span class="nc">Array</span><span class="o">[</span><span class="kt">AnyRef</span><span class="o">](</span><span class="mi">2</span> <span class="o">*</span> <span class="n">initialCapacity</span><span class="o">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="c1">// 数组的容量
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="k">private</span> <span class="k">var</span> <span class="n">capacity</span> <span class="k">=</span> <span class="n">initialCapacity</span>
+</span></span><span class="line"><span class="cl"><span class="o">}</span>
+</span></span></code></pre></td></tr></table></div>
 </div>
 </div><p>每条数据对应数组的两个位置，格式如下所示：</p>
 <div class="highlight"><div class="chroma">
@@ -273,10 +273,10 @@
 </span><span class="lnt">3
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell">-------------------------------------
-   partitionId, key    <span class="p">|</span>   value    <span class="p">|</span>
--------------------------------------
-</code></pre></td></tr></table></div>
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">-------------------------------------
+</span></span><span class="line"><span class="cl">   partitionId, key    <span class="p">|</span>   value    <span class="p">|</span>
+</span></span><span class="line"><span class="cl">-------------------------------------
+</span></span></code></pre></td></tr></table></div>
 </div>
 </div><p>排序的原理也简单，只是将数组进行排序，比较函数由外部指定。</p>
 <h2 id="partitionedappendonlymap-原理"><a href="#partitionedappendonlymap-原理" class="anchor-link"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon anchor-icon"><path d="M326.612 185.391c59.747 59.809 58.927 155.698.36 214.59-.11.12-.24.25-.36.37l-67.2 67.2c-59.27 59.27-155.699 59.262-214.96 0-59.27-59.26-59.27-155.7 0-214.96l37.106-37.106c9.84-9.84 26.786-3.3 27.294 10.606.648 17.722 3.826 35.527 9.69 52.721 1.986 5.822.567 12.262-3.783 16.612l-13.087 13.087c-28.026 28.026-28.905 73.66-1.155 101.96 28.024 28.579 74.086 28.749 102.325.51l67.2-67.19c28.191-28.191 28.073-73.757 0-101.83-3.701-3.694-7.429-6.564-10.341-8.569a16.037 16.037 0 0 1-6.947-12.606c-.396-10.567 3.348-21.456 11.698-29.806l21.054-21.055c5.521-5.521 14.182-6.199 20.584-1.731a152.482 152.482 0 0 1 20.522 17.197zM467.547 44.449c-59.261-59.262-155.69-59.27-214.96 0l-67.2 67.2c-.12.12-.25.25-.36.37-58.566 58.892-59.387 154.781.36 214.59a152.454 152.454 0 0 0 20.521 17.196c6.402 4.468 15.064 3.789 20.584-1.731l21.054-21.055c8.35-8.35 12.094-19.239 11.698-29.806a16.037 16.037 0 0 0-6.947-12.606c-2.912-2.005-6.64-4.875-10.341-8.569-28.073-28.073-28.191-73.639 0-101.83l67.2-67.19c28.239-28.239 74.3-28.069 102.325.51 27.75 28.3 26.872 73.934-1.155 101.96l-13.087 13.087c-4.35 4.35-5.769 10.79-3.783 16.612 5.864 17.194 9.042 34.999 9.69 52.721.509 13.906 17.454 20.446 27.294 10.606l37.106-37.106c59.271-59.259 59.271-155.699.001-214.959z"/></svg></a>PartitionedAppendOnlyMap 原理</h2>
@@ -302,18 +302,18 @@
 </span><span class="lnt">11
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-scala" data-lang="scala"><span class="k">class</span> <span class="nc">AppendOnlyMap</span><span class="o">[</span><span class="kt">K</span>, <span class="kt">V</span><span class="o">](</span><span class="n">initialCapacity</span><span class="k">:</span> <span class="kt">Int</span> <span class="o">=</span> <span class="mi">64</span><span class="o">)</span> <span class="o">{</span>
-  
-  <span class="c1">// 因为一条数据的 key 和 value，对应 array 的两个位置。所以数组的大小为 数据的容量的两倍
-</span><span class="c1"></span>  <span class="k">private</span> <span class="k">var</span> <span class="n">data</span> <span class="k">=</span> <span class="k">new</span> <span class="nc">Array</span><span class="o">[</span><span class="kt">AnyRef</span><span class="o">](</span><span class="mi">2</span> <span class="o">*</span> <span class="n">capacity</span><span class="o">)</span>
-  
-  <span class="c1">// 数组大小为2的倍数，这样对于计算位置非常方便，直接执行位操作
-</span><span class="c1"></span>  <span class="k">private</span> <span class="k">var</span> <span class="n">capacity</span> <span class="k">=</span> <span class="n">nextPowerOf2</span><span class="o">(</span><span class="n">initialCapacity</span><span class="o">)</span>
-  
-  <span class="c1">// 哈希算法采用 murmur3，这种方法计算的值更加平均分布，计算效率也更高
-</span><span class="c1"></span>  <span class="k">private</span> <span class="k">def</span> <span class="n">rehash</span><span class="o">(</span><span class="n">h</span><span class="k">:</span> <span class="kt">Int</span><span class="o">)</span><span class="k">:</span> <span class="kt">Int</span> <span class="o">=</span> <span class="nc">Hashing</span><span class="o">.</span><span class="n">murmur3_32</span><span class="o">().</span><span class="n">hashInt</span><span class="o">(</span><span class="n">h</span><span class="o">).</span><span class="n">asInt</span><span class="o">()</span>
-<span class="o">}</span>
-</code></pre></td></tr></table></div>
+<pre tabindex="0" class="chroma"><code class="language-scala" data-lang="scala"><span class="line"><span class="cl"><span class="k">class</span> <span class="nc">AppendOnlyMap</span><span class="o">[</span><span class="kt">K</span>, <span class="kt">V</span><span class="o">](</span><span class="n">initialCapacity</span><span class="k">:</span> <span class="kt">Int</span> <span class="o">=</span> <span class="mi">64</span><span class="o">)</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">  
+</span></span><span class="line"><span class="cl">  <span class="c1">// 因为一条数据的 key 和 value，对应 array 的两个位置。所以数组的大小为 数据的容量的两倍
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="k">private</span> <span class="k">var</span> <span class="n">data</span> <span class="k">=</span> <span class="k">new</span> <span class="nc">Array</span><span class="o">[</span><span class="kt">AnyRef</span><span class="o">](</span><span class="mi">2</span> <span class="o">*</span> <span class="n">capacity</span><span class="o">)</span>
+</span></span><span class="line"><span class="cl">  
+</span></span><span class="line"><span class="cl">  <span class="c1">// 数组大小为2的倍数，这样对于计算位置非常方便，直接执行位操作
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="k">private</span> <span class="k">var</span> <span class="n">capacity</span> <span class="k">=</span> <span class="n">nextPowerOf2</span><span class="o">(</span><span class="n">initialCapacity</span><span class="o">)</span>
+</span></span><span class="line"><span class="cl">  
+</span></span><span class="line"><span class="cl">  <span class="c1">// 哈希算法采用 murmur3，这种方法计算的值更加平均分布，计算效率也更高
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="k">private</span> <span class="k">def</span> <span class="n">rehash</span><span class="o">(</span><span class="n">h</span><span class="k">:</span> <span class="kt">Int</span><span class="o">)</span><span class="k">:</span> <span class="kt">Int</span> <span class="o">=</span> <span class="nc">Hashing</span><span class="o">.</span><span class="n">murmur3_32</span><span class="o">().</span><span class="n">hashInt</span><span class="o">(</span><span class="n">h</span><span class="o">).</span><span class="n">asInt</span><span class="o">()</span>
+</span></span><span class="line"><span class="cl"><span class="o">}</span>
+</span></span></code></pre></td></tr></table></div>
 </div>
 </div><p>分组之后，再来讲讲它的排序过程。<code>AppendOnlyMap</code>的数组会有空闲位置，所以 Spark 会将这些空闲位置移到数组后面，这样排序的数目会少一些。源码比较简单，这里只是说下过程</p>
 <ol>
@@ -340,20 +340,20 @@
 </span><span class="lnt">13
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-scala" data-lang="scala"><span class="k">val</span> <span class="n">mergeValue</span> <span class="k">=</span> <span class="n">aggregator</span><span class="o">.</span><span class="n">get</span><span class="o">.</span><span class="n">mergeValue</span>
-<span class="k">val</span> <span class="n">createCombiner</span> <span class="k">=</span> <span class="n">aggregator</span><span class="o">.</span><span class="n">get</span><span class="o">.</span><span class="n">createCombiner</span>
-<span class="k">var</span> <span class="n">kv</span><span class="k">:</span> <span class="kt">Product2</span><span class="o">[</span><span class="kt">K</span>, <span class="kt">V</span><span class="o">]</span> <span class="k">=</span> <span class="kc">null</span>
-<span class="c1">// 构造聚合函数，如果有旧有值，则调用聚合的mergeValue合并值。否则调用createCombiner实例combiner
-</span><span class="c1"></span><span class="k">val</span> <span class="n">update</span> <span class="k">=</span> <span class="o">(</span><span class="n">hadValue</span><span class="k">:</span> <span class="kt">Boolean</span><span class="o">,</span> <span class="n">oldValue</span><span class="k">:</span> <span class="kt">C</span><span class="o">)</span> <span class="k">=&gt;</span> <span class="o">{</span>
-    <span class="k">if</span> <span class="o">(</span><span class="n">hadValue</span><span class="o">)</span> <span class="n">mergeValue</span><span class="o">(</span><span class="n">oldValue</span><span class="o">,</span> <span class="n">kv</span><span class="o">.</span><span class="n">_2</span><span class="o">)</span> <span class="k">else</span> <span class="n">createCombiner</span><span class="o">(</span><span class="n">kv</span><span class="o">.</span><span class="n">_2</span><span class="o">)</span>
-<span class="o">}</span>
-<span class="k">while</span> <span class="o">(</span><span class="n">records</span><span class="o">.</span><span class="n">hasNext</span><span class="o">)</span> <span class="o">{</span>
-    <span class="n">addElementsRead</span><span class="o">()</span>
-    <span class="n">kv</span> <span class="k">=</span> <span class="n">records</span><span class="o">.</span><span class="n">next</span><span class="o">()</span>
-    <span class="c1">// 调用getPartition根据key，获得partitionId， 添加到map里
-</span><span class="c1"></span>    <span class="n">map</span><span class="o">.</span><span class="n">changeValue</span><span class="o">((</span><span class="n">getPartition</span><span class="o">(</span><span class="n">kv</span><span class="o">.</span><span class="n">_1</span><span class="o">),</span> <span class="n">kv</span><span class="o">.</span><span class="n">_1</span><span class="o">),</span> <span class="n">update</span><span class="o">)</span>
-<span class="o">}</span>
-</code></pre></td></tr></table></div>
+<pre tabindex="0" class="chroma"><code class="language-scala" data-lang="scala"><span class="line"><span class="cl"><span class="k">val</span> <span class="n">mergeValue</span> <span class="k">=</span> <span class="n">aggregator</span><span class="o">.</span><span class="n">get</span><span class="o">.</span><span class="n">mergeValue</span>
+</span></span><span class="line"><span class="cl"><span class="k">val</span> <span class="n">createCombiner</span> <span class="k">=</span> <span class="n">aggregator</span><span class="o">.</span><span class="n">get</span><span class="o">.</span><span class="n">createCombiner</span>
+</span></span><span class="line"><span class="cl"><span class="k">var</span> <span class="n">kv</span><span class="k">:</span> <span class="kt">Product2</span><span class="o">[</span><span class="kt">K</span>, <span class="kt">V</span><span class="o">]</span> <span class="k">=</span> <span class="kc">null</span>
+</span></span><span class="line"><span class="cl"><span class="c1">// 构造聚合函数，如果有旧有值，则调用聚合的mergeValue合并值。否则调用createCombiner实例combiner
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="k">val</span> <span class="n">update</span> <span class="k">=</span> <span class="o">(</span><span class="n">hadValue</span><span class="k">:</span> <span class="kt">Boolean</span><span class="o">,</span> <span class="n">oldValue</span><span class="k">:</span> <span class="kt">C</span><span class="o">)</span> <span class="k">=&gt;</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">    <span class="k">if</span> <span class="o">(</span><span class="n">hadValue</span><span class="o">)</span> <span class="n">mergeValue</span><span class="o">(</span><span class="n">oldValue</span><span class="o">,</span> <span class="n">kv</span><span class="o">.</span><span class="n">_2</span><span class="o">)</span> <span class="k">else</span> <span class="n">createCombiner</span><span class="o">(</span><span class="n">kv</span><span class="o">.</span><span class="n">_2</span><span class="o">)</span>
+</span></span><span class="line"><span class="cl"><span class="o">}</span>
+</span></span><span class="line"><span class="cl"><span class="k">while</span> <span class="o">(</span><span class="n">records</span><span class="o">.</span><span class="n">hasNext</span><span class="o">)</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">    <span class="n">addElementsRead</span><span class="o">()</span>
+</span></span><span class="line"><span class="cl">    <span class="n">kv</span> <span class="k">=</span> <span class="n">records</span><span class="o">.</span><span class="n">next</span><span class="o">()</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// 调用getPartition根据key，获得partitionId， 添加到map里
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="n">map</span><span class="o">.</span><span class="n">changeValue</span><span class="o">((</span><span class="n">getPartition</span><span class="o">(</span><span class="n">kv</span><span class="o">.</span><span class="n">_1</span><span class="o">),</span> <span class="n">kv</span><span class="o">.</span><span class="n">_1</span><span class="o">),</span> <span class="n">update</span><span class="o">)</span>
+</span></span><span class="line"><span class="cl"><span class="o">}</span>
+</span></span></code></pre></td></tr></table></div>
 </div>
 </div><h2 id="写文件"><a href="#写文件" class="anchor-link"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon anchor-icon"><path d="M326.612 185.391c59.747 59.809 58.927 155.698.36 214.59-.11.12-.24.25-.36.37l-67.2 67.2c-59.27 59.27-155.699 59.262-214.96 0-59.27-59.26-59.27-155.7 0-214.96l37.106-37.106c9.84-9.84 26.786-3.3 27.294 10.606.648 17.722 3.826 35.527 9.69 52.721 1.986 5.822.567 12.262-3.783 16.612l-13.087 13.087c-28.026 28.026-28.905 73.66-1.155 101.96 28.024 28.579 74.086 28.749 102.325.51l67.2-67.19c28.191-28.191 28.073-73.757 0-101.83-3.701-3.694-7.429-6.564-10.341-8.569a16.037 16.037 0 0 1-6.947-12.606c-.396-10.567 3.348-21.456 11.698-29.806l21.054-21.055c5.521-5.521 14.182-6.199 20.584-1.731a152.482 152.482 0 0 1 20.522 17.197zM467.547 44.449c-59.261-59.262-155.69-59.27-214.96 0l-67.2 67.2c-.12.12-.25.25-.36.37-58.566 58.892-59.387 154.781.36 214.59a152.454 152.454 0 0 0 20.521 17.196c6.402 4.468 15.064 3.789 20.584-1.731l21.054-21.055c8.35-8.35 12.094-19.239 11.698-29.806a16.037 16.037 0 0 0-6.947-12.606c-2.912-2.005-6.64-4.875-10.341-8.569-28.073-28.073-28.191-73.639 0-101.83l67.2-67.19c28.239-28.239 74.3-28.069 102.325.51 27.75 28.3 26.872 73.934-1.155 101.96l-13.087 13.087c-4.35 4.35-5.769 10.79-3.783 16.612 5.864 17.194 9.042 34.999 9.69 52.721.509 13.906 17.454 20.446 27.294 10.606l37.106-37.106c59.271-59.259 59.271-155.699.001-214.959z"/></svg></a>写文件</h2>
 <p>当数据越来越多时，单个<code>PartitionedAppendOnlyMap </code>或<code>PartitionedPairBuffer</code>的内存也是有限的，所以 Spark 会定期的检查是否需要触发 Spill 操作。当每插入 32 条数据时，就会检查当前的内存使用量。首先 Spark 会有限申请内存，如果申请内存不够，那么就会触发 spill 操作。</p>
@@ -386,32 +386,32 @@
 </span><span class="lnt">25
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-scala" data-lang="scala"><span class="k">protected</span> <span class="k">def</span> <span class="n">maybeSpill</span><span class="o">(</span><span class="n">collection</span><span class="k">:</span> <span class="kt">C</span><span class="o">,</span> <span class="n">currentMemory</span><span class="k">:</span> <span class="kt">Long</span><span class="o">)</span><span class="k">:</span> <span class="kt">Boolean</span> <span class="o">=</span> <span class="o">{</span>
-    <span class="k">var</span> <span class="n">shouldSpill</span> <span class="k">=</span> <span class="kc">false</span>
-    <span class="c1">// 每隔32条数据，检查是否当前使用内存超过限制
-</span><span class="c1"></span>    <span class="k">if</span> <span class="o">(</span><span class="n">elementsRead</span> <span class="o">%</span> <span class="mi">32</span> <span class="o">==</span> <span class="mi">0</span> <span class="o">&amp;&amp;</span> <span class="n">currentMemory</span> <span class="o">&gt;=</span> <span class="n">myMemoryThreshold</span><span class="o">)</span> <span class="o">{</span>
-      <span class="c1">// 申请2倍内存
-</span><span class="c1"></span>      <span class="k">val</span> <span class="n">amountToRequest</span> <span class="k">=</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">currentMemory</span> <span class="o">-</span> <span class="n">myMemoryThreshold</span>
-      <span class="k">val</span> <span class="n">granted</span> <span class="k">=</span> <span class="n">acquireMemory</span><span class="o">(</span><span class="n">amountToRequest</span><span class="o">)</span>
-      <span class="n">myMemoryThreshold</span> <span class="o">+=</span> <span class="n">granted</span>
-      <span class="c1">// 如果申请之后的内存，仍然不够存储，那么触发spill
-</span><span class="c1"></span>      <span class="n">shouldSpill</span> <span class="k">=</span> <span class="n">currentMemory</span> <span class="o">&gt;=</span> <span class="n">myMemoryThreshold</span>
-    <span class="o">}</span>
-    <span class="c1">// 当内存不足，或者数据大小超过了指定值，则执行spill
-</span><span class="c1"></span>    <span class="n">shouldSpill</span> <span class="k">=</span> <span class="n">shouldSpill</span> <span class="o">||</span> <span class="nc">_elementsRead</span> <span class="o">&gt;</span> <span class="n">numElementsForceSpillThreshold</span>
-    <span class="k">if</span> <span class="o">(</span><span class="n">shouldSpill</span><span class="o">)</span> <span class="o">{</span>
-      <span class="nc">_spillCount</span> <span class="o">+=</span> <span class="mi">1</span>
-      <span class="c1">// 调用spill
-</span><span class="c1"></span>      <span class="n">spill</span><span class="o">(</span><span class="n">collection</span><span class="o">)</span>
-      <span class="nc">_elementsRead</span> <span class="k">=</span> <span class="mi">0</span>
-      <span class="nc">_memoryBytesSpilled</span> <span class="o">+=</span> <span class="n">currentMemory</span>
-      <span class="c1">// 释放数据占用的内存
-</span><span class="c1"></span>      <span class="n">releaseMemory</span><span class="o">()</span>
-    <span class="o">}</span>
-    <span class="c1">// 返回是否触发了spill
-</span><span class="c1"></span>    <span class="n">shouldSpill</span>
-  <span class="o">}</span>
-</code></pre></td></tr></table></div>
+<pre tabindex="0" class="chroma"><code class="language-scala" data-lang="scala"><span class="line"><span class="cl"><span class="k">protected</span> <span class="k">def</span> <span class="n">maybeSpill</span><span class="o">(</span><span class="n">collection</span><span class="k">:</span> <span class="kt">C</span><span class="o">,</span> <span class="n">currentMemory</span><span class="k">:</span> <span class="kt">Long</span><span class="o">)</span><span class="k">:</span> <span class="kt">Boolean</span> <span class="o">=</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">    <span class="k">var</span> <span class="n">shouldSpill</span> <span class="k">=</span> <span class="kc">false</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// 每隔32条数据，检查是否当前使用内存超过限制
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="k">if</span> <span class="o">(</span><span class="n">elementsRead</span> <span class="o">%</span> <span class="mi">32</span> <span class="o">==</span> <span class="mi">0</span> <span class="o">&amp;&amp;</span> <span class="n">currentMemory</span> <span class="o">&gt;=</span> <span class="n">myMemoryThreshold</span><span class="o">)</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">      <span class="c1">// 申请2倍内存
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>      <span class="k">val</span> <span class="n">amountToRequest</span> <span class="k">=</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">currentMemory</span> <span class="o">-</span> <span class="n">myMemoryThreshold</span>
+</span></span><span class="line"><span class="cl">      <span class="k">val</span> <span class="n">granted</span> <span class="k">=</span> <span class="n">acquireMemory</span><span class="o">(</span><span class="n">amountToRequest</span><span class="o">)</span>
+</span></span><span class="line"><span class="cl">      <span class="n">myMemoryThreshold</span> <span class="o">+=</span> <span class="n">granted</span>
+</span></span><span class="line"><span class="cl">      <span class="c1">// 如果申请之后的内存，仍然不够存储，那么触发spill
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>      <span class="n">shouldSpill</span> <span class="k">=</span> <span class="n">currentMemory</span> <span class="o">&gt;=</span> <span class="n">myMemoryThreshold</span>
+</span></span><span class="line"><span class="cl">    <span class="o">}</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// 当内存不足，或者数据大小超过了指定值，则执行spill
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="n">shouldSpill</span> <span class="k">=</span> <span class="n">shouldSpill</span> <span class="o">||</span> <span class="nc">_elementsRead</span> <span class="o">&gt;</span> <span class="n">numElementsForceSpillThreshold</span>
+</span></span><span class="line"><span class="cl">    <span class="k">if</span> <span class="o">(</span><span class="n">shouldSpill</span><span class="o">)</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">      <span class="nc">_spillCount</span> <span class="o">+=</span> <span class="mi">1</span>
+</span></span><span class="line"><span class="cl">      <span class="c1">// 调用spill
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>      <span class="n">spill</span><span class="o">(</span><span class="n">collection</span><span class="o">)</span>
+</span></span><span class="line"><span class="cl">      <span class="nc">_elementsRead</span> <span class="k">=</span> <span class="mi">0</span>
+</span></span><span class="line"><span class="cl">      <span class="nc">_memoryBytesSpilled</span> <span class="o">+=</span> <span class="n">currentMemory</span>
+</span></span><span class="line"><span class="cl">      <span class="c1">// 释放数据占用的内存
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>      <span class="n">releaseMemory</span><span class="o">()</span>
+</span></span><span class="line"><span class="cl">    <span class="o">}</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// 返回是否触发了spill
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="n">shouldSpill</span>
+</span></span><span class="line"><span class="cl">  <span class="o">}</span>
+</span></span></code></pre></td></tr></table></div>
 </div>
 </div><p>这里涉及到了两个配置项：</p>
 <ol>
@@ -461,38 +461,38 @@
 </span><span class="lnt">31
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-scala" data-lang="scala"><span class="k">private</span> <span class="k">def</span> <span class="n">mergeSort</span><span class="o">(</span><span class="n">iterators</span><span class="k">:</span> <span class="kt">Seq</span><span class="o">[</span><span class="kt">Iterator</span><span class="o">[</span><span class="kt">Product2</span><span class="o">[</span><span class="kt">K</span>, <span class="kt">C</span><span class="o">]]],</span> <span class="n">comparator</span><span class="k">:</span> <span class="kt">Comparator</span><span class="o">[</span><span class="kt">K</span><span class="o">])</span>
-    <span class="k">:</span> <span class="kt">Iterator</span><span class="o">[</span><span class="kt">Product2</span><span class="o">[</span><span class="kt">K</span>, <span class="kt">C</span><span class="o">]]</span> <span class="k">=</span>
-<span class="o">{</span>
-  <span class="k">val</span> <span class="n">bufferedIters</span> <span class="k">=</span> <span class="n">iterators</span><span class="o">.</span><span class="n">filter</span><span class="o">(</span><span class="k">_</span><span class="o">.</span><span class="n">hasNext</span><span class="o">).</span><span class="n">map</span><span class="o">(</span><span class="k">_</span><span class="o">.</span><span class="n">buffered</span><span class="o">)</span>
-  <span class="k">type</span> <span class="kt">Iter</span> <span class="o">=</span> <span class="nc">BufferedIterator</span><span class="o">[</span><span class="kt">Product2</span><span class="o">[</span><span class="kt">K</span>, <span class="kt">C</span><span class="o">]]</span>
-  <span class="k">val</span> <span class="n">heap</span> <span class="k">=</span> <span class="k">new</span> <span class="n">mutable</span><span class="o">.</span><span class="nc">PriorityQueue</span><span class="o">[</span><span class="kt">Iter</span><span class="o">]()(</span><span class="k">new</span> <span class="nc">Ordering</span><span class="o">[</span><span class="kt">Iter</span><span class="o">]</span> <span class="o">{</span>
-    <span class="c1">// Use the reverse of comparator.compare because PriorityQueue dequeues the max
-</span><span class="c1"></span>    <span class="k">override</span> 
-    <span class="k">def</span> <span class="n">compare</span><span class="o">(</span><span class="n">x</span><span class="k">:</span> <span class="kt">Iter</span><span class="o">,</span> <span class="n">y</span><span class="k">:</span> <span class="kt">Iter</span><span class="o">)</span><span class="k">:</span> <span class="kt">Int</span> <span class="o">=</span> <span class="o">-</span><span class="n">comparator</span><span class="o">.</span><span class="n">compare</span><span class="o">(</span><span class="n">x</span><span class="o">.</span><span class="n">head</span><span class="o">.</span><span class="n">_1</span><span class="o">,</span> <span class="n">y</span><span class="o">.</span><span class="n">head</span><span class="o">.</span><span class="n">_1</span><span class="o">)</span>
-  <span class="o">})</span>
-  <span class="c1">// 添加所有的iterator
-</span><span class="c1"></span>  <span class="n">heap</span><span class="o">.</span><span class="n">enqueue</span><span class="o">(</span><span class="n">bufferedIters</span><span class="k">:</span> <span class="k">_</span><span class="kt">*</span><span class="o">)</span>  <span class="c1">// Will contain only the iterators with hasNext = true
-</span><span class="c1"></span>  <span class="k">new</span> <span class="nc">Iterator</span><span class="o">[</span><span class="kt">Product2</span><span class="o">[</span><span class="kt">K</span>, <span class="kt">C</span><span class="o">]]</span> <span class="o">{</span>
-    <span class="k">override</span> <span class="k">def</span> <span class="n">hasNext</span><span class="k">:</span> <span class="kt">Boolean</span> <span class="o">=</span> <span class="o">!</span><span class="n">heap</span><span class="o">.</span><span class="n">isEmpty</span>
-
-    <span class="k">override</span> <span class="k">def</span> <span class="n">next</span><span class="o">()</span><span class="k">:</span> <span class="kt">Product2</span><span class="o">[</span><span class="kt">K</span>, <span class="kt">C</span><span class="o">]</span> <span class="k">=</span> <span class="o">{</span>
-      <span class="k">if</span> <span class="o">(!</span><span class="n">hasNext</span><span class="o">)</span> <span class="o">{</span>
-        <span class="k">throw</span> <span class="k">new</span> <span class="nc">NoSuchElementException</span>
-      <span class="o">}</span>
-      <span class="c1">// 取出最小的iterator
-</span><span class="c1"></span>      <span class="k">val</span> <span class="n">firstBuf</span> <span class="k">=</span> <span class="n">heap</span><span class="o">.</span><span class="n">dequeue</span><span class="o">()</span>
-      <span class="c1">// 从iterator中取第一个数据
-</span><span class="c1"></span>      <span class="k">val</span> <span class="n">firstPair</span> <span class="k">=</span> <span class="n">firstBuf</span><span class="o">.</span><span class="n">next</span><span class="o">()</span>
-      <span class="k">if</span> <span class="o">(</span><span class="n">firstBuf</span><span class="o">.</span><span class="n">hasNext</span><span class="o">)</span> <span class="o">{</span>
-        <span class="c1">// 重新插入到PriorityQueue， 让PriorityQueue重新排序
-</span><span class="c1"></span>        <span class="n">heap</span><span class="o">.</span><span class="n">enqueue</span><span class="o">(</span><span class="n">firstBuf</span><span class="o">)</span>
-      <span class="o">}</span>
-      <span class="n">firstPair</span>
-    <span class="o">}</span>
-  <span class="o">}</span>
-<span class="o">}</span>
-</code></pre></td></tr></table></div>
+<pre tabindex="0" class="chroma"><code class="language-scala" data-lang="scala"><span class="line"><span class="cl"><span class="k">private</span> <span class="k">def</span> <span class="n">mergeSort</span><span class="o">(</span><span class="n">iterators</span><span class="k">:</span> <span class="kt">Seq</span><span class="o">[</span><span class="kt">Iterator</span><span class="o">[</span><span class="kt">Product2</span><span class="o">[</span><span class="kt">K</span>, <span class="kt">C</span><span class="o">]]],</span> <span class="n">comparator</span><span class="k">:</span> <span class="kt">Comparator</span><span class="o">[</span><span class="kt">K</span><span class="o">])</span>
+</span></span><span class="line"><span class="cl">    <span class="k">:</span> <span class="kt">Iterator</span><span class="o">[</span><span class="kt">Product2</span><span class="o">[</span><span class="kt">K</span>, <span class="kt">C</span><span class="o">]]</span> <span class="k">=</span>
+</span></span><span class="line"><span class="cl"><span class="o">{</span>
+</span></span><span class="line"><span class="cl">  <span class="k">val</span> <span class="n">bufferedIters</span> <span class="k">=</span> <span class="n">iterators</span><span class="o">.</span><span class="n">filter</span><span class="o">(</span><span class="k">_</span><span class="o">.</span><span class="n">hasNext</span><span class="o">).</span><span class="n">map</span><span class="o">(</span><span class="k">_</span><span class="o">.</span><span class="n">buffered</span><span class="o">)</span>
+</span></span><span class="line"><span class="cl">  <span class="k">type</span> <span class="kt">Iter</span> <span class="o">=</span> <span class="nc">BufferedIterator</span><span class="o">[</span><span class="kt">Product2</span><span class="o">[</span><span class="kt">K</span>, <span class="kt">C</span><span class="o">]]</span>
+</span></span><span class="line"><span class="cl">  <span class="k">val</span> <span class="n">heap</span> <span class="k">=</span> <span class="k">new</span> <span class="n">mutable</span><span class="o">.</span><span class="nc">PriorityQueue</span><span class="o">[</span><span class="kt">Iter</span><span class="o">]()(</span><span class="k">new</span> <span class="nc">Ordering</span><span class="o">[</span><span class="kt">Iter</span><span class="o">]</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// Use the reverse of comparator.compare because PriorityQueue dequeues the max
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="k">override</span> 
+</span></span><span class="line"><span class="cl">    <span class="k">def</span> <span class="n">compare</span><span class="o">(</span><span class="n">x</span><span class="k">:</span> <span class="kt">Iter</span><span class="o">,</span> <span class="n">y</span><span class="k">:</span> <span class="kt">Iter</span><span class="o">)</span><span class="k">:</span> <span class="kt">Int</span> <span class="o">=</span> <span class="o">-</span><span class="n">comparator</span><span class="o">.</span><span class="n">compare</span><span class="o">(</span><span class="n">x</span><span class="o">.</span><span class="n">head</span><span class="o">.</span><span class="n">_1</span><span class="o">,</span> <span class="n">y</span><span class="o">.</span><span class="n">head</span><span class="o">.</span><span class="n">_1</span><span class="o">)</span>
+</span></span><span class="line"><span class="cl">  <span class="o">})</span>
+</span></span><span class="line"><span class="cl">  <span class="c1">// 添加所有的iterator
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="n">heap</span><span class="o">.</span><span class="n">enqueue</span><span class="o">(</span><span class="n">bufferedIters</span><span class="k">:</span> <span class="k">_</span><span class="kt">*</span><span class="o">)</span>  <span class="c1">// Will contain only the iterators with hasNext = true
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="k">new</span> <span class="nc">Iterator</span><span class="o">[</span><span class="kt">Product2</span><span class="o">[</span><span class="kt">K</span>, <span class="kt">C</span><span class="o">]]</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">    <span class="k">override</span> <span class="k">def</span> <span class="n">hasNext</span><span class="k">:</span> <span class="kt">Boolean</span> <span class="o">=</span> <span class="o">!</span><span class="n">heap</span><span class="o">.</span><span class="n">isEmpty</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="k">override</span> <span class="k">def</span> <span class="n">next</span><span class="o">()</span><span class="k">:</span> <span class="kt">Product2</span><span class="o">[</span><span class="kt">K</span>, <span class="kt">C</span><span class="o">]</span> <span class="k">=</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">      <span class="k">if</span> <span class="o">(!</span><span class="n">hasNext</span><span class="o">)</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">        <span class="k">throw</span> <span class="k">new</span> <span class="nc">NoSuchElementException</span>
+</span></span><span class="line"><span class="cl">      <span class="o">}</span>
+</span></span><span class="line"><span class="cl">      <span class="c1">// 取出最小的iterator
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>      <span class="k">val</span> <span class="n">firstBuf</span> <span class="k">=</span> <span class="n">heap</span><span class="o">.</span><span class="n">dequeue</span><span class="o">()</span>
+</span></span><span class="line"><span class="cl">      <span class="c1">// 从iterator中取第一个数据
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>      <span class="k">val</span> <span class="n">firstPair</span> <span class="k">=</span> <span class="n">firstBuf</span><span class="o">.</span><span class="n">next</span><span class="o">()</span>
+</span></span><span class="line"><span class="cl">      <span class="k">if</span> <span class="o">(</span><span class="n">firstBuf</span><span class="o">.</span><span class="n">hasNext</span><span class="o">)</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">        <span class="c1">// 重新插入到PriorityQueue， 让PriorityQueue重新排序
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>        <span class="n">heap</span><span class="o">.</span><span class="n">enqueue</span><span class="o">(</span><span class="n">firstBuf</span><span class="o">)</span>
+</span></span><span class="line"><span class="cl">      <span class="o">}</span>
+</span></span><span class="line"><span class="cl">      <span class="n">firstPair</span>
+</span></span><span class="line"><span class="cl">    <span class="o">}</span>
+</span></span><span class="line"><span class="cl">  <span class="o">}</span>
+</span></span><span class="line"><span class="cl"><span class="o">}</span>
+</span></span></code></pre></td></tr></table></div>
 </div>
 </div>
             </div>
@@ -521,9 +521,9 @@
 
         
     <div class="updated-badge-container">
-        <span title="Updated @ 2021-10-22 14:44:34 CST" style="cursor:help">
+        <span title="Updated @ 2023-07-02 16:59:09 CST" style="cursor:help">
 
-<svg xmlns="http://www.w3.org/2000/svg" width="130" height="20" class="updated-badge"><linearGradient id="b" x2="0" y2="100%"><stop offset="0" stop-color="#bbb" stop-opacity=".1"/><stop offset="1" stop-opacity=".1"/></linearGradient><clipPath id="a"><rect width="130" height="20" rx="3" fill="#fff"/></clipPath><g clip-path="url(#a)"><path class="updated-badge-left" d="M0 0h55v20H0z"/><path class="updated-badge-right" d="M55 0h75v20H55z"/><path fill="url(#b)" d="M0 0h130v20H0z"/></g><g fill="#fff" text-anchor="middle" font-size="110"><text x="285" y="150" fill="#010101" fill-opacity=".3" textLength="450" transform="scale(.1)">updated</text><text x="285" y="140" textLength="450" transform="scale(.1)">updated</text><text x="915" y="150" fill="#010101" fill-opacity=".3" textLength="650" transform="scale(.1)">2021-10-22</text><text x="915" y="140" textLength="650" transform="scale(.1)">2021-10-22</text></g></svg>
+<svg xmlns="http://www.w3.org/2000/svg" width="130" height="20" class="updated-badge"><linearGradient id="b" x2="0" y2="100%"><stop offset="0" stop-color="#bbb" stop-opacity=".1"/><stop offset="1" stop-opacity=".1"/></linearGradient><clipPath id="a"><rect width="130" height="20" rx="3" fill="#fff"/></clipPath><g clip-path="url(#a)"><path class="updated-badge-left" d="M0 0h55v20H0z"/><path class="updated-badge-right" d="M55 0h75v20H55z"/><path fill="url(#b)" d="M0 0h130v20H0z"/></g><g fill="#fff" text-anchor="middle" font-size="110"><text x="285" y="150" fill="#010101" fill-opacity=".3" textLength="450" transform="scale(.1)">updated</text><text x="285" y="140" textLength="450" transform="scale(.1)">updated</text><text x="915" y="150" fill="#010101" fill-opacity=".3" textLength="650" transform="scale(.1)">2023-07-02</text><text x="915" y="140" textLength="650" transform="scale(.1)">2023-07-02</text></g></svg>
         </span></div>
 
 

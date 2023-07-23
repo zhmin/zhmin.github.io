@@ -3,7 +3,7 @@
     <head prefix="og: http://ogp.me/ns# article: http://ogp.me/ns/article#">
     <meta charset="UTF-8" />
 
-    <meta name="generator" content="Hugo 0.88.1" /><meta name="theme-color" content="#fff" />
+    <meta name="generator" content="Hugo 0.115.0"><meta name="theme-color" content="#fff" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     
     <meta name="format-detection" content="telephone=no, date=no, address=no, email=no" />
@@ -14,11 +14,11 @@
 
     <title>Datax数据统计原理 | 学习笔记</title>
 
-    <link rel="stylesheet" href="/css/meme.min.2d3e1834af2bc8dda20c7d74aaa1d8134845094441b7a554a5206ccd4b472596.css"/>
+    <link rel="stylesheet" href="/css/meme.min.91e7f58f97e1c60563ef481c38d9684fa8099537801d6f17bbfc724121e7d8f1.css"/>
 
     
     
-        <script src="/js/meme.min.800f61672145711eb3e1f29fcfcc3dbe0139dd459259718b611a0390f74703d1.js"></script>
+        <script src="/js/meme.min.3210a00c2fdcf6f831170b681b8ee40f83f0224663661e986872616aec45407f.js"></script>
 
     
 
@@ -54,7 +54,7 @@
         "@context": "https://schema.org",
         "@type": "BlogPosting",
         "datePublished": "2018-12-27T16:06:00+00:00",
-        "dateModified": "2023-07-10T09:52:11+08:00",
+        "dateModified": "2023-07-09T22:48:44+08:00",
         "url": "https://zhmin.github.io/posts/datax-statistics/",
         "headline": "Datax数据统计原理",
         "description": "Datax 数据统计原理 根据datax的运行模式的区别， 数据的收集会有些区别，这篇文章都是讲的在standalone模式下。 统计数据类 DataX所有的统计信息都会保存到Communication类里面。Comm……",
@@ -98,7 +98,7 @@
 <meta property="og:locale" content="zh" /><meta property="og:image" content="https://zhmin.github.io/icons/apple-touch-icon.png" />
     <meta property="og:type" content="article" />
     <meta property="article:published_time" content="2018-12-27T16:06:00&#43;00:00" />
-    <meta property="article:modified_time" content="2023-07-10T09:52:11&#43;08:00" />
+    <meta property="article:modified_time" content="2023-07-09T22:48:44&#43;08:00" />
     
     <meta property="article:section" content="posts" />
 
@@ -266,21 +266,21 @@
 </span><span class="lnt">14
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="c1">// 计数器
-</span><span class="c1"></span><span class="kd">private</span> <span class="n">Map</span><span class="o">&lt;</span><span class="n">String</span><span class="o">,</span> <span class="n">Number</span><span class="o">&gt;</span> <span class="n">counter</span><span class="o">;</span>
-
-<span class="c1">// 执行状态
-</span><span class="c1"></span><span class="kd">private</span> <span class="n">State</span> <span class="n">state</span><span class="o">;</span>
-
-<span class="c1">// 异常记录 
-</span><span class="c1"></span><span class="kd">private</span> <span class="n">Throwable</span> <span class="n">throwable</span><span class="o">;</span>
-
-<span class="c1">//在哪个时间点统计数据
-</span><span class="c1"></span><span class="kd">private</span> <span class="kt">long</span> <span class="n">timestamp</span><span class="o">;</span>
-
-<span class="c1">// 消息集合
-</span><span class="c1"></span><span class="n">Map</span><span class="o">&lt;</span><span class="n">String</span><span class="o">,</span> <span class="n">List</span><span class="o">&lt;</span><span class="n">String</span><span class="o">&gt;&gt;</span> <span class="n">message</span><span class="o">;</span>
-</code></pre></td></tr></table></div>
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="c1">// 计数器
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="kd">private</span> <span class="n">Map</span><span class="o">&lt;</span><span class="n">String</span><span class="o">,</span> <span class="n">Number</span><span class="o">&gt;</span> <span class="n">counter</span><span class="o">;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1">// 执行状态
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="kd">private</span> <span class="n">State</span> <span class="n">state</span><span class="o">;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1">// 异常记录 
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="kd">private</span> <span class="n">Throwable</span> <span class="n">throwable</span><span class="o">;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1">//在哪个时间点统计数据
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="kd">private</span> <span class="kt">long</span> <span class="n">timestamp</span><span class="o">;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1">// 消息集合
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="n">Map</span><span class="o">&lt;</span><span class="n">String</span><span class="o">,</span> <span class="n">List</span><span class="o">&lt;</span><span class="n">String</span><span class="o">&gt;&gt;</span> <span class="n">message</span><span class="o">;</span>
+</span></span></code></pre></td></tr></table></div>
 </div>
 </div><p>如果需要汇总多个Communication的数据，Communication提供了mergeFrom方法。根据不同的数据类型，对应着不同的操作</p>
 <ul>
@@ -301,12 +301,12 @@
 </span><span class="lnt">5
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">final</span> <span class="kd">class</span> <span class="nc">LocalTGCommunicationManager</span> <span class="o">{</span>
-    <span class="c1">// Key为task group id， Value为对应的Communication
-</span><span class="c1"></span>    <span class="kd">private</span> <span class="kd">static</span> <span class="n">Map</span><span class="o">&lt;</span><span class="n">Integer</span><span class="o">,</span> <span class="n">Communication</span><span class="o">&gt;</span> <span class="n">taskGroupCommunicationMap</span> <span class="o">=</span>
-        <span class="k">new</span> <span class="n">ConcurrentHashMap</span><span class="o">&lt;</span><span class="n">Integer</span><span class="o">,</span> <span class="n">Communication</span><span class="o">&gt;();</span>
-<span class="o">}</span>
-</code></pre></td></tr></table></div>
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="kd">public</span> <span class="kd">final</span> <span class="kd">class</span> <span class="nc">LocalTGCommunicationManager</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// Key为task group id， Value为对应的Communication
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="kd">private</span> <span class="kd">static</span> <span class="n">Map</span><span class="o">&lt;</span><span class="n">Integer</span><span class="o">,</span> <span class="n">Communication</span><span class="o">&gt;</span> <span class="n">taskGroupCommunicationMap</span> <span class="o">=</span>
+</span></span><span class="line"><span class="cl">        <span class="k">new</span> <span class="n">ConcurrentHashMap</span><span class="o">&lt;</span><span class="n">Integer</span><span class="o">,</span> <span class="n">Communication</span><span class="o">&gt;();</span>
+</span></span><span class="line"><span class="cl"><span class="o">}</span>
+</span></span></code></pre></td></tr></table></div>
 </div>
 </div><p>当task组在初始化的时候，都会向LocalTGCommunicationManager这里注册。</p>
 <div class="highlight"><div class="chroma">
@@ -318,12 +318,12 @@
 </span><span class="lnt">5
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="c1">// 这里只是简单保存到taskGroupCommunicationMap变量里
-</span><span class="c1"></span><span class="kd">public</span> <span class="kd">static</span> <span class="kt">void</span> <span class="nf">registerTaskGroupCommunication</span><span class="o">(</span>
-        <span class="kt">int</span> <span class="n">taskGroupId</span><span class="o">,</span> <span class="n">Communication</span> <span class="n">communication</span><span class="o">)</span> <span class="o">{</span>
-    <span class="n">taskGroupCommunicationMap</span><span class="o">.</span><span class="na">put</span><span class="o">(</span><span class="n">taskGroupId</span><span class="o">,</span> <span class="n">communication</span><span class="o">);</span>
-<span class="o">}</span>
-</code></pre></td></tr></table></div>
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="c1">// 这里只是简单保存到taskGroupCommunicationMap变量里
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="kd">public</span> <span class="kd">static</span> <span class="kt">void</span> <span class="nf">registerTaskGroupCommunication</span><span class="o">(</span>
+</span></span><span class="line"><span class="cl">        <span class="kt">int</span> <span class="n">taskGroupId</span><span class="o">,</span> <span class="n">Communication</span> <span class="n">communication</span><span class="o">)</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">    <span class="n">taskGroupCommunicationMap</span><span class="o">.</span><span class="na">put</span><span class="o">(</span><span class="n">taskGroupId</span><span class="o">,</span> <span class="n">communication</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl"><span class="o">}</span>
+</span></span></code></pre></td></tr></table></div>
 </div>
 </div><p>当需要统计所有的数据时，getJobCommunication实现了这个功能</p>
 <div class="highlight"><div class="chroma">
@@ -342,19 +342,19 @@
 </span><span class="lnt">12
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java">    <span class="kd">public</span> <span class="kd">static</span> <span class="n">Communication</span> <span class="nf">getJobCommunication</span><span class="o">()</span> <span class="o">{</span>
-        <span class="c1">// 初始一个新的Communication，然后更新它的数据
-</span><span class="c1"></span>        <span class="n">Communication</span> <span class="n">communication</span> <span class="o">=</span> <span class="k">new</span> <span class="n">Communication</span><span class="o">();</span>
-        <span class="n">communication</span><span class="o">.</span><span class="na">setState</span><span class="o">(</span><span class="n">State</span><span class="o">.</span><span class="na">SUCCEEDED</span><span class="o">);</span>
-        <span class="c1">// 遍历所有任务的Communication， 调用mergeFrom合并统计结果
-</span><span class="c1"></span>        <span class="k">for</span> <span class="o">(</span><span class="n">Communication</span> <span class="n">taskGroupCommunication</span> <span class="o">:</span>
-                <span class="n">taskGroupCommunicationMap</span><span class="o">.</span><span class="na">values</span><span class="o">())</span> <span class="o">{</span>
-            <span class="n">communication</span><span class="o">.</span><span class="na">mergeFrom</span><span class="o">(</span><span class="n">taskGroupCommunication</span><span class="o">);</span>
-        <span class="o">}</span>
-
-        <span class="k">return</span> <span class="n">communication</span><span class="o">;</span>
-    <span class="o">}</span>
-</code></pre></td></tr></table></div>
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl">    <span class="kd">public</span> <span class="kd">static</span> <span class="n">Communication</span> <span class="nf">getJobCommunication</span><span class="o">()</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">        <span class="c1">// 初始一个新的Communication，然后更新它的数据
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>        <span class="n">Communication</span> <span class="n">communication</span> <span class="o">=</span> <span class="k">new</span> <span class="n">Communication</span><span class="o">();</span>
+</span></span><span class="line"><span class="cl">        <span class="n">communication</span><span class="o">.</span><span class="na">setState</span><span class="o">(</span><span class="n">State</span><span class="o">.</span><span class="na">SUCCEEDED</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">        <span class="c1">// 遍历所有任务的Communication， 调用mergeFrom合并统计结果
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>        <span class="k">for</span> <span class="o">(</span><span class="n">Communication</span> <span class="n">taskGroupCommunication</span> <span class="o">:</span>
+</span></span><span class="line"><span class="cl">                <span class="n">taskGroupCommunicationMap</span><span class="o">.</span><span class="na">values</span><span class="o">())</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">            <span class="n">communication</span><span class="o">.</span><span class="na">mergeFrom</span><span class="o">(</span><span class="n">taskGroupCommunication</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">        <span class="o">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">        <span class="k">return</span> <span class="n">communication</span><span class="o">;</span>
+</span></span><span class="line"><span class="cl">    <span class="o">}</span>
+</span></span></code></pre></td></tr></table></div>
 </div>
 </div><h2 id="注册communication"><a href="#注册communication" class="anchor-link"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon anchor-icon"><path d="M326.612 185.391c59.747 59.809 58.927 155.698.36 214.59-.11.12-.24.25-.36.37l-67.2 67.2c-59.27 59.27-155.699 59.262-214.96 0-59.27-59.26-59.27-155.7 0-214.96l37.106-37.106c9.84-9.84 26.786-3.3 27.294 10.606.648 17.722 3.826 35.527 9.69 52.721 1.986 5.822.567 12.262-3.783 16.612l-13.087 13.087c-28.026 28.026-28.905 73.66-1.155 101.96 28.024 28.579 74.086 28.749 102.325.51l67.2-67.19c28.191-28.191 28.073-73.757 0-101.83-3.701-3.694-7.429-6.564-10.341-8.569a16.037 16.037 0 0 1-6.947-12.606c-.396-10.567 3.348-21.456 11.698-29.806l21.054-21.055c5.521-5.521 14.182-6.199 20.584-1.731a152.482 152.482 0 0 1 20.522 17.197zM467.547 44.449c-59.261-59.262-155.69-59.27-214.96 0l-67.2 67.2c-.12.12-.25.25-.36.37-58.566 58.892-59.387 154.781.36 214.59a152.454 152.454 0 0 0 20.521 17.196c6.402 4.468 15.064 3.789 20.584-1.731l21.054-21.055c8.35-8.35 12.094-19.239 11.698-29.806a16.037 16.037 0 0 0-6.947-12.606c-2.912-2.005-6.64-4.875-10.341-8.569-28.073-28.073-28.191-73.639 0-101.83l67.2-67.19c28.239-28.239 74.3-28.069 102.325.51 27.75 28.3 26.872 73.934-1.155 101.96l-13.087 13.087c-4.35 4.35-5.769 10.79-3.783 16.612 5.864 17.194 9.042 34.999 9.69 52.721.509 13.906 17.454 20.446 27.294 10.606l37.106-37.106c59.271-59.259 59.271-155.699.001-214.959z"/></svg></a>注册Communication</h2>
 <p>AbstractScheduler会根据切分后的任务，为每个task组注册一个Communication。registerCommunication接收task配置列表，里面每个配置都包含了task group id。</p>
@@ -371,7 +371,6 @@
 	LocalTGCommunicationManager --&gt;&gt;- AbstractCollector : #
 	AbstractCollector --&gt;&gt;- StandAloneJobContainerCommunicator : #
 	StandAloneJobContainerCommunicator --&gt;&gt;- AbstractScheduler : #
-
 </code></pre><h2 id="更新统计数据"><a href="#更新统计数据" class="anchor-link"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon anchor-icon"><path d="M326.612 185.391c59.747 59.809 58.927 155.698.36 214.59-.11.12-.24.25-.36.37l-67.2 67.2c-59.27 59.27-155.699 59.262-214.96 0-59.27-59.26-59.27-155.7 0-214.96l37.106-37.106c9.84-9.84 26.786-3.3 27.294 10.606.648 17.722 3.826 35.527 9.69 52.721 1.986 5.822.567 12.262-3.783 16.612l-13.087 13.087c-28.026 28.026-28.905 73.66-1.155 101.96 28.024 28.579 74.086 28.749 102.325.51l67.2-67.19c28.191-28.191 28.073-73.757 0-101.83-3.701-3.694-7.429-6.564-10.341-8.569a16.037 16.037 0 0 1-6.947-12.606c-.396-10.567 3.348-21.456 11.698-29.806l21.054-21.055c5.521-5.521 14.182-6.199 20.584-1.731a152.482 152.482 0 0 1 20.522 17.197zM467.547 44.449c-59.261-59.262-155.69-59.27-214.96 0l-67.2 67.2c-.12.12-.25.25-.36.37-58.566 58.892-59.387 154.781.36 214.59a152.454 152.454 0 0 0 20.521 17.196c6.402 4.468 15.064 3.789 20.584-1.731l21.054-21.055c8.35-8.35 12.094-19.239 11.698-29.806a16.037 16.037 0 0 0-6.947-12.606c-2.912-2.005-6.64-4.875-10.341-8.569-28.073-28.073-28.191-73.639 0-101.83l67.2-67.19c28.239-28.239 74.3-28.069 102.325.51 27.75 28.3 26.872 73.934-1.155 101.96l-13.087 13.087c-4.35 4.35-5.769 10.79-3.783 16.612 5.864 17.194 9.042 34.999 9.69 52.721.509 13.906 17.454 20.446 27.294 10.606l37.106-37.106c59.271-59.259 59.271-155.699.001-214.959z"/></svg></a>更新统计数据</h2>
 <p>每个任务执行都会对应着Channel，Channel当每处理一条数据时，都会更新对应Communication的统计信息。</p>
 <p>比如下面的pull方法是Writer从Channel拉取数据，每次pull的时候，都会调用statPull函数，会更新写入数据条数和字节数的信息。</p>
@@ -395,23 +394,23 @@
 </span><span class="lnt">16
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">abstract</span> <span class="kd">class</span> <span class="nc">Channel</span> <span class="o">{</span>
-
-	<span class="kd">private</span> <span class="n">Communication</span> <span class="n">currentCommunication</span><span class="o">;</span>
-    
-    <span class="kd">public</span> <span class="n">Record</span> <span class="nf">pull</span><span class="o">()</span> <span class="o">{</span>
-        <span class="n">Record</span> <span class="n">record</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="na">doPull</span><span class="o">();</span>
-        <span class="k">this</span><span class="o">.</span><span class="na">statPull</span><span class="o">(</span><span class="n">1L</span><span class="o">,</span> <span class="n">record</span><span class="o">.</span><span class="na">getByteSize</span><span class="o">());</span>
-        <span class="k">return</span> <span class="n">record</span><span class="o">;</span>
-    <span class="o">}</span>
-
-    <span class="kd">private</span> <span class="kt">void</span> <span class="nf">statPull</span><span class="o">(</span><span class="kt">long</span> <span class="n">recordSize</span><span class="o">,</span> <span class="kt">long</span> <span class="n">byteSize</span><span class="o">)</span> <span class="o">{</span>
-        <span class="n">currentCommunication</span><span class="o">.</span><span class="na">increaseCounter</span><span class="o">(</span>
-                <span class="n">CommunicationTool</span><span class="o">.</span><span class="na">WRITE_RECEIVED_RECORDS</span><span class="o">,</span> <span class="n">recordSize</span><span class="o">);</span>
-        <span class="n">currentCommunication</span><span class="o">.</span><span class="na">increaseCounter</span><span class="o">(</span>
-                <span class="n">CommunicationTool</span><span class="o">.</span><span class="na">WRITE_RECEIVED_BYTES</span><span class="o">,</span> <span class="n">byteSize</span><span class="o">);</span>
-    <span class="o">}</span>
-</code></pre></td></tr></table></div>
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="kd">public</span> <span class="kd">abstract</span> <span class="kd">class</span> <span class="nc">Channel</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">	<span class="kd">private</span> <span class="n">Communication</span> <span class="n">currentCommunication</span><span class="o">;</span>
+</span></span><span class="line"><span class="cl">    
+</span></span><span class="line"><span class="cl">    <span class="kd">public</span> <span class="n">Record</span> <span class="nf">pull</span><span class="o">()</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">        <span class="n">Record</span> <span class="n">record</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="na">doPull</span><span class="o">();</span>
+</span></span><span class="line"><span class="cl">        <span class="k">this</span><span class="o">.</span><span class="na">statPull</span><span class="o">(</span><span class="mi">1L</span><span class="o">,</span> <span class="n">record</span><span class="o">.</span><span class="na">getByteSize</span><span class="o">());</span>
+</span></span><span class="line"><span class="cl">        <span class="k">return</span> <span class="n">record</span><span class="o">;</span>
+</span></span><span class="line"><span class="cl">    <span class="o">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="kd">private</span> <span class="kt">void</span> <span class="nf">statPull</span><span class="o">(</span><span class="kt">long</span> <span class="n">recordSize</span><span class="o">,</span> <span class="kt">long</span> <span class="n">byteSize</span><span class="o">)</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">        <span class="n">currentCommunication</span><span class="o">.</span><span class="na">increaseCounter</span><span class="o">(</span>
+</span></span><span class="line"><span class="cl">                <span class="n">CommunicationTool</span><span class="o">.</span><span class="na">WRITE_RECEIVED_RECORDS</span><span class="o">,</span> <span class="n">recordSize</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">        <span class="n">currentCommunication</span><span class="o">.</span><span class="na">increaseCounter</span><span class="o">(</span>
+</span></span><span class="line"><span class="cl">                <span class="n">CommunicationTool</span><span class="o">.</span><span class="na">WRITE_RECEIVED_BYTES</span><span class="o">,</span> <span class="n">byteSize</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">    <span class="o">}</span>
+</span></span></code></pre></td></tr></table></div>
 </div>
 </div><h2 id="收集数据"><a href="#收集数据" class="anchor-link"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon anchor-icon"><path d="M326.612 185.391c59.747 59.809 58.927 155.698.36 214.59-.11.12-.24.25-.36.37l-67.2 67.2c-59.27 59.27-155.699 59.262-214.96 0-59.27-59.26-59.27-155.7 0-214.96l37.106-37.106c9.84-9.84 26.786-3.3 27.294 10.606.648 17.722 3.826 35.527 9.69 52.721 1.986 5.822.567 12.262-3.783 16.612l-13.087 13.087c-28.026 28.026-28.905 73.66-1.155 101.96 28.024 28.579 74.086 28.749 102.325.51l67.2-67.19c28.191-28.191 28.073-73.757 0-101.83-3.701-3.694-7.429-6.564-10.341-8.569a16.037 16.037 0 0 1-6.947-12.606c-.396-10.567 3.348-21.456 11.698-29.806l21.054-21.055c5.521-5.521 14.182-6.199 20.584-1.731a152.482 152.482 0 0 1 20.522 17.197zM467.547 44.449c-59.261-59.262-155.69-59.27-214.96 0l-67.2 67.2c-.12.12-.25.25-.36.37-58.566 58.892-59.387 154.781.36 214.59a152.454 152.454 0 0 0 20.521 17.196c6.402 4.468 15.064 3.789 20.584-1.731l21.054-21.055c8.35-8.35 12.094-19.239 11.698-29.806a16.037 16.037 0 0 0-6.947-12.606c-2.912-2.005-6.64-4.875-10.341-8.569-28.073-28.073-28.191-73.639 0-101.83l67.2-67.19c28.239-28.239 74.3-28.069 102.325.51 27.75 28.3 26.872 73.934-1.155 101.96l-13.087 13.087c-4.35 4.35-5.769 10.79-3.783 16.612 5.864 17.194 9.042 34.999 9.69 52.721.509 13.906 17.454 20.446 27.294 10.606l37.106-37.106c59.271-59.259 59.271-155.699.001-214.959z"/></svg></a>收集数据</h2>
 <ol>
@@ -475,9 +474,9 @@
 
         
     <div class="updated-badge-container">
-        <span title="Updated @ 2023-07-10 09:52:11 CST" style="cursor:help">
+        <span title="Updated @ 2023-07-09 22:48:44 CST" style="cursor:help">
 
-<svg xmlns="http://www.w3.org/2000/svg" width="130" height="20" class="updated-badge"><linearGradient id="b" x2="0" y2="100%"><stop offset="0" stop-color="#bbb" stop-opacity=".1"/><stop offset="1" stop-opacity=".1"/></linearGradient><clipPath id="a"><rect width="130" height="20" rx="3" fill="#fff"/></clipPath><g clip-path="url(#a)"><path class="updated-badge-left" d="M0 0h55v20H0z"/><path class="updated-badge-right" d="M55 0h75v20H55z"/><path fill="url(#b)" d="M0 0h130v20H0z"/></g><g fill="#fff" text-anchor="middle" font-size="110"><text x="285" y="150" fill="#010101" fill-opacity=".3" textLength="450" transform="scale(.1)">updated</text><text x="285" y="140" textLength="450" transform="scale(.1)">updated</text><text x="915" y="150" fill="#010101" fill-opacity=".3" textLength="650" transform="scale(.1)">2023-07-10</text><text x="915" y="140" textLength="650" transform="scale(.1)">2023-07-10</text></g></svg>
+<svg xmlns="http://www.w3.org/2000/svg" width="130" height="20" class="updated-badge"><linearGradient id="b" x2="0" y2="100%"><stop offset="0" stop-color="#bbb" stop-opacity=".1"/><stop offset="1" stop-opacity=".1"/></linearGradient><clipPath id="a"><rect width="130" height="20" rx="3" fill="#fff"/></clipPath><g clip-path="url(#a)"><path class="updated-badge-left" d="M0 0h55v20H0z"/><path class="updated-badge-right" d="M55 0h75v20H55z"/><path fill="url(#b)" d="M0 0h130v20H0z"/></g><g fill="#fff" text-anchor="middle" font-size="110"><text x="285" y="150" fill="#010101" fill-opacity=".3" textLength="450" transform="scale(.1)">updated</text><text x="285" y="140" textLength="450" transform="scale(.1)">updated</text><text x="915" y="150" fill="#010101" fill-opacity=".3" textLength="650" transform="scale(.1)">2023-07-09</text><text x="915" y="140" textLength="650" transform="scale(.1)">2023-07-09</text></g></svg>
         </span></div>
 
 

@@ -3,7 +3,7 @@
     <head prefix="og: http://ogp.me/ns# article: http://ogp.me/ns/article#">
     <meta charset="UTF-8" />
 
-    <meta name="generator" content="Hugo 0.88.1" /><meta name="theme-color" content="#fff" />
+    <meta name="generator" content="Hugo 0.115.0"><meta name="theme-color" content="#fff" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     
     <meta name="format-detection" content="telephone=no, date=no, address=no, email=no" />
@@ -14,11 +14,11 @@
 
     <title>Hbase Bulkload 原理 | 学习笔记</title>
 
-    <link rel="stylesheet" href="/css/meme.min.2d3e1834af2bc8dda20c7d74aaa1d8134845094441b7a554a5206ccd4b472596.css"/>
+    <link rel="stylesheet" href="/css/meme.min.91e7f58f97e1c60563ef481c38d9684fa8099537801d6f17bbfc724121e7d8f1.css"/>
 
     
     
-        <script src="/js/meme.min.800f61672145711eb3e1f29fcfcc3dbe0139dd459259718b611a0390f74703d1.js"></script>
+        <script src="/js/meme.min.3210a00c2fdcf6f831170b681b8ee40f83f0224663661e986872616aec45407f.js"></script>
 
     
 
@@ -54,7 +54,7 @@
         "@context": "https://schema.org",
         "@type": "BlogPosting",
         "datePublished": "2019-06-01T22:09:05+00:00",
-        "dateModified": "2021-10-22T14:44:34+08:00",
+        "dateModified": "2023-07-02T16:59:09+08:00",
         "url": "https://zhmin.github.io/posts/hbase-bulkload/",
         "headline": "Hbase Bulkload 原理",
         "description": "Hbase Bulkload 原理 当需要大批量的向Hbase导入数据时，我们可以使用Hbase Bulkload的方式，这种方式是先生成Hbase的底层存储文件 HFile，然后直接将这些 HFile 移动到Hbase的存储目录下。它相比调用……",
@@ -98,7 +98,7 @@
 <meta property="og:locale" content="zh" /><meta property="og:image" content="https://zhmin.github.io/icons/apple-touch-icon.png" />
     <meta property="og:type" content="article" />
     <meta property="article:published_time" content="2019-06-01T22:09:05&#43;00:00" />
-    <meta property="article:modified_time" content="2021-10-22T14:44:34&#43;08:00" />
+    <meta property="article:modified_time" content="2023-07-02T16:59:09&#43;08:00" />
     
     <meta property="article:section" content="posts" />
 
@@ -248,12 +248,12 @@
 </span><span class="lnt">5
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell">bin/hbase org.apache.hadoop.hbase.mapreduce.ImportTsv -Dimporttsv.separator<span class="o">=</span><span class="s1">$&#39;\x01&#39;</span>
--Dimporttsv.columns<span class="o">=</span>HBASE_ROW_KEY,cf:consumer,cf:product
- -Dimporttsv.bulk.output<span class="o">=</span>&lt;hdfs://storefileoutput&gt; &lt;hbase_table&gt; &lt;hdfs://datainput&gt;
- 
-bin/hbase org.apache.hadoop.hbase.mapreduce.LoadIncrementalHFiles &lt;hdfs://storefileoutput&gt; &lt;hbase_table&gt;
-</code></pre></td></tr></table></div>
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">bin/hbase org.apache.hadoop.hbase.mapreduce.ImportTsv -Dimporttsv.separator<span class="o">=</span><span class="s1">$&#39;\x01&#39;</span>
+</span></span><span class="line"><span class="cl">-Dimporttsv.columns<span class="o">=</span>HBASE_ROW_KEY,cf:consumer,cf:product
+</span></span><span class="line"><span class="cl"> -Dimporttsv.bulk.output<span class="o">=</span>&lt;hdfs://storefileoutput&gt; &lt;hbase_table&gt; &lt;hdfs://datainput&gt;
+</span></span><span class="line"><span class="cl"> 
+</span></span><span class="line"><span class="cl">bin/hbase org.apache.hadoop.hbase.mapreduce.LoadIncrementalHFiles &lt;hdfs://storefileoutput&gt; &lt;hbase_table&gt;
+</span></span></code></pre></td></tr></table></div>
 </div>
 </div><p>可以看到批量导入只需要上述两部， 生成 HFile 文件 和 加载 HFile 文件。下面我们来深入了解其原理</p>
 <h2 id="底层实现原理"><a href="#底层实现原理" class="anchor-link"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon anchor-icon"><path d="M326.612 185.391c59.747 59.809 58.927 155.698.36 214.59-.11.12-.24.25-.36.37l-67.2 67.2c-59.27 59.27-155.699 59.262-214.96 0-59.27-59.26-59.27-155.7 0-214.96l37.106-37.106c9.84-9.84 26.786-3.3 27.294 10.606.648 17.722 3.826 35.527 9.69 52.721 1.986 5.822.567 12.262-3.783 16.612l-13.087 13.087c-28.026 28.026-28.905 73.66-1.155 101.96 28.024 28.579 74.086 28.749 102.325.51l67.2-67.19c28.191-28.191 28.073-73.757 0-101.83-3.701-3.694-7.429-6.564-10.341-8.569a16.037 16.037 0 0 1-6.947-12.606c-.396-10.567 3.348-21.456 11.698-29.806l21.054-21.055c5.521-5.521 14.182-6.199 20.584-1.731a152.482 152.482 0 0 1 20.522 17.197zM467.547 44.449c-59.261-59.262-155.69-59.27-214.96 0l-67.2 67.2c-.12.12-.25.25-.36.37-58.566 58.892-59.387 154.781.36 214.59a152.454 152.454 0 0 0 20.521 17.196c6.402 4.468 15.064 3.789 20.584-1.731l21.054-21.055c8.35-8.35 12.094-19.239 11.698-29.806a16.037 16.037 0 0 0-6.947-12.606c-2.912-2.005-6.64-4.875-10.341-8.569-28.073-28.073-28.191-73.639 0-101.83l67.2-67.19c28.239-28.239 74.3-28.069 102.325.51 27.75 28.3 26.872 73.934-1.155 101.96l-13.087 13.087c-4.35 4.35-5.769 10.79-3.783 16.612 5.864 17.194 9.042 34.999 9.69 52.721.509 13.906 17.454 20.446 27.294 10.606l37.106-37.106c59.271-59.259 59.271-155.699.001-214.959z"/></svg></a>底层实现原理</h2>
@@ -357,63 +357,63 @@ bin/hbase org.apache.hadoop.hbase.mapreduce.LoadIncrementalHFiles &lt;hdfs://sto
 </span><span class="lnt">56
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">PutSortReducer</span> <span class="kd">extends</span>
-    <span class="n">Reducer</span><span class="o">&lt;</span><span class="n">ImmutableBytesWritable</span><span class="o">,</span> <span class="n">Put</span><span class="o">,</span> <span class="n">ImmutableBytesWritable</span><span class="o">,</span> <span class="n">KeyValue</span><span class="o">&gt;</span> <span class="o">{</span>
-  <span class="c1">// the cell creator
-</span><span class="c1"></span>  <span class="kd">private</span> <span class="n">CellCreator</span> <span class="n">kvCreator</span><span class="o">;</span>
-  
-  <span class="nd">@Override</span>
-  <span class="kd">protected</span> <span class="kt">void</span> <span class="nf">reduce</span><span class="o">(</span>
-      <span class="n">ImmutableBytesWritable</span> <span class="n">row</span><span class="o">,</span>
-      <span class="n">java</span><span class="o">.</span><span class="na">lang</span><span class="o">.</span><span class="na">Iterable</span><span class="o">&lt;</span><span class="n">Put</span><span class="o">&gt;</span> <span class="n">puts</span><span class="o">,</span>
-      <span class="n">Reducer</span><span class="o">&lt;</span><span class="n">ImmutableBytesWritable</span><span class="o">,</span> <span class="n">Put</span><span class="o">,</span>
-              <span class="n">ImmutableBytesWritable</span><span class="o">,</span> <span class="n">KeyValue</span><span class="o">&gt;.</span><span class="na">Context</span> <span class="n">context</span><span class="o">)</span>
-      <span class="kd">throws</span> <span class="n">java</span><span class="o">.</span><span class="na">io</span><span class="o">.</span><span class="na">IOException</span><span class="o">,</span> <span class="n">InterruptedException</span>
-  <span class="o">{</span>
-    <span class="c1">// 这里指定了一个阈值，默认为10GB过大。如果puts中不重复的数据过大，就会按照这个阈值分批处理
-</span><span class="c1"></span>    <span class="kt">long</span> <span class="n">threshold</span> <span class="o">=</span> <span class="n">context</span><span class="o">.</span><span class="na">getConfiguration</span><span class="o">().</span><span class="na">getLong</span><span class="o">(</span>
-        <span class="s">&#34;putsortreducer.row.threshold&#34;</span><span class="o">,</span> <span class="n">1L</span> <span class="o">*</span> <span class="o">(</span><span class="n">1</span><span class="o">&lt;&lt;</span><span class="n">30</span><span class="o">));</span>
-    <span class="n">Iterator</span><span class="o">&lt;</span><span class="n">Put</span><span class="o">&gt;</span> <span class="n">iter</span> <span class="o">=</span> <span class="n">puts</span><span class="o">.</span><span class="na">iterator</span><span class="o">();</span>
-    <span class="c1">// 开始遍历 puts列表
-</span><span class="c1"></span>    <span class="k">while</span> <span class="o">(</span><span class="n">iter</span><span class="o">.</span><span class="na">hasNext</span><span class="o">())</span> <span class="o">{</span>
-      <span class="c1">// 这个TreeSet就是用来去重的，比如向同个qualifier添加值
-</span><span class="c1"></span>      <span class="n">TreeSet</span><span class="o">&lt;</span><span class="n">KeyValue</span><span class="o">&gt;</span> <span class="n">map</span> <span class="o">=</span> <span class="k">new</span> <span class="n">TreeSet</span><span class="o">&lt;&gt;(</span><span class="n">CellComparator</span><span class="o">.</span><span class="na">getInstance</span><span class="o">());</span>
-      <span class="c1">// 记录map里保存的数据长度
-</span><span class="c1"></span>      <span class="kt">long</span> <span class="n">curSize</span> <span class="o">=</span> <span class="n">0</span><span class="o">;</span>
-      <span class="c1">// 遍历 puts列表，直到不重复的数据不超过阈值
-</span><span class="c1"></span>      <span class="k">while</span> <span class="o">(</span><span class="n">iter</span><span class="o">.</span><span class="na">hasNext</span><span class="o">()</span> <span class="o">&amp;&amp;</span> <span class="n">curSize</span> <span class="o">&lt;</span> <span class="n">threshold</span><span class="o">)</span> <span class="o">{</span>
-        <span class="c1">// 从列表中获取值
-</span><span class="c1"></span>        <span class="n">Put</span> <span class="n">p</span> <span class="o">=</span> <span class="n">iter</span><span class="o">.</span><span class="na">next</span><span class="o">();</span>
-        <span class="c1">// 遍历这个Put的所有列值，一个Put包含了多列，这些列由Cell表示
-</span><span class="c1"></span>        <span class="k">for</span> <span class="o">(</span><span class="n">List</span><span class="o">&lt;</span><span class="n">Cell</span><span class="o">&gt;</span> <span class="n">cells</span><span class="o">:</span> <span class="n">p</span><span class="o">.</span><span class="na">getFamilyCellMap</span><span class="o">().</span><span class="na">values</span><span class="o">())</span> <span class="o">{</span>
-          <span class="k">for</span> <span class="o">(</span><span class="n">Cell</span> <span class="n">cell</span><span class="o">:</span> <span class="n">cells</span><span class="o">)</span> <span class="o">{</span>
-            <span class="n">KeyValue</span> <span class="n">kv</span> <span class="o">=</span> <span class="kc">null</span><span class="o">;</span>
-            <span class="n">kv</span> <span class="o">=</span> <span class="n">KeyValueUtil</span><span class="o">.</span><span class="na">ensureKeyValue</span><span class="o">(</span><span class="n">cell</span><span class="o">);</span>
-            <span class="o">}</span>
-            <span class="k">if</span> <span class="o">(</span><span class="n">map</span><span class="o">.</span><span class="na">add</span><span class="o">(</span><span class="n">kv</span><span class="o">))</span> <span class="o">{</span>
-              <span class="c1">// 如果这列值没有重复，那么添加到TreeSet中，并且更新curSize的值
-</span><span class="c1"></span>              <span class="n">curSize</span> <span class="o">+=</span> <span class="n">kv</span><span class="o">.</span><span class="na">heapSize</span><span class="o">();</span>
-            <span class="o">}</span>
-          <span class="o">}</span>
-        <span class="o">}</span>
-      <span class="o">}</span>
-      <span class="c1">// 将map里的数据，调用context.write方法输出
-</span><span class="c1"></span>      <span class="kt">int</span> <span class="n">index</span> <span class="o">=</span> <span class="n">0</span><span class="o">;</span>
-      <span class="k">for</span> <span class="o">(</span><span class="n">KeyValue</span> <span class="n">kv</span> <span class="o">:</span> <span class="n">map</span><span class="o">)</span> <span class="o">{</span>
-        <span class="n">context</span><span class="o">.</span><span class="na">write</span><span class="o">(</span><span class="n">row</span><span class="o">,</span> <span class="n">kv</span><span class="o">);</span>
-        <span class="k">if</span> <span class="o">(++</span><span class="n">index</span> <span class="o">%</span> <span class="n">100</span> <span class="o">==</span> <span class="n">0</span><span class="o">)</span>
-          <span class="n">context</span><span class="o">.</span><span class="na">setStatus</span><span class="o">(</span><span class="s">&#34;Wrote &#34;</span> <span class="o">+</span> <span class="n">index</span><span class="o">);</span>
-      <span class="o">}</span>
-
-      <span class="c1">// 如果还有，那么说明此行数据过大，那么就会输出一条特殊的记录(null, null)
-</span><span class="c1"></span>      <span class="k">if</span> <span class="o">(</span><span class="n">iter</span><span class="o">.</span><span class="na">hasNext</span><span class="o">())</span> <span class="o">{</span>
-        <span class="c1">// force flush because we cannot guarantee intra-row sorted order
-</span><span class="c1"></span>        <span class="n">context</span><span class="o">.</span><span class="na">write</span><span class="o">(</span><span class="kc">null</span><span class="o">,</span> <span class="kc">null</span><span class="o">);</span>
-      <span class="o">}</span>
-    <span class="o">}</span>
-  <span class="o">}</span>
-<span class="o">}</span>  
-</code></pre></td></tr></table></div>
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">PutSortReducer</span> <span class="kd">extends</span>
+</span></span><span class="line"><span class="cl">    <span class="n">Reducer</span><span class="o">&lt;</span><span class="n">ImmutableBytesWritable</span><span class="o">,</span> <span class="n">Put</span><span class="o">,</span> <span class="n">ImmutableBytesWritable</span><span class="o">,</span> <span class="n">KeyValue</span><span class="o">&gt;</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">  <span class="c1">// the cell creator
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="kd">private</span> <span class="n">CellCreator</span> <span class="n">kvCreator</span><span class="o">;</span>
+</span></span><span class="line"><span class="cl">  
+</span></span><span class="line"><span class="cl">  <span class="nd">@Override</span>
+</span></span><span class="line"><span class="cl">  <span class="kd">protected</span> <span class="kt">void</span> <span class="nf">reduce</span><span class="o">(</span>
+</span></span><span class="line"><span class="cl">      <span class="n">ImmutableBytesWritable</span> <span class="n">row</span><span class="o">,</span>
+</span></span><span class="line"><span class="cl">      <span class="n">java</span><span class="o">.</span><span class="na">lang</span><span class="o">.</span><span class="na">Iterable</span><span class="o">&lt;</span><span class="n">Put</span><span class="o">&gt;</span> <span class="n">puts</span><span class="o">,</span>
+</span></span><span class="line"><span class="cl">      <span class="n">Reducer</span><span class="o">&lt;</span><span class="n">ImmutableBytesWritable</span><span class="o">,</span> <span class="n">Put</span><span class="o">,</span>
+</span></span><span class="line"><span class="cl">              <span class="n">ImmutableBytesWritable</span><span class="o">,</span> <span class="n">KeyValue</span><span class="o">&gt;.</span><span class="na">Context</span> <span class="n">context</span><span class="o">)</span>
+</span></span><span class="line"><span class="cl">      <span class="kd">throws</span> <span class="n">java</span><span class="o">.</span><span class="na">io</span><span class="o">.</span><span class="na">IOException</span><span class="o">,</span> <span class="n">InterruptedException</span>
+</span></span><span class="line"><span class="cl">  <span class="o">{</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// 这里指定了一个阈值，默认为10GB过大。如果puts中不重复的数据过大，就会按照这个阈值分批处理
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="kt">long</span> <span class="n">threshold</span> <span class="o">=</span> <span class="n">context</span><span class="o">.</span><span class="na">getConfiguration</span><span class="o">().</span><span class="na">getLong</span><span class="o">(</span>
+</span></span><span class="line"><span class="cl">        <span class="s">&#34;putsortreducer.row.threshold&#34;</span><span class="o">,</span> <span class="mi">1L</span> <span class="o">*</span> <span class="o">(</span><span class="mi">1</span><span class="o">&lt;&lt;</span><span class="mi">30</span><span class="o">));</span>
+</span></span><span class="line"><span class="cl">    <span class="n">Iterator</span><span class="o">&lt;</span><span class="n">Put</span><span class="o">&gt;</span> <span class="n">iter</span> <span class="o">=</span> <span class="n">puts</span><span class="o">.</span><span class="na">iterator</span><span class="o">();</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// 开始遍历 puts列表
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="k">while</span> <span class="o">(</span><span class="n">iter</span><span class="o">.</span><span class="na">hasNext</span><span class="o">())</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">      <span class="c1">// 这个TreeSet就是用来去重的，比如向同个qualifier添加值
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>      <span class="n">TreeSet</span><span class="o">&lt;</span><span class="n">KeyValue</span><span class="o">&gt;</span> <span class="n">map</span> <span class="o">=</span> <span class="k">new</span> <span class="n">TreeSet</span><span class="o">&lt;&gt;(</span><span class="n">CellComparator</span><span class="o">.</span><span class="na">getInstance</span><span class="o">());</span>
+</span></span><span class="line"><span class="cl">      <span class="c1">// 记录map里保存的数据长度
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>      <span class="kt">long</span> <span class="n">curSize</span> <span class="o">=</span> <span class="mi">0</span><span class="o">;</span>
+</span></span><span class="line"><span class="cl">      <span class="c1">// 遍历 puts列表，直到不重复的数据不超过阈值
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>      <span class="k">while</span> <span class="o">(</span><span class="n">iter</span><span class="o">.</span><span class="na">hasNext</span><span class="o">()</span> <span class="o">&amp;&amp;</span> <span class="n">curSize</span> <span class="o">&lt;</span> <span class="n">threshold</span><span class="o">)</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">        <span class="c1">// 从列表中获取值
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>        <span class="n">Put</span> <span class="n">p</span> <span class="o">=</span> <span class="n">iter</span><span class="o">.</span><span class="na">next</span><span class="o">();</span>
+</span></span><span class="line"><span class="cl">        <span class="c1">// 遍历这个Put的所有列值，一个Put包含了多列，这些列由Cell表示
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>        <span class="k">for</span> <span class="o">(</span><span class="n">List</span><span class="o">&lt;</span><span class="n">Cell</span><span class="o">&gt;</span> <span class="n">cells</span><span class="o">:</span> <span class="n">p</span><span class="o">.</span><span class="na">getFamilyCellMap</span><span class="o">().</span><span class="na">values</span><span class="o">())</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">          <span class="k">for</span> <span class="o">(</span><span class="n">Cell</span> <span class="n">cell</span><span class="o">:</span> <span class="n">cells</span><span class="o">)</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">            <span class="n">KeyValue</span> <span class="n">kv</span> <span class="o">=</span> <span class="kc">null</span><span class="o">;</span>
+</span></span><span class="line"><span class="cl">            <span class="n">kv</span> <span class="o">=</span> <span class="n">KeyValueUtil</span><span class="o">.</span><span class="na">ensureKeyValue</span><span class="o">(</span><span class="n">cell</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">            <span class="o">}</span>
+</span></span><span class="line"><span class="cl">            <span class="k">if</span> <span class="o">(</span><span class="n">map</span><span class="o">.</span><span class="na">add</span><span class="o">(</span><span class="n">kv</span><span class="o">))</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">              <span class="c1">// 如果这列值没有重复，那么添加到TreeSet中，并且更新curSize的值
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>              <span class="n">curSize</span> <span class="o">+=</span> <span class="n">kv</span><span class="o">.</span><span class="na">heapSize</span><span class="o">();</span>
+</span></span><span class="line"><span class="cl">            <span class="o">}</span>
+</span></span><span class="line"><span class="cl">          <span class="o">}</span>
+</span></span><span class="line"><span class="cl">        <span class="o">}</span>
+</span></span><span class="line"><span class="cl">      <span class="o">}</span>
+</span></span><span class="line"><span class="cl">      <span class="c1">// 将map里的数据，调用context.write方法输出
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>      <span class="kt">int</span> <span class="n">index</span> <span class="o">=</span> <span class="mi">0</span><span class="o">;</span>
+</span></span><span class="line"><span class="cl">      <span class="k">for</span> <span class="o">(</span><span class="n">KeyValue</span> <span class="n">kv</span> <span class="o">:</span> <span class="n">map</span><span class="o">)</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">        <span class="n">context</span><span class="o">.</span><span class="na">write</span><span class="o">(</span><span class="n">row</span><span class="o">,</span> <span class="n">kv</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">        <span class="k">if</span> <span class="o">(++</span><span class="n">index</span> <span class="o">%</span> <span class="mi">100</span> <span class="o">==</span> <span class="mi">0</span><span class="o">)</span>
+</span></span><span class="line"><span class="cl">          <span class="n">context</span><span class="o">.</span><span class="na">setStatus</span><span class="o">(</span><span class="s">&#34;Wrote &#34;</span> <span class="o">+</span> <span class="n">index</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">      <span class="o">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">      <span class="c1">// 如果还有，那么说明此行数据过大，那么就会输出一条特殊的记录(null, null)
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>      <span class="k">if</span> <span class="o">(</span><span class="n">iter</span><span class="o">.</span><span class="na">hasNext</span><span class="o">())</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">        <span class="c1">// force flush because we cannot guarantee intra-row sorted order
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>        <span class="n">context</span><span class="o">.</span><span class="na">write</span><span class="o">(</span><span class="kc">null</span><span class="o">,</span> <span class="kc">null</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">      <span class="o">}</span>
+</span></span><span class="line"><span class="cl">    <span class="o">}</span>
+</span></span><span class="line"><span class="cl">  <span class="o">}</span>
+</span></span><span class="line"><span class="cl"><span class="o">}</span>  
+</span></span></code></pre></td></tr></table></div>
 </div>
 </div><p>从上面的代码可以看到，PutSortReducer会使用到TreeSet去重，TreeSet会保存数据，默认不超过 1GB。如果当Reducer的内存设置过小时，并且数据过大时，是有可能会造成内存溢出。如果遇到这种情况，可以通过减少阈值或者增大Reducer的内存。</p>
 <h3 id="两种实现方式比较"><a href="#两种实现方式比较" class="anchor-link"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon anchor-icon"><path d="M326.612 185.391c59.747 59.809 58.927 155.698.36 214.59-.11.12-.24.25-.36.37l-67.2 67.2c-59.27 59.27-155.699 59.262-214.96 0-59.27-59.26-59.27-155.7 0-214.96l37.106-37.106c9.84-9.84 26.786-3.3 27.294 10.606.648 17.722 3.826 35.527 9.69 52.721 1.986 5.822.567 12.262-3.783 16.612l-13.087 13.087c-28.026 28.026-28.905 73.66-1.155 101.96 28.024 28.579 74.086 28.749 102.325.51l67.2-67.19c28.191-28.191 28.073-73.757 0-101.83-3.701-3.694-7.429-6.564-10.341-8.569a16.037 16.037 0 0 1-6.947-12.606c-.396-10.567 3.348-21.456 11.698-29.806l21.054-21.055c5.521-5.521 14.182-6.199 20.584-1.731a152.482 152.482 0 0 1 20.522 17.197zM467.547 44.449c-59.261-59.262-155.69-59.27-214.96 0l-67.2 67.2c-.12.12-.25.25-.36.37-58.566 58.892-59.387 154.781.36 214.59a152.454 152.454 0 0 0 20.521 17.196c6.402 4.468 15.064 3.789 20.584-1.731l21.054-21.055c8.35-8.35 12.094-19.239 11.698-29.806a16.037 16.037 0 0 0-6.947-12.606c-2.912-2.005-6.64-4.875-10.341-8.569-28.073-28.073-28.191-73.639 0-101.83l67.2-67.19c28.239-28.239 74.3-28.069 102.325.51 27.75 28.3 26.872 73.934-1.155 101.96l-13.087 13.087c-4.35 4.35-5.769 10.79-3.783 16.612 5.864 17.194 9.042 34.999 9.69 52.721.509 13.906 17.454 20.446 27.294 10.606l37.106-37.106c59.271-59.259 59.271-155.699.001-214.959z"/></svg></a>两种实现方式比较</h3>
@@ -457,32 +457,32 @@ bin/hbase org.apache.hadoop.hbase.mapreduce.LoadIncrementalHFiles &lt;hdfs://sto
 </span><span class="lnt">25
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">HFileOutputFormat2</span>
-    <span class="kd">extends</span> <span class="n">FileOutputFormat</span><span class="o">&lt;</span><span class="n">ImmutableBytesWritable</span><span class="o">,</span> <span class="n">Cell</span><span class="o">&gt;</span> <span class="o">{</span>
-    
-    <span class="kd">public</span> <span class="kd">static</span> <span class="kt">void</span> <span class="nf">configureIncrementalLoad</span><span class="o">(</span><span class="n">Job</span> <span class="n">job</span><span class="o">,</span> <span class="n">TableDescriptor</span> <span class="n">tableDescriptor</span><span class="o">,</span>
-      <span class="n">RegionLocator</span> <span class="n">regionLocator</span><span class="o">)</span> <span class="kd">throws</span> <span class="n">IOException</span> <span class="o">{</span>
-    	<span class="n">ArrayList</span><span class="o">&lt;</span><span class="n">TableInfo</span><span class="o">&gt;</span> <span class="n">singleTableInfo</span> <span class="o">=</span> <span class="k">new</span> <span class="n">ArrayList</span><span class="o">&lt;&gt;();</span>
-    	<span class="n">singleTableInfo</span><span class="o">.</span><span class="na">add</span><span class="o">(</span><span class="k">new</span> <span class="n">TableInfo</span><span class="o">(</span><span class="n">tableDescriptor</span><span class="o">,</span> <span class="n">regionLocator</span><span class="o">));</span>
-    	<span class="n">configureIncrementalLoad</span><span class="o">(</span><span class="n">job</span><span class="o">,</span> <span class="n">singleTableInfo</span><span class="o">,</span> <span class="n">HFileOutputFormat2</span><span class="o">.</span><span class="na">class</span><span class="o">);</span>
-  	<span class="o">}</span>    
-  	<span class="kd">static</span> <span class="kt">void</span> <span class="nf">configureIncrementalLoad</span><span class="o">(</span><span class="n">Job</span> <span class="n">job</span><span class="o">,</span> <span class="n">List</span><span class="o">&lt;</span><span class="n">TableInfo</span><span class="o">&gt;</span> <span class="n">multiTableInfo</span><span class="o">,</span>
-      	<span class="n">Class</span><span class="o">&lt;?</span> <span class="kd">extends</span> <span class="n">OutputFormat</span><span class="o">&lt;?,</span> <span class="o">?&gt;&gt;</span> <span class="n">cls</span><span class="o">)</span> <span class="kd">throws</span> <span class="n">IOException</span> <span class="o">{</span>
-        <span class="c1">// 这里虽然支持多表，但是批量导入时只会使用单表
-</span><span class="c1"></span>        <span class="n">List</span><span class="o">&lt;</span><span class="n">RegionLocator</span><span class="o">&gt;</span> <span class="n">regionLocators</span> <span class="o">=</span> <span class="k">new</span> <span class="n">ArrayList</span><span class="o">&lt;&gt;(</span> <span class="n">multiTableInfo</span><span class="o">.</span><span class="na">size</span><span class="o">());</span>     
-      	<span class="k">for</span><span class="o">(</span> <span class="n">TableInfo</span> <span class="n">tableInfo</span> <span class="o">:</span> <span class="n">multiTableInfo</span> <span class="o">)</span>
-      	<span class="o">{</span>
-            <span class="c1">// 获取region分布情况
-</span><span class="c1"></span>      		<span class="n">regionLocators</span><span class="o">.</span><span class="na">add</span><span class="o">(</span><span class="n">tableInfo</span><span class="o">.</span><span class="na">getRegionLocator</span><span class="o">());</span>
-     		<span class="o">......</span>
-      	<span class="o">}</span>
-        <span class="c1">// 获取region的row key起始大小
-</span><span class="c1"></span>      	<span class="n">List</span><span class="o">&lt;</span><span class="n">ImmutableBytesWritable</span><span class="o">&gt;</span> <span class="n">startKeys</span> <span class="o">=</span> <span class="n">getRegionStartKeys</span><span class="o">(</span><span class="n">regionLocators</span><span class="o">,</span> <span class="n">writeMultipleTables</span><span class="o">);</span>
-        <span class="c1">// 设置reduce的数目
-</span><span class="c1"></span>      	<span class="n">job</span><span class="o">.</span><span class="na">setNumReduceTasks</span><span class="o">(</span><span class="n">startKeys</span><span class="o">.</span><span class="na">size</span><span class="o">());</span>
-    <span class="o">}</span>  
-<span class="o">}</span>
-</code></pre></td></tr></table></div>
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">HFileOutputFormat2</span>
+</span></span><span class="line"><span class="cl">    <span class="kd">extends</span> <span class="n">FileOutputFormat</span><span class="o">&lt;</span><span class="n">ImmutableBytesWritable</span><span class="o">,</span> <span class="n">Cell</span><span class="o">&gt;</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">    
+</span></span><span class="line"><span class="cl">    <span class="kd">public</span> <span class="kd">static</span> <span class="kt">void</span> <span class="nf">configureIncrementalLoad</span><span class="o">(</span><span class="n">Job</span> <span class="n">job</span><span class="o">,</span> <span class="n">TableDescriptor</span> <span class="n">tableDescriptor</span><span class="o">,</span>
+</span></span><span class="line"><span class="cl">      <span class="n">RegionLocator</span> <span class="n">regionLocator</span><span class="o">)</span> <span class="kd">throws</span> <span class="n">IOException</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">    	<span class="n">ArrayList</span><span class="o">&lt;</span><span class="n">TableInfo</span><span class="o">&gt;</span> <span class="n">singleTableInfo</span> <span class="o">=</span> <span class="k">new</span> <span class="n">ArrayList</span><span class="o">&lt;&gt;();</span>
+</span></span><span class="line"><span class="cl">    	<span class="n">singleTableInfo</span><span class="o">.</span><span class="na">add</span><span class="o">(</span><span class="k">new</span> <span class="n">TableInfo</span><span class="o">(</span><span class="n">tableDescriptor</span><span class="o">,</span> <span class="n">regionLocator</span><span class="o">));</span>
+</span></span><span class="line"><span class="cl">    	<span class="n">configureIncrementalLoad</span><span class="o">(</span><span class="n">job</span><span class="o">,</span> <span class="n">singleTableInfo</span><span class="o">,</span> <span class="n">HFileOutputFormat2</span><span class="o">.</span><span class="na">class</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">  	<span class="o">}</span>    
+</span></span><span class="line"><span class="cl">  	<span class="kd">static</span> <span class="kt">void</span> <span class="nf">configureIncrementalLoad</span><span class="o">(</span><span class="n">Job</span> <span class="n">job</span><span class="o">,</span> <span class="n">List</span><span class="o">&lt;</span><span class="n">TableInfo</span><span class="o">&gt;</span> <span class="n">multiTableInfo</span><span class="o">,</span>
+</span></span><span class="line"><span class="cl">      	<span class="n">Class</span><span class="o">&lt;?</span> <span class="kd">extends</span> <span class="n">OutputFormat</span><span class="o">&lt;?,</span> <span class="o">?&gt;&gt;</span> <span class="n">cls</span><span class="o">)</span> <span class="kd">throws</span> <span class="n">IOException</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">        <span class="c1">// 这里虽然支持多表，但是批量导入时只会使用单表
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>        <span class="n">List</span><span class="o">&lt;</span><span class="n">RegionLocator</span><span class="o">&gt;</span> <span class="n">regionLocators</span> <span class="o">=</span> <span class="k">new</span> <span class="n">ArrayList</span><span class="o">&lt;&gt;(</span> <span class="n">multiTableInfo</span><span class="o">.</span><span class="na">size</span><span class="o">());</span>     
+</span></span><span class="line"><span class="cl">      	<span class="k">for</span><span class="o">(</span> <span class="n">TableInfo</span> <span class="n">tableInfo</span> <span class="o">:</span> <span class="n">multiTableInfo</span> <span class="o">)</span>
+</span></span><span class="line"><span class="cl">      	<span class="o">{</span>
+</span></span><span class="line"><span class="cl">            <span class="c1">// 获取region分布情况
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>      		<span class="n">regionLocators</span><span class="o">.</span><span class="na">add</span><span class="o">(</span><span class="n">tableInfo</span><span class="o">.</span><span class="na">getRegionLocator</span><span class="o">());</span>
+</span></span><span class="line"><span class="cl">     		<span class="o">......</span>
+</span></span><span class="line"><span class="cl">      	<span class="o">}</span>
+</span></span><span class="line"><span class="cl">        <span class="c1">// 获取region的row key起始大小
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>      	<span class="n">List</span><span class="o">&lt;</span><span class="n">ImmutableBytesWritable</span><span class="o">&gt;</span> <span class="n">startKeys</span> <span class="o">=</span> <span class="n">getRegionStartKeys</span><span class="o">(</span><span class="n">regionLocators</span><span class="o">,</span> <span class="n">writeMultipleTables</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">        <span class="c1">// 设置reduce的数目
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>      	<span class="n">job</span><span class="o">.</span><span class="na">setNumReduceTasks</span><span class="o">(</span><span class="n">startKeys</span><span class="o">.</span><span class="na">size</span><span class="o">());</span>
+</span></span><span class="line"><span class="cl">    <span class="o">}</span>  
+</span></span><span class="line"><span class="cl"><span class="o">}</span>
+</span></span></code></pre></td></tr></table></div>
 </div>
 </div><h2 id="hbase-数据存储格式"><a href="#hbase-数据存储格式" class="anchor-link"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon anchor-icon"><path d="M326.612 185.391c59.747 59.809 58.927 155.698.36 214.59-.11.12-.24.25-.36.37l-67.2 67.2c-59.27 59.27-155.699 59.262-214.96 0-59.27-59.26-59.27-155.7 0-214.96l37.106-37.106c9.84-9.84 26.786-3.3 27.294 10.606.648 17.722 3.826 35.527 9.69 52.721 1.986 5.822.567 12.262-3.783 16.612l-13.087 13.087c-28.026 28.026-28.905 73.66-1.155 101.96 28.024 28.579 74.086 28.749 102.325.51l67.2-67.19c28.191-28.191 28.073-73.757 0-101.83-3.701-3.694-7.429-6.564-10.341-8.569a16.037 16.037 0 0 1-6.947-12.606c-.396-10.567 3.348-21.456 11.698-29.806l21.054-21.055c5.521-5.521 14.182-6.199 20.584-1.731a152.482 152.482 0 0 1 20.522 17.197zM467.547 44.449c-59.261-59.262-155.69-59.27-214.96 0l-67.2 67.2c-.12.12-.25.25-.36.37-58.566 58.892-59.387 154.781.36 214.59a152.454 152.454 0 0 0 20.521 17.196c6.402 4.468 15.064 3.789 20.584-1.731l21.054-21.055c8.35-8.35 12.094-19.239 11.698-29.806a16.037 16.037 0 0 0-6.947-12.606c-2.912-2.005-6.64-4.875-10.341-8.569-28.073-28.073-28.191-73.639 0-101.83l67.2-67.19c28.239-28.239 74.3-28.069 102.325.51 27.75 28.3 26.872 73.934-1.155 101.96l-13.087 13.087c-4.35 4.35-5.769 10.79-3.783 16.612 5.864 17.194 9.042 34.999 9.69 52.721.509 13.906 17.454 20.446 27.294 10.606l37.106-37.106c59.271-59.259 59.271-155.699.001-214.959z"/></svg></a>Hbase 数据存储格式</h2>
 <p>Hbase的每列数据都是单独存储的，都是以 KeyValue 的形式。KeyValue 的数据格式如下图所示：</p>
@@ -493,10 +493,10 @@ bin/hbase org.apache.hadoop.hbase.mapreduce.LoadIncrementalHFiles &lt;hdfs://sto
 </span><span class="lnt">3
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell">-----------------------------------------------
- keylength <span class="p">|</span> valuelength <span class="p">|</span> key <span class="p">|</span> value <span class="p">|</span> Tags
------------------------------------------------
-</code></pre></td></tr></table></div>
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">-----------------------------------------------
+</span></span><span class="line"><span class="cl"> keylength <span class="p">|</span> valuelength <span class="p">|</span> key <span class="p">|</span> value <span class="p">|</span> Tags
+</span></span><span class="line"><span class="cl">-----------------------------------------------
+</span></span></code></pre></td></tr></table></div>
 </div>
 </div><p>其中 key 的格式如下：</p>
 <div class="highlight"><div class="chroma">
@@ -506,10 +506,10 @@ bin/hbase org.apache.hadoop.hbase.mapreduce.LoadIncrementalHFiles &lt;hdfs://sto
 </span><span class="lnt">3
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell">----------------------------------------------------------------------------------------------
- rowlength <span class="p">|</span> row <span class="p">|</span> columnfamilylength <span class="p">|</span> columnfamily <span class="p">|</span> columnqualifier <span class="p">|</span> timestamp <span class="p">|</span> keytype 
-----------------------------------------------------------------------------------------------
-</code></pre></td></tr></table></div>
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">----------------------------------------------------------------------------------------------
+</span></span><span class="line"><span class="cl"> rowlength <span class="p">|</span> row <span class="p">|</span> columnfamilylength <span class="p">|</span> columnfamily <span class="p">|</span> columnqualifier <span class="p">|</span> timestamp <span class="p">|</span> keytype 
+</span></span><span class="line"><span class="cl">----------------------------------------------------------------------------------------------
+</span></span></code></pre></td></tr></table></div>
 </div>
 </div><p>Tags的格式如下：</p>
 <div class="highlight"><div class="chroma">
@@ -519,10 +519,10 @@ bin/hbase org.apache.hadoop.hbase.mapreduce.LoadIncrementalHFiles &lt;hdfs://sto
 </span><span class="lnt">3
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell">-------------------------
- tagslength <span class="p">|</span> tagsbytes 
--------------------------
-</code></pre></td></tr></table></div>
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">-------------------------
+</span></span><span class="line"><span class="cl"> tagslength <span class="p">|</span> tagsbytes 
+</span></span><span class="line"><span class="cl">-------------------------
+</span></span></code></pre></td></tr></table></div>
 </div>
 </div><p>tagsbytes 可以包含多个 tag，每个 tag 的格式如下：</p>
 <div class="highlight"><div class="chroma">
@@ -532,10 +532,10 @@ bin/hbase org.apache.hadoop.hbase.mapreduce.LoadIncrementalHFiles &lt;hdfs://sto
 </span><span class="lnt">3
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell">----------------------------------
- taglength <span class="p">|</span> tagtype <span class="p">|</span> tagbytes
-----------------------------------
-</code></pre></td></tr></table></div>
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">----------------------------------
+</span></span><span class="line"><span class="cl"> taglength <span class="p">|</span> tagtype <span class="p">|</span> tagbytes
+</span></span><span class="line"><span class="cl">----------------------------------
+</span></span></code></pre></td></tr></table></div>
 </div>
 </div><p>Reducer 会使用 CellCreator 类，负责生成 KeyValue。CellCreator 的原理很简单，这里不再详细介绍。</p>
 <h2 id="生成-hfile"><a href="#生成-hfile" class="anchor-link"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon anchor-icon"><path d="M326.612 185.391c59.747 59.809 58.927 155.698.36 214.59-.11.12-.24.25-.36.37l-67.2 67.2c-59.27 59.27-155.699 59.262-214.96 0-59.27-59.26-59.27-155.7 0-214.96l37.106-37.106c9.84-9.84 26.786-3.3 27.294 10.606.648 17.722 3.826 35.527 9.69 52.721 1.986 5.822.567 12.262-3.783 16.612l-13.087 13.087c-28.026 28.026-28.905 73.66-1.155 101.96 28.024 28.579 74.086 28.749 102.325.51l67.2-67.19c28.191-28.191 28.073-73.757 0-101.83-3.701-3.694-7.429-6.564-10.341-8.569a16.037 16.037 0 0 1-6.947-12.606c-.396-10.567 3.348-21.456 11.698-29.806l21.054-21.055c5.521-5.521 14.182-6.199 20.584-1.731a152.482 152.482 0 0 1 20.522 17.197zM467.547 44.449c-59.261-59.262-155.69-59.27-214.96 0l-67.2 67.2c-.12.12-.25.25-.36.37-58.566 58.892-59.387 154.781.36 214.59a152.454 152.454 0 0 0 20.521 17.196c6.402 4.468 15.064 3.789 20.584-1.731l21.054-21.055c8.35-8.35 12.094-19.239 11.698-29.806a16.037 16.037 0 0 0-6.947-12.606c-2.912-2.005-6.64-4.875-10.341-8.569-28.073-28.073-28.191-73.639 0-101.83l67.2-67.19c28.239-28.239 74.3-28.069 102.325.51 27.75 28.3 26.872 73.934-1.155 101.96l-13.087 13.087c-4.35 4.35-5.769 10.79-3.783 16.612 5.864 17.194 9.042 34.999 9.69 52.721.509 13.906 17.454 20.446 27.294 10.606l37.106-37.106c59.271-59.259 59.271-155.699.001-214.959z"/></svg></a>生成 HFile</h2>
@@ -551,14 +551,14 @@ bin/hbase org.apache.hadoop.hbase.mapreduce.LoadIncrementalHFiles &lt;hdfs://sto
 </span><span class="lnt">7
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell">.
-<span class="p">|</span>---- column_family_1
-<span class="p">|</span>    <span class="p">|</span>---- uuid_1
-<span class="p">|</span>    <span class="sb">`</span>---- uuid_2
-<span class="p">|</span>---- column_family_2
-<span class="p">|</span>    <span class="p">|</span>---- uuid3
-<span class="p">|</span>    <span class="sb">`</span>---- uuid4
-</code></pre></td></tr></table></div>
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">.
+</span></span><span class="line"><span class="cl"><span class="p">|</span>---- column_family_1
+</span></span><span class="line"><span class="cl"><span class="p">|</span>    <span class="p">|</span>---- uuid_1
+</span></span><span class="line"><span class="cl"><span class="p">|</span>    <span class="sb">`</span>---- uuid_2
+</span></span><span class="line"><span class="cl"><span class="p">|</span>---- column_family_2
+</span></span><span class="line"><span class="cl"><span class="p">|</span>    <span class="p">|</span>---- uuid3
+</span></span><span class="line"><span class="cl"><span class="p">|</span>    <span class="sb">`</span>---- uuid4
+</span></span></code></pre></td></tr></table></div>
 </div>
 </div><p>每个 column family 对应一个目录，这个目录会有多个 HFile 文件。</p>
 <p>HFileOutputFormat2 会创建 RecordWriter 实例，所有数据的写入都是通过 RecordWriter。</p>
@@ -585,26 +585,26 @@ bin/hbase org.apache.hadoop.hbase.mapreduce.LoadIncrementalHFiles &lt;hdfs://sto
 </span><span class="lnt">19
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">HFileOutputFormat2</span>
-    <span class="kd">extends</span> <span class="n">FileOutputFormat</span><span class="o">&lt;</span><span class="n">ImmutableBytesWritable</span><span class="o">,</span> <span class="n">Cell</span><span class="o">&gt;</span> <span class="o">{</span>
-    
-  <span class="nd">@Override</span>
-  <span class="kd">public</span> <span class="n">RecordWriter</span><span class="o">&lt;</span><span class="n">ImmutableBytesWritable</span><span class="o">,</span> <span class="n">Cell</span><span class="o">&gt;</span> <span class="nf">getRecordWriter</span><span class="o">(</span>
-      <span class="kd">final</span> <span class="n">TaskAttemptContext</span> <span class="n">context</span><span class="o">)</span> <span class="kd">throws</span> <span class="n">IOException</span><span class="o">,</span> <span class="n">InterruptedException</span> <span class="o">{</span>
-    <span class="c1">// 调用createRecordWriter方法创建
-</span><span class="c1"></span>    <span class="k">return</span> <span class="n">createRecordWriter</span><span class="o">(</span><span class="n">context</span><span class="o">,</span> <span class="k">this</span><span class="o">.</span><span class="na">getOutputCommitter</span><span class="o">(</span><span class="n">context</span><span class="o">));</span>
-  <span class="o">}</span>
-    
-  <span class="kd">static</span> <span class="o">&lt;</span><span class="n">V</span> <span class="kd">extends</span> <span class="n">Cell</span><span class="o">&gt;</span> <span class="n">RecordWriter</span><span class="o">&lt;</span><span class="n">ImmutableBytesWritable</span><span class="o">,</span> <span class="n">V</span><span class="o">&gt;</span>
-      <span class="nf">createRecordWriter</span><span class="o">(</span><span class="kd">final</span> <span class="n">TaskAttemptContext</span> <span class="n">context</span><span class="o">,</span> <span class="kd">final</span> <span class="n">OutputCommitter</span> <span class="n">committer</span><span class="o">)</span>
-          <span class="kd">throws</span> <span class="n">IOException</span> <span class="o">{</span>
-      <span class="c1">// 实例化一个匿名类
-</span><span class="c1"></span>      <span class="k">return</span> <span class="k">new</span> <span class="n">RecordWriter</span><span class="o">&lt;</span><span class="n">ImmutableBytesWritable</span><span class="o">,</span> <span class="n">V</span><span class="o">&gt;()</span> <span class="o">{</span>
-          <span class="o">......</span>
-      <span class="o">}</span>
-  <span class="o">}</span>
-<span class="o">}</span>
-</code></pre></td></tr></table></div>
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">HFileOutputFormat2</span>
+</span></span><span class="line"><span class="cl">    <span class="kd">extends</span> <span class="n">FileOutputFormat</span><span class="o">&lt;</span><span class="n">ImmutableBytesWritable</span><span class="o">,</span> <span class="n">Cell</span><span class="o">&gt;</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">    
+</span></span><span class="line"><span class="cl">  <span class="nd">@Override</span>
+</span></span><span class="line"><span class="cl">  <span class="kd">public</span> <span class="n">RecordWriter</span><span class="o">&lt;</span><span class="n">ImmutableBytesWritable</span><span class="o">,</span> <span class="n">Cell</span><span class="o">&gt;</span> <span class="nf">getRecordWriter</span><span class="o">(</span>
+</span></span><span class="line"><span class="cl">      <span class="kd">final</span> <span class="n">TaskAttemptContext</span> <span class="n">context</span><span class="o">)</span> <span class="kd">throws</span> <span class="n">IOException</span><span class="o">,</span> <span class="n">InterruptedException</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// 调用createRecordWriter方法创建
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="k">return</span> <span class="n">createRecordWriter</span><span class="o">(</span><span class="n">context</span><span class="o">,</span> <span class="k">this</span><span class="o">.</span><span class="na">getOutputCommitter</span><span class="o">(</span><span class="n">context</span><span class="o">));</span>
+</span></span><span class="line"><span class="cl">  <span class="o">}</span>
+</span></span><span class="line"><span class="cl">    
+</span></span><span class="line"><span class="cl">  <span class="kd">static</span> <span class="o">&lt;</span><span class="n">V</span> <span class="kd">extends</span> <span class="n">Cell</span><span class="o">&gt;</span> <span class="n">RecordWriter</span><span class="o">&lt;</span><span class="n">ImmutableBytesWritable</span><span class="o">,</span> <span class="n">V</span><span class="o">&gt;</span>
+</span></span><span class="line"><span class="cl">      <span class="nf">createRecordWriter</span><span class="o">(</span><span class="kd">final</span> <span class="n">TaskAttemptContext</span> <span class="n">context</span><span class="o">,</span> <span class="kd">final</span> <span class="n">OutputCommitter</span> <span class="n">committer</span><span class="o">)</span>
+</span></span><span class="line"><span class="cl">          <span class="kd">throws</span> <span class="n">IOException</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">      <span class="c1">// 实例化一个匿名类
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>      <span class="k">return</span> <span class="k">new</span> <span class="n">RecordWriter</span><span class="o">&lt;</span><span class="n">ImmutableBytesWritable</span><span class="o">,</span> <span class="n">V</span><span class="o">&gt;()</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">          <span class="o">......</span>
+</span></span><span class="line"><span class="cl">      <span class="o">}</span>
+</span></span><span class="line"><span class="cl">  <span class="o">}</span>
+</span></span><span class="line"><span class="cl"><span class="o">}</span>
+</span></span></code></pre></td></tr></table></div>
 </div>
 </div><p>可以看到 createRecordWriter 方法，返回了一个匿名类。继续看看这个匿名类的定义：</p>
 <div class="highlight"><div class="chroma">
@@ -623,19 +623,19 @@ bin/hbase org.apache.hadoop.hbase.mapreduce.LoadIncrementalHFiles &lt;hdfs://sto
 </span><span class="lnt">12
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="c1">// 封装了StoreFileWriter，记录了写入的数据长度
-</span><span class="c1"></span><span class="kd">static</span> <span class="kd">class</span> <span class="nc">WriterLength</span> <span class="o">{</span>
-    <span class="kt">long</span> <span class="n">written</span> <span class="o">=</span> <span class="n">0</span><span class="o">;</span>
-    <span class="n">StoreFileWriter</span> <span class="n">writer</span> <span class="o">=</span> <span class="kc">null</span><span class="o">;</span>
-<span class="o">}</span>
-
-<span class="kd">class</span> <span class="nc">RecordWriter</span><span class="o">&lt;</span><span class="n">ImmutableBytesWritable</span><span class="o">,</span> <span class="n">V</span><span class="o">&gt;()</span> <span class="o">{</span>
-    <span class="c1">// key值为表名和column family组成的字节，value为对应的writer
-</span><span class="c1"></span>    <span class="kd">private</span> <span class="kd">final</span> <span class="n">Map</span><span class="o">&lt;</span><span class="kt">byte</span><span class="o">[],</span> <span class="n">WriterLength</span><span class="o">&gt;</span> <span class="n">writers</span> <span class="o">=</span> <span class="k">new</span> <span class="n">TreeMap</span><span class="o">&lt;&gt;(</span><span class="n">Bytes</span><span class="o">.</span><span class="na">BYTES_COMPARATOR</span><span class="o">);</span>
-    <span class="c1">// 是否需要创建新的HFile
-</span><span class="c1"></span>    <span class="kd">private</span> <span class="kt">boolean</span> <span class="n">rollRequested</span> <span class="o">=</span> <span class="kc">false</span><span class="o">;</span>
-<span class="o">}</span>
-</code></pre></td></tr></table></div>
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="c1">// 封装了StoreFileWriter，记录了写入的数据长度
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="kd">static</span> <span class="kd">class</span> <span class="nc">WriterLength</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">    <span class="kt">long</span> <span class="n">written</span> <span class="o">=</span> <span class="mi">0</span><span class="o">;</span>
+</span></span><span class="line"><span class="cl">    <span class="n">StoreFileWriter</span> <span class="n">writer</span> <span class="o">=</span> <span class="kc">null</span><span class="o">;</span>
+</span></span><span class="line"><span class="cl"><span class="o">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kd">class</span> <span class="nc">RecordWriter</span><span class="o">&lt;</span><span class="n">ImmutableBytesWritable</span><span class="o">,</span> <span class="n">V</span><span class="o">&gt;()</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// key值为表名和column family组成的字节，value为对应的writer
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="kd">private</span> <span class="kd">final</span> <span class="n">Map</span><span class="o">&lt;</span><span class="kt">byte</span><span class="o">[],</span> <span class="n">WriterLength</span><span class="o">&gt;</span> <span class="n">writers</span> <span class="o">=</span> <span class="k">new</span> <span class="n">TreeMap</span><span class="o">&lt;&gt;(</span><span class="n">Bytes</span><span class="o">.</span><span class="na">BYTES_COMPARATOR</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// 是否需要创建新的HFile
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="kd">private</span> <span class="kt">boolean</span> <span class="n">rollRequested</span> <span class="o">=</span> <span class="kc">false</span><span class="o">;</span>
+</span></span><span class="line"><span class="cl"><span class="o">}</span>
+</span></span></code></pre></td></tr></table></div>
 </div>
 </div><p>从上面 WriterLength 类的定义，我们可以知道 RecordWriter的底层原理是调用了StoreFileWriter的接口。对于StoreFile，我们回忆下Hbase的写操作，它接收客户端的写请求，首先写入到内存中MemoryStore，然后刷新到磁盘生成StoreFile。如果该表有两个column family，就会有两个MemoryStore和两个StoreFile，对应于不同的column family。所以 RecordWriter 类有个哈希表，记录着每个 column family 的 StoreFileWriter。（这里说的 StoreFile 也就是 HFile）</p>
 <p>因为 HFile 支持不同的压缩算法，不同的块大小，RecordWriter 会根据配置，获取HFile的格式，然后创建对应的 StoreFileWriter。下面创建 StoreFileWriter 时只指定了文件目录，StoreFileWriter会在这个目录下，使用 uuid 生成一个唯一的文件名。</p>
@@ -681,45 +681,45 @@ bin/hbase org.apache.hadoop.hbase.mapreduce.LoadIncrementalHFiles &lt;hdfs://sto
 </span><span class="lnt">38
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="kd">class</span> <span class="nc">RecordWriter</span><span class="o">&lt;</span><span class="n">ImmutableBytesWritable</span><span class="o">,</span> <span class="n">V</span><span class="o">&gt;()</span> <span class="o">{</span>
-    <span class="c1">// favoredNodes 表示创建HFile文件，希望尽可能在这些服务器节点上
-</span><span class="c1"></span>    <span class="kd">private</span> <span class="n">WriterLength</span> <span class="nf">getNewWriter</span><span class="o">(</span><span class="kt">byte</span><span class="o">[]</span> <span class="n">tableName</span><span class="o">,</span> <span class="kt">byte</span><span class="o">[]</span> <span class="n">family</span><span class="o">,</span> <span class="n">Configuration</span> <span class="n">conf</span><span class="o">,</span> <span class="n">InetSocketAddress</span><span class="o">[]</span> <span class="n">favoredNodes</span><span class="o">)</span> <span class="kd">throws</span> <span class="n">IOException</span> <span class="o">{</span>
-        <span class="c1">// 根据表名和column family生成唯一字节
-</span><span class="c1"></span>        <span class="kt">byte</span><span class="o">[]</span> <span class="n">tableAndFamily</span> <span class="o">=</span> <span class="n">getTableNameSuffixedWithFamily</span><span class="o">(</span><span class="n">tableName</span><span class="o">,</span> <span class="n">family</span><span class="o">);</span>
-        <span class="n">Path</span> <span class="n">familydir</span> <span class="o">=</span> <span class="k">new</span> <span class="n">Path</span><span class="o">(</span><span class="n">outputDir</span><span class="o">,</span> <span class="n">Bytes</span><span class="o">.</span><span class="na">toString</span><span class="o">(</span><span class="n">family</span><span class="o">));</span>
-        <span class="n">WriterLength</span> <span class="n">wl</span> <span class="o">=</span> <span class="k">new</span> <span class="n">WriterLength</span><span class="o">();</span>
-        <span class="c1">// 获取HFile的压缩算法
-</span><span class="c1"></span>        <span class="n">Algorithm</span> <span class="n">compression</span> <span class="o">=</span> <span class="n">compressionMap</span><span class="o">.</span><span class="na">get</span><span class="o">(</span><span class="n">tableAndFamily</span><span class="o">);</span>
-        <span class="c1">// 获取bloom过滤器信息
-</span><span class="c1"></span>        <span class="n">BloomType</span> <span class="n">bloomType</span> <span class="o">=</span> <span class="n">bloomTypeMap</span><span class="o">.</span><span class="na">get</span><span class="o">(</span><span class="n">tableAndFamily</span><span class="o">);</span>
-        <span class="c1">// 获取HFile其他的配置
-</span><span class="c1"></span>        <span class="o">.....</span>
-        <span class="c1">// 生成HFile的配置信息
-</span><span class="c1"></span>        <span class="n">HFileContextBuilder</span> <span class="n">contextBuilder</span> <span class="o">=</span> <span class="k">new</span> <span class="n">HFileContextBuilder</span><span class="o">()</span>
-                                    <span class="o">.</span><span class="na">withCompression</span><span class="o">(</span><span class="n">compression</span><span class="o">)</span>
-                                    <span class="o">.</span><span class="na">withChecksumType</span><span class="o">(</span><span class="n">HStore</span><span class="o">.</span><span class="na">getChecksumType</span><span class="o">(</span><span class="n">conf</span><span class="o">))</span>
-                                    <span class="o">.</span><span class="na">withBytesPerCheckSum</span><span class="o">(</span><span class="n">HStore</span><span class="o">.</span><span class="na">getBytesPerChecksum</span><span class="o">(</span><span class="n">conf</span><span class="o">))</span>
-                                    <span class="o">.</span><span class="na">withBlockSize</span><span class="o">(</span><span class="n">blockSize</span><span class="o">);</span>
-        <span class="n">HFileContext</span> <span class="n">hFileContext</span> <span class="o">=</span> <span class="n">contextBuilder</span><span class="o">.</span><span class="na">build</span><span class="o">();</span>
-        <span class="c1">// 实例化 StoreFileWriter
-</span><span class="c1"></span>        <span class="n">f</span> <span class="o">(</span><span class="kc">null</span> <span class="o">==</span> <span class="n">favoredNodes</span><span class="o">)</span> <span class="o">{</span>
-          <span class="n">wl</span><span class="o">.</span><span class="na">writer</span> <span class="o">=</span>
-              <span class="k">new</span> <span class="n">StoreFileWriter</span><span class="o">.</span><span class="na">Builder</span><span class="o">(</span><span class="n">conf</span><span class="o">,</span> <span class="k">new</span> <span class="n">CacheConfig</span><span class="o">(</span><span class="n">tempConf</span><span class="o">),</span> <span class="n">fs</span><span class="o">)</span>
-                  <span class="o">.</span><span class="na">withOutputDir</span><span class="o">(</span><span class="n">familydir</span><span class="o">).</span><span class="na">withBloomType</span><span class="o">(</span><span class="n">bloomType</span><span class="o">)</span>
-              <span class="o">.</span><span class="na">withComparator</span><span class="o">(</span><span class="n">CellComparator</span><span class="o">.</span><span class="na">getInstance</span><span class="o">()).</span><span class="na">withFileContext</span><span class="o">(</span><span class="n">hFileContext</span><span class="o">).</span><span class="na">build</span><span class="o">();</span>
-        <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
-          <span class="n">wl</span><span class="o">.</span><span class="na">writer</span> <span class="o">=</span>
-              <span class="k">new</span> <span class="n">StoreFileWriter</span><span class="o">.</span><span class="na">Builder</span><span class="o">(</span><span class="n">conf</span><span class="o">,</span> <span class="k">new</span> <span class="n">CacheConfig</span><span class="o">(</span><span class="n">tempConf</span><span class="o">),</span> <span class="k">new</span> <span class="n">HFileSystem</span><span class="o">(</span><span class="n">fs</span><span class="o">))</span>
-                  <span class="o">.</span><span class="na">withOutputDir</span><span class="o">(</span><span class="n">familydir</span><span class="o">).</span><span class="na">withBloomType</span><span class="o">(</span><span class="n">bloomType</span><span class="o">)</span>
-                  <span class="o">.</span><span class="na">withComparator</span><span class="o">(</span><span class="n">CellComparator</span><span class="o">.</span><span class="na">getInstance</span><span class="o">()).</span><span class="na">withFileContext</span><span class="o">(</span><span class="n">hFileContext</span><span class="o">)</span>
-                  <span class="o">.</span><span class="na">withFavoredNodes</span><span class="o">(</span><span class="n">favoredNodes</span><span class="o">).</span><span class="na">build</span><span class="o">();</span>
-        <span class="o">}</span>
-        <span class="c1">// 添加到 writers集合中
-</span><span class="c1"></span>        <span class="k">this</span><span class="o">.</span><span class="na">writers</span><span class="o">.</span><span class="na">put</span><span class="o">(</span><span class="n">tableAndFamily</span><span class="o">,</span> <span class="n">wl</span><span class="o">);</span>
-        <span class="k">return</span> <span class="n">wl</span><span class="o">;</span>
-    <span class="o">}</span>
-<span class="o">}</span>
-</code></pre></td></tr></table></div>
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="kd">class</span> <span class="nc">RecordWriter</span><span class="o">&lt;</span><span class="n">ImmutableBytesWritable</span><span class="o">,</span> <span class="n">V</span><span class="o">&gt;()</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// favoredNodes 表示创建HFile文件，希望尽可能在这些服务器节点上
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="kd">private</span> <span class="n">WriterLength</span> <span class="nf">getNewWriter</span><span class="o">(</span><span class="kt">byte</span><span class="o">[]</span> <span class="n">tableName</span><span class="o">,</span> <span class="kt">byte</span><span class="o">[]</span> <span class="n">family</span><span class="o">,</span> <span class="n">Configuration</span> <span class="n">conf</span><span class="o">,</span> <span class="n">InetSocketAddress</span><span class="o">[]</span> <span class="n">favoredNodes</span><span class="o">)</span> <span class="kd">throws</span> <span class="n">IOException</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">        <span class="c1">// 根据表名和column family生成唯一字节
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>        <span class="kt">byte</span><span class="o">[]</span> <span class="n">tableAndFamily</span> <span class="o">=</span> <span class="n">getTableNameSuffixedWithFamily</span><span class="o">(</span><span class="n">tableName</span><span class="o">,</span> <span class="n">family</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">        <span class="n">Path</span> <span class="n">familydir</span> <span class="o">=</span> <span class="k">new</span> <span class="n">Path</span><span class="o">(</span><span class="n">outputDir</span><span class="o">,</span> <span class="n">Bytes</span><span class="o">.</span><span class="na">toString</span><span class="o">(</span><span class="n">family</span><span class="o">));</span>
+</span></span><span class="line"><span class="cl">        <span class="n">WriterLength</span> <span class="n">wl</span> <span class="o">=</span> <span class="k">new</span> <span class="n">WriterLength</span><span class="o">();</span>
+</span></span><span class="line"><span class="cl">        <span class="c1">// 获取HFile的压缩算法
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>        <span class="n">Algorithm</span> <span class="n">compression</span> <span class="o">=</span> <span class="n">compressionMap</span><span class="o">.</span><span class="na">get</span><span class="o">(</span><span class="n">tableAndFamily</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">        <span class="c1">// 获取bloom过滤器信息
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>        <span class="n">BloomType</span> <span class="n">bloomType</span> <span class="o">=</span> <span class="n">bloomTypeMap</span><span class="o">.</span><span class="na">get</span><span class="o">(</span><span class="n">tableAndFamily</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">        <span class="c1">// 获取HFile其他的配置
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>        <span class="o">.....</span>
+</span></span><span class="line"><span class="cl">        <span class="c1">// 生成HFile的配置信息
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>        <span class="n">HFileContextBuilder</span> <span class="n">contextBuilder</span> <span class="o">=</span> <span class="k">new</span> <span class="n">HFileContextBuilder</span><span class="o">()</span>
+</span></span><span class="line"><span class="cl">                                    <span class="o">.</span><span class="na">withCompression</span><span class="o">(</span><span class="n">compression</span><span class="o">)</span>
+</span></span><span class="line"><span class="cl">                                    <span class="o">.</span><span class="na">withChecksumType</span><span class="o">(</span><span class="n">HStore</span><span class="o">.</span><span class="na">getChecksumType</span><span class="o">(</span><span class="n">conf</span><span class="o">))</span>
+</span></span><span class="line"><span class="cl">                                    <span class="o">.</span><span class="na">withBytesPerCheckSum</span><span class="o">(</span><span class="n">HStore</span><span class="o">.</span><span class="na">getBytesPerChecksum</span><span class="o">(</span><span class="n">conf</span><span class="o">))</span>
+</span></span><span class="line"><span class="cl">                                    <span class="o">.</span><span class="na">withBlockSize</span><span class="o">(</span><span class="n">blockSize</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">        <span class="n">HFileContext</span> <span class="n">hFileContext</span> <span class="o">=</span> <span class="n">contextBuilder</span><span class="o">.</span><span class="na">build</span><span class="o">();</span>
+</span></span><span class="line"><span class="cl">        <span class="c1">// 实例化 StoreFileWriter
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>        <span class="n">f</span> <span class="o">(</span><span class="kc">null</span> <span class="o">==</span> <span class="n">favoredNodes</span><span class="o">)</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">          <span class="n">wl</span><span class="o">.</span><span class="na">writer</span> <span class="o">=</span>
+</span></span><span class="line"><span class="cl">              <span class="k">new</span> <span class="n">StoreFileWriter</span><span class="o">.</span><span class="na">Builder</span><span class="o">(</span><span class="n">conf</span><span class="o">,</span> <span class="k">new</span> <span class="n">CacheConfig</span><span class="o">(</span><span class="n">tempConf</span><span class="o">),</span> <span class="n">fs</span><span class="o">)</span>
+</span></span><span class="line"><span class="cl">                  <span class="o">.</span><span class="na">withOutputDir</span><span class="o">(</span><span class="n">familydir</span><span class="o">).</span><span class="na">withBloomType</span><span class="o">(</span><span class="n">bloomType</span><span class="o">)</span>
+</span></span><span class="line"><span class="cl">              <span class="o">.</span><span class="na">withComparator</span><span class="o">(</span><span class="n">CellComparator</span><span class="o">.</span><span class="na">getInstance</span><span class="o">()).</span><span class="na">withFileContext</span><span class="o">(</span><span class="n">hFileContext</span><span class="o">).</span><span class="na">build</span><span class="o">();</span>
+</span></span><span class="line"><span class="cl">        <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">          <span class="n">wl</span><span class="o">.</span><span class="na">writer</span> <span class="o">=</span>
+</span></span><span class="line"><span class="cl">              <span class="k">new</span> <span class="n">StoreFileWriter</span><span class="o">.</span><span class="na">Builder</span><span class="o">(</span><span class="n">conf</span><span class="o">,</span> <span class="k">new</span> <span class="n">CacheConfig</span><span class="o">(</span><span class="n">tempConf</span><span class="o">),</span> <span class="k">new</span> <span class="n">HFileSystem</span><span class="o">(</span><span class="n">fs</span><span class="o">))</span>
+</span></span><span class="line"><span class="cl">                  <span class="o">.</span><span class="na">withOutputDir</span><span class="o">(</span><span class="n">familydir</span><span class="o">).</span><span class="na">withBloomType</span><span class="o">(</span><span class="n">bloomType</span><span class="o">)</span>
+</span></span><span class="line"><span class="cl">                  <span class="o">.</span><span class="na">withComparator</span><span class="o">(</span><span class="n">CellComparator</span><span class="o">.</span><span class="na">getInstance</span><span class="o">()).</span><span class="na">withFileContext</span><span class="o">(</span><span class="n">hFileContext</span><span class="o">)</span>
+</span></span><span class="line"><span class="cl">                  <span class="o">.</span><span class="na">withFavoredNodes</span><span class="o">(</span><span class="n">favoredNodes</span><span class="o">).</span><span class="na">build</span><span class="o">();</span>
+</span></span><span class="line"><span class="cl">        <span class="o">}</span>
+</span></span><span class="line"><span class="cl">        <span class="c1">// 添加到 writers集合中
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>        <span class="k">this</span><span class="o">.</span><span class="na">writers</span><span class="o">.</span><span class="na">put</span><span class="o">(</span><span class="n">tableAndFamily</span><span class="o">,</span> <span class="n">wl</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">        <span class="k">return</span> <span class="n">wl</span><span class="o">;</span>
+</span></span><span class="line"><span class="cl">    <span class="o">}</span>
+</span></span><span class="line"><span class="cl"><span class="o">}</span>
+</span></span></code></pre></td></tr></table></div>
 </div>
 </div><p>继续看看 RecordWriter 的写操作：</p>
 <div class="highlight"><div class="chroma">
@@ -794,75 +794,75 @@ bin/hbase org.apache.hadoop.hbase.mapreduce.LoadIncrementalHFiles &lt;hdfs://sto
 </span><span class="lnt">68
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="kd">class</span> <span class="nc">RecordWriter</span><span class="o">&lt;</span><span class="n">ImmutableBytesWritable</span><span class="o">,</span> <span class="n">V</span><span class="o">&gt;()</span> <span class="o">{</span>
-    <span class="nd">@Override</span>
-    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">write</span><span class="o">(</span><span class="n">ImmutableBytesWritable</span> <span class="n">row</span><span class="o">,</span> <span class="n">V</span> <span class="n">cell</span><span class="o">)</span>
-        <span class="n">Cell</span> <span class="n">kv</span> <span class="o">=</span> <span class="n">cell</span><span class="o">;</span>
-         <span class="c1">// 收到空数据，表示需要立即刷新到磁盘，并且创建新的HFile
-</span><span class="c1"></span>    	<span class="k">if</span> <span class="o">(</span><span class="n">row</span> <span class="o">==</span> <span class="kc">null</span> <span class="o">&amp;&amp;</span> <span class="n">kv</span> <span class="o">==</span> <span class="kc">null</span><span class="o">)</span> <span class="o">{</span>
-            <span class="c1">// 刷新到磁盘
-</span><span class="c1"></span>            <span class="n">rollWriters</span><span class="o">(</span><span class="kc">null</span><span class="o">);</span>
-            <span class="k">return</span><span class="o">;</span>
-        <span class="o">}</span>
-        <span class="c1">// 根据table和column family生成唯一值
-</span><span class="c1"></span>    	<span class="kt">byte</span><span class="o">[]</span> <span class="n">tableAndFamily</span> <span class="o">=</span> <span class="n">getTableNameSuffixedWithFamily</span><span class="o">(</span><span class="n">tableNameBytes</span><span class="o">,</span> <span class="n">family</span><span class="o">);</span>
-        <span class="c1">// 获取对应的writer
-</span><span class="c1"></span>    	<span class="n">WriterLength</span> <span class="n">wl</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="na">writers</span><span class="o">.</span><span class="na">get</span><span class="o">(</span><span class="n">tableAndFamily</span><span class="o">);</span>
-    	<span class="k">if</span> <span class="o">(</span><span class="n">wl</span> <span class="o">==</span> <span class="kc">null</span><span class="o">)</span> <span class="o">{</span>
-            <span class="c1">// 如果为空，那么先创建对应的文件目录
-</span><span class="c1"></span>            <span class="n">Path</span> <span class="n">writerPath</span> <span class="o">=</span> <span class="kc">null</span><span class="o">;</span>
-            <span class="n">writerPath</span> <span class="o">=</span> <span class="k">new</span> <span class="n">Path</span><span class="o">(</span><span class="n">outputDir</span><span class="o">,</span> <span class="n">Bytes</span><span class="o">.</span><span class="na">toString</span><span class="o">(</span><span class="n">family</span><span class="o">));</span>
-            <span class="n">fs</span><span class="o">.</span><span class="na">mkdirs</span><span class="o">(</span><span class="n">writerPath</span><span class="o">);</span>
-        <span class="o">}</span>
-        <span class="c1">// 检测当前HFile的大小是否超过了最大值，默认为10GB
-</span><span class="c1"></span>    	<span class="k">if</span> <span class="o">(</span><span class="n">wl</span> <span class="o">!=</span> <span class="kc">null</span> <span class="o">&amp;&amp;</span> <span class="n">wl</span><span class="o">.</span><span class="na">written</span> <span class="o">+</span> <span class="n">length</span> <span class="o">&gt;=</span> <span class="n">maxsize</span><span class="o">)</span> <span class="o">{</span>
-            <span class="k">this</span><span class="o">.</span><span class="na">rollRequested</span> <span class="o">=</span> <span class="kc">true</span><span class="o">;</span>
-        <span class="o">}</span>
-        <span class="c1">// 如果当前HFile过大，那么需要将它刷新到磁盘
-</span><span class="c1"></span>    	<span class="k">if</span> <span class="o">(</span><span class="n">rollRequested</span> <span class="o">&amp;&amp;</span> <span class="n">Bytes</span><span class="o">.</span><span class="na">compareTo</span><span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="na">previousRow</span><span class="o">,</span> <span class="n">rowKey</span><span class="o">)</span> <span class="o">!=</span> <span class="n">0</span><span class="o">)</span> <span class="o">{</span>
-            <span class="n">rollWriters</span><span class="o">(</span><span class="n">wl</span><span class="o">);</span>
-        <span class="o">}</span>
-        <span class="c1">// 创建writer
-</span><span class="c1"></span>    	<span class="k">if</span> <span class="o">(</span><span class="n">wl</span> <span class="o">==</span> <span class="kc">null</span> <span class="o">||</span> <span class="n">wl</span><span class="o">.</span><span class="na">writer</span> <span class="o">==</span> <span class="kc">null</span><span class="o">)</span> <span class="o">{</span>
-            <span class="k">if</span> <span class="o">(</span><span class="n">conf</span><span class="o">.</span><span class="na">getBoolean</span><span class="o">(</span><span class="n">LOCALITY_SENSITIVE_CONF_KEY</span><span class="o">,</span> <span class="n">DEFAULT_LOCALITY_SENSITIVE</span><span class="o">))</span> <span class="o">{</span>
-                <span class="c1">// 如果开启了位置感知，那么就会去获取row所在的region的地址
-</span><span class="c1"></span>                <span class="n">HRegionLocation</span> <span class="n">loc</span> <span class="o">=</span> <span class="kc">null</span><span class="o">;</span>
-                <span class="n">loc</span> <span class="o">=</span> <span class="n">locator</span><span class="o">.</span><span class="na">getRegionLocation</span><span class="o">(</span><span class="n">rowKey</span><span class="o">);</span>
-                <span class="n">InetSocketAddress</span> <span class="n">initialIsa</span> <span class="o">=</span> <span class="k">new</span> <span class="n">InetSocketAddress</span><span class="o">(</span><span class="n">loc</span><span class="o">.</span><span class="na">getHostname</span><span class="o">(),</span> <span class="n">loc</span><span class="o">.</span><span class="na">getPort</span><span class="o">());</span>
-                <span class="c1">// 创建writer，指定了偏向节点
-</span><span class="c1"></span>                <span class="n">wl</span> <span class="o">=</span> <span class="n">getNewWriter</span><span class="o">(</span><span class="n">tableNameBytes</span><span class="o">,</span> <span class="n">family</span><span class="o">,</span> <span class="n">conf</span><span class="o">,</span> <span class="k">new</span> <span class="n">InetSocketAddress</span><span class="o">[]</span> <span class="o">{</span> <span class="n">initialIsa</span><span class="o">})</span>
-            <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
-                <span class="c1">// 创建writer
-</span><span class="c1"></span>                <span class="n">wl</span> <span class="o">=</span> <span class="n">getNewWriter</span><span class="o">(</span><span class="n">tableNameBytes</span><span class="o">,</span> <span class="n">family</span><span class="o">,</span> <span class="n">conf</span><span class="o">,</span> <span class="kc">null</span><span class="o">);</span>
-            <span class="o">}</span>
-        <span class="o">}</span>
-    	<span class="n">wl</span><span class="o">.</span><span class="na">writer</span><span class="o">.</span><span class="na">append</span><span class="o">(</span><span class="n">kv</span><span class="o">);</span>
-    	<span class="n">wl</span><span class="o">.</span><span class="na">written</span> <span class="o">+=</span> <span class="n">length</span><span class="o">;</span>
-    	<span class="k">this</span><span class="o">.</span><span class="na">previousRow</span> <span class="o">=</span> <span class="n">rowKey</span><span class="o">;</span>
-	<span class="o">}</span>
-
-	<span class="kd">private</span> <span class="kt">void</span> <span class="nf">rollWriters</span><span class="o">(</span><span class="n">WriterLength</span> <span class="n">writerLength</span><span class="o">)</span> <span class="kd">throws</span> <span class="n">IOException</span> <span class="o">{</span>
-        <span class="k">if</span> <span class="o">(</span><span class="n">writerLength</span> <span class="o">!=</span> <span class="kc">null</span><span class="o">)</span> <span class="o">{</span>
-            <span class="c1">// 关闭当前writer
-</span><span class="c1"></span>            <span class="n">closeWriter</span><span class="o">(</span><span class="n">writerLength</span><span class="o">);</span>
-        <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
-            <span class="c1">// 关闭所有family对应的writer
-</span><span class="c1"></span>            <span class="k">for</span> <span class="o">(</span><span class="n">WriterLength</span> <span class="n">wl</span> <span class="o">:</span> <span class="k">this</span><span class="o">.</span><span class="na">writers</span><span class="o">.</span><span class="na">values</span><span class="o">())</span> <span class="o">{</span>
-                <span class="n">closeWriter</span><span class="o">(</span><span class="n">wl</span><span class="o">);</span>
-            <span class="o">}</span>
-        <span class="o">}</span>
-        <span class="k">this</span><span class="o">.</span><span class="na">rollRequested</span> <span class="o">=</span> <span class="kc">false</span><span class="o">;</span>
-    <span class="o">}</span>
-
-	<span class="kd">private</span> <span class="kt">void</span> <span class="nf">closeWriter</span><span class="o">(</span><span class="n">WriterLength</span> <span class="n">wl</span><span class="o">)</span> <span class="kd">throws</span> <span class="n">IOException</span> <span class="o">{</span>
-        <span class="k">if</span> <span class="o">(</span><span class="n">wl</span><span class="o">.</span><span class="na">writer</span> <span class="o">!=</span> <span class="kc">null</span><span class="o">)</span> <span class="o">{</span>
-            <span class="n">close</span><span class="o">(</span><span class="n">wl</span><span class="o">.</span><span class="na">writer</span><span class="o">);</span>
-        <span class="o">}</span>
-        <span class="n">wl</span><span class="o">.</span><span class="na">writer</span> <span class="o">=</span> <span class="kc">null</span><span class="o">;</span>
-        <span class="n">wl</span><span class="o">.</span><span class="na">written</span> <span class="o">=</span> <span class="n">0</span><span class="o">;</span>
-    <span class="o">}</span>
-<span class="o">}</span>   	
-</code></pre></td></tr></table></div>
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="kd">class</span> <span class="nc">RecordWriter</span><span class="o">&lt;</span><span class="n">ImmutableBytesWritable</span><span class="o">,</span> <span class="n">V</span><span class="o">&gt;()</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">    <span class="nd">@Override</span>
+</span></span><span class="line"><span class="cl">    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">write</span><span class="o">(</span><span class="n">ImmutableBytesWritable</span> <span class="n">row</span><span class="o">,</span> <span class="n">V</span> <span class="n">cell</span><span class="o">)</span>
+</span></span><span class="line"><span class="cl">        <span class="n">Cell</span> <span class="n">kv</span> <span class="o">=</span> <span class="n">cell</span><span class="o">;</span>
+</span></span><span class="line"><span class="cl">         <span class="c1">// 收到空数据，表示需要立即刷新到磁盘，并且创建新的HFile
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    	<span class="k">if</span> <span class="o">(</span><span class="n">row</span> <span class="o">==</span> <span class="kc">null</span> <span class="o">&amp;&amp;</span> <span class="n">kv</span> <span class="o">==</span> <span class="kc">null</span><span class="o">)</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">            <span class="c1">// 刷新到磁盘
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>            <span class="n">rollWriters</span><span class="o">(</span><span class="kc">null</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">            <span class="k">return</span><span class="o">;</span>
+</span></span><span class="line"><span class="cl">        <span class="o">}</span>
+</span></span><span class="line"><span class="cl">        <span class="c1">// 根据table和column family生成唯一值
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    	<span class="kt">byte</span><span class="o">[]</span> <span class="n">tableAndFamily</span> <span class="o">=</span> <span class="n">getTableNameSuffixedWithFamily</span><span class="o">(</span><span class="n">tableNameBytes</span><span class="o">,</span> <span class="n">family</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">        <span class="c1">// 获取对应的writer
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    	<span class="n">WriterLength</span> <span class="n">wl</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="na">writers</span><span class="o">.</span><span class="na">get</span><span class="o">(</span><span class="n">tableAndFamily</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">    	<span class="k">if</span> <span class="o">(</span><span class="n">wl</span> <span class="o">==</span> <span class="kc">null</span><span class="o">)</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">            <span class="c1">// 如果为空，那么先创建对应的文件目录
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>            <span class="n">Path</span> <span class="n">writerPath</span> <span class="o">=</span> <span class="kc">null</span><span class="o">;</span>
+</span></span><span class="line"><span class="cl">            <span class="n">writerPath</span> <span class="o">=</span> <span class="k">new</span> <span class="n">Path</span><span class="o">(</span><span class="n">outputDir</span><span class="o">,</span> <span class="n">Bytes</span><span class="o">.</span><span class="na">toString</span><span class="o">(</span><span class="n">family</span><span class="o">));</span>
+</span></span><span class="line"><span class="cl">            <span class="n">fs</span><span class="o">.</span><span class="na">mkdirs</span><span class="o">(</span><span class="n">writerPath</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">        <span class="o">}</span>
+</span></span><span class="line"><span class="cl">        <span class="c1">// 检测当前HFile的大小是否超过了最大值，默认为10GB
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    	<span class="k">if</span> <span class="o">(</span><span class="n">wl</span> <span class="o">!=</span> <span class="kc">null</span> <span class="o">&amp;&amp;</span> <span class="n">wl</span><span class="o">.</span><span class="na">written</span> <span class="o">+</span> <span class="n">length</span> <span class="o">&gt;=</span> <span class="n">maxsize</span><span class="o">)</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">            <span class="k">this</span><span class="o">.</span><span class="na">rollRequested</span> <span class="o">=</span> <span class="kc">true</span><span class="o">;</span>
+</span></span><span class="line"><span class="cl">        <span class="o">}</span>
+</span></span><span class="line"><span class="cl">        <span class="c1">// 如果当前HFile过大，那么需要将它刷新到磁盘
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    	<span class="k">if</span> <span class="o">(</span><span class="n">rollRequested</span> <span class="o">&amp;&amp;</span> <span class="n">Bytes</span><span class="o">.</span><span class="na">compareTo</span><span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="na">previousRow</span><span class="o">,</span> <span class="n">rowKey</span><span class="o">)</span> <span class="o">!=</span> <span class="mi">0</span><span class="o">)</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">            <span class="n">rollWriters</span><span class="o">(</span><span class="n">wl</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">        <span class="o">}</span>
+</span></span><span class="line"><span class="cl">        <span class="c1">// 创建writer
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    	<span class="k">if</span> <span class="o">(</span><span class="n">wl</span> <span class="o">==</span> <span class="kc">null</span> <span class="o">||</span> <span class="n">wl</span><span class="o">.</span><span class="na">writer</span> <span class="o">==</span> <span class="kc">null</span><span class="o">)</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">            <span class="k">if</span> <span class="o">(</span><span class="n">conf</span><span class="o">.</span><span class="na">getBoolean</span><span class="o">(</span><span class="n">LOCALITY_SENSITIVE_CONF_KEY</span><span class="o">,</span> <span class="n">DEFAULT_LOCALITY_SENSITIVE</span><span class="o">))</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">                <span class="c1">// 如果开启了位置感知，那么就会去获取row所在的region的地址
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>                <span class="n">HRegionLocation</span> <span class="n">loc</span> <span class="o">=</span> <span class="kc">null</span><span class="o">;</span>
+</span></span><span class="line"><span class="cl">                <span class="n">loc</span> <span class="o">=</span> <span class="n">locator</span><span class="o">.</span><span class="na">getRegionLocation</span><span class="o">(</span><span class="n">rowKey</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">                <span class="n">InetSocketAddress</span> <span class="n">initialIsa</span> <span class="o">=</span> <span class="k">new</span> <span class="n">InetSocketAddress</span><span class="o">(</span><span class="n">loc</span><span class="o">.</span><span class="na">getHostname</span><span class="o">(),</span> <span class="n">loc</span><span class="o">.</span><span class="na">getPort</span><span class="o">());</span>
+</span></span><span class="line"><span class="cl">                <span class="c1">// 创建writer，指定了偏向节点
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>                <span class="n">wl</span> <span class="o">=</span> <span class="n">getNewWriter</span><span class="o">(</span><span class="n">tableNameBytes</span><span class="o">,</span> <span class="n">family</span><span class="o">,</span> <span class="n">conf</span><span class="o">,</span> <span class="k">new</span> <span class="n">InetSocketAddress</span><span class="o">[]</span> <span class="o">{</span> <span class="n">initialIsa</span><span class="o">})</span>
+</span></span><span class="line"><span class="cl">            <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">                <span class="c1">// 创建writer
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>                <span class="n">wl</span> <span class="o">=</span> <span class="n">getNewWriter</span><span class="o">(</span><span class="n">tableNameBytes</span><span class="o">,</span> <span class="n">family</span><span class="o">,</span> <span class="n">conf</span><span class="o">,</span> <span class="kc">null</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">            <span class="o">}</span>
+</span></span><span class="line"><span class="cl">        <span class="o">}</span>
+</span></span><span class="line"><span class="cl">    	<span class="n">wl</span><span class="o">.</span><span class="na">writer</span><span class="o">.</span><span class="na">append</span><span class="o">(</span><span class="n">kv</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">    	<span class="n">wl</span><span class="o">.</span><span class="na">written</span> <span class="o">+=</span> <span class="n">length</span><span class="o">;</span>
+</span></span><span class="line"><span class="cl">    	<span class="k">this</span><span class="o">.</span><span class="na">previousRow</span> <span class="o">=</span> <span class="n">rowKey</span><span class="o">;</span>
+</span></span><span class="line"><span class="cl">	<span class="o">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">	<span class="kd">private</span> <span class="kt">void</span> <span class="nf">rollWriters</span><span class="o">(</span><span class="n">WriterLength</span> <span class="n">writerLength</span><span class="o">)</span> <span class="kd">throws</span> <span class="n">IOException</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">        <span class="k">if</span> <span class="o">(</span><span class="n">writerLength</span> <span class="o">!=</span> <span class="kc">null</span><span class="o">)</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">            <span class="c1">// 关闭当前writer
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>            <span class="n">closeWriter</span><span class="o">(</span><span class="n">writerLength</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">        <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">            <span class="c1">// 关闭所有family对应的writer
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>            <span class="k">for</span> <span class="o">(</span><span class="n">WriterLength</span> <span class="n">wl</span> <span class="o">:</span> <span class="k">this</span><span class="o">.</span><span class="na">writers</span><span class="o">.</span><span class="na">values</span><span class="o">())</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">                <span class="n">closeWriter</span><span class="o">(</span><span class="n">wl</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">            <span class="o">}</span>
+</span></span><span class="line"><span class="cl">        <span class="o">}</span>
+</span></span><span class="line"><span class="cl">        <span class="k">this</span><span class="o">.</span><span class="na">rollRequested</span> <span class="o">=</span> <span class="kc">false</span><span class="o">;</span>
+</span></span><span class="line"><span class="cl">    <span class="o">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">	<span class="kd">private</span> <span class="kt">void</span> <span class="nf">closeWriter</span><span class="o">(</span><span class="n">WriterLength</span> <span class="n">wl</span><span class="o">)</span> <span class="kd">throws</span> <span class="n">IOException</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">        <span class="k">if</span> <span class="o">(</span><span class="n">wl</span><span class="o">.</span><span class="na">writer</span> <span class="o">!=</span> <span class="kc">null</span><span class="o">)</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">            <span class="n">close</span><span class="o">(</span><span class="n">wl</span><span class="o">.</span><span class="na">writer</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">        <span class="o">}</span>
+</span></span><span class="line"><span class="cl">        <span class="n">wl</span><span class="o">.</span><span class="na">writer</span> <span class="o">=</span> <span class="kc">null</span><span class="o">;</span>
+</span></span><span class="line"><span class="cl">        <span class="n">wl</span><span class="o">.</span><span class="na">written</span> <span class="o">=</span> <span class="mi">0</span><span class="o">;</span>
+</span></span><span class="line"><span class="cl">    <span class="o">}</span>
+</span></span><span class="line"><span class="cl"><span class="o">}</span>   	
+</span></span></code></pre></td></tr></table></div>
 </div>
 </div><p>RecordWriter在写入数据时，如果遇到一条 row key 和 value 都为 null 的数据时，这条数据有着特殊的含义，表示writer应该立即 flush。在每次创建RecordWriter时，它会根据此时row key 的值，找到所属 Region 的服务器地址，然后尽量在这台服务器上，创建新的HFile文件。</p>
 <h2 id="加载-hfile"><a href="#加载-hfile" class="anchor-link"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon anchor-icon"><path d="M326.612 185.391c59.747 59.809 58.927 155.698.36 214.59-.11.12-.24.25-.36.37l-67.2 67.2c-59.27 59.27-155.699 59.262-214.96 0-59.27-59.26-59.27-155.7 0-214.96l37.106-37.106c9.84-9.84 26.786-3.3 27.294 10.606.648 17.722 3.826 35.527 9.69 52.721 1.986 5.822.567 12.262-3.783 16.612l-13.087 13.087c-28.026 28.026-28.905 73.66-1.155 101.96 28.024 28.579 74.086 28.749 102.325.51l67.2-67.19c28.191-28.191 28.073-73.757 0-101.83-3.701-3.694-7.429-6.564-10.341-8.569a16.037 16.037 0 0 1-6.947-12.606c-.396-10.567 3.348-21.456 11.698-29.806l21.054-21.055c5.521-5.521 14.182-6.199 20.584-1.731a152.482 152.482 0 0 1 20.522 17.197zM467.547 44.449c-59.261-59.262-155.69-59.27-214.96 0l-67.2 67.2c-.12.12-.25.25-.36.37-58.566 58.892-59.387 154.781.36 214.59a152.454 152.454 0 0 0 20.521 17.196c6.402 4.468 15.064 3.789 20.584-1.731l21.054-21.055c8.35-8.35 12.094-19.239 11.698-29.806a16.037 16.037 0 0 0-6.947-12.606c-2.912-2.005-6.64-4.875-10.341-8.569-28.073-28.073-28.191-73.639 0-101.83l67.2-67.19c28.239-28.239 74.3-28.069 102.325.51 27.75 28.3 26.872 73.934-1.155 101.96l-13.087 13.087c-4.35 4.35-5.769 10.79-3.783 16.612 5.864 17.194 9.042 34.999 9.69 52.721.509 13.906 17.454 20.446 27.294 10.606l37.106-37.106c59.271-59.259 59.271-155.699.001-214.959z"/></svg></a>加载 HFile</h2>
@@ -908,9 +908,9 @@ bin/hbase org.apache.hadoop.hbase.mapreduce.LoadIncrementalHFiles &lt;hdfs://sto
 
         
     <div class="updated-badge-container">
-        <span title="Updated @ 2021-10-22 14:44:34 CST" style="cursor:help">
+        <span title="Updated @ 2023-07-02 16:59:09 CST" style="cursor:help">
 
-<svg xmlns="http://www.w3.org/2000/svg" width="130" height="20" class="updated-badge"><linearGradient id="b" x2="0" y2="100%"><stop offset="0" stop-color="#bbb" stop-opacity=".1"/><stop offset="1" stop-opacity=".1"/></linearGradient><clipPath id="a"><rect width="130" height="20" rx="3" fill="#fff"/></clipPath><g clip-path="url(#a)"><path class="updated-badge-left" d="M0 0h55v20H0z"/><path class="updated-badge-right" d="M55 0h75v20H55z"/><path fill="url(#b)" d="M0 0h130v20H0z"/></g><g fill="#fff" text-anchor="middle" font-size="110"><text x="285" y="150" fill="#010101" fill-opacity=".3" textLength="450" transform="scale(.1)">updated</text><text x="285" y="140" textLength="450" transform="scale(.1)">updated</text><text x="915" y="150" fill="#010101" fill-opacity=".3" textLength="650" transform="scale(.1)">2021-10-22</text><text x="915" y="140" textLength="650" transform="scale(.1)">2021-10-22</text></g></svg>
+<svg xmlns="http://www.w3.org/2000/svg" width="130" height="20" class="updated-badge"><linearGradient id="b" x2="0" y2="100%"><stop offset="0" stop-color="#bbb" stop-opacity=".1"/><stop offset="1" stop-opacity=".1"/></linearGradient><clipPath id="a"><rect width="130" height="20" rx="3" fill="#fff"/></clipPath><g clip-path="url(#a)"><path class="updated-badge-left" d="M0 0h55v20H0z"/><path class="updated-badge-right" d="M55 0h75v20H55z"/><path fill="url(#b)" d="M0 0h130v20H0z"/></g><g fill="#fff" text-anchor="middle" font-size="110"><text x="285" y="150" fill="#010101" fill-opacity=".3" textLength="450" transform="scale(.1)">updated</text><text x="285" y="140" textLength="450" transform="scale(.1)">updated</text><text x="915" y="150" fill="#010101" fill-opacity=".3" textLength="650" transform="scale(.1)">2023-07-02</text><text x="915" y="140" textLength="650" transform="scale(.1)">2023-07-02</text></g></svg>
         </span></div>
 
 
